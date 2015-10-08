@@ -1,0 +1,30 @@
+﻿{
+    "version": "1.0.0-*",
+    "description": "CK.Infrastructure.Commands.Tests Class Library",
+    "authors": [ "cedri_000" ],
+    "tags": [ "" ],
+    "projectUrl": "",
+    "licenseUrl": "",
+
+    "dependencies": {
+        "xunit": "2.1.0-rc1-*",
+        "xunit.runner.dnx": "2.1.0-beta5-*",
+        "Microsoft.Dnx.TestHost": "1.0.0-beta7",
+        "Microsoft.Dnx.Runtime.Abstractions": "1.0.0-beta7",
+        "Microsoft.Dnx.TestAdapter": "1.0.0-beta7",
+        "CK.Infrastructure.Commands": "1.0.0-*",
+        "Microsoft.Framework.DependencyInjection": "1.0.0-beta7"
+    },
+
+    "commands": {
+        "test": "xunit.runner.dnx"
+    },
+
+    "frameworks": {
+        "dnx451": {
+            "dependencies": {
+                "CK.Infrastructure.Commands": "1.0.0-*"
+            }
+        }
+    }
+}
