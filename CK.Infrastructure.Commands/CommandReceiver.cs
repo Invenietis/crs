@@ -35,7 +35,7 @@ namespace CK.Infrastructure.Commands
 
             //1. Concretize Stream into valid .NET DTO Commands
 
-            object command = ResolveCommandFactory( httpContext ).CreateCommand( commandRegistration, httpContext.Request.Body );
+            ICommand command = ResolveCommandFactory( httpContext ).CreateCommand( commandRegistration, httpContext.Request.Body );
             if( command == null )
             {
                 string msg = String.Format( "A valid command definition has been infered from routes, but the command type {0} failed to be instanciated.", commandRegistration.CommandType.Name );
@@ -120,7 +120,7 @@ namespace CK.Infrastructure.Commands
         {
             services.AddSingleton<ICommandFactory, DefaultCommandFactory>();
             services.AddSingleton<ICommandResultSerializer, DefaultCommandResultSerializer>();
-            //services.AddSingleton<ICommandBus, DefaultCommandBus>();
+            services.AddSingleton<ICommandBus, DefaultCommandBus>();
             services.AddSingleton<ICommandRouteMap, DefaultCommandRouteMap>();
             services.AddSingleton<ICommandTypeSelector, ConventionCommandTypeSelector>();
         }

@@ -119,7 +119,7 @@ namespace CK.Infrastructure.Commands.Tests.Fake
         {
             get
             {
-                throw new NotImplementedException();
+                return new FakeHttpResponse( this );
             }
         }
 
@@ -159,16 +159,15 @@ namespace CK.Infrastructure.Commands.Tests.Fake
             }
         }
 
+        public override IFeatureCollection Features
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public override void Abort()
-        {
-        }
-
-        public override object GetFeature( Type type )
-        {
-            return null;
-        }
-
-        public override void SetFeature( Type type, object instance )
         {
         }
 

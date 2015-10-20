@@ -40,11 +40,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandResult.cs" />
     <Compile Include="CommandRouteAttribute.cs" />
+    <Compile Include="CommandRoutePath.cs" />
+    <Compile Include="DefaultCommandBus.cs" />
+    <Compile Include="CommandFactoryBase.cs" />
+    <Compile Include="DefaultCommandRouteMap.cs" />
+    <Compile Include="DefaultReceiverOptions.cs" />
     <Compile Include="ICommand.cs" />
     <Compile Include="ICommandBus.cs" />
     <Compile Include="ICommandFactory.cs" />
     <Compile Include="ICommandHandler.cs" />
+    <Compile Include="ICommandHandlerRegistry.cs" />
     <Compile Include="ICommandReceiverOptions.cs" />
     <Compile Include="ICommandResult.cs" />
     <Compile Include="ICommandRouteMap.cs" />

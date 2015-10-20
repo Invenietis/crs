@@ -14,6 +14,7 @@ using Microsoft.AspNet.Http.Features;
 using Microsoft.Dnx.Runtime.Infrastructure;
 using Xunit;
 using Microsoft.Framework.DependencyInjection;
+using CK.Infrastructure.Commands.Tests.Stubs;
 
 namespace CK.Infrastructure.Commands.Tests
 {
@@ -73,12 +74,7 @@ namespace CK.Infrastructure.Commands.Tests
                 ApplicationException exc = await Assert.ThrowsAsync<ApplicationException>( () => r.Invoke( new FakeHttpContext( ApplicationServices, "/api", SerializeRequestBody() ) ) );
                 Assert.Equal( "Next delegate invoked.", exc.Message );
 
-                ApplicationServices.GetService<ICommandRouteMap>().Register( new CommandRouteRegistration
-                {
-                    CommandType = typeof( TestCommand1 ),
-                    IsLongRunning = false,
-                    Route = "/c/TestCommand1"
-                } );
+                Register<TestCommand1>();
 
                 exc = await Assert.ThrowsAsync<ApplicationException>( () => r.Invoke( new FakeHttpContext( ApplicationServices, "/api", SerializeRequestBody() ) ) );
                 Assert.Equal( "Next delegate invoked.", exc.Message );
@@ -88,7 +84,28 @@ namespace CK.Infrastructure.Commands.Tests
 
                 await r.Invoke( new FakeHttpContext( ApplicationServices, "/c/TestCommand1", SerializeRequestBody() ) );
             }
+        }
 
+        [Fact]
+        public async Task CommandReceiver_Should_Handle_CommandTypeName_InDefaultNamespace()
+        {
+            ICommandReceiverOptions options = new DefaultReceiverOptions("/c");
+            options.CommandRouteOptions.DefaultCommandNamespace = "CK.Infrastructure.Commands.Tests.Fake";
+            Register<TestCommand1>();
+
+            CommandReceiver r = new CommandReceiver( ShouldNotInvokeDelegate, options);
+            HttpContext context = new FakeHttpContext( ApplicationServices, "/c/TestCommand1", SerializeRequestBody() );
+            await r.Invoke( context );
+            Assert.Equal( 1, ((FakeCommandBus)ApplicationServices.GetRequiredService<ICommandBus>()).Commands.Count );
+        }
+
+        private void Register<T>() where T : ICommand
+        {
+            ApplicationServices.GetService<ICommandRouteMap>().Register( new CommandRouteRegistration
+            {
+                CommandType = typeof( T ),
+                Route = new CommandRoutePath( "/c", typeof( T ).Name )
+            } );
         }
 
         private Stream SerializeRequestBody()

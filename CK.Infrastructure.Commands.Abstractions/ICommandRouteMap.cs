@@ -15,10 +15,8 @@ namespace CK.Infrastructure.Commands
 
     public class CommandRouteRegistration
     {
-        public string Route { get; set; }
+        public CommandRoutePath Route { get; set; }
 
         public Type CommandType { get; set; }
-
-        public bool IsLongRunning { get; set; }
     }
 }

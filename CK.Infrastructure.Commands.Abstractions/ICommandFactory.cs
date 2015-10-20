@@ -9,6 +9,6 @@ namespace CK.Infrastructure.Commands
 {
     public interface ICommandFactory
     {
-        object CreateCommand( CommandRouteRegistration routeInfo, Stream requestPayload );
+        ICommand CreateCommand( CommandRouteRegistration routeInfo, Stream requestPayload );
     }
 }

@@ -8,7 +8,7 @@ namespace CK.Infrastructure.Commands.Tests
     {
         public Task SerializeCommandResult( ICommandResult result, Stream outputStream )
         {
-            throw new NotImplementedException();
+            return Task.FromResult<object>( null );
         }
     }
 }

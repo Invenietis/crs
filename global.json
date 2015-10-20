@@ -1,9 +1,9 @@
 {
-  "projects": [
-    ".",
-    "wrap"
-  ],
-  "sdk": {
-    "version": "1.0.0-beta7"
-  }
+    "projects": [
+        ".",
+        "wrap"
+    ],
+    "sdk": {
+        "version": "1.0.0-beta8"
+    }
 }

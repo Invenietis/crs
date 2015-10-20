@@ -8,6 +8,6 @@ namespace CK.Infrastructure.Commands
 {
     public interface ICommandTypeSelector
     {
-        Type DetermineCommandType( ICommandReceiverOptions receiverOptions, string requestPath );
+        Type DetermineCommandType( ICommandReceiverOptions receiverOptions, CommandRoutePath routePath );
     }
 }

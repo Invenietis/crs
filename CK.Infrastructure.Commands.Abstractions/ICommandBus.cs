@@ -8,6 +8,6 @@ namespace CK.Infrastructure.Commands
 {
     public interface ICommandBus
     {
-        Task<ICommandResult> SendAsync( object command );
+        Task<ICommandResult> SendAsync( ICommand command );
     }
 }

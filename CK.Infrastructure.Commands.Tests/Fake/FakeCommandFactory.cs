@@ -5,9 +5,11 @@ namespace CK.Infrastructure.Commands.Tests
 {
     internal class FakeCommandFactory : ICommandFactory
     {
-        public object CreateCommand( CommandRouteRegistration routeInfo, Stream requestPayload )
+        public ICommand CreateCommand( CommandRouteRegistration routeInfo, Stream requestPayload )
         {
-            throw new NotImplementedException();
+            if( routeInfo.CommandType == null ) return null;
+
+            return (ICommand)Activator.CreateInstance( routeInfo.CommandType );
         }
     }
 }

@@ -18,8 +18,9 @@ namespace CK.Infrastructure.Commands
 
     public class CommandRouteOptions
     {
-        
-        public bool AddConventionRoutesToMap { get; set; }
+        public string DefaultCommandAssemblyName { get; set; }
+        public string DefaultCommandNamespace { get; set; }
     }
+
 
 }

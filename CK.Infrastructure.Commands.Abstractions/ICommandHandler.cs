@@ -6,9 +6,13 @@ using System.Threading.Tasks;
 
 namespace CK.Infrastructure.Commands
 {
-    
-    public interface ICommandHandler<in T, TResult> where T : ICommand<TResult>
+    public interface ICommandHandler
     {
-        Task<TResult> HandleAsync( T command );
+        Task<object> HandleAsync( object command );
+    }
+
+    public interface ICommandHandler<in T>
+    {
+        Task<object> HandleAsync( T command );
     }
 }
