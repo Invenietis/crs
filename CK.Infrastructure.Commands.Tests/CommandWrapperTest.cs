@@ -10,6 +10,7 @@ using Xunit.Abstractions;
 
 namespace CK.Infrastructure.Commands.Tests
 {
+    [AsyncCommand]
     public class TransferAmountCommand
     {
         public Guid SourceAccountId { get; set; }
@@ -19,13 +20,22 @@ namespace CK.Infrastructure.Commands.Tests
         public decimal Amount { get; set; }
     }
 
+    public class WithdrawMoneyCommand
+    {
+        public Guid AccountId { get; set; }
+        public decimal Amount { get; set; }
+    }
+
     public class AmountTransferredEvent
     {
         public DateTime EffectiveDate { get; set; }
 
         public DateTime CancellableDate { get; set; }
     }
-
+    public class MoneyWithdrawedEvent
+    {
+        public bool Success { get; set; }
+    }
     public class AmountTransferFailedEvent
     {
         public DateTime FailedDate { get; set; }
@@ -46,6 +56,18 @@ namespace CK.Infrastructure.Commands.Tests
         }
     }
 
+    public class WithDrawyMoneyHandler : CommandHandler<WithdrawMoneyCommand>
+    {
+        public override Task<object> DoHandleAsync( WithdrawMoneyCommand command )
+        {
+            var result =  new MoneyWithdrawedEvent
+            {
+                Success = true
+            };
+            return Task.FromResult<object>( result );
+        }
+    }
+
     [Collection( "CK.Infrastructure.Commands.Tests collection" )]
     public class CommandWrapperTest
     {
@@ -59,14 +81,15 @@ namespace CK.Infrastructure.Commands.Tests
         public async Task SendCommandAndWaitForEvents()
         {
             string serverAddress = "http://MyDumbServer/c/";
-            using( ICommandServer server = new DumbServer( serverAddress ) )
+            using( var server = new DumbCommandReceiver( serverAddress ) )
             {
                 // Server initialization
-                server.RegisterHandler<TransferAmountCommand>( new TransferAlwaysSuccessHandler() );
+                server.RegisterHandler<TransferAmountCommand, TransferAlwaysSuccessHandler>();
+                server.RegisterHandler<WithdrawMoneyCommand, WithDrawyMoneyHandler>();
                 server.Run();
 
                 // Client Code
-                IClientCommandSender sender = new ClientCommandSender();
+                var sender = new ClientCommandSender();
 
                 TransferAmountCommand command = new TransferAmountCommand
                 {
@@ -95,7 +118,26 @@ namespace CK.Infrastructure.Commands.Tests
                     return Task.FromResult( 0 );
                 } );
 
-                await Task.Delay( TimeSpan.FromSeconds( 15 ) );
+                WithdrawMoneyCommand withDrawCommand = new WithdrawMoneyCommand
+                {
+                    AccountId = Guid.NewGuid(),
+                    Amount = 20
+                };
+
+                result = await sender.SendAsync(serverAddress, withDrawCommand );
+                await result.OnResultAsync<MoneyWithdrawedEvent>( @event =>
+                {
+                    Output.WriteLine( @event.Success.ToString() );
+                    return Task.FromResult( 0 );
+                } );
+
+                await result.OnErrorAsync( ex =>
+                {
+                    Console.WriteLine( ex.ToString() );
+                    return Task.FromResult( 0 );
+                } );
+
+                await Task.Delay( TimeSpan.FromSeconds( 60 ) );
             }
         }
     }
@@ -109,10 +151,6 @@ namespace CK.Infrastructure.Commands.Tests
 
     public class ClientCommandSender : IClientCommandSender
     {
-        public ClientCommandSender()
-        {
-        }
-
         public async Task<ClientCommandResult> SendAsync<T>( string address, T command )
         {
             CommandRequest request = new CommandRequest( command )
@@ -123,13 +161,13 @@ namespace CK.Infrastructure.Commands.Tests
             ClientCommandResult result = null;
             try
             {
-                IResponse response = await CommandChannel.SendAsync( address, request );
-                if( response.ResponseType == 0 )
+                ICommandResponse response = await CommandChannel.SendAsync( address, request );
+                if( response.ResponseType == CommandResponseType.Deferred )
                 {
                     result = new DeferredResult();
                     result.Result = request.CallbackId;
                 }
-                else if( response.ResponseType == 1 )
+                else if( response.ResponseType == CommandResponseType.Direct )
                 {
                     result = new DirectResult();
                     result.Result = response.Payload;
@@ -193,7 +231,7 @@ namespace CK.Infrastructure.Commands.Tests
 
     #region Abstractions
 
-    public interface IRequest
+    public interface ICommandRequest
     {
         object Command { get; }
 
@@ -202,23 +240,52 @@ namespace CK.Infrastructure.Commands.Tests
         Type CommandServerType { get; }
     }
 
-    public interface IResponse
+    public enum CommandResponseType
+    {
+        Error = -1,
+        Direct = 0,
+        Deferred = 1
+    }
+
+    public interface ICommandResponse
     {
         Guid CommandId { get; }
 
-        int ResponseType { get; }
+        CommandResponseType ResponseType { get; set; }
 
-        object Payload { get; }
+        object Payload { get; set; }
     }
-    public interface ICommandServer : IDisposable
+
+    public interface ICommandHandlerRegistry
     {
-        void RegisterHandler<T>( ICommandHandler handler );
-
-        Task<IResponse> ProcessCommandAsync( CommandRequest command );
-        void Run();
+        void RegisterHandler<T, THandler>();
     }
 
-    public class CommandRequest : IRequest
+    /// <summary>
+    /// Defines the contract a command receiver should implement
+    /// </summary>
+    public interface ICommandReceiver
+    {
+        /// <summary>
+        /// Process a <see cref="ICommandRequest"/> and returns a <see cref="ICommandResponse"/>
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        Task<ICommandResponse> ProcessCommandAsync( ICommandRequest command );
+    }
+
+    public interface ICommandContext
+    {
+        ICommandRequest Request { get; }
+
+        ICommandResponse Response { get; }
+
+        Type HandlerType { get; }
+
+        bool IsAsynchronous { get; }
+    }
+
+    public class CommandRequest : ICommandRequest
     {
         public CommandRequest( object command )
         {
@@ -231,13 +298,23 @@ namespace CK.Infrastructure.Commands.Tests
         public Type CommandServerType { get; set; }
     }
 
-    public class CommandResponse : IResponse
+    public class CommandResponse : ICommandResponse
     {
         public Guid CommandId { get; set; }
 
-        public int ResponseType { get; set; }
+        public CommandResponseType ResponseType { get; set; }
 
         public object Payload { get; set; }
+    }
+    public class CommandContext : ICommandContext
+    {
+        public ICommandRequest Request { get; set; }
+
+        public ICommandResponse Response { get; set; }
+
+        public Type HandlerType { get; set; }
+
+        public bool IsAsynchronous { get; set; }
     }
 
     public abstract class CommandHandler<T> : ICommandHandler where T : class
@@ -250,15 +327,20 @@ namespace CK.Infrastructure.Commands.Tests
         public abstract Task<object> DoHandleAsync( T command );
     }
 
+    [AttributeUsage( AttributeTargets.Class, AllowMultiple = false )]
+    public class AsyncCommandAttribute : Attribute
+    {
+    }
+
     #endregion
 
     #region Commands and Events Channels
 
     public static class CommandChannel
     {
-        internal static Task<IResponse> SendAsync( string serverAddress, CommandRequest request )
+        internal static Task<ICommandResponse> SendAsync( string serverAddress, ICommandRequest request )
         {
-            return Servers.GetServer( serverAddress ).ProcessCommandAsync( request );
+            return Servers.GetCommandReceiver( serverAddress ).ProcessCommandAsync( request );
         }
     }
 
@@ -343,7 +425,7 @@ namespace CK.Infrastructure.Commands.Tests
             } );
         }
 
-        public void Dispatch( string callbackId, CommandResponse response )
+        public void Dispatch( string callbackId, ICommandResponse response )
         {
             if( String.IsNullOrEmpty( callbackId ) ) throw new ArgumentNullException( nameof( callbackId ) );
             if( response == null ) throw new ArgumentNullException( nameof( response ) );
@@ -356,102 +438,29 @@ namespace CK.Infrastructure.Commands.Tests
 
     #region Server Command Receiver
 
-    class DumbServer : ICommandServer, IDisposable
+    class DumbCommandReceiver : ICommandReceiver, ICommandHandlerRegistry, IDisposable
     {
         bool _disposed = false;
-        public DumbServer( string serverAddress )
+        public DumbCommandReceiver( string serverAddress )
         {
             Servers.Register( serverAddress, this );
         }
 
         class PendingRequest
         {
-            public CommandRequest CommandRequest { get; set; }
+            public ICommandRequest CommandRequest { get; set; }
 
-            public TaskCompletionSource<IResponse> CommandResponsePromise { get; set; }
+            public TaskCompletionSource<ICommandResponse> CommandResponsePromise { get; set; }
         }
-
-        Dictionary<Type, ICommandHandler> HandlerMap { get; } = new Dictionary<Type, ICommandHandler>();
 
         BlockingCollection<PendingRequest> IncomingRequests { get; } = new BlockingCollection<PendingRequest>();
-        public void Run()
-        {
-            Task.Factory.StartNew( () =>
-            {
-                while( !_disposed )
-                {
-                    PendingRequest request = IncomingRequests.Take();
-                    if( request == null ) continue;
 
-                    CommandWrapper w  = new CommandWrapper();
-                    w.CommandId = Guid.NewGuid();
-                    w.CallbackId = request.CommandRequest.CallbackId;
-                    w.CommandServerType = request.CommandRequest.CommandServerType;
-                    w.CommandBody = request.CommandRequest.Command;
-
-                    var response = new CommandResponse();
-                    response.CommandId = w.CommandId;
-
-                    var handler = FindHandler( w );
-                    if( handler == null )
-                    {
-                        response.ResponseType = -1;
-                        response.Payload = new InvalidOperationException( "Handler not found for command type " + w.CommandServerType.FullName );
-                    }
-                    else response.ResponseType = 0;
-
-                    request.CommandResponsePromise.SetResult( response );
-
-                    DoHandle( async () =>
-                    {
-                        var deferredResponse = new CommandResponse();
-                        deferredResponse.CommandId = w.CommandId;
-                        try
-                        {
-                            deferredResponse.Payload = await handler.HandleAsync( w.CommandBody );
-                            deferredResponse.ResponseType = 0;
-                        }
-                        catch( Exception ex )
-                        {
-                            deferredResponse.ResponseType = -2;
-                            deferredResponse.Payload = ex;
-                        }
-                        EventChannel.Instance.Dispatch( w.CallbackId, deferredResponse );
-                    } );
-
-                    Thread.Sleep( 100 );
-                }
-            } );
-        }
-
-        private void DoHandle( Func<Task> lambda )
-        {
-            Task.Run( lambda );
-        }
-
-        private ICommandHandler FindHandler( CommandWrapper w )
-        {
-            ICommandHandler handler = null;
-            HandlerMap.TryGetValue( w.CommandServerType, out handler );
-            return handler;
-        }
-
-        public void RegisterHandler<T>( ICommandHandler handler )
-        {
-            if( handler == null )
-                throw new ArgumentNullException( nameof( handler ) );
-            if( HandlerMap.ContainsKey( typeof( T ) ) )
-                throw new ArgumentException( "An handler is already registered for this command " + typeof( T ).FullName );
-
-            HandlerMap.Add( typeof( T ), handler );
-        }
-
-        public Task<IResponse> ProcessCommandAsync( CommandRequest command )
+        public Task<ICommandResponse> ProcessCommandAsync( ICommandRequest command )
         {
             if( command == null )
                 throw new ArgumentNullException( nameof( command ) );
 
-            TaskCompletionSource<IResponse> future = new TaskCompletionSource<IResponse>();
+            TaskCompletionSource<ICommandResponse> future = new TaskCompletionSource<ICommandResponse>();
 
             IncomingRequests.Add( new PendingRequest
             {
@@ -461,6 +470,88 @@ namespace CK.Infrastructure.Commands.Tests
 
             return future.Task;
         }
+        internal void Run()
+        {
+            Task.Factory.StartNew( async () =>
+            {
+                while( !_disposed )
+                {
+                    PendingRequest pending = IncomingRequests.Take();
+                    if( pending == null ) continue;
+
+                    var context = new CommandContext();
+                    context.Request = pending.CommandRequest;
+                    context.Response = new CommandResponse
+                    {
+                        CommandId = Guid.NewGuid()
+                    };
+
+                    if( !HandlerMap.ContainsKey( pending.CommandRequest.CommandServerType ) )
+                    {
+                        context.Response.ResponseType = CommandResponseType.Error;
+                        context.Response.Payload = new InvalidOperationException( "Handler not found for command type " + context.Request.CommandServerType );
+                        pending.CommandResponsePromise.SetResult( context.Response );
+                    }
+                    else
+                    {
+                        context.IsAsynchronous = ShouldHandleAsynchronously( context.Request.CommandServerType );
+                        context.HandlerType = HandlerMap[context.Request.CommandServerType];
+                        if( context.IsAsynchronous )
+                        {
+                            context.Response.ResponseType = CommandResponseType.Deferred; // Deferred
+                            pending.CommandResponsePromise.SetResult( context.Response );
+
+                            new Task( async ( state ) => await Process( state as ICommandContext ), context ).Start( TaskScheduler.Current );
+                        }
+                        else
+                        {
+                            await Process( context );
+                            context.Response.ResponseType = CommandResponseType.Direct; // Direct
+                            pending.CommandResponsePromise.SetResult( context.Response );
+                        }
+                    }
+
+
+                    Thread.Sleep( 100 );
+                }
+            } );
+        }
+
+        public async Task Process( ICommandContext ctx )
+        {
+            try
+            {
+                ICommandHandler handler = Activator.CreateInstance( ctx.HandlerType ) as ICommandHandler;
+                ctx.Response.Payload = await handler.HandleAsync( ctx.Request.Command );
+                ctx.Response.ResponseType = CommandResponseType.Direct; // Event
+            }
+            catch( Exception ex )
+            {
+                ctx.Response.ResponseType = CommandResponseType.Error;
+                ctx.Response.Payload = ex;
+            }
+            if( ctx.IsAsynchronous )
+            {
+                EventChannel.Instance.Dispatch( ctx.Request.CallbackId, ctx.Response );
+            }
+        }
+
+        protected virtual bool ShouldHandleAsynchronously( Type commandServerType )
+        {
+            // Dumpb impl
+            return commandServerType.GetCustomAttributes( typeof( AsyncCommandAttribute ), false ).Length > 0;
+        }
+
+        Dictionary<Type, Type> HandlerMap { get; } = new Dictionary<Type, Type>();
+
+        public void RegisterHandler<T, THandler>()
+        {
+            if( HandlerMap.ContainsKey( typeof( T ) ) )
+                throw new ArgumentException( "An handler is already registered for this command " + typeof( T ).FullName );
+
+            HandlerMap.Add( typeof( T ), typeof( THandler ) );
+        }
+
         public void Dispose()
         {
             _disposed = true;
@@ -470,10 +561,10 @@ namespace CK.Infrastructure.Commands.Tests
 
     public static class Servers
     {
-        static Dictionary<string, ICommandServer> ServerDns { get; } = new Dictionary<string, ICommandServer>();
-        public static ICommandServer GetServer( string serverAddress )
+        static Dictionary<string, ICommandReceiver> ServerDns { get; } = new Dictionary<string, ICommandReceiver>();
+        public static ICommandReceiver GetCommandReceiver( string serverAddress )
         {
-            ICommandServer serv;
+            ICommandReceiver serv;
             if( !ServerDns.TryGetValue( serverAddress, out serv ) )
             {
                 throw new InvalidOperationException( "Server not found or not running !" );
@@ -481,19 +572,10 @@ namespace CK.Infrastructure.Commands.Tests
             return serv;
         }
 
-        internal static void Register( string serverAddress, ICommandServer server )
+        internal static void Register( string serverAddress, ICommandReceiver server )
         {
             ServerDns.Add( serverAddress, server );
         }
     }
-
-    class CommandWrapper
-    {
-        public string CallbackId { get; set; }
-        public object CommandBody { get; set; }
-        public Guid CommandId { get; set; }
-        public Type CommandServerType { get; set; }
-    }
-
     #endregion
 }
