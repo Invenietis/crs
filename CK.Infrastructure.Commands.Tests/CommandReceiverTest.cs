@@ -14,7 +14,6 @@ using Microsoft.AspNet.Http.Features;
 using Microsoft.Dnx.Runtime.Infrastructure;
 using Xunit;
 using Microsoft.Framework.DependencyInjection;
-using CK.Infrastructure.Commands.Tests.Stubs;
 
 namespace CK.Infrastructure.Commands.Tests
 {
@@ -44,11 +43,8 @@ namespace CK.Infrastructure.Commands.Tests
         {
             ApplicationServices = TestHelper.CreateServiceProvider( services =>
             {
-                services.AddSingleton<ICommandBus, FakeCommandBus>();
-                services.AddSingleton<ICommandFactory, FakeCommandFactory>();
-                services.AddSingleton<ICommandResultSerializer, FakeCommandResultSerializer>();
-                services.AddSingleton<ICommandRouteMap, DefaultCommandRouteMap>();
-                services.AddSingleton<ICommandTypeSelector, ConventionCommandTypeSelector>();
+                services.AddCommandReceiver();
+                services.AddSingleton<IEventDispatcher, EventChannel>();
             } );
         }
 
@@ -65,52 +61,67 @@ namespace CK.Infrastructure.Commands.Tests
         } );
 
 
+        class TestCommand1
+        {
+        }
+
         [Fact]
         public async Task CommandReceiver_Should_Be_Scoped_To_A_Route_Prefix()
         {
+            var cmd =new Handlers.TransferAmountCommand
+            {
+                SourceAccountId = Guid.NewGuid(),
+                DestinationAccountId = Guid.NewGuid(),
+                Amount = 1000
+            };
             ICommandReceiverOptions options = new DefaultReceiverOptions("/c");
             {
-                CommandReceiver r = new CommandReceiver( ShouldNotInvokeDelegate, options);
-                ApplicationException exc = await Assert.ThrowsAsync<ApplicationException>( () => r.Invoke( new FakeHttpContext( ApplicationServices, "/api", SerializeRequestBody() ) ) );
-                Assert.Equal( "Next delegate invoked.", exc.Message );
+                Commands.CommandReceiver r = new Commands.CommandReceiver( ShouldNotInvokeDelegate, options);
+                using( var httpContext = new FakeHttpContext( ApplicationServices, "/api", SerializeRequestBody( cmd ) ) )
+                {
+                    var exc = await Assert.ThrowsAsync<ApplicationException>( () => r.Invoke( httpContext ) );
+                    Assert.Equal( "Next delegate invoked.", exc.Message );
+                }
 
-                Register<TestCommand1>();
-
-                exc = await Assert.ThrowsAsync<ApplicationException>( () => r.Invoke( new FakeHttpContext( ApplicationServices, "/api", SerializeRequestBody() ) ) );
-                Assert.Equal( "Next delegate invoked.", exc.Message );
+                Register<Handlers.TransferAmountCommand, Handlers.TransferAlwaysSuccessHandler>();
+                using( var httpContext = new FakeHttpContext( ApplicationServices, "/api", SerializeRequestBody( cmd ) ) )
+                {
+                    var exc = await Assert.ThrowsAsync<ApplicationException>( () => r.Invoke( httpContext ) );
+                    Assert.Equal( "Next delegate invoked.", exc.Message );
+                }
             }
             {
-                CommandReceiver r = new CommandReceiver( SuccessDelegate, options);
+                Commands.CommandReceiver r = new Commands.CommandReceiver( SuccessDelegate, options);
 
-                await r.Invoke( new FakeHttpContext( ApplicationServices, "/c/TestCommand1", SerializeRequestBody() ) );
+                using( var httpContext = new FakeHttpContext( ApplicationServices, "/c/TransferAmountCommand", SerializeRequestBody( cmd ) ) )
+                {
+                    await r.Invoke( httpContext );
+                    Assert.NotNull( httpContext.Response.Body );
+                    Assert.True( httpContext.Response.Body.Length > 0 );
+                }
             }
         }
 
-        [Fact]
-        public async Task CommandReceiver_Should_Handle_CommandTypeName_InDefaultNamespace()
-        {
-            ICommandReceiverOptions options = new DefaultReceiverOptions("/c");
-            options.CommandRouteOptions.DefaultCommandNamespace = "CK.Infrastructure.Commands.Tests.Fake";
-            Register<TestCommand1>();
 
-            CommandReceiver r = new CommandReceiver( ShouldNotInvokeDelegate, options);
-            HttpContext context = new FakeHttpContext( ApplicationServices, "/c/TestCommand1", SerializeRequestBody() );
-            await r.Invoke( context );
-            Assert.Equal( 1, ((FakeCommandBus)ApplicationServices.GetRequiredService<ICommandBus>()).Commands.Count );
-        }
-
-        private void Register<T>() where T : ICommand
+        private void Register<T, THandler>()
         {
-            ApplicationServices.GetService<ICommandRouteMap>().Register( new CommandRouteRegistration
+            ICommandRouteMap routeMap = ApplicationServices.GetService<ICommandRouteMap>();
+            routeMap.Register( new CommandRouteRegistration
             {
                 CommandType = typeof( T ),
                 Route = new CommandRoutePath( "/c", typeof( T ).Name )
             } );
+            ICommandReceiver commandReceiver = ApplicationServices.GetService<ICommandReceiver>();
+            commandReceiver.RegisterHandler<T, THandler>();
         }
 
-        private Stream SerializeRequestBody()
+        private Stream SerializeRequestBody<T>( T command )
         {
-            return Stream.Null;
+            Stream s = new MemoryStream();
+            StreamWriter sw = new StreamWriter(s);
+            Newtonsoft.Json.JsonSerializer.Create().Serialize( sw, command );
+            s.Seek( 0, SeekOrigin.Begin );
+            return s;
         }
     }
 

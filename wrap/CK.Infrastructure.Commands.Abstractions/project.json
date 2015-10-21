@@ -6,6 +6,10 @@
       "bin": {
         "assembly": "../../CK.Infrastructure.Commands.Abstractions/obj/{configuration}/CK.Infrastructure.Commands.Abstractions.dll",
         "pdb": "../../CK.Infrastructure.Commands.Abstractions/obj/{configuration}/CK.Infrastructure.Commands.Abstractions.pdb"
+      },
+      "dependencies": {
+        "CK.Core": "4.3.0-r03",
+        "CK.Infrastructure.Commands.Framework": "1.0.0-*"
       }
     }
   }

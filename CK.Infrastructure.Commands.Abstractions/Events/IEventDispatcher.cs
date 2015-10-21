@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace CK.Infrastructure.Commands
 {
-    public interface ICommandBus
+
+    public interface IEventDispatcher
     {
-        Task<ICommandResult> SendAsync( ICommand command );
+        Task DispatchAsync( string callbackId, ICommandResponse response );
     }
+
 }

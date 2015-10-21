@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CK.Infrastructure.Commands.Abstractions
+namespace CK.Infrastructure.Commands
 {
     public interface ICommandHandlerRegistry
     {
-        ICommandHandlerRegistry Register( Type commandType, Type handlerType );
+        void RegisterHandler<T, THandler>();
     }
+
 }

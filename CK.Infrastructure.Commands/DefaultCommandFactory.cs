@@ -1,16 +1,29 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using Newtonsoft.Json;
 
 namespace CK.Infrastructure.Commands
 {
-    public class DefaultCommandFactory : CommandFactoryBase
+    public class DefaultCommandFactory : ICommandRequestFactory
     {
-        protected override ICommand Deserialize( string json, Type t )
+        public ICommandRequest CreateCommand( CommandRouteRegistration routeInfo, Stream requestPayload )
         {
-            ICommand command = (ICommand)JsonConvert.DeserializeObject( json, t );
-            Debug.Assert( command != null );
-            return command;
+            object command = ReadBody( requestPayload, routeInfo.CommandType );
+            return new CommandRequest( command )
+            {
+                CommandServerType = routeInfo.CommandType,
+                CallbackId = null
+            };
+        }
+
+        protected virtual object ReadBody( Stream requestPayload, Type commandType )
+        {
+            using( var reader = new StreamReader( requestPayload ) )
+            {
+                string json = reader.ReadToEnd();
+                return JsonConvert.DeserializeObject( json, commandType );
+            }
         }
     }
 }

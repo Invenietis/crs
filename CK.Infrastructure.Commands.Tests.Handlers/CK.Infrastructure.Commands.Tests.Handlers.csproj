@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{26F61E77-D59E-4820-A0B1-00A7E57DDB4E}</ProjectGuid>
+    <ProjectGuid>{B5F369B2-D95A-487C-9230-01BDA780152A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CK.Infrastructure.Commands.Abstractions</RootNamespace>
-    <AssemblyName>CK.Infrastructure.Commands.Abstractions</AssemblyName>
+    <RootNamespace>CK.Infrastructure.Commands.Tests.Handlers</RootNamespace>
+    <AssemblyName>CK.Infrastructure.Commands.Tests.Handlers</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,10 +30,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CK.Core, Version=4.3.0.0, Culture=neutral, PublicKeyToken=edfa2f62fc978217, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.Core.4.3.0-r03\lib\net45\CK.Core.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -44,31 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Defaults\DefaultCommandFileStore.cs" />
-    <Compile Include="Defaults\DefaultCommandReceiver.cs" />
-    <Compile Include="Defaults\CommandResponse.cs" />
-    <Compile Include="Defaults\CommandRequest.cs" />
-    <Compile Include="Defaults\DefaultCommandHandlerFactory.cs" />
-    <Compile Include="ICommandReceiver.cs" />
-    <Compile Include="ICommandFileWriter.cs" />
-    <Compile Include="ICommandContext.cs" />
-    <Compile Include="Events\IEventDispatcher.cs" />
-    <Compile Include="ICommandResponse.cs" />
-    <Compile Include="ICommandRequest.cs" />
-    <Compile Include="CommandRoutePath.cs" />
-    <Compile Include="Defaults\DefaultCommandRouteMap.cs" />
-    <Compile Include="Defaults\DefaultReceiverOptions.cs" />
-    <Compile Include="Defaults\CommandContext.cs" />
-    <Compile Include="ICommandRequestFactory.cs" />
-    <Compile Include="ICommandHandlerFactory.cs" />
-    <Compile Include="ICommandHandlerRegistry.cs" />
-    <Compile Include="ICommandReceiverOptions.cs" />
-    <Compile Include="ICommandResponseSerializer.cs" />
-    <Compile Include="ICommandRouteMap.cs" />
+    <Compile Include="Commands.cs" />
+    <Compile Include="Handlers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CK.Infrastructure.Commands.Framework\CK.Infrastructure.Commands.Framework.csproj">
@@ -76,7 +50,6 @@
       <Name>CK.Infrastructure.Commands.Framework</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -23,47 +23,34 @@ namespace CK.Infrastructure.Commands
 
         public async Task Invoke( HttpContext httpContext )
         {
-            var commandRegistration = FindCommandRoute( httpContext );
-            if( commandRegistration == null )
+            var commandRegistration = ResolveRouteMap( httpContext ).FindCommandRoute( httpContext.Request.Path, _options );
+            if( commandRegistration == null && _next != null )
             {
-                if( _next != null )
-                {
-                    await _next( httpContext );
-                    return;
-                }
+                await _next( httpContext );
+                return;
             }
 
-            //1. Concretize Stream into valid .NET DTO Commands
-
-            ICommand command = ResolveCommandFactory( httpContext ).CreateCommand( commandRegistration, httpContext.Request.Body );
-            if( command == null )
+            ICommandRequestFactory commandRequestFactory = ResolveCommandFactory( httpContext );
+            ICommandRequest commandRequest = commandRequestFactory.CreateCommand( commandRegistration, httpContext.Request.Body );
+            if( commandRequest == null )
             {
                 string msg = String.Format( "A valid command definition has been infered from routes, but the command type {0} failed to be instanciated.", commandRegistration.CommandType.Name );
                 throw new InvalidOperationException( msg );
             }
-            //2. Sends to the bus
-            ICommandResult result = await ResolveCommandBus( httpContext ).SendAsync( command );
-            if( result == null )
+
+            ICommandReceiver commandReceiver = ResolveCommandReceiver( httpContext );
+            ICommandResponse commandResponse = await commandReceiver.ProcessCommandAsync( commandRequest );
+            if( commandResponse == null )
             {
-                string msg = "The command bus must returns a valid ICommandResult, even in failure cases.";
+                string msg = String.Format( "A valid command response must be received" );
                 throw new InvalidOperationException( msg );
             }
-            await WriteCommandResponse( httpContext, result );
-            // Do not call the next handler as the request has been handled by this middleware.
+
+            ICommandResponseSerializer responseSerializer = ResolveCommandResponseSerializer( httpContext );
+            responseSerializer.Serialize( commandResponse, httpContext.Response.Body );
         }
 
-        protected virtual async Task WriteCommandResponse( HttpContext httpContext, ICommandResult result )
-        {
-            httpContext.Response.ContentType = httpContext.Request.ContentType;
-            await SelectCommandSerializer( httpContext ).SerializeCommandResult( result, httpContext.Response.Body );
-        }
-
-        protected virtual CommandRouteRegistration FindCommandRoute( HttpContext context )
-        {
-            //context.Request.Path.StartsWithSegments( _requestUrlPath )
-
-            return ResolveRouteMap( context ).FindCommandRoute( context.Request.Path, _options );
-        }
+        #region Resolvers
 
         protected virtual ICommandRouteMap ResolveRouteMap( HttpContext context )
         {
@@ -75,34 +62,37 @@ namespace CK.Infrastructure.Commands
             return map;
         }
 
-        protected virtual ICommandFactory ResolveCommandFactory( HttpContext context )
+        protected virtual ICommandRequestFactory ResolveCommandFactory( HttpContext context )
         {
-            ICommandFactory commandFactory = context.ApplicationServices.GetService<ICommandFactory>();
+            ICommandRequestFactory commandFactory = context.ApplicationServices.GetService<ICommandRequestFactory>();
             if( commandFactory == null )
             {
-                throw new InvalidOperationException( "An implementation of ICommandFactory must be registered into the ApplicationServices" );
+                throw new InvalidOperationException( "An implementation of ICommandRequestFactory must be registered into the ApplicationServices" );
             }
             return commandFactory;
         }
+        protected virtual ICommandReceiver ResolveCommandReceiver( HttpContext context )
+        {
+            ICommandReceiver o = context.ApplicationServices.GetService<ICommandReceiver>();
+            if( o == null )
+            {
+                throw new InvalidOperationException( "An implementation of ICommandReceiver must be registered into the ApplicationServices" );
+            }
+            return o;
+        }
 
-        protected virtual ICommandBus ResolveCommandBus( HttpContext context )
+        protected virtual ICommandResponseSerializer ResolveCommandResponseSerializer( HttpContext context )
         {
-            ICommandBus commandBus = context.ApplicationServices.GetService<ICommandBus>();
-            if( commandBus == null )
+            ICommandResponseSerializer o = context.ApplicationServices.GetService<ICommandResponseSerializer>();
+            if( o == null )
             {
-                throw new InvalidOperationException( "An implementation of ICommandBus must be registered into the ApplicationServices" );
+                throw new InvalidOperationException( "An implementation of ICommandResponseSerializer must be registered into the ApplicationServices" );
             }
-            return commandBus;
+            return o;
         }
-        protected virtual ICommandResultSerializer SelectCommandSerializer( HttpContext context )
-        {
-            ICommandResultSerializer commandSerializer = context.ApplicationServices.GetService<ICommandResultSerializer>();
-            if( commandSerializer == null )
-            {
-                throw new InvalidOperationException( "An implementation of ICommandSerializer must be registered into the ApplicationServices" );
-            }
-            return commandSerializer;
-        }
+
+        #endregion
+
     }
 
     // Extension method used to add the middleware to the HTTP request pipeline.
@@ -118,11 +108,12 @@ namespace CK.Infrastructure.Commands
 
         public static void AddCommandReceiver( this IServiceCollection services )
         {
-            services.AddSingleton<ICommandFactory, DefaultCommandFactory>();
-            services.AddSingleton<ICommandResultSerializer, DefaultCommandResultSerializer>();
-            services.AddSingleton<ICommandBus, DefaultCommandBus>();
+            services.AddSingleton<ICommandReceiver, DefaultCommandReceiver>();
+            services.AddSingleton<ICommandRequestFactory, DefaultCommandFactory>();
+            services.AddSingleton<ICommandResponseSerializer, DefaultCommandResponseSerializer>();
             services.AddSingleton<ICommandRouteMap, DefaultCommandRouteMap>();
-            services.AddSingleton<ICommandTypeSelector, ConventionCommandTypeSelector>();
+            services.AddSingleton<ICommandHandlerFactory, DefaultCommandHandlerFactory>();
+            services.AddSingleton<ICommandFileWriter, DefaultCommandFileStore>();
         }
     }
 }

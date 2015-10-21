@@ -12,6 +12,7 @@ namespace CK.Infrastructure.Commands.Tests.Fake
         public FakeHttpResponse( HttpContext context )
         {
             _context = context;
+            Body = new MemoryStream();
         }
 
         public override Stream Body { get; set; }

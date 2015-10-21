@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace CK.Infrastructure.Commands
 {
-    public interface ICommandResult
+    public interface ICommandResponseSerializer
     {
-        Guid CommandId { get; }
-        bool IsSuccess { get; }
-        bool IsFailure { get; }
-        object Result { get; set; }
+        void Serialize( ICommandResponse response, Stream outputStream );
     }
 }

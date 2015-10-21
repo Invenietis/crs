@@ -18,13 +18,15 @@
     },
 
     "commands": {
-        "test": "xunit.runner.dnx"  
+        "test": "xunit.runner.dnx"
     },
-
+     
     "frameworks": {
         "dnx451": {
             "dependencies": {
-                "CK.Infrastructure.Commands": "1.0.0-*"
+                "CK.Infrastructure.Commands": "1.0.0-*",
+                "CK.Infrastructure.Commands.Framework": "1.0.0-*",
+                "CK.Infrastructure.Commands.Tests.Handlers": "1.0.0-*"
             }
         }
     }

@@ -1,4 +1,4 @@
-﻿{
+{
     "version": "1.0.0-*",
     "description": "CK.Infrastructure.Commands Class Library",
     "authors": [ "cedri_000" ],
@@ -9,7 +9,6 @@
     "dependencies": {
         "Microsoft.AspNet.Http.Abstractions": "1.0.0-*",
         "Newtonsoft.Json": "7.0.1",
-        "CK.Core": "4.3.0-*",
         "Microsoft.Framework.DependencyInjection.Abstractions": "1.0.0-*"
     },
 

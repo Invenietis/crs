@@ -115,11 +115,12 @@ namespace CK.Infrastructure.Commands.Tests.Fake
             }
         }
 
+        FakeHttpResponse _response;
         public override HttpResponse Response
         {
             get
             {
-                return new FakeHttpResponse( this );
+                return _response ?? (_response = new FakeHttpResponse( this ));
             }
         }
 
@@ -173,6 +174,8 @@ namespace CK.Infrastructure.Commands.Tests.Fake
 
         public override void Dispose()
         {
+            Request.Body.Dispose();
+            Response.Body.Dispose();
         }
     }
 }

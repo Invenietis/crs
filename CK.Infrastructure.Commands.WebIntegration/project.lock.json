@@ -16,7 +16,6 @@
         "type": "project",
         "framework": "DNX,Version=v4.5.1",
         "dependencies": {
-          "CK.Core": "4.3.0",
           "CK.Infrastructure.Commands.Abstractions": "1.0.0",
           "Microsoft.AspNet.Http.Abstractions": "1.0.0",
           "Microsoft.Framework.DependencyInjection.Abstractions": "1.0.0",
@@ -24,6 +23,14 @@
         }
       },
       "CK.Infrastructure.Commands.Abstractions/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5.1",
+        "dependencies": {
+          "CK.Core": "4.3.0-r03",
+          "CK.Infrastructure.Commands.Framework": "1.0.0"
+        }
+      },
+      "CK.Infrastructure.Commands.Framework/1.0.0": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.5.1"
       },
@@ -662,7 +669,6 @@
         "type": "project",
         "framework": "DNX,Version=v4.5.1",
         "dependencies": {
-          "CK.Core": "4.3.0",
           "CK.Infrastructure.Commands.Abstractions": "1.0.0",
           "Microsoft.AspNet.Http.Abstractions": "1.0.0",
           "Microsoft.Framework.DependencyInjection.Abstractions": "1.0.0",
@@ -670,6 +676,14 @@
         }
       },
       "CK.Infrastructure.Commands.Abstractions/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5.1",
+        "dependencies": {
+          "CK.Core": "4.3.0-r03",
+          "CK.Infrastructure.Commands.Framework": "1.0.0"
+        }
+      },
+      "CK.Infrastructure.Commands.Framework/1.0.0": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.5.1"
       },
@@ -1308,7 +1322,6 @@
         "type": "project",
         "framework": "DNX,Version=v4.5.1",
         "dependencies": {
-          "CK.Core": "4.3.0",
           "CK.Infrastructure.Commands.Abstractions": "1.0.0",
           "Microsoft.AspNet.Http.Abstractions": "1.0.0",
           "Microsoft.Framework.DependencyInjection.Abstractions": "1.0.0",
@@ -1316,6 +1329,14 @@
         }
       },
       "CK.Infrastructure.Commands.Abstractions/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5.1",
+        "dependencies": {
+          "CK.Core": "4.3.0-r03",
+          "CK.Infrastructure.Commands.Framework": "1.0.0"
+        }
+      },
+      "CK.Infrastructure.Commands.Framework/1.0.0": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.5.1"
       },
@@ -1949,6 +1970,10 @@
     "CK.Infrastructure.Commands.Abstractions/1.0.0": {
       "type": "project",
       "path": "../wrap/CK.Infrastructure.Commands.Abstractions/project.json"
+    },
+    "CK.Infrastructure.Commands.Framework/1.0.0": {
+      "type": "project",
+      "path": "../wrap/CK.Infrastructure.Commands.Framework/project.json"
     },
     "CK.Core/4.3.0-r03": {
       "type": "package",
