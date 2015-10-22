@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using CK.Infrastructure.Commands.Framework;
 using CK.Infrastructure.Commands.Tests.Handlers;
 using Xunit;
 using Xunit.Abstractions;
@@ -209,7 +208,7 @@ namespace CK.Infrastructure.Commands.Tests
     }
 
 
-    public class EventChannel : IEventDispatcher
+    public class EventChannel : ICommandResponseDispatcher
     {
         public static EventChannel Instance = new EventChannel();
 

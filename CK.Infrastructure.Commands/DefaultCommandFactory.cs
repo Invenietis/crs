@@ -2,18 +2,22 @@
 using System.Diagnostics;
 using System.IO;
 using Newtonsoft.Json;
+using System.Reflection;
+using System.Linq;
+using Microsoft.AspNet.Http;
 
 namespace CK.Infrastructure.Commands
 {
     public class DefaultCommandFactory : ICommandRequestFactory
     {
-        public ICommandRequest CreateCommand( CommandRouteRegistration routeInfo, Stream requestPayload )
+        public ICommandRequest CreateCommand( CommandRouteRegistration routeInfo, HttpRequest request )
         {
-            object command = ReadBody( requestPayload, routeInfo.CommandType );
+            object command = ReadBody( request.Body, routeInfo.CommandType );
             return new CommandRequest( command )
             {
+                CallbackId = request.Query["c"],
                 CommandServerType = routeInfo.CommandType,
-                CallbackId = null
+                IsLongRunning = routeInfo.IsLongRunningCommand
             };
         }
 

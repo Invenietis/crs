@@ -9,13 +9,23 @@
     "dependencies": {
         "Microsoft.AspNet.Http.Abstractions": "1.0.0-*",
         "Newtonsoft.Json": "7.0.1",
-        "Microsoft.Framework.DependencyInjection.Abstractions": "1.0.0-*"
+        "Microsoft.Framework.DependencyInjection.Abstractions": "1.0.0-*",
+        "CK.Infrastructure.Commands.Runtime": "1.0.0-*",
+        "Microsoft.AspNet.SignalR.Server": "3.0.0-beta5"
     },
 
     "frameworks": {
         "dnx451": {
             "dependencies": {
-                "CK.Infrastructure.Commands.Abstractions": "1.0.0-*"
+            }
+        },
+        "dnxcore50": {
+            "dependencies": {
+                "System.Collections": "4.0.11-beta-23409",
+                "System.Linq": "4.0.1-beta-23409",
+                "System.Threading": "4.0.11-beta-23409",
+                "System.Runtime": "4.0.21-beta-23409",
+                "System.Reflection": "4.1.0-beta-23409"
             }
         }
     }

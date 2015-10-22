@@ -16,6 +16,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\CK.Infrastructure.Commands.Abstractions\CK.Infrastructure.Commands.Abstractions.csproj" />
+    <ProjectReference Include="..\CK.Infrastructure.Commands.Abstractions\CK.Infrastructure.Commands.Runtime.csproj" />
     <ProjectReference Include="..\CK.Infrastructure.Commands.Framework\CK.Infrastructure.Commands.Framework.csproj" />
     <ProjectReference Include="..\CK.Infrastructure.Commands.Tests.Handlers\CK.Infrastructure.Commands.Tests.Handlers.csproj" />
   </ItemGroup>

@@ -5,6 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Http;
+using Microsoft.AspNet.SignalR.Hubs;
+using Microsoft.AspNet.SignalR.Infrastructure;
 using Microsoft.Framework.DependencyInjection;
 
 namespace CK.Infrastructure.Commands
@@ -31,7 +33,7 @@ namespace CK.Infrastructure.Commands
             }
 
             ICommandRequestFactory commandRequestFactory = ResolveCommandFactory( httpContext );
-            ICommandRequest commandRequest = commandRequestFactory.CreateCommand( commandRegistration, httpContext.Request.Body );
+            ICommandRequest commandRequest = commandRequestFactory.CreateCommand( commandRegistration, httpContext.Request );
             if( commandRequest == null )
             {
                 string msg = String.Format( "A valid command definition has been infered from routes, but the command type {0} failed to be instanciated.", commandRegistration.CommandType.Name );
@@ -100,7 +102,9 @@ namespace CK.Infrastructure.Commands
     {
         public static IApplicationBuilder UseCommandReceiver( this IApplicationBuilder builder, string routePrefix, Action<ICommandReceiverOptions> configuration )
         {
-            ICommandReceiverOptions options = new DefaultReceiverOptions(routePrefix);
+            ICommandRouteMap map = builder.ApplicationServices.GetRequiredService<ICommandRouteMap>();
+            ICommandHandlerRegistry registry = builder.ApplicationServices.GetRequiredService<ICommandHandlerRegistry>();
+            ICommandReceiverOptions options = new DefaultReceiverOptions(routePrefix, map, registry);
             configuration( options );
 
             return builder.UseMiddleware<CommandReceiver>( options );
@@ -114,6 +118,18 @@ namespace CK.Infrastructure.Commands
             services.AddSingleton<ICommandRouteMap, DefaultCommandRouteMap>();
             services.AddSingleton<ICommandHandlerFactory, DefaultCommandHandlerFactory>();
             services.AddSingleton<ICommandFileWriter, DefaultCommandFileStore>();
+            services.AddSingleton<ICommandResponseDispatcher>( ( sp ) =>
+           {
+               IConnectionManager connectionManager = sp.GetService<IConnectionManager>();
+               if( connectionManager != null ) return new HubResponseDispatcher( connectionManager );
+
+               return new NullResponseDispatcher();
+           } );
+            services.AddSignalR( o =>
+            {
+                o.Hubs.EnableDetailedErrors = true;
+                //o.Hubs.PipelineModules.Add( )
+            } );
         }
     }
 }

@@ -1,0 +1,30 @@
+﻿{
+    "version": "1.0.0-*",
+    "description": "CK.Infrastructure.Commands.Model Class Library",
+    "authors": [ "cedri_000" ],
+    "tags": [ "" ],
+    "projectUrl": "",
+    "licenseUrl": "",
+
+    "dependencies": {
+    },
+
+    "frameworks": {
+        "dnx451": { },
+        "net46": { },
+        "dotnet": {
+            "dependencies": {
+                "System.Collections": "4.0.11-beta-23409",
+                "System.Threading": "4.0.11-beta-23409",
+                "System.Runtime": "4.0.21-beta-23409"
+            }
+        },
+        "dnxcore50": {
+            "dependencies": {
+                "System.Collections": "4.0.11-beta-23409",
+                "System.Threading": "4.0.11-beta-23409",
+                "System.Runtime": "4.0.21-beta-23409"
+            }
+        }
+    }
+}

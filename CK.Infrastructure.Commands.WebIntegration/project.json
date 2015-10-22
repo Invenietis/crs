@@ -3,9 +3,10 @@
     "version": "1.0.0-*",
 
     "dependencies": {
+        "CK.Infrastructure.Commands": "1.0.0-*",
         "Microsoft.AspNet.Server.IIS": "1.0.0-*",
         "Microsoft.AspNet.Server.WebListener": "1.0.0-*",
-        "CK.Infrastructure.Commands": "1.0.0-*"
+        "Microsoft.AspNet.SignalR.Server": "3.0.0-beta5"
     },
 
     "commands": {
@@ -15,7 +16,15 @@
     "frameworks": {
         "dnx451": {
             "dependencies": {
-                "CK.Infrastructure.Commands": "1.0.0-*"
+            }
+        },
+        "dnxcore50": {
+            "dependencies": {
+                "System.Collections": "4.0.11-beta-23409",
+                "System.Linq": "4.0.1-beta-23409",
+                "System.Threading": "4.0.11-beta-23409",
+                "System.Runtime": "4.0.21-beta-23409",
+                "System.Reflection": "4.1.0-beta-23409"
             }
         }
     },

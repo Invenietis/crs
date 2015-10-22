@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CK.Infrastructure.Commands.Handlers;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Http;
 using Microsoft.Framework.DependencyInjection;
@@ -19,6 +20,7 @@ namespace CK.Infrastructure.Commands.WebIntegration
         {
             app.UseCommandReceiver( "c", x =>
             {
+                x.Register<TransferAmountCommand, TransferAlwaysSuccessHandler>( route: "TransferAmount", isLongRunning: true );
             } );
             app.Run( async ( context ) =>
              {

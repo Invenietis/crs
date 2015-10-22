@@ -18,8 +18,21 @@ namespace CK.Infrastructure.Commands
         {
             StreamWriter sw = new StreamWriter( outputStream );
             JsonTextWriter jw = new JsonTextWriter( sw );
-            _serializer.Serialize( jw, response.Payload );
+
+            var directResponse = new DirectResponse
+            {
+                CommandId = response.CommandId.ToString(),
+                Payload = response.Payload
+            };
+            _serializer.Serialize( jw, directResponse );
             jw.Flush();
+        }
+
+        class DirectResponse
+        {
+            public string CommandId { get; set; }
+
+            public object Payload { get; set; }
         }
     }
 }
