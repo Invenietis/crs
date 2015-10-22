@@ -1,0 +1,17 @@
+{
+    "name": "CK.Infrastructure.Commands.Client",
+    "version": "0.0.0-alpha",
+    "authors": [
+        "Cédric Legendre <albundy1385@gmail.com>"
+    ],
+    "main": "CommandSender.js",
+    "license": "MIT",
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "bower_components",
+        "test",
+        "tests"
+    ],
+    "dependencies": { "jQuery": "2.1.4", "requirejs": "2.1.20" }
+}
