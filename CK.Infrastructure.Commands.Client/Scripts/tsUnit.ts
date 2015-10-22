@@ -1,5 +1,4 @@
 /* tsUnit (c) Copyright 2012-2015 Steve Fenton, licensed under Apache 2.0 https://github.com/Steve-Fenton/tsUnit */
-
 export class Test {
     public privateMemberPrefix = '_';
 
@@ -19,8 +18,8 @@ export class Test {
                 this.addTestClass(new testModule[testClass](), testClass);
             }
         }
-    }
-
+    } 
+     
     addTestClass(testClass: TestClass, name: string = 'Tests'): void {
         this.tests.push(new TestDefintion(testClass, name));
     }
@@ -495,10 +494,13 @@ export class TestContext {
     }
 
     private static getNameOfClass(inputClass: {}) {
-        // see: https://www.stevefenton.co.uk/Content/Blog/Date/201304/Blog/Obtaining-A-Class-Name-At-Runtime-In-TypeScript/
-        var funcNameRegex = /function (.{1,})\(/;
-        var results = (funcNameRegex).exec((<any>inputClass).constructor.toString());
-        return (results && results.length > 1) ? results[1] : '';
+        if (inputClass) {
+            // see: https://www.stevefenton.co.uk/Content/Blog/Date/201304/Blog/Obtaining-A-Class-Name-At-Runtime-In-TypeScript/
+            var funcNameRegex = /function (.{1,})\(/;
+            var results = (funcNameRegex).exec((<any>inputClass).constructor.toString());
+            return (results && results.length > 1) ? results[1] : '';
+        }
+        return '';
     }
 
     private printVariable(variable: any) {

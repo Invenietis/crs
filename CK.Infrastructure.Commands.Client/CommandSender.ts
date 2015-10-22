@@ -1,6 +1,11 @@
-﻿
+﻿/// <reference path="Scripts/jquery.d.ts"/>
+
 export interface ICommandResponseListener {
-    listen: (commandId: String, callback: String) => JQueryPromise<any>;
+    listen: (commandId: string, callbackId: string) => JQueryPromise<ICommandResponse>;
+}
+
+export interface ICommandRequestSender {
+    post: (url: string, command: any) => JQueryPromise<any>;
 }
 
 export interface ICommandSender {
@@ -9,38 +14,47 @@ export interface ICommandSender {
      * @param commandBody  The command payload DTO.
      * @param callback  A callback
      */
-    send: (route: String, commandBody: Object, callback: Function) => JQueryPromise<any>;
+    send: (route: string, commandBody: Object) => JQueryPromise<ICommandResponse>;
 }
 
 export interface ICommandResponse {
     /**
     * The identifier of the command. */
-    CommandId: String,
+    CommandId: string,
     /**
     * The payload of the result. */
-    Payload: any,
+    Payload: any, 
 
-    ResponseType: Number
+    ResponseType: Number 
 }
 
-export class CommandSender implements ICommandSender {
-    private _listener: ICommandResponseListener
-
-    constructor(commandResponseListener: ICommandResponseListener) {
-        this._listener = commandResponseListener;
-    }
-
-    send(route: String, commandBody: Object, callback: Function) {
-        console.info('Sending Command to route: ' + route);
-
-        var xhr = $.ajax('/c/' + route, {
+class AjaxSender implements ICommandRequestSender {
+    post(url: string, command: any) {
+        var json = JSON.stringify(command);
+        return $.ajax(url, {
             type: 'POST',
-            data: JSON.stringify(commandBody),
+            data: json,
             contentType: 'application/json',
             dataType: 'JSON'
         });
+    }
+}
 
-        var deferred = $.Deferred();
+export class CommandSender implements ICommandSender {
+    private _sender: ICommandRequestSender
+    private _listener: ICommandResponseListener
+
+    constructor(commandRequestSender: ICommandRequestSender, commandResponseListener: ICommandResponseListener) {
+        this._sender = commandRequestSender || new AjaxSender();
+        this._listener = commandResponseListener;
+    }
+
+    send(route: string, commandBody: Object) {
+        console.info('Sending Command to route: ' + route);
+
+        var xhr = this._sender.post('/c' + route, commandBody);
+
+        var deferred = $.Deferred<ICommandResponse>();
 
         xhr.done((data, status, jqXhr) => {
 
@@ -49,10 +63,10 @@ export class CommandSender implements ICommandSender {
             if (a !== null) {
                 switch (a.ResponseType) {
                     // Direct resposne
-                    case 0: deferred.resolve(a.Payload); break;
+                    case 0: deferred.resolve(a); break;
                     // Deferred response
                     case 1: {
-                        var callbackId: String = a.Payload;
+                        var callbackId: string = a.Payload;
                         var promise = this._listener.listen(a.CommandId, callbackId);
                         promise.done((commandResponseBody) => {
                             deferred.resolve(commandResponseBody);
