@@ -13,9 +13,12 @@
         "test",
         "tests",
         "libs",
-        "CommandSender.ts",
         "project.json",
-        "tsconfig.json"
+        "tsconfig.json",
+        "gulpfile.js",
+        "package.json",
+        "*.sln",
+        "*.xproj"
     ],
     "dependencies": {
         "requirejs": "2.1.20", 

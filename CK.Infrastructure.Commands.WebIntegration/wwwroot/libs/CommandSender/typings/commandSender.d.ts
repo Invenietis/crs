@@ -26,12 +26,6 @@ interface ICommandRequestSender {
     post: (url: string, command: any) => JQueryPromise<any>;
 }
 
-interface ICKStatic {
-    CommandSender: ICommandSender;
+interface JQueryStatic {
+    commandSender: ICommandSender;
 }
-
-declare module "CK" {
-    export = CK;
-}
-
-declare var CK: ICKStatic;

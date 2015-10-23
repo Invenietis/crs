@@ -1,4 +1,4 @@
-define(["require", "exports", './commands'], function (require, exports, commands_1) {
+define(["require", "exports", 'commands'], function (require, exports, commands_1) {
     $.connection.hub.logging = true;
     var signalRListener = new commands_1.SignalRListener($.connection.hub, 'commandresponse');
     $.connection.hub.start().done(function (d) {

@@ -15,6 +15,6 @@
     "dependencies": {
         "requirejs": "2.1.20",
         "signalr": "2.2.0",
-        "CommandSender": "file:///D:/Dev/Framework/CK.Infrastructure.Commands.Client/.git" 
+        "CommandSender": "file:///D:/Dev/Framework/CK.Infrastructure.Commands.Client/.git"   
     }   
-}    
+}     

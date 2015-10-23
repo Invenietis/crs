@@ -12,19 +12,22 @@
     "test",
     "tests",
     "libs",
-    "CommandSender.ts",
     "project.json",
-    "tsconfig.json"
+    "tsconfig.json",
+    "gulpfile.js",
+    "package.json",
+    "*.sln",
+    "*.xproj"
   ],
   "dependencies": {
     "requirejs": "2.1.20",
     "signalr": "2.2.0"
   },
-  "_release": "248fe1eac8",
+  "_release": "7f406091c3",
   "_resolution": {
     "type": "branch",
     "branch": "master",
-    "commit": "248fe1eac8d1b93733e684d6e897f5f57d626e2f"
+    "commit": "7f406091c3421dcfdedf645be6375f79ed42ddfa"
   },
   "_source": "file:///D:/Dev/Framework/CK.Infrastructure.Commands.Client/.git",
   "_target": "*",

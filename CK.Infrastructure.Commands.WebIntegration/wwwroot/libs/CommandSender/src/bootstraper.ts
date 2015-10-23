@@ -1,4 +1,4 @@
-﻿import {CommandSender, AjaxSender, SignalRListener} from './commands';
+﻿import {CommandSender, AjaxSender, SignalRListener} from 'commands';
 
 $.connection.hub.logging = true;
 var signalRListener = new SignalRListener($.connection.hub, 'commandresponse')
