@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR;
+using Microsoft.AspNet.SignalR.Hubs;
 
 namespace CK.Infrastructure.Commands
 {
-
+    [HubName("commandResponse")]
     public class CommandResponseHub : Hub
     {
         public override Task OnConnected()

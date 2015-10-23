@@ -1,4 +1,6 @@
-/// <reference path="Scripts/jquery.d.ts"/>
+/// <reference path="CommandSender.d.ts"/>
+/// <reference path="libs/signalr.d.ts"/>
+/// <reference path="libs/jquery.d.ts"/>
 define(["require", "exports"], function (require, exports) {
     var AjaxSender = (function () {
         function AjaxSender() {
@@ -14,15 +16,44 @@ define(["require", "exports"], function (require, exports) {
         };
         return AjaxSender;
     })();
+    var SignalRListener = (function () {
+        function SignalRListener(connection, hubName) {
+            var me = this;
+            this._hubConnection = connection;
+            this._hubConnection.createHubProxy(hubName).on('ReceiveCommandResponse', function (data) {
+                me._receivedResponses.push(data);
+            });
+        }
+        SignalRListener.prototype.listen = function (commandId, callbackId) {
+            if (callbackId !== this._hubConnection.id)
+                throw new Error('Try to listen to the wrong ConnectionId...');
+            var me = this;
+            var def = $.Deferred();
+            var interval = setInterval(function () {
+                me._receivedResponses.forEach(function (r, idx, ar) {
+                    if (r.CommandId === commandId) {
+                        clearInterval(interval);
+                        ar.splice(idx, 1);
+                        def.resolve(r);
+                    }
+                });
+            }, 200);
+            return def.promise();
+        };
+        return SignalRListener;
+    })();
     var CommandSender = (function () {
-        function CommandSender(commandRequestSender, commandResponseListener) {
+        function CommandSender(prefix, connectionId, commandRequestSender, commandResponseListener) {
+            this._prefix = prefix;
+            this._connectionId = connectionId;
             this._sender = commandRequestSender || new AjaxSender();
             this._listener = commandResponseListener;
         }
         CommandSender.prototype.send = function (route, commandBody) {
             var _this = this;
             console.info('Sending Command to route: ' + route);
-            var xhr = this._sender.post('/c' + route, commandBody);
+            var url = '/' + this._prefix + route + '?c=' + this._connectionId;
+            var xhr = this._sender.post(url, commandBody);
             var deferred = $.Deferred();
             xhr.done(function (data, status, jqXhr) {
                 var o = JSON.parse(data);
