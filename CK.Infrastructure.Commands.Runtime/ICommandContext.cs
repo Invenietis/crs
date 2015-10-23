@@ -15,10 +15,6 @@ namespace CK.Infrastructure.Commands
         Type HandlerType { get; }
 
         IReadOnlyCollection<BlobRef> Blobs { get; }
-
-        ICommandResponseDispatcher EventDispatcher { get; }
-
-        ICommandHandlerFactory HandlerFactory { get; }
     }
 
 }

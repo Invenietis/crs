@@ -41,7 +41,8 @@
         "framework": "DNX,Version=v4.5.1",
         "dependencies": {
           "CK.Core": "0.0.0-Absolutely-Invalid",
-          "CK.Infrastructure.Commands.Model": "1.0.0"
+          "CK.Infrastructure.Commands.Model": "1.0.0",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-15672"
         }
       },
       "Microsoft.AspNet.Cryptography.Internal/1.0.0-rc1-15670": {
@@ -972,6 +973,7 @@
         "dependencies": {
           "CK.Core": "0.0.0-Absolutely-Invalid",
           "CK.Infrastructure.Commands.Model": "1.0.0",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-15672",
           "System.Collections": "4.0.11-beta-23409",
           "System.Collections.Concurrent": "4.0.11-beta-23409",
           "System.Linq": "4.0.1-beta-23409",
@@ -2747,7 +2749,8 @@
         "framework": "DNX,Version=v4.5.1",
         "dependencies": {
           "CK.Core": "0.0.0-Absolutely-Invalid",
-          "CK.Infrastructure.Commands.Model": "1.0.0"
+          "CK.Infrastructure.Commands.Model": "1.0.0",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-15672"
         }
       },
       "Microsoft.AspNet.Cryptography.Internal/1.0.0-rc1-15670": {
@@ -3656,7 +3659,8 @@
         "framework": "DNX,Version=v4.5.1",
         "dependencies": {
           "CK.Core": "0.0.0-Absolutely-Invalid",
-          "CK.Infrastructure.Commands.Model": "1.0.0"
+          "CK.Infrastructure.Commands.Model": "1.0.0",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-15672"
         }
       },
       "Microsoft.AspNet.Cryptography.Internal/1.0.0-rc1-15670": {
@@ -4587,6 +4591,7 @@
         "dependencies": {
           "CK.Core": "0.0.0-Absolutely-Invalid",
           "CK.Infrastructure.Commands.Model": "1.0.0",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-15672",
           "System.Collections": "4.0.11-beta-23409",
           "System.Collections.Concurrent": "4.0.11-beta-23409",
           "System.Linq": "4.0.1-beta-23409",
@@ -6689,6 +6694,7 @@
         "dependencies": {
           "CK.Core": "0.0.0-Absolutely-Invalid",
           "CK.Infrastructure.Commands.Model": "1.0.0",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-15672",
           "System.Collections": "4.0.11-beta-23409",
           "System.Collections.Concurrent": "4.0.11-beta-23409",
           "System.Linq": "4.0.1-beta-23409",

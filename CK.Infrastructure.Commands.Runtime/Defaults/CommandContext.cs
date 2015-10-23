@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CK.Infrastructure.Commands
 {
@@ -10,23 +11,19 @@ namespace CK.Infrastructure.Commands
     {
         List<BlobRef> _refs;
 
-        public CommandContext( ICommandResponseDispatcher eventDispatcher, ICommandHandlerFactory handlerFactory )
+        public CommandContext( ICommandRequest request, Guid commandId )
         {
-            EventDispatcher = eventDispatcher;
-            HandlerFactory = handlerFactory;
+            Request = request;
+            CommandId = commandId;
         }
 
-        public ICommandRequest Request { get; set; }
+        public Guid CommandId { get; set; }
 
-        public ICommandResponse Response { get; set; }
+        public ICommandRequest Request { get; private set; }
 
-        public ICommandResponseDispatcher EventDispatcher { get; private set; }
-
-        public ICommandHandlerFactory HandlerFactory { get; private set; }
+        public ICommandResponse Response { get; private set; }
 
         public Type HandlerType { get; set; }
-
-        public bool IsAsynchronous { get; set; }
 
         public IReadOnlyCollection<BlobRef> Blobs
         {
@@ -43,6 +40,42 @@ namespace CK.Infrastructure.Commands
             if( _refs == null ) _refs = new List<BlobRef>();
 
             _refs.Add( blobRef );
+        }
+
+        internal void CreateDirectResponse( object result )
+        {
+            if( Response != null ) throw new InvalidOperationException( "There is already a Response created for this CommandContext" );
+            Response = new DirectResponse( result, this );
+        }
+
+        internal ICommandRunner PrepareHandling( Type handlerType, ICommandHandlerFactory handlerFactoy, ICommandResponseDispatcher dispatcher )
+        {
+            this.HandlerType = handlerType;
+            if( Request.IsLongRunning )
+            {
+                return new DedicatedRunner( handlerFactoy, dispatcher );
+            }
+            return new InProcessCommandRunner( handlerFactoy );
+        }
+
+        internal void CreateDeferredResponse()
+        {
+            if( Response != null ) throw new InvalidOperationException( "There is already a Response created for this CommandContext" );
+            Response = new DeferredResponse( Request.CallbackId, this );
+        }
+
+        internal void CreateErrorResponse( string msg )
+        {
+            Response = new ErrorResponse( msg, this );
+        }
+
+        internal CommandContext CloneContext()
+        {
+            return new CommandContext( Request, CommandId )
+            {
+                HandlerType = this.HandlerType,
+                _refs = this._refs
+            };
         }
     }
 

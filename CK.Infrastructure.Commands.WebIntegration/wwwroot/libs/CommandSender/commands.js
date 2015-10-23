@@ -1,6 +1,3 @@
-/// <reference path="def/CK.Infrastructure.Commands.d.ts"/>
-/// <reference path="../signalr.d.ts"/>
-/// <reference path="../jquery.d.ts"/>
 define(["require", "exports"], function (require, exports) {
     var AjaxSender = (function () {
         function AjaxSender() {
@@ -55,7 +52,7 @@ define(["require", "exports"], function (require, exports) {
         CommandSender.prototype.send = function (route, commandBody) {
             var _this = this;
             console.info('Sending Command to route: ' + route);
-            var url = this._prefix + route + '?c=' + this._connectionId;
+            var url = this._prefix + '/' + route + '?c=' + this._connectionId;
             var xhr = this._sender.post(url, commandBody);
             var deferred = $.Deferred();
             xhr.done(function (data, status, jqXhr) {
@@ -86,4 +83,4 @@ define(["require", "exports"], function (require, exports) {
     })();
     exports.CommandSender = CommandSender;
 });
-//# sourceMappingURL=CK.Infrastructure.Commands.js.map
+//# sourceMappingURL=commands.js.map

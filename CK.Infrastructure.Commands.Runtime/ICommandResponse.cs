@@ -17,9 +17,9 @@ namespace CK.Infrastructure.Commands
     {
         Guid CommandId { get; }
 
-        CommandResponseType ResponseType { get; set; }
+        CommandResponseType ResponseType { get; }
 
-        object Payload { get; set; }
+        object Payload { get;  }
     }
 
 

@@ -23,7 +23,9 @@ namespace CK.Infrastructure.Commands.WebIntegration
             app.UseStaticFiles();
             app.UseCommandReceiver( "c", x =>
             {
-                x.Register<TransferAmountCommand, TransferAlwaysSuccessHandler>( route: "TransferAmount", isLongRunning: true );
+                x.Register<TransferAmountCommand, TransferAlwaysSuccessHandler>( route: "TransferAmount", isLongRunning: true )
+                .Register<WithdrawMoneyCommand, WithDrawyMoneyHandler>( "WithdrawMoney", false );
+                //x.RegisterAllHandlers( "RemoveCommandSuffix" );
             } );
 
             app.UseSignalR();

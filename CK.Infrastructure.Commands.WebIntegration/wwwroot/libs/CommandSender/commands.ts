@@ -1,12 +1,8 @@
-﻿/// <reference path="def/CK.Infrastructure.Commands.d.ts"/>
-/// <reference path="../signalr.d.ts"/>
-/// <reference path="../jquery.d.ts"/>
-
-export class AjaxSender implements ICommandRequestSender {
+﻿export class AjaxSender implements ICommandRequestSender {
     post(url: string, command: any) {
         var json = JSON.stringify(command);
         return $.ajax(url, {
-            type: 'POST',
+            type: 'POST', 
             data: json,
             contentType: 'application/json',
             dataType: 'JSON'
@@ -15,9 +11,9 @@ export class AjaxSender implements ICommandRequestSender {
 }
 
 export class SignalRListener implements ICommandResponseListener {
-    private _hubConnection: HubConnection;
+    private _hubConnection: HubConnection; 
     private _receivedResponses: Array<ICommandResponse>;
-
+     
     constructor(connection: HubConnection, hubName: string) {
         var me = this;
         this._receivedResponses = new Array<ICommandResponse>();
@@ -47,7 +43,7 @@ export class SignalRListener implements ICommandResponseListener {
     }
 }
 
-export class CommandSender implements ICommandSender {
+export class CommandSender implements ICommandSender { 
     private _sender: ICommandRequestSender
     private _listener: ICommandResponseListener
     private _prefix: string
@@ -63,14 +59,14 @@ export class CommandSender implements ICommandSender {
     public send(route: string, commandBody: Object) {
         console.info('Sending Command to route: ' + route);
 
-        var url = this._prefix + route + '?c=' + this._connectionId;
+        var url = this._prefix + '/' + route + '?c=' + this._connectionId;
         var xhr = this._sender.post(url, commandBody);
 
         var deferred = $.Deferred<ICommandResponse>();
 
         xhr.done((data, status, jqXhr) => {
 
-            let a = data as ICommandResponse;
+            var a = data as ICommandResponse;
             if (a !== null) {
                 switch (a.ResponseType) {
                     // Direct resposne

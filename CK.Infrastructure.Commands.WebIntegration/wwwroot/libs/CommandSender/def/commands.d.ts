@@ -1,6 +1,4 @@
-﻿/// <reference path="../../../libs/jquery.d.ts"/>
-
-interface ICommandResponse {
+﻿interface ICommandResponse {
     /**
     * The identifier of the command. */
     CommandId: string,
@@ -27,3 +25,13 @@ interface ICommandResponseListener {
 interface ICommandRequestSender {
     post: (url: string, command: any) => JQueryPromise<any>;
 }
+
+interface ICKStatic {
+    CommandSender: ICommandSender;
+}
+
+declare module "CK" {
+    export = CK;
+}
+
+declare var CK: ICKStatic;
