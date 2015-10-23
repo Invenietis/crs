@@ -1,6 +1,6 @@
-/// <reference path="CommandSender.d.ts"/>
-/// <reference path="libs/signalr.d.ts"/>
-/// <reference path="libs/jquery.d.ts"/>
+/// <reference path="def/CK.Infrastructure.Commands.d.ts"/>
+/// <reference path="../signalr.d.ts"/>
+/// <reference path="../jquery.d.ts"/>
 define(["require", "exports"], function (require, exports) {
     var AjaxSender = (function () {
         function AjaxSender() {
@@ -16,13 +16,15 @@ define(["require", "exports"], function (require, exports) {
         };
         return AjaxSender;
     })();
+    exports.AjaxSender = AjaxSender;
     var SignalRListener = (function () {
         function SignalRListener(connection, hubName) {
             var me = this;
+            this._receivedResponses = new Array();
             this._hubConnection = connection;
-            this._hubConnection.createHubProxy(hubName).on('ReceiveCommandResponse', function (data) {
+            this._hubConnection.proxies[hubName].client.ReceiveCommandResponse = function (data) {
                 me._receivedResponses.push(data);
-            });
+            };
         }
         SignalRListener.prototype.listen = function (commandId, callbackId) {
             if (callbackId !== this._hubConnection.id)
@@ -42,6 +44,7 @@ define(["require", "exports"], function (require, exports) {
         };
         return SignalRListener;
     })();
+    exports.SignalRListener = SignalRListener;
     var CommandSender = (function () {
         function CommandSender(prefix, connectionId, commandRequestSender, commandResponseListener) {
             this._prefix = prefix;
@@ -52,12 +55,11 @@ define(["require", "exports"], function (require, exports) {
         CommandSender.prototype.send = function (route, commandBody) {
             var _this = this;
             console.info('Sending Command to route: ' + route);
-            var url = '/' + this._prefix + route + '?c=' + this._connectionId;
+            var url = this._prefix + route + '?c=' + this._connectionId;
             var xhr = this._sender.post(url, commandBody);
             var deferred = $.Deferred();
             xhr.done(function (data, status, jqXhr) {
-                var o = JSON.parse(data);
-                var a = o;
+                var a = data;
                 if (a !== null) {
                     switch (a.ResponseType) {
                         // Direct resposne
@@ -84,4 +86,4 @@ define(["require", "exports"], function (require, exports) {
     })();
     exports.CommandSender = CommandSender;
 });
-//# sourceMappingURL=CommandSender.js.map
+//# sourceMappingURL=CK.Infrastructure.Commands.js.map

@@ -24,11 +24,12 @@ namespace CK.Infrastructure.Commands.Tests
         public async Task SendCommandAndWaitForEvents()
         {
             string serverAddress = "http://MyDumbServer/c/";
+            var registry = new DefaultCommandHandlerRegistry();
+            registry.RegisterHandler<TransferAmountCommand, TransferAlwaysSuccessHandler>();
+            registry.RegisterHandler<WithdrawMoneyCommand, WithDrawyMoneyHandler>();
 
-            var commandReceiver = new DefaultCommandReceiver(  EventChannel.Instance, new DefaultCommandFileStore(), new DefaultCommandHandlerFactory() );
-            commandReceiver.RegisterHandler<TransferAmountCommand, TransferAlwaysSuccessHandler>();
-            commandReceiver.RegisterHandler<WithdrawMoneyCommand, WithDrawyMoneyHandler>();
-
+            var commandReceiver = new DefaultCommandReceiver(  EventChannel.Instance, new DefaultCommandFileStore(), new DefaultCommandHandlerFactory(), registry );
+          
             using( var server = new CommandReceiverHost( serverAddress, commandReceiver ) )
             {
                 // Server initialization

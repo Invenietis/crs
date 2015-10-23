@@ -6,7 +6,7 @@ namespace CK.Infrastructure.Commands
 {
     public interface ICommandResponseClient
     {
-        Task ReceiveCommandResponse( object response );
+        Task ReceiveCommandResponse( ICommandResponse response );
     }
 
 }

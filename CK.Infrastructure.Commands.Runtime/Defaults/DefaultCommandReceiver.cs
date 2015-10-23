@@ -6,26 +6,19 @@ using System.Threading.Tasks;
 
 namespace CK.Infrastructure.Commands
 {
-    public class DefaultCommandReceiver : ICommandReceiver, ICommandHandlerRegistry
+    public class DefaultCommandReceiver : ICommandReceiver
     {
         readonly ICommandFileWriter _fileWriter;
         readonly ICommandResponseDispatcher _eventDispatcher;
         readonly ICommandHandlerFactory _handlerFactory;
-        Dictionary<Type, Type> HandlerMap { get; } = new Dictionary<Type, Type>();
+        readonly ICommandHandlerRegistry _registry;
 
-        public DefaultCommandReceiver( ICommandResponseDispatcher eventDispatcher, ICommandFileWriter fileWriter, ICommandHandlerFactory handlerFactory )
+        public DefaultCommandReceiver( ICommandResponseDispatcher eventDispatcher, ICommandFileWriter fileWriter, ICommandHandlerFactory handlerFactory, ICommandHandlerRegistry registry )
         {
             _eventDispatcher = eventDispatcher;
             _fileWriter = fileWriter;
             _handlerFactory = handlerFactory;
-        }
-
-        public void RegisterHandler<T, THandler>()
-        {
-            if( HandlerMap.ContainsKey( typeof( T ) ) )
-                throw new ArgumentException( "An handler is already registered for this command " + typeof( T ).FullName );
-
-            HandlerMap.Add( typeof( T ), typeof( THandler ) );
+            _registry = registry;
         }
 
         public async Task<ICommandResponse> ProcessCommandAsync( ICommandRequest commandRequest )
@@ -37,14 +30,14 @@ namespace CK.Infrastructure.Commands
                 CommandId = Guid.NewGuid()
             };
 
-            if( !HandlerMap.ContainsKey( commandRequest.CommandServerType ) )
+            if( !_registry.IsRegisterd( commandRequest.CommandServerType ) )
             {
                 context.Response.ResponseType = CommandResponseType.Error;
                 context.Response.Payload = new InvalidOperationException( "Handler not found for command type " + context.Request.CommandServerType );
             }
             else
             {
-                context.HandlerType = HandlerMap[context.Request.CommandServerType];
+                context.HandlerType = _registry.GetHandlerType( context.Request.CommandServerType );
                 if( context.Request.IsLongRunning )
                 {
                     context.Response.Payload = context.Request.CallbackId;

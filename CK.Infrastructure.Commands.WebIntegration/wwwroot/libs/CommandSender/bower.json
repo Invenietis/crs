@@ -13,7 +13,7 @@
         "test",
         "tests",
         "libs",
-        "*.ts",
+        "CommandSender.ts",
         "project.json",
         "tsconfig.json"
     ],

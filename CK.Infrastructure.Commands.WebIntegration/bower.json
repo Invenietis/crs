@@ -1,6 +1,6 @@
 {
     "name": "CK.Infrastructure.Commands.WebIntegration",
-    "version": "0.0.0-alpha",
+    "version": "0.0.0-alpha-01",
     "authors": [
         "Cédric Legendre <albundy1385@gmail.com>"
     ],
@@ -17,4 +17,4 @@
         "signalr": "2.2.0",
         "CommandSender": "file:///D:/Dev/Framework/CK.Infrastructure.Commands.Client/.git"
     }   
-}
+}  

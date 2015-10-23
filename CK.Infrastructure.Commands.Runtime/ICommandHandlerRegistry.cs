@@ -9,6 +9,8 @@ namespace CK.Infrastructure.Commands
     public interface ICommandHandlerRegistry
     {
         void RegisterHandler<T, THandler>();
+        bool IsRegisterd( Type commandType );
+        Type GetHandlerType( Type commandType );
     }
 
 }

@@ -12,7 +12,7 @@ using Microsoft.AspNet.Http.Features;
 namespace CK.Infrastructure.Commands.Tests.Fake
 {
 
-    internal class FakeHttpContext : HttpContext
+    internal class FakeHttpContext : HttpContext, IDisposable
     {
         IServiceProvider _sp;
         IServiceProvider _scopedSp;
@@ -172,7 +172,7 @@ namespace CK.Infrastructure.Commands.Tests.Fake
         {
         }
 
-        public override void Dispose()
+        public void Dispose()
         {
             Request.Body.Dispose();
             Response.Body.Dispose();

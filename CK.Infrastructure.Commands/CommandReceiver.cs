@@ -5,9 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Http;
-using Microsoft.AspNet.SignalR.Hubs;
 using Microsoft.AspNet.SignalR.Infrastructure;
-using Microsoft.Framework.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CK.Infrastructure.Commands
 {
@@ -116,6 +115,7 @@ namespace CK.Infrastructure.Commands
             services.AddSingleton<ICommandRequestFactory, DefaultCommandFactory>();
             services.AddSingleton<ICommandResponseSerializer, DefaultCommandResponseSerializer>();
             services.AddSingleton<ICommandRouteMap, DefaultCommandRouteMap>();
+            services.AddSingleton<ICommandHandlerRegistry, DefaultCommandHandlerRegistry>();
             services.AddSingleton<ICommandHandlerFactory, DefaultCommandHandlerFactory>();
             services.AddSingleton<ICommandFileWriter, DefaultCommandFileStore>();
             services.AddSingleton<ICommandResponseDispatcher>( ( sp ) =>
@@ -128,7 +128,6 @@ namespace CK.Infrastructure.Commands
             services.AddSignalR( o =>
             {
                 o.Hubs.EnableDetailedErrors = true;
-                //o.Hubs.PipelineModules.Add( )
             } );
         }
     }

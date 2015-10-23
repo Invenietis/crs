@@ -9,7 +9,7 @@ namespace CK.Infrastructure.Commands
     /// <summary>
     /// Defines the contract a command receiver should implement
     /// </summary>
-    public interface ICommandReceiver : ICommandHandlerRegistry
+    public interface ICommandReceiver
     {
         /// <summary>
         /// Process a <see cref="ICommandRequest"/> and returns a <see cref="ICommandResponse"/>

@@ -12,7 +12,7 @@
         "Microsoft.Dnx.TestHost": "1.0.0-*",
         "Microsoft.Dnx.Runtime.Abstractions": "1.0.0-*",
         "Microsoft.Dnx.TestAdapter": "1.0.0-*",
-        "Microsoft.Framework.DependencyInjection": "1.0.0-*",
+        "Microsoft.Extensions.DependencyInjection": "1.0.0-*",
         "Microsoft.AspNet.Http.Abstractions": "1.0.0-*",
         "CK.Infrastructure.Commands": "1.0.0-*",
         "CK.Core": "0.0.0-Absolutely-Invalid"

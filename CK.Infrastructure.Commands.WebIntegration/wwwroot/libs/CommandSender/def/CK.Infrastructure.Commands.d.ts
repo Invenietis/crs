@@ -1,4 +1,4 @@
-﻿/// <reference path="../jquery.d.ts"/>
+﻿/// <reference path="../../../libs/jquery.d.ts"/>
 
 interface ICommandResponse {
     /**
@@ -27,4 +27,3 @@ interface ICommandResponseListener {
 interface ICommandRequestSender {
     post: (url: string, command: any) => JQueryPromise<any>;
 }
-

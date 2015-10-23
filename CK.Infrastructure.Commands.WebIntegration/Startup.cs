@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using CK.Infrastructure.Commands.Handlers;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Http;
-using Microsoft.Framework.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CK.Infrastructure.Commands.WebIntegration
 {
@@ -14,18 +14,19 @@ namespace CK.Infrastructure.Commands.WebIntegration
         // For more information on how to configure your application, visit http://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices( IServiceCollection services )
         {
+            services.AddCommandReceiver();
         }
 
         public void Configure( IApplicationBuilder app )
         {
+            app.UseIISPlatformHandler();
+            app.UseStaticFiles();
             app.UseCommandReceiver( "c", x =>
             {
                 x.Register<TransferAmountCommand, TransferAlwaysSuccessHandler>( route: "TransferAmount", isLongRunning: true );
             } );
-            app.Run( async ( context ) =>
-             {
-                 await context.Response.WriteAsync( "Hello World!" );
-             } );
+
+            app.UseSignalR();
         }
     }
 }

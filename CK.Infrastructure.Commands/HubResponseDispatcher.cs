@@ -19,7 +19,7 @@ namespace CK.Infrastructure.Commands
         public Task DispatchAsync( string callbackId, ICommandResponse response )
         {
             var hubContext = _connectionManager.GetHubContext<CommandResponseHub, ICommandResponseClient>();
-            return hubContext.Clients.Client( callbackId ).ReceiveCommandResponse( response.Payload );
+            return hubContext.Clients.Client( callbackId ).ReceiveCommandResponse( response );
         }
     }
 }

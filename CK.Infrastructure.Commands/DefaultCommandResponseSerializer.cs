@@ -19,12 +19,7 @@ namespace CK.Infrastructure.Commands
             StreamWriter sw = new StreamWriter( outputStream );
             JsonTextWriter jw = new JsonTextWriter( sw );
 
-            var directResponse = new DirectResponse
-            {
-                CommandId = response.CommandId.ToString(),
-                Payload = response.Payload
-            };
-            _serializer.Serialize( jw, directResponse );
+            _serializer.Serialize( jw, response );
             jw.Flush();
         }
 
