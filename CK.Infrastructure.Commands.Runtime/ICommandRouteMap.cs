@@ -13,13 +13,4 @@ namespace CK.Infrastructure.Commands
 
         ICommandRouteMap Register( CommandRouteRegistration route );
     }
-
-    public class CommandRouteRegistration
-    {
-        public CommandRoutePath Route { get; set; }
-
-        public Type CommandType { get; set; }
-
-        public bool IsLongRunningCommand { get; set; }
-    }
 }

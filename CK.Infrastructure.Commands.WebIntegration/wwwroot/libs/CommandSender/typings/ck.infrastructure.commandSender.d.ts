@@ -1,4 +1,6 @@
-﻿interface ICommandResponse {
+﻿/// <reference path="ck.d.ts" />
+
+interface ICommandResponse {
     /**
     * The identifier of the command. */
     CommandId: string,
@@ -26,6 +28,6 @@ interface ICommandRequestSender {
     post: (url: string, command: any) => JQueryPromise<any>;
 }
 
-interface JQueryStatic {
+interface ICKStatic {
     commandSender: ICommandSender;
 }

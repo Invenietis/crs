@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CK.Infrastructure.Commands
 {
-    public class CommandContext : ICommandContext
+    internal class CommandContext : ICommandContext
     {
         List<BlobRef> _refs;
 
@@ -53,9 +53,9 @@ namespace CK.Infrastructure.Commands
             this.HandlerType = handlerType;
             if( Request.IsLongRunning )
             {
-                return new DedicatedRunner( handlerFactoy, dispatcher );
+                return new AsyncCommandRunner( handlerFactoy, dispatcher );
             }
-            return new InProcessCommandRunner( handlerFactoy );
+            return new CommandRunner( handlerFactoy );
         }
 
         internal void CreateDeferredResponse()

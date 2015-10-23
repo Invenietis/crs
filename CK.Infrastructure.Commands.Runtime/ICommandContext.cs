@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CK.Infrastructure.Commands
 {
-    public interface ICommandContext
+    internal interface ICommandContext
     {
         ICommandRequest Request { get; }
 

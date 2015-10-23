@@ -66,7 +66,7 @@ var CK;
                             case 0:
                                 deferred.resolve(a);
                                 break;
-                                // Deferred response
+                            // Deferred response
                             case 1: {
                                 var callbackId = a.Payload;
                                 var promise = _this._listener.listen(a.CommandId, callbackId);
@@ -95,7 +95,7 @@ var CK;
         $.connection.hub.logging = true;
         var signalRListener = new Infrastructure.SignalRListener($.connection.hub, 'commandresponse');
         $.connection.hub.start().done(function (d) {
-            $.commandSender = new Infrastructure.CommandSender('/c', $.connection.hub.id, new Infrastructure.AjaxSender(), signalRListener);
+            $.CK.commandSender = new Infrastructure.CommandSender('/c', $.connection.hub.id, new Infrastructure.AjaxSender(), signalRListener);
         }).fail(function (er) {
             throw new Error(er);
         });

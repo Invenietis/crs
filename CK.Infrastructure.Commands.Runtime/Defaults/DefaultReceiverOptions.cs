@@ -5,7 +5,7 @@ namespace CK.Infrastructure.Commands
     {
         ICommandRouteMap _map;
         ICommandHandlerRegistry _registry;
- 
+
         public DefaultReceiverOptions( string routePrefix, ICommandRouteMap map, ICommandHandlerRegistry registry )
         {
             if( String.IsNullOrWhiteSpace( routePrefix ) ) throw new ArgumentNullException( nameof( routePrefix ) );
@@ -18,7 +18,7 @@ namespace CK.Infrastructure.Commands
 
         public ICommandReceiverOptions Register<TCommand, THandler>( string route, bool isLongRunning )
             where TCommand : class
-            where THandler : class
+            where THandler : class, ICommandHandler
         {
             _map.Register( new CommandRouteRegistration
             {

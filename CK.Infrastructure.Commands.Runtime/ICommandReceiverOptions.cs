@@ -9,7 +9,7 @@ namespace CK.Infrastructure.Commands
     public interface ICommandReceiverOptions
     {
         /// <summary>
-        /// Gets or sets the route prefix of the command route path.
+        /// Gets or sets the route prefix of this command receiver.
         /// </summary>
         string RoutePrefix { get; }
 
@@ -23,6 +23,6 @@ namespace CK.Infrastructure.Commands
         /// <returns></returns>
         ICommandReceiverOptions Register<TCommand, THandler>( string route, bool isLongRunning )
             where TCommand : class
-            where THandler : class;
+            where THandler : class, ICommandHandler;
     }
 }

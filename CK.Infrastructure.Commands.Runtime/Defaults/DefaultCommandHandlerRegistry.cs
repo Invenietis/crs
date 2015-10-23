@@ -21,7 +21,7 @@ namespace CK.Infrastructure.Commands
             return HandlerMap.ContainsKey( commandType );
         }
 
-        public void RegisterHandler<T, THandler>()
+        public void RegisterHandler<T, THandler>() where THandler : ICommandHandler
         {
             if( HandlerMap.ContainsKey( typeof( T ) ) )
                 throw new ArgumentException( "An handler is already registered for this command " + typeof( T ).FullName );

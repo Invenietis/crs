@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace CK.Infrastructure.Commands
 {
-
-    public class CommandRequest : ICommandRequest
+    internal class CommandRequest : ICommandRequest
     {
         public CommandRequest( object command )
         {
@@ -18,9 +17,8 @@ namespace CK.Infrastructure.Commands
 
         public string CallbackId { get; set; }
 
-        public Type CommandServerType { get; set; }
+        public Type CommandType { get; set; }
 
         public bool IsLongRunning { get; set; }
     }
-
 }

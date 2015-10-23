@@ -22,12 +22,5 @@ namespace CK.Infrastructure.Commands
             _serializer.Serialize( jw, response );
             jw.Flush();
         }
-
-        class DirectResponse
-        {
-            public string CommandId { get; set; }
-
-            public object Payload { get; set; }
-        }
     }
 }

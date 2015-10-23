@@ -1,10 +1,14 @@
-define(["require", "exports", 'commands'], function (require, exports, commands_1) {
-    $.connection.hub.logging = true;
-    var signalRListener = new commands_1.SignalRListener($.connection.hub, 'commandresponse');
-    $.connection.hub.start().done(function (d) {
-        CK.CommandSender = new commands_1.CommandSender('/c', $.connection.hub.id, new commands_1.AjaxSender(), signalRListener);
-    }).fail(function (er) {
-        throw new Error(er);
-    });
-});
-//# sourceMappingURL=bootstraper.js.map
+/// <reference path="commands.ts" />
+var CK;
+(function (CK) {
+    var Infrastructure;
+    (function (Infrastructure) {
+        $.connection.hub.logging = true;
+        var signalRListener = new Infrastructure.SignalRListener($.connection.hub, 'commandresponse');
+        $.connection.hub.start().done(function (d) {
+            $.CK.commandSender = new Infrastructure.CommandSender('/c', $.connection.hub.id, new Infrastructure.AjaxSender(), signalRListener);
+        }).fail(function (er) {
+            throw new Error(er);
+        });
+    })(Infrastructure = CK.Infrastructure || (CK.Infrastructure = {}));
+})(CK || (CK = {}));

@@ -16,7 +16,7 @@ namespace CK.Infrastructure.Commands
             return new CommandRequest( command )
             {
                 CallbackId = request.Query["c"],
-                CommandServerType = routeInfo.CommandType,
+                CommandType = routeInfo.CommandType,
                 IsLongRunning = routeInfo.IsLongRunningCommand
             };
         }

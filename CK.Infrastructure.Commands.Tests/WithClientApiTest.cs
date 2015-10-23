@@ -29,7 +29,7 @@ namespace CK.Infrastructure.Commands.Tests
             registry.RegisterHandler<WithdrawMoneyCommand, WithDrawyMoneyHandler>();
 
             var commandReceiver = new DefaultCommandReceiver(  EventChannel.Instance, new DefaultCommandFileStore(), new DefaultCommandHandlerFactory(), registry );
-          
+
             using( var server = new CommandReceiverHost( serverAddress, commandReceiver ) )
             {
                 // Server initialization
@@ -90,14 +90,25 @@ namespace CK.Infrastructure.Commands.Tests
         Task<ClientCommandResult> SendAsync<T>( string address, T command );
     }
 
+    class CommandRequest : ICommandRequest
+    {
+        public string CallbackId { get; set; }
+
+        public object Command { get; set; }
+
+        public Type CommandType { get; set; }
+
+        public bool IsLongRunning { get; set; }
+    }
     public class ClientCommandSender : IClientCommandSender
     {
         public async Task<ClientCommandResult> SendAsync<T>( string address, T command )
         {
-            CommandRequest request = new CommandRequest( command )
+            ICommandRequest request = new CommandRequest
             {
+                Command = command,
                 CallbackId = EventChannel.Instance.ConnectionId,
-                CommandServerType = typeof( T)
+                CommandType = typeof( T)
             };
             ClientCommandResult result = null;
             try
