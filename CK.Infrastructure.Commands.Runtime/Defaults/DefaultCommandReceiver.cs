@@ -12,10 +12,10 @@ namespace CK.Infrastructure.Commands
         readonly Runners _runners;
         readonly ICommandHandlerRegistry _registry;
 
-        public DefaultCommandReceiver( ICommandResponseDispatcher eventDispatcher, ICommandHandlerFactory handlerFactory, ICommandHandlerRegistry registry )
+        public DefaultCommandReceiver( ICommandResponseDispatcher eventDispatcher, ICommandHandlerFactory handlerFactory, ICommandHandlerRegistry registry, IServiceProvider sp )
         {
             _registry = registry;
-            _runners = new Runners( handlerFactory, eventDispatcher );
+            _runners = new Runners( handlerFactory, eventDispatcher, sp );
         }
 
         public Task<ICommandResponse> ProcessCommandAsync( ICommandRequest commandRequest, CancellationToken cancellationToken = default( CancellationToken ) )

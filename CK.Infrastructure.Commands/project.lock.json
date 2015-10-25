@@ -23,15 +23,17 @@
       },
       "CK.Infrastructure.Commands.Model/1.0.0": {
         "type": "project",
-        "framework": "DNX,Version=v4.5.1"
+        "framework": "DNX,Version=v4.5.1",
+        "frameworkAssemblies": [
+          "System.Transactions"
+        ]
       },
       "CK.Infrastructure.Commands.Runtime/1.0.0": {
         "type": "project",
         "framework": "DNX,Version=v4.5.1",
         "dependencies": {
           "CK.Core": "0.0.0-Absolutely-Invalid",
-          "CK.Infrastructure.Commands.Model": "1.0.0",
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-15672"
+          "CK.Infrastructure.Commands.Model": "1.0.0"
         }
       },
       "Microsoft.AspNet.Cryptography.Internal/1.0.0-rc1-15670": {
@@ -472,6 +474,9 @@
         "framework": "DNXCore,Version=v5.0",
         "dependencies": {
           "System.Collections": "4.0.11-beta-23409",
+          "System.ComponentModel": "4.0.1-beta-23409",
+          "System.Linq": "4.0.1-beta-23409",
+          "System.Reflection": "4.1.0-beta-23409",
           "System.Runtime": "4.0.21-beta-23409",
           "System.Threading": "4.0.11-beta-23409"
         }
@@ -482,9 +487,9 @@
         "dependencies": {
           "CK.Core": "0.0.0-Absolutely-Invalid",
           "CK.Infrastructure.Commands.Model": "1.0.0",
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-15672",
           "System.Collections": "4.0.11-beta-23409",
           "System.Collections.Concurrent": "4.0.11-beta-23409",
+          "System.ComponentModel": "4.0.1-beta-23409",
           "System.Linq": "4.0.1-beta-23409",
           "System.Runtime": "4.0.21-beta-23409",
           "System.Text.RegularExpressions": "4.0.11-beta-23409",
@@ -1708,15 +1713,17 @@
       },
       "CK.Infrastructure.Commands.Model/1.0.0": {
         "type": "project",
-        "framework": "DNX,Version=v4.5.1"
+        "framework": "DNX,Version=v4.5.1",
+        "frameworkAssemblies": [
+          "System.Transactions"
+        ]
       },
       "CK.Infrastructure.Commands.Runtime/1.0.0": {
         "type": "project",
         "framework": "DNX,Version=v4.5.1",
         "dependencies": {
           "CK.Core": "0.0.0-Absolutely-Invalid",
-          "CK.Infrastructure.Commands.Model": "1.0.0",
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-15672"
+          "CK.Infrastructure.Commands.Model": "1.0.0"
         }
       },
       "Microsoft.AspNet.Cryptography.Internal/1.0.0-rc1-15670": {
@@ -2143,15 +2150,17 @@
       },
       "CK.Infrastructure.Commands.Model/1.0.0": {
         "type": "project",
-        "framework": "DNX,Version=v4.5.1"
+        "framework": "DNX,Version=v4.5.1",
+        "frameworkAssemblies": [
+          "System.Transactions"
+        ]
       },
       "CK.Infrastructure.Commands.Runtime/1.0.0": {
         "type": "project",
         "framework": "DNX,Version=v4.5.1",
         "dependencies": {
           "CK.Core": "0.0.0-Absolutely-Invalid",
-          "CK.Infrastructure.Commands.Model": "1.0.0",
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-15672"
+          "CK.Infrastructure.Commands.Model": "1.0.0"
         }
       },
       "Microsoft.AspNet.Cryptography.Internal/1.0.0-rc1-15670": {
@@ -2592,6 +2601,9 @@
         "framework": "DNXCore,Version=v5.0",
         "dependencies": {
           "System.Collections": "4.0.11-beta-23409",
+          "System.ComponentModel": "4.0.1-beta-23409",
+          "System.Linq": "4.0.1-beta-23409",
+          "System.Reflection": "4.1.0-beta-23409",
           "System.Runtime": "4.0.21-beta-23409",
           "System.Threading": "4.0.11-beta-23409"
         }
@@ -2602,9 +2614,9 @@
         "dependencies": {
           "CK.Core": "0.0.0-Absolutely-Invalid",
           "CK.Infrastructure.Commands.Model": "1.0.0",
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-15672",
           "System.Collections": "4.0.11-beta-23409",
           "System.Collections.Concurrent": "4.0.11-beta-23409",
+          "System.ComponentModel": "4.0.1-beta-23409",
           "System.Linq": "4.0.1-beta-23409",
           "System.Runtime": "4.0.21-beta-23409",
           "System.Text.RegularExpressions": "4.0.11-beta-23409",
@@ -3089,7 +3101,7 @@
           "runtimes/win7/lib/DNXCore50/System.Diagnostics.Debug.dll": {}
         }
       },
-      "runtime.win7.System.Globalization.Extensions/4.0.1-beta-23409": {
+      "runtime.win7.System.Globalization.Extensions/4.0.1-beta-23405": {
         "type": "package",
         "dependencies": {
           "System.Globalization": "4.0.10",
@@ -3127,7 +3139,7 @@
           "runtimes/win7/lib/dotnet/System.IO.Compression.dll": {}
         }
       },
-      "runtime.win7.System.IO.FileSystem/4.0.1-beta-23409": {
+      "runtime.win7.System.IO.FileSystem/4.0.1-beta-23405": {
         "type": "package",
         "dependencies": {
           "System.Collections": "4.0.10",
@@ -4169,6 +4181,9 @@
         "framework": "DNXCore,Version=v5.0",
         "dependencies": {
           "System.Collections": "4.0.11-beta-23409",
+          "System.ComponentModel": "4.0.1-beta-23409",
+          "System.Linq": "4.0.1-beta-23409",
+          "System.Reflection": "4.1.0-beta-23409",
           "System.Runtime": "4.0.21-beta-23409",
           "System.Threading": "4.0.11-beta-23409"
         }
@@ -4179,9 +4194,9 @@
         "dependencies": {
           "CK.Core": "0.0.0-Absolutely-Invalid",
           "CK.Infrastructure.Commands.Model": "1.0.0",
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-15672",
           "System.Collections": "4.0.11-beta-23409",
           "System.Collections.Concurrent": "4.0.11-beta-23409",
+          "System.ComponentModel": "4.0.1-beta-23409",
           "System.Linq": "4.0.1-beta-23409",
           "System.Runtime": "4.0.21-beta-23409",
           "System.Text.RegularExpressions": "4.0.11-beta-23409",
@@ -4666,7 +4681,7 @@
           "runtimes/win7/lib/DNXCore50/System.Diagnostics.Debug.dll": {}
         }
       },
-      "runtime.win7.System.Globalization.Extensions/4.0.1-beta-23409": {
+      "runtime.win7.System.Globalization.Extensions/4.0.1-beta-23405": {
         "type": "package",
         "dependencies": {
           "System.Globalization": "4.0.10",
@@ -4704,7 +4719,7 @@
           "runtimes/win7/lib/dotnet/System.IO.Compression.dll": {}
         }
       },
-      "runtime.win7.System.IO.FileSystem/4.0.1-beta-23409": {
+      "runtime.win7.System.IO.FileSystem/4.0.1-beta-23405": {
         "type": "package",
         "dependencies": {
           "System.Collections": "4.0.10",
@@ -6247,14 +6262,14 @@
         "runtimes/win8-aot/lib/netcore50/System.Diagnostics.Debug.dll"
       ]
     },
-    "runtime.win7.System.Globalization.Extensions/4.0.1-beta-23409": {
+    "runtime.win7.System.Globalization.Extensions/4.0.1-beta-23405": {
       "type": "package",
       "serviceable": true,
-      "sha512": "rahgL3dRtC+Pn7hzciPRdo4REM4jzAIPI0SHkZaEPPgrX8bkPVqT9Ch6lR+UJJLfZ3oryKhjprYwh5LEIJt0dA==",
+      "sha512": "5qRe6rSlUVpphZ+tTGNuxJ3Gvb///gOndhjlJUOjWbUwMCyMhMgY1rezvuUtno0R6NSmAy0NWBAQ3oMbNSQcfw==",
       "files": [
         "ref/dotnet/_._",
-        "runtime.win7.System.Globalization.Extensions.4.0.1-beta-23409.nupkg",
-        "runtime.win7.System.Globalization.Extensions.4.0.1-beta-23409.nupkg.sha512",
+        "runtime.win7.System.Globalization.Extensions.4.0.1-beta-23405.nupkg",
+        "runtime.win7.System.Globalization.Extensions.4.0.1-beta-23405.nupkg.sha512",
         "runtime.win7.System.Globalization.Extensions.nuspec",
         "runtimes/win7/lib/dotnet/de/System.Globalization.Extensions.xml",
         "runtimes/win7/lib/dotnet/es/System.Globalization.Extensions.xml",
@@ -6297,10 +6312,10 @@
         "runtimes/win7/lib/dotnet/zh-hant/System.IO.Compression.xml"
       ]
     },
-    "runtime.win7.System.IO.FileSystem/4.0.1-beta-23409": {
+    "runtime.win7.System.IO.FileSystem/4.0.1-beta-23405": {
       "type": "package",
       "serviceable": true,
-      "sha512": "174mgFFnzvMQMAVsIm8IEvCSG3u968h6arQMV+EgHEfQLCkd2CGFfKeSfAqBPRTWOZ0RbU3XdbTAiiJgxsv/iQ==",
+      "sha512": "WD3rcQW/shVv9XbbcOHcJms+9diOWbLzlhffXU8+0ZzXgJex65Y6251gJWhTldBb6xMA22rQoXamAxC6EDJ9OQ==",
       "files": [
         "lib/net/_._",
         "lib/win8/_._",
@@ -6308,8 +6323,8 @@
         "lib/wpa81/_._",
         "ref/dotnet/_._",
         "ref/netcore50/_._",
-        "runtime.win7.System.IO.FileSystem.4.0.1-beta-23409.nupkg",
-        "runtime.win7.System.IO.FileSystem.4.0.1-beta-23409.nupkg.sha512",
+        "runtime.win7.System.IO.FileSystem.4.0.1-beta-23405.nupkg",
+        "runtime.win7.System.IO.FileSystem.4.0.1-beta-23405.nupkg.sha512",
         "runtime.win7.System.IO.FileSystem.nuspec",
         "runtimes/win7/lib/dotnet/de/System.IO.FileSystem.xml",
         "runtimes/win7/lib/dotnet/es/System.IO.FileSystem.xml",

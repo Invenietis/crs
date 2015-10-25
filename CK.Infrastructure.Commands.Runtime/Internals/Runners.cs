@@ -11,9 +11,9 @@ namespace CK.Infrastructure.Commands
         private AsyncCommandRunner _asyncRunner;
         private CommandRunner _syncRunner;
 
-        public Runners( ICommandHandlerFactory handlerFactory, ICommandResponseDispatcher eventDispatcher )
+        public Runners( ICommandHandlerFactory handlerFactory, ICommandResponseDispatcher eventDispatcher, IServiceProvider sp )
         {
-            _syncRunner = new CommandRunner( handlerFactory );
+            _syncRunner = new CommandRunner( handlerFactory, sp );
             _asyncRunner = new AsyncCommandRunner( _syncRunner, eventDispatcher );
         }
 

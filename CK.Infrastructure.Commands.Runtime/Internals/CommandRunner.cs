@@ -8,38 +8,51 @@ namespace CK.Infrastructure.Commands
 {
     internal class CommandRunner : ICommandRunner
     {
-        public CommandRunner( ICommandHandlerFactory factory )
+        IServiceProvider _serviceProvider;
+        public CommandRunner( ICommandHandlerFactory factory, IServiceProvider serviceProvider )
         {
             HandlerFactory = factory;
+            _serviceProvider = serviceProvider;
         }
 
         public ICommandHandlerFactory HandlerFactory { get; private set; }
 
-        protected class JobResult
+        protected async virtual Task<CommandExecutionContext> DoJob( object command, Type handlerType )
         {
-            public object Result { get; set; }
-            public Exception Exception { get; set; }
-            public TimeSpan ElapsedTime { get; set; }
-        }
+            ICommandHandler handler = HandlerFactory.Create( handlerType );
 
-        protected async virtual Task<JobResult> DoJob( Type handlerType, object command )
-        {
-            JobResult result = new JobResult();
+            CommandReflectionContext reflectionContext = new CommandReflectionContext( command, handlerType);
+            CommandExecutionContext exContext = new CommandExecutionContext( _serviceProvider,reflectionContext);
+
+            // TODO: cache
+            // TODO: sort of chain of responsibility with a kind of dependency between decorators
+            // TODO: ability to dynamicaly register attribute with another IoC
+            foreach( var attr in exContext.ReflectionContext.Decorators.OrderBy( a => a.Order ) )
+                attr.OnCommandExecuting( exContext );
             try
             {
-                ICommandHandler handler = HandlerFactory.Create( handlerType );
-                result.Result = await handler.HandleAsync( command );
+                exContext.Result = await handler.HandleAsync( command );
             }
             catch( Exception ex )
             {
-                result.Exception = ex;
+                exContext.Exception = ex;
             }
-            return result;
+
+            if( exContext.Exception != null )
+            {
+                foreach( var attr in exContext.ReflectionContext.Decorators.OrderByDescending( a => a.Order ) )
+                    attr.OnException( exContext );
+            }
+
+            foreach( var attr in exContext.ReflectionContext.Decorators.OrderByDescending( a => a.Order ) )
+                attr.OnCommandExecuted( exContext );
+
+            return exContext;
         }
 
         public virtual async Task<ICommandResponse> RunAsync( CommandProcessingContext ctx, CancellationToken cancellationToken = default( CancellationToken ) )
         {
-            JobResult result = await DoJob( ctx.HandlerType, ctx.Request.Command );
+            CommandExecutionContext result = await DoJob(ctx.Request.Command,  ctx.HandlerType );
             if( result.Exception == null )
             {
                 return ctx.CreateDirectResponse( result.Result );

@@ -34,15 +34,17 @@
       },
       "CK.Infrastructure.Commands.Model/1.0.0": {
         "type": "project",
-        "framework": "DNX,Version=v4.5.1"
+        "framework": "DNX,Version=v4.5.1",
+        "frameworkAssemblies": [
+          "System.Transactions"
+        ]
       },
       "CK.Infrastructure.Commands.Runtime/1.0.0": {
         "type": "project",
         "framework": "DNX,Version=v4.5.1",
         "dependencies": {
           "CK.Core": "0.0.0-Absolutely-Invalid",
-          "CK.Infrastructure.Commands.Model": "1.0.0",
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-15672"
+          "CK.Infrastructure.Commands.Model": "1.0.0"
         }
       },
       "Microsoft.AspNet.Cryptography.Internal/1.0.0-rc1-15670": {
@@ -963,6 +965,9 @@
         "framework": "DNXCore,Version=v5.0",
         "dependencies": {
           "System.Collections": "4.0.11-beta-23409",
+          "System.ComponentModel": "4.0.1-beta-23409",
+          "System.Linq": "4.0.1-beta-23409",
+          "System.Reflection": "4.1.0-beta-23409",
           "System.Runtime": "4.0.21-beta-23409",
           "System.Threading": "4.0.11-beta-23409"
         }
@@ -973,9 +978,9 @@
         "dependencies": {
           "CK.Core": "0.0.0-Absolutely-Invalid",
           "CK.Infrastructure.Commands.Model": "1.0.0",
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-15672",
           "System.Collections": "4.0.11-beta-23409",
           "System.Collections.Concurrent": "4.0.11-beta-23409",
+          "System.ComponentModel": "4.0.1-beta-23409",
           "System.Linq": "4.0.1-beta-23409",
           "System.Runtime": "4.0.21-beta-23409",
           "System.Text.RegularExpressions": "4.0.11-beta-23409",
@@ -2742,15 +2747,17 @@
       },
       "CK.Infrastructure.Commands.Model/1.0.0": {
         "type": "project",
-        "framework": "DNX,Version=v4.5.1"
+        "framework": "DNX,Version=v4.5.1",
+        "frameworkAssemblies": [
+          "System.Transactions"
+        ]
       },
       "CK.Infrastructure.Commands.Runtime/1.0.0": {
         "type": "project",
         "framework": "DNX,Version=v4.5.1",
         "dependencies": {
           "CK.Core": "0.0.0-Absolutely-Invalid",
-          "CK.Infrastructure.Commands.Model": "1.0.0",
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-15672"
+          "CK.Infrastructure.Commands.Model": "1.0.0"
         }
       },
       "Microsoft.AspNet.Cryptography.Internal/1.0.0-rc1-15670": {
@@ -3652,15 +3659,17 @@
       },
       "CK.Infrastructure.Commands.Model/1.0.0": {
         "type": "project",
-        "framework": "DNX,Version=v4.5.1"
+        "framework": "DNX,Version=v4.5.1",
+        "frameworkAssemblies": [
+          "System.Transactions"
+        ]
       },
       "CK.Infrastructure.Commands.Runtime/1.0.0": {
         "type": "project",
         "framework": "DNX,Version=v4.5.1",
         "dependencies": {
           "CK.Core": "0.0.0-Absolutely-Invalid",
-          "CK.Infrastructure.Commands.Model": "1.0.0",
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-15672"
+          "CK.Infrastructure.Commands.Model": "1.0.0"
         }
       },
       "Microsoft.AspNet.Cryptography.Internal/1.0.0-rc1-15670": {
@@ -4581,6 +4590,9 @@
         "framework": "DNXCore,Version=v5.0",
         "dependencies": {
           "System.Collections": "4.0.11-beta-23409",
+          "System.ComponentModel": "4.0.1-beta-23409",
+          "System.Linq": "4.0.1-beta-23409",
+          "System.Reflection": "4.1.0-beta-23409",
           "System.Runtime": "4.0.21-beta-23409",
           "System.Threading": "4.0.11-beta-23409"
         }
@@ -4591,9 +4603,9 @@
         "dependencies": {
           "CK.Core": "0.0.0-Absolutely-Invalid",
           "CK.Infrastructure.Commands.Model": "1.0.0",
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-15672",
           "System.Collections": "4.0.11-beta-23409",
           "System.Collections.Concurrent": "4.0.11-beta-23409",
+          "System.ComponentModel": "4.0.1-beta-23409",
           "System.Linq": "4.0.1-beta-23409",
           "System.Runtime": "4.0.21-beta-23409",
           "System.Text.RegularExpressions": "4.0.11-beta-23409",
@@ -6684,6 +6696,9 @@
         "framework": "DNXCore,Version=v5.0",
         "dependencies": {
           "System.Collections": "4.0.11-beta-23409",
+          "System.ComponentModel": "4.0.1-beta-23409",
+          "System.Linq": "4.0.1-beta-23409",
+          "System.Reflection": "4.1.0-beta-23409",
           "System.Runtime": "4.0.21-beta-23409",
           "System.Threading": "4.0.11-beta-23409"
         }
@@ -6694,9 +6709,9 @@
         "dependencies": {
           "CK.Core": "0.0.0-Absolutely-Invalid",
           "CK.Infrastructure.Commands.Model": "1.0.0",
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-15672",
           "System.Collections": "4.0.11-beta-23409",
           "System.Collections.Concurrent": "4.0.11-beta-23409",
+          "System.ComponentModel": "4.0.1-beta-23409",
           "System.Linq": "4.0.1-beta-23409",
           "System.Runtime": "4.0.21-beta-23409",
           "System.Text.RegularExpressions": "4.0.11-beta-23409",

@@ -28,7 +28,7 @@ namespace CK.Infrastructure.Commands.Tests
             registry.RegisterHandler<TransferAmountCommand, TransferAlwaysSuccessHandler>();
             registry.RegisterHandler<WithdrawMoneyCommand, WithDrawyMoneyHandler>();
 
-            var commandReceiver = new DefaultCommandReceiver(  EventChannel.Instance, new DefaultCommandHandlerFactory(), registry );
+            var commandReceiver = new DefaultCommandReceiver(  EventChannel.Instance, new DefaultCommandHandlerFactory(), registry, null );
 
             using( var server = new CommandReceiverHost( serverAddress, commandReceiver ) )
             {
