@@ -12,8 +12,15 @@ namespace CK.Infrastructure.Commands
     {
         public CommandRoutePath Route { get; set; }
 
+        /// <summary>
+        /// The <see cref="Type"/> of the command to process.
+        /// </summary>
         public Type CommandType { get; set; }
 
-        public bool IsLongRunningCommand { get; set; }
+        /// <summary>
+        /// Gets wether the command has been defined as a long running or not.
+        /// This gives a hint to the <see cref="ICommandReceiver"/>.
+        /// </summary>
+        public bool IsLongRunning { get; set; }
     }
 }

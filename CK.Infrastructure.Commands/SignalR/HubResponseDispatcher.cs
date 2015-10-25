@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Infrastructure;
@@ -16,7 +17,7 @@ namespace CK.Infrastructure.Commands
             _connectionManager = connectionManager;
         }
 
-        public Task DispatchAsync( string callbackId, ICommandResponse response )
+        public Task DispatchAsync( string callbackId, ICommandResponse response, CancellationToken cancellationToken = default( CancellationToken ) )
         {
             var hubContext = _connectionManager.GetHubContext<CommandResponseHub, ICommandResponseClient>();
             return hubContext.Clients.Client( callbackId ).ReceiveCommandResponse( response );

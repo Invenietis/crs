@@ -28,7 +28,7 @@ namespace CK.Infrastructure.Commands.Tests
             registry.RegisterHandler<TransferAmountCommand, TransferAlwaysSuccessHandler>();
             registry.RegisterHandler<WithdrawMoneyCommand, WithDrawyMoneyHandler>();
 
-            var commandReceiver = new DefaultCommandReceiver(  EventChannel.Instance, new DefaultCommandFileStore(), new DefaultCommandHandlerFactory(), registry );
+            var commandReceiver = new DefaultCommandReceiver(  EventChannel.Instance, new DefaultCommandHandlerFactory(), registry );
 
             using( var server = new CommandReceiverHost( serverAddress, commandReceiver ) )
             {
@@ -96,10 +96,10 @@ namespace CK.Infrastructure.Commands.Tests
 
         public object Command { get; set; }
 
-        public Type CommandType { get; set; }
-
-        public bool IsLongRunning { get; set; }
+        public CommandRouteRegistration CommandDescription { get; set; }
+        public IReadOnlyCollection<BlobRef> Files { get; set; }
     }
+
     public class ClientCommandSender : IClientCommandSender
     {
         public async Task<ClientCommandResult> SendAsync<T>( string address, T command )
@@ -108,7 +108,7 @@ namespace CK.Infrastructure.Commands.Tests
             {
                 Command = command,
                 CallbackId = EventChannel.Instance.ConnectionId,
-                CommandType = typeof( T)
+                CommandDescription = new CommandRouteRegistration { CommandType = typeof( T) }
             };
             ClientCommandResult result = null;
             try
@@ -273,7 +273,7 @@ namespace CK.Infrastructure.Commands.Tests
             } );
         }
 
-        public Task DispatchAsync( string callbackId, ICommandResponse response )
+        public Task DispatchAsync( string callbackId, ICommandResponse response, CancellationToken cancellationToken = default( CancellationToken ) )
         {
             if( String.IsNullOrEmpty( callbackId ) ) throw new ArgumentNullException( nameof( callbackId ) );
             if( response == null ) throw new ArgumentNullException( nameof( response ) );

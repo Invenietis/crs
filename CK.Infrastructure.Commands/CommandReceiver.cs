@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Http;
@@ -22,7 +23,7 @@ namespace CK.Infrastructure.Commands
             _options = options;
         }
 
-        public async Task Invoke( HttpContext httpContext )
+        public async Task Invoke( HttpContext httpContext, CancellationToken cancellationToken = default( CancellationToken ) )
         {
             var commandRegistration = ResolveRouteMap( httpContext ).FindCommandRoute( httpContext.Request.Path, _options );
             if( commandRegistration == null && _next != null )
@@ -32,7 +33,7 @@ namespace CK.Infrastructure.Commands
             }
 
             ICommandRequestFactory commandRequestFactory = ResolveCommandFactory( httpContext );
-            ICommandRequest commandRequest = commandRequestFactory.CreateCommand( commandRegistration, httpContext.Request );
+            ICommandRequest commandRequest = await commandRequestFactory.CreateCommand( commandRegistration, httpContext.Request, cancellationToken );
             if( commandRequest == null )
             {
                 string msg = String.Format( "A valid command definition has been infered from routes, but the command type {0} failed to be instanciated.", commandRegistration.CommandType.Name );
@@ -40,7 +41,7 @@ namespace CK.Infrastructure.Commands
             }
 
             ICommandReceiver commandReceiver = ResolveCommandReceiver( httpContext );
-            ICommandResponse commandResponse = await commandReceiver.ProcessCommandAsync( commandRequest );
+            ICommandResponse commandResponse = await commandReceiver.ProcessCommandAsync( commandRequest, cancellationToken );
             if( commandResponse == null )
             {
                 string msg = String.Format( "A valid command response must be received" );

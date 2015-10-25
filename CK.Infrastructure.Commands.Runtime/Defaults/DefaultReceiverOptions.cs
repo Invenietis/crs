@@ -24,7 +24,7 @@ namespace CK.Infrastructure.Commands
             {
                 CommandType = typeof( TCommand ),
                 Route = new CommandRoutePath( RoutePrefix, route ),
-                IsLongRunningCommand = isLongRunning
+                IsLongRunning = isLongRunning
             } );
 
             _registry.RegisterHandler<TCommand, THandler>();

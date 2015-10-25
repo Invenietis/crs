@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CK.Infrastructure.Commands
@@ -16,7 +17,7 @@ namespace CK.Infrastructure.Commands
         /// <param name="callbackId"></param>
         /// <param name="response"></param>
         /// <returns></returns>
-        Task DispatchAsync( string callbackId, ICommandResponse response );
+        Task DispatchAsync( string callbackId, ICommandResponse response, CancellationToken cancellationToken = default( CancellationToken ) );
     }
 
 }

@@ -8,7 +8,7 @@ namespace CK.Infrastructure.Commands
 {
     internal abstract class CommandResponse : ICommandResponse
     {
-        internal CommandResponse( CommandContext ctx )
+        internal CommandResponse( CommandProcessingContext ctx )
         {
             CommandId = ctx.CommandId;
         }

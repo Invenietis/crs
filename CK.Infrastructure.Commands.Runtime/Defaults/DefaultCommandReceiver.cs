@@ -2,41 +2,32 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CK.Infrastructure.Commands
 {
     public class DefaultCommandReceiver : ICommandReceiver
     {
-        readonly ICommandFileWriter _fileWriter;
-        readonly ICommandResponseDispatcher _eventDispatcher;
-        readonly ICommandHandlerFactory _handlerFactory;
+        readonly Runners _runners;
         readonly ICommandHandlerRegistry _registry;
 
-        public DefaultCommandReceiver( ICommandResponseDispatcher eventDispatcher, ICommandFileWriter fileWriter, ICommandHandlerFactory handlerFactory, ICommandHandlerRegistry registry )
+        public DefaultCommandReceiver( ICommandResponseDispatcher eventDispatcher, ICommandHandlerFactory handlerFactory, ICommandHandlerRegistry registry )
         {
-            _eventDispatcher = eventDispatcher;
-            _fileWriter = fileWriter;
-            _handlerFactory = handlerFactory;
             _registry = registry;
+            _runners = new Runners( handlerFactory, eventDispatcher );
         }
 
-        public async Task<ICommandResponse> ProcessCommandAsync( ICommandRequest commandRequest )
+        public Task<ICommandResponse> ProcessCommandAsync( ICommandRequest commandRequest, CancellationToken cancellationToken = default( CancellationToken ) )
         {
-            var context = new CommandContext( commandRequest, Guid.NewGuid() );
-            var handlerType = _registry.GetHandlerType( context.Request.CommandType );
-            if( handlerType == null )
+            var context = new CommandProcessingContext( commandRequest, Guid.NewGuid() );
+            context.HandlerType = _registry.GetHandlerType( context.Request.CommandDescription.CommandType );
+            if( context.HandlerType == null )
             {
-                string msg = "Handler not found for command type " + context.Request.CommandType;
-                context.CreateErrorResponse( msg );
+                string msg = "Handler not found for command type " + context.Request.CommandDescription.CommandType;
+                return Task.FromResult( context.CreateErrorResponse( msg ) );
             }
-            else
-            {
-                ICommandRunner runner = context.PrepareHandling( handlerType, _handlerFactory, _eventDispatcher );
-                await runner.ProcessAsync( context );
-
-            }
-            return context.Response;
+            return _runners.RunAsync( context, cancellationToken );
         }
     }
 }

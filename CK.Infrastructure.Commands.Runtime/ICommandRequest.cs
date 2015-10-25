@@ -18,20 +18,16 @@ namespace CK.Infrastructure.Commands
         string CallbackId { get; }
 
         /// <summary>
-        /// Gets wether the command has been defined as a long running or not.
-        /// This gives a hint to the <see cref="ICommandReceiver"/>.
+        /// Command description
         /// </summary>
-        bool IsLongRunning { get; }
+        CommandRouteRegistration CommandDescription { get; }
 
         /// <summary>
         /// The instance of the command to process. This should never be null.
         /// </summary>
         object Command { get; }
 
-        /// <summary>
-        /// The <see cref="Type"/> of the command to process.
-        /// </summary>
-        Type CommandType { get; }
+        IReadOnlyCollection<BlobRef> Files { get; }
     }
 
 }
