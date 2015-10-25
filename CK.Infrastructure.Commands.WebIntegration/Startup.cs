@@ -19,7 +19,6 @@ namespace CK.Infrastructure.Commands.WebIntegration
 
         public void Configure( IApplicationBuilder app )
         {
-            app.UseIISPlatformHandler();
             app.UseStaticFiles();
             app.UseCommandReceiver( "c", x =>
             {

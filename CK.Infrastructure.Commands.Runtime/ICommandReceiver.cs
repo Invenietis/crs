@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CK.Infrastructure.Commands
@@ -16,7 +17,7 @@ namespace CK.Infrastructure.Commands
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
-        Task<ICommandResponse> ProcessCommandAsync( ICommandRequest command );
+        Task<ICommandResponse> ProcessCommandAsync( ICommandRequest command, CancellationToken cancellationToken = default( CancellationToken ) );
     }
 
 }

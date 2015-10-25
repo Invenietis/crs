@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Http.Authentication;
 using Microsoft.AspNet.Http.Features;
+using Microsoft.Extensions.Primitives;
 
 namespace CK.Infrastructure.Commands.Tests.Fake
 {
@@ -32,8 +34,59 @@ namespace CK.Infrastructure.Commands.Tests.Fake
             return new FakeHttpRequest( this )
             {
                 Path = requestPath,
-                Body = requestBody
+                Body = requestBody,
+                Query = new ReadableStringCollection(  "c", "3712-451235-aze"  )
             };
+        }
+
+        class ReadableStringCollection : IReadableStringCollection
+        {
+            private string c; private string v;
+
+            public ReadableStringCollection( string c, string v )
+            {
+                this.c = c;
+                this.v = v;
+            }
+
+            public StringValues this[string key]
+            {
+                get
+                {
+                    return v;
+                }
+            }
+
+            public int Count
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public ICollection<string> Keys
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public bool ContainsKey( string key )
+            {
+                throw new NotImplementedException();
+            }
+
+            public IEnumerator<KeyValuePair<string, StringValues>> GetEnumerator()
+            {
+                throw new NotImplementedException();
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                throw new NotImplementedException();
+            }
         }
 
         public override IServiceProvider ApplicationServices

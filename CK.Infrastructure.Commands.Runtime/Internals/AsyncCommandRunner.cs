@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CK.Infrastructure.Commands
@@ -10,25 +11,24 @@ namespace CK.Infrastructure.Commands
         CommandRunner _localRunner;
         public ICommandResponseDispatcher EventDispatcher { get; private set; }
 
-        public AsyncCommandRunner( ICommandHandlerFactory factory, ICommandResponseDispatcher dispatcher )
+        public AsyncCommandRunner( CommandRunner innerRunner, ICommandResponseDispatcher dispatcher )
         {
-            _localRunner = new CommandRunner( factory );
+            _localRunner = innerRunner;
             EventDispatcher = dispatcher;
         }
 
-        public Task ProcessAsync( CommandContext ctx )
+        public Task<ICommandResponse> RunAsync( CommandProcessingContext ctx, CancellationToken cancellationToken = default( CancellationToken ) )
         {
             var newContext = ctx.CloneContext();
             var t = new Task( async () =>
             {
-                await _localRunner.ProcessAsync( newContext );
-                await EventDispatcher.DispatchAsync( newContext.Request.CallbackId, newContext.Response );
+                var response =  await _localRunner.RunAsync( newContext, cancellationToken );
+                await EventDispatcher.DispatchAsync( newContext.Request.CallbackId, response, cancellationToken );
 
-            }, TaskCreationOptions.LongRunning );
+            }, cancellationToken, TaskCreationOptions.LongRunning );
 
-            ctx.CreateDeferredResponse();
             t.Start( TaskScheduler.Current );
-            return Task.FromResult( 0 );
+            return Task.FromResult( ctx.CreateDeferredResponse() );
         }
     }
 }

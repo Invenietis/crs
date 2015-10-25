@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CK.Infrastructure.Commands
@@ -8,7 +9,7 @@ namespace CK.Infrastructure.Commands
 
     internal interface ICommandRunner
     {
-        Task ProcessAsync( CommandContext ctx );
+        Task<ICommandResponse> RunAsync( CommandProcessingContext ctx, CancellationToken cancellationToken = default( CancellationToken ) );
     }
 
 }

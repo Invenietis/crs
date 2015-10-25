@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNet.Http;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.AspNet.Http;
 
 namespace CK.Infrastructure.Commands
 {
@@ -10,6 +12,6 @@ namespace CK.Infrastructure.Commands
         /// <param name="routeInfo"></param>
         /// <param name="request"></param>
         /// <returns></returns>
-        ICommandRequest CreateCommand( CommandRouteRegistration routeInfo, HttpRequest request );
+        Task<ICommandRequest> CreateCommand( CommandRouteRegistration routeInfo, HttpRequest request, CancellationToken cancellationToken = default( CancellationToken ) );
     }
 }

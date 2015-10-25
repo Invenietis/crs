@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CK.Infrastructure.Commands
@@ -36,14 +37,14 @@ namespace CK.Infrastructure.Commands
             return result;
         }
 
-        public virtual async Task ProcessAsync( CommandContext ctx )
+        public virtual async Task<ICommandResponse> RunAsync( CommandProcessingContext ctx, CancellationToken cancellationToken = default( CancellationToken ) )
         {
             JobResult result = await DoJob( ctx.HandlerType, ctx.Request.Command );
             if( result.Exception == null )
             {
-                ctx.CreateDirectResponse( result.Result );
+                return ctx.CreateDirectResponse( result.Result );
             }
-            else ctx.CreateErrorResponse( result.Exception.Message );
+            return ctx.CreateErrorResponse( result.Exception.Message );
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CK.Infrastructure.Commands
@@ -13,8 +14,8 @@ namespace CK.Infrastructure.Commands
         /// Saves the content of a BLOB and its metadata and returns a ref to this BLOB
         /// </summary>
         /// <param name="blobContent"></param>
-        /// <param name="metadata"></param>
+        /// <param name="fileName"></param>
         /// <returns></returns>
-        Task<BlobRef> SaveAsync( Stream blobContent, IDictionary<string, string> metadata );
+        Task<BlobRef> SaveAsync( Stream blobContent, string contentType, string contentDisposition, CancellationToken cancellationToken = default( CancellationToken ) );
     }
 }
