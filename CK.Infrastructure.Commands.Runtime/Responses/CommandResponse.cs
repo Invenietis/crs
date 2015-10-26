@@ -8,9 +8,9 @@ namespace CK.Infrastructure.Commands
 {
     internal abstract class CommandResponse : ICommandResponse
     {
-        internal CommandResponse( CommandProcessingContext ctx )
+        internal CommandResponse( Guid commandId )
         {
-            CommandId = ctx.CommandId;
+            CommandId = commandId;
         }
 
         public CommandResponseType ResponseType { get; protected set; }

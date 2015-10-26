@@ -8,7 +8,7 @@ namespace CK.Infrastructure.Commands
 {
     public class DefaultCommandHandlerFactory : ICommandHandlerFactory
     {
-        public ICommandHandler Create( Type handlerType )
+        public ICommandHandler Create( Type handlerType ) 
         {
             return Activator.CreateInstance( handlerType ) as ICommandHandler;
         }

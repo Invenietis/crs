@@ -19,7 +19,7 @@ namespace CK.Infrastructure.Commands
             _fileWriter = fileWriter;
         }
 
-        public async Task<ICommandRequest> CreateCommand( CommandRouteRegistration routeInfo, HttpRequest request, CancellationToken cancellationToken = default( CancellationToken ) )
+        public async Task<ICommandRequest> CreateCommand( CommandDescriptor routeInfo, HttpRequest request, CancellationToken cancellationToken = default( CancellationToken ) )
         {
             CommandRequest commandRequest = new CommandRequest(routeInfo);
             if( request.HasFormContentType )

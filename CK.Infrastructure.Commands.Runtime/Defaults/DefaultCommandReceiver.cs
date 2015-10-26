@@ -9,25 +9,25 @@ namespace CK.Infrastructure.Commands
 {
     public class DefaultCommandReceiver : ICommandReceiver
     {
-        readonly Runners _runners;
-        readonly ICommandHandlerRegistry _registry;
+        readonly ICommandRunnerFactory _runners;
 
-        public DefaultCommandReceiver( ICommandResponseDispatcher eventDispatcher, ICommandHandlerFactory handlerFactory, ICommandHandlerRegistry registry, IServiceProvider sp )
+        public DefaultCommandReceiver( ICommandRunnerFactory runnerFactory )
         {
-            _registry = registry;
-            _runners = new Runners( handlerFactory, eventDispatcher, sp );
+            if( runnerFactory == null ) throw new ArgumentNullException( nameof( runnerFactory ) );
+
+            _runners = runnerFactory;
         }
 
         public Task<ICommandResponse> ProcessCommandAsync( ICommandRequest commandRequest, CancellationToken cancellationToken = default( CancellationToken ) )
         {
-            var context = new CommandProcessingContext( commandRequest, Guid.NewGuid() );
-            context.HandlerType = _registry.GetHandlerType( context.Request.CommandDescription.CommandType );
-            if( context.HandlerType == null )
+            if( commandRequest.CommandDescription.HandlerType == null )
             {
-                string msg = "Handler not found for command type " + context.Request.CommandDescription.CommandType;
-                return Task.FromResult( context.CreateErrorResponse( msg ) );
+                string msg = "Handler not found for command type " + commandRequest.CommandDescription.CommandType;
+                return Task.FromResult<ICommandResponse>( new ErrorResponse( msg, Guid.NewGuid() ) );
             }
-            return _runners.RunAsync( context, cancellationToken );
+            CommandProcessingContext processingContext = new CommandProcessingContext( Guid.NewGuid(), commandRequest );
+
+            return _runners.CreateRunner( processingContext.RuntimeContext ).RunAsync( processingContext, cancellationToken );
         }
     }
 }

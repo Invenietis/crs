@@ -8,13 +8,14 @@ namespace CK.Infrastructure.Commands
 {
     internal class AsyncCommandRunner : ICommandRunner
     {
-        CommandRunner _localRunner;
-        public ICommandResponseDispatcher EventDispatcher { get; private set; }
+        readonly CommandRunner _localRunner;
+        readonly ICommandResponseDispatcher _commandResponseDispatcher;
 
         public AsyncCommandRunner( CommandRunner innerRunner, ICommandResponseDispatcher dispatcher )
         {
+            if( innerRunner == null ) throw new ArgumentNullException( nameof( innerRunner ) );
             _localRunner = innerRunner;
-            EventDispatcher = dispatcher;
+            _commandResponseDispatcher = dispatcher;
         }
 
         public Task<ICommandResponse> RunAsync( CommandProcessingContext ctx, CancellationToken cancellationToken = default( CancellationToken ) )
@@ -23,7 +24,7 @@ namespace CK.Infrastructure.Commands
             var t = new Task( async () =>
             {
                 var response =  await _localRunner.RunAsync( newContext, cancellationToken );
-                await EventDispatcher.DispatchAsync( newContext.Request.CallbackId, response, cancellationToken );
+                await _commandResponseDispatcher.DispatchAsync( newContext.Request.CallbackId, response, cancellationToken );
 
             }, cancellationToken, TaskCreationOptions.LongRunning );
 

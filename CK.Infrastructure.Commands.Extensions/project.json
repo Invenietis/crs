@@ -9,6 +9,9 @@
         "dnx451": {
             "dependencies": {
                 "CK.SqlServer.Setup.Model": "4.0.0-beta"
+            },
+            "frameworkAssemblies": {
+                "System.Transactions": "4.0.0.0"
             }
         }
     },

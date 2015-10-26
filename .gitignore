@@ -29,3 +29,5 @@ _ReSharper*/
 [Tt]est[Rr]esult*
 packages/
 CK.Infrastructure.Commands.WebIntegration/wwwroot/libs/
+.bowerrc
+*.lock.json

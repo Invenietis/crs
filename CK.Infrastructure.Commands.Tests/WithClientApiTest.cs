@@ -24,13 +24,8 @@ namespace CK.Infrastructure.Commands.Tests
         public async Task SendCommandAndWaitForEvents()
         {
             string serverAddress = "http://MyDumbServer/c/";
-            var registry = new DefaultCommandHandlerRegistry();
-            registry.RegisterHandler<TransferAmountCommand, TransferAlwaysSuccessHandler>();
-            registry.RegisterHandler<WithdrawMoneyCommand, WithDrawyMoneyHandler>();
 
-            var commandReceiver = new DefaultCommandReceiver(  EventChannel.Instance, new DefaultCommandHandlerFactory(), registry, null );
-
-            using( var server = new CommandReceiverHost( serverAddress, commandReceiver ) )
+            using( var server = new CommandReceiverHost( serverAddress, new DefaultCommandReceiver( new DefaultRunnerFactory( new DefaultCommandHandlerFactory() ) ) ) )
             {
                 // Server initialization
                 server.Run();
@@ -45,7 +40,7 @@ namespace CK.Infrastructure.Commands.Tests
                     Amount = 400
                 };
 
-                ClientCommandResult result = await sender.SendAsync(serverAddress, command );
+                ClientCommandResult result = await sender.SendAsync(serverAddress, command, new CommandDescriptor { Route = new CommandRoutePath( "c", "TransferAmountCommand" ), CommandType = typeof( TransferAmountCommand ), HandlerType = typeof( TransferAlwaysSuccessHandler ) } );
                 await result.OnResultAsync<TransferAmountCommand.Result>( @event =>
                 {
                     Output.WriteLine( @event.CancellableDate.ToString() );
@@ -65,7 +60,7 @@ namespace CK.Infrastructure.Commands.Tests
                     Amount = 20
                 };
 
-                result = await sender.SendAsync( serverAddress, withDrawCommand );
+                result = await sender.SendAsync( serverAddress, withDrawCommand, new CommandDescriptor { Route = new CommandRoutePath( "c", "WithdrawMoneyCommand" ), CommandType = typeof( WithdrawMoneyCommand ), HandlerType = typeof( WithDrawyMoneyHandler ) } );
                 await result.OnResultAsync<WithdrawMoneyCommand.Result>( @event =>
                 {
                     Output.WriteLine( @event.Success.ToString() );
@@ -85,30 +80,25 @@ namespace CK.Infrastructure.Commands.Tests
 
     #region Client SDK
 
-    public interface IClientCommandSender
-    {
-        Task<ClientCommandResult> SendAsync<T>( string address, T command );
-    }
-
     class CommandRequest : ICommandRequest
     {
         public string CallbackId { get; set; }
 
         public object Command { get; set; }
 
-        public CommandRouteRegistration CommandDescription { get; set; }
+        public CommandDescriptor CommandDescription { get; set; }
         public IReadOnlyCollection<BlobRef> Files { get; set; }
     }
 
-    public class ClientCommandSender : IClientCommandSender
+    class ClientCommandSender
     {
-        public async Task<ClientCommandResult> SendAsync<T>( string address, T command )
+        public async Task<ClientCommandResult> SendAsync<T>( string address, T command, CommandDescriptor commandDescriptor )
         {
             ICommandRequest request = new CommandRequest
             {
                 Command = command,
                 CallbackId = EventChannel.Instance.ConnectionId,
-                CommandDescription = new CommandRouteRegistration { CommandType = typeof( T) }
+                CommandDescription = commandDescriptor
             };
             ClientCommandResult result = null;
             try

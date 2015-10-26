@@ -1,5 +1,4 @@
-﻿#if DNX451 || NET46
-using System.Transactions;
+﻿using System.Transactions;
 
 namespace CK.Infrastructure.Commands
 {
@@ -60,4 +59,3 @@ namespace CK.Infrastructure.Commands
         }
     }
 }
-#endif

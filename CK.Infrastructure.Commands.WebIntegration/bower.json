@@ -1,20 +1,19 @@
 {
-    "name": "CK.Infrastructure.Commands.WebIntegration",
-    "version": "0.0.0-alpha-01",
-    "authors": [
-        "Cédric Legendre <albundy1385@gmail.com>"
-    ],
-    "license": "MIT",
-    "ignore": [
-        "**/.*",
-        "node_modules",
-        "bower_components",
-        "test",
-        "tests"
-    ],
-    "dependencies": {
-        "requirejs": "2.1.20",
-        "signalr": "2.2.0",
-        "CommandSender": "file:///D:/Dev/Framework/CK.Infrastructure.Commands.Client/.git"   
-    }   
-}     
+  "name": "CK.Infrastructure.Commands.WebIntegration",
+  "version": "0.0.0-alpha-01",
+  "authors": [
+    "Cédric Legendre <albundy1385@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "CK.Infrastructure.CommandSender": "~0.1.0-alpha-01",
+    "requirejs": "2.1.20"
+  }
+}

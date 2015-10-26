@@ -10,11 +10,11 @@ namespace CK.Infrastructure.Commands
     {
         BlobRef[] _refs;
 
-        public CommandRequest( CommandRouteRegistration routeInfo )
+        public CommandRequest( CommandDescriptor routeInfo )
         {
             CommandDescription = routeInfo;
         }
-        public CommandRouteRegistration CommandDescription { get; private set; }
+        public CommandDescriptor CommandDescription { get; private set; }
 
         public object Command { get; set; }
 

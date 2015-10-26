@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace CK.Infrastructure.Commands
 {
-
-    internal interface ICommandRunner
+    public interface ICommandRunner
     {
         Task<ICommandResponse> RunAsync( CommandProcessingContext ctx, CancellationToken cancellationToken = default( CancellationToken ) );
     }
-
 }
