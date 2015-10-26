@@ -25,7 +25,7 @@ namespace CK.Infrastructure.Commands.Tests
         {
             string serverAddress = "http://MyDumbServer/c/";
 
-            using( var server = new CommandReceiverHost( serverAddress, new DefaultCommandReceiver( new DefaultRunnerFactory( new DefaultCommandHandlerFactory() ) ) ) )
+            using( var server = new CommandReceiverHost( serverAddress, new DefaultCommandReceiver( new DefaultCommandRunnerHostSelector( EventChannel.Instance ), new DefaultCommandHandlerFactory() ) ) )
             {
                 // Server initialization
                 server.Run();

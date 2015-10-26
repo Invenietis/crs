@@ -7,7 +7,7 @@ namespace CK.Infrastructure.Commands
 {
     internal class DirectResponse : CommandResponse
     {
-        public DirectResponse( object result, CommandProcessingContext ctx ) : base( ctx.RuntimeContext.CommandId )
+        public DirectResponse( object result, CommandContext ctx ) : base( ctx.CommandId )
         {
             ResponseType = CommandResponseType.Direct;
             Payload = result;

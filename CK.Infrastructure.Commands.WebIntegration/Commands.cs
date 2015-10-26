@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 namespace CK.Infrastructure.Commands.Handlers
 {
 
-    [AsyncCommand]
     public class UploadVideoCommand
     {
         public string Name { get; set; }
@@ -15,7 +14,6 @@ namespace CK.Infrastructure.Commands.Handlers
         public BlobRef Videos { get; set; }
     }
 
-    [AsyncCommand]
     public class TransferAmountCommand
     {
         public Guid SourceAccountId { get; set; }

@@ -8,6 +8,6 @@ namespace CK.Infrastructure.Commands
 {
     public interface ICommandRunner
     {
-        Task<ICommandResponse> RunAsync( CommandProcessingContext ctx, CancellationToken cancellationToken = default( CancellationToken ) );
+        Task RunAsync( CommandExecutionContext ctx, CancellationToken cancellationToken = default( CancellationToken ) );
     }
 }

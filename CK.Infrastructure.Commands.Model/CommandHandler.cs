@@ -3,16 +3,6 @@ using System.Threading.Tasks;
 
 namespace CK.Infrastructure.Commands
 {
-    public class EmptyResult
-    {
-        public static EmptyResult Empty = new EmptyResult();
-
-        public override int GetHashCode()
-        {
-            return 0;
-        }
-    }
-
     public abstract class CommandHandler<T, TResult> : ICommandHandler<T> where T : class
         where TResult : class
     {
@@ -50,5 +40,13 @@ namespace CK.Infrastructure.Commands
             return HandleAsync( (CommandContext<T>)commandContext );
         }
     }
+    internal class EmptyResult
+    {
+        public static EmptyResult Empty = new EmptyResult();
 
+        public override int GetHashCode()
+        {
+            return 0;
+        }
+    }
 }

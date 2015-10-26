@@ -7,7 +7,7 @@ namespace CK.Infrastructure.Commands
 {
     internal class DeferredResponse : CommandResponse
     {
-        public DeferredResponse( string callbackId, CommandProcessingContext ctx ) : base( ctx.RuntimeContext.CommandId )
+        public DeferredResponse( string callbackId, CommandContext ctx ) : base( ctx.CommandId )
         {
             ResponseType = CommandResponseType.Deferred;
             Payload = callbackId;

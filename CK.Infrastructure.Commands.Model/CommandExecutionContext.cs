@@ -8,14 +8,19 @@ namespace CK.Infrastructure.Commands
     /// </summary>
     public class CommandExecutionContext
     {
+        private ICommandResponse _response;
 
-        public CommandExecutionContext( CommandContext commandContext )
+        public CommandExecutionContext( CommandDescriptor commandDescription, CommandContext commandContext )
         {
+            if( commandDescription == null ) throw new ArgumentNullException( "commandDescription" );
             if( commandContext == null ) throw new ArgumentNullException( "commandContext" );
 
+            CommandDescription = commandDescription;
             RuntimeContext = commandContext;
             Items = new Dictionary<object, object>();
         }
+
+        public CommandDescriptor CommandDescription { get; private set; }
 
         public CommandContext RuntimeContext { get; private set; }
 
@@ -23,6 +28,27 @@ namespace CK.Infrastructure.Commands
         /// Gets a bag of data that can hold data during the command execution
         /// </summary>
         public IDictionary<object, object> Items { get; private set; }
+
+        public ICommandResponse CreateResponse()
+        {
+            if( _response != null ) throw new InvalidOperationException( "There is already a Response created for this CommandContext" );
+            if( Exception != null )
+            {
+                _response = CreateErrorResponse( Exception.Message );
+            }
+            else
+            {
+                if( RuntimeContext.IsLongRunning ) _response = new DeferredResponse( RuntimeContext.CallbackId, RuntimeContext );
+                else _response = new DirectResponse( Result, RuntimeContext );
+            }
+            return _response;
+        }
+
+        public ICommandResponse CreateErrorResponse( string message )
+        {
+            _response = new ErrorResponse( message, RuntimeContext.CommandId );
+            return _response;
+        }
 
         /// <summary>
         /// Gets or sets the result of the command.

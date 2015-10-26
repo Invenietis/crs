@@ -7,7 +7,7 @@
         "Microsoft.AspNet.Hosting": "1.0.0-*",
         "Microsoft.AspNet.Server.WebListener": "1.0.0-*",
         "Microsoft.AspNet.SignalR.Server": "3.0.0-*",
-        "Microsoft.AspNet.StaticFiles": "1.0.0-*"
+        "Microsoft.AspNet.StaticFiles": "1.0.0-*" 
     },
 
     "commands": {
@@ -31,6 +31,6 @@
     "exclude": [
         "wwwroot",
         "node_modules",
-        "bower_components"
+        "bower_components" 
     ]
 }

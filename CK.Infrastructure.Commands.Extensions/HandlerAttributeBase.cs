@@ -3,7 +3,7 @@
 namespace CK.Infrastructure.Commands
 {
     [AttributeUsage( AttributeTargets.Method | AttributeTargets.Class )]
-    public abstract class HandlerAttributeBase : Attribute, IDecorator
+    public abstract class HandlerAttributeBase : Attribute, ICommandDecorator
     {
         public int Order { get; set; }
 

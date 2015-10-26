@@ -105,7 +105,7 @@ namespace CK.Infrastructure.Commands
             services.AddSingleton<ICommandReceiver, DefaultCommandReceiver>();
             services.AddSingleton<ICommandRequestFactory, DefaultCommandFactory>();
             services.AddSingleton<ICommandResponseSerializer, DefaultCommandResponseSerializer>();
-            services.AddSingleton<ICommandRunnerFactory, DefaultRunnerFactory>();
+            services.AddSingleton<ICommandRunnerHostSelector, DefaultCommandRunnerHostSelector>();
             services.AddSingleton<ICommandHandlerFactory, DefaultCommandHandlerFactory>();
             services.AddSingleton<ICommandFileWriter, DefaultCommandFileStore>();
             services.AddSingleton<ICommandResponseDispatcher>( ( sp ) =>

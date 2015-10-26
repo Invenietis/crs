@@ -1,6 +1,6 @@
 ﻿namespace CK.Infrastructure.Commands
 {
-    public interface IDecorator
+    public interface ICommandDecorator
     {
         int Order { get; }
 
