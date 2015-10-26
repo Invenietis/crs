@@ -1,0 +1,21 @@
+﻿{
+    "version": "1.0.0-*",
+    "description": "CK.Infrastructure.Commands.Extensions Class Library",
+    "authors": [ "cedri_000" ],
+    "tags": [ "" ],
+    "projectUrl": "",
+    "licenseUrl": "",
+    "frameworks": {
+        "dnx451": {
+            "dependencies": {
+                "CK.SqlServer.Setup.Model": "4.0.0-beta"
+            },
+            "frameworkAssemblies": {
+                "System.Transactions": "4.0.0.0"
+            }
+        }
+    },
+    "dependencies": {
+        "CK.Infrastructure.Commands.Model": "1.0.0-*"
+    }
+}

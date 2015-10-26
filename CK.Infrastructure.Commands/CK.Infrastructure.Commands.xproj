@@ -17,12 +17,5 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <ProduceOutputsOnBuild>True</ProduceOutputsOnBuild>
   </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CK.Infrastructure.Commands.Abstractions\CK.Infrastructure.Commands.Abstractions.csproj" />
-    <ProjectReference Include="..\CK.Infrastructure.Commands.Abstractions\CK.Infrastructure.Commands.Runtime.csproj" />
-    <ProjectReference Include="..\CK.Infrastructure.Commands.Framework\CK.Infrastructure.Commands.Model.csproj" />
-    <ProjectReference Include="..\CK.Infrastructure.Commands.Model\CK.Infrastructure.Commands.Model.csproj" />
-    <ProjectReference Include="..\CK.Infrastructure.Commands.Runtime\CK.Infrastructure.Commands.Runtime.csproj" />
-  </ItemGroup>
   <Import Project="$(VSToolsPath)\DNX\Microsoft.DNX.targets" Condition="'$(VSToolsPath)' != ''" />
 </Project>

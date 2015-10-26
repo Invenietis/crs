@@ -71,9 +71,9 @@ namespace CK.Infrastructure.Commands.Tests
                 DestinationAccountId = Guid.NewGuid(),
                 Amount = 1000
             };
-            ICommandReceiverOptions options = new DefaultReceiverOptions( "/c", ApplicationServices.GetRequiredService<ICommandRouteMap>(), ApplicationServices.GetRequiredService<ICommandHandlerRegistry>() );
+            ICommandReceiverOptions options = new DefaultReceiverOptions( "/c", new DefaultCommandRegistry() );
             {
-                Commands.CommandReceiver r = new Commands.CommandReceiver( ShouldNotInvokeDelegate, options);
+                Commands.CommandReceiver r = new Commands.CommandReceiver( ShouldNotInvokeDelegate, options.Registry );
                 using( var httpContext = new FakeHttpContext( ApplicationServices, "/api", SerializeRequestBody( cmd ) ) )
                 {
                     var exc = await Assert.ThrowsAsync<CKException>( () => r.Invoke( httpContext ) );
@@ -88,7 +88,7 @@ namespace CK.Infrastructure.Commands.Tests
                 }
             }
             {
-                Commands.CommandReceiver r = new Commands.CommandReceiver( SuccessDelegate, options);
+                Commands.CommandReceiver r = new Commands.CommandReceiver( SuccessDelegate, options.Registry);
 
                 using( var httpContext = new FakeHttpContext( ApplicationServices, "/c/TransferAmountCommand", SerializeRequestBody( cmd ) ) )
                 {

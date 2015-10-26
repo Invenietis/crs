@@ -5,7 +5,7 @@
             DestinationAccountId: '37EC9EA1-2A13-4A4D-B55E-6C844D822DAC',
             Amount: Math.random() * 1000
         };
-        $.CK.commandSender.send('TransferAmount', command1).done(r => {
+        $.CK.getCommandSender( '/c' ).send('TransferAmount', command1).done(r => {
             $("#results").append('<li class="long-running">' + JSON.stringify(r) + '</li>');
         });
     };
@@ -15,7 +15,7 @@
             Amount: Math.random() * 1000
         };
          
-        $.CK.commandSender.send('WithdrawMoney', command2).done(r => {
+        $.CK.getCommandSender('/c').send('WithdrawMoney', command2).done(r => {
             $("#results").append('<li>' + JSON.stringify(r) + '</li>');
         });
     };

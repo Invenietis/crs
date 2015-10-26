@@ -8,7 +8,7 @@ namespace CK.Infrastructure.Commands.Handlers
 {
     public class TransferAlwaysSuccessHandler : CommandHandler<TransferAmountCommand, TransferAmountCommand.Result>
     {
-        public override Task<TransferAmountCommand.Result> DoHandleAsync( TransferAmountCommand command )
+        protected override Task<TransferAmountCommand.Result> DoHandleAsync( CommandContext<TransferAmountCommand> command )
         {
             var result = new TransferAmountCommand.Result
             {
@@ -21,7 +21,7 @@ namespace CK.Infrastructure.Commands.Handlers
 
     public class WithDrawyMoneyHandler : CommandHandler<WithdrawMoneyCommand, WithdrawMoneyCommand.Result>
     {
-        public override Task<WithdrawMoneyCommand.Result> DoHandleAsync( WithdrawMoneyCommand command )
+        protected override Task<WithdrawMoneyCommand.Result> DoHandleAsync( CommandContext<WithdrawMoneyCommand> command )
         {
             var result =  new WithdrawMoneyCommand.Result
             {

@@ -14,18 +14,18 @@ namespace CK.Infrastructure.Commands
     // You may need to install the Microsoft.AspNet.Http.Abstractions package into your project
     public class CommandReceiver
     {
+        private readonly ICommandRegistry _registry;
         private readonly RequestDelegate _next;
-        private readonly ICommandReceiverOptions _options;
 
-        public CommandReceiver( RequestDelegate next, ICommandReceiverOptions options )
+        public CommandReceiver( RequestDelegate next, ICommandRegistry registry )
         {
             _next = next;
-            _options = options;
+            _registry = registry;
         }
 
-        public async Task Invoke( HttpContext httpContext, CancellationToken cancellationToken = default( CancellationToken ) )
+        public async Task Invoke( HttpContext httpContext )
         {
-            var commandRegistration = ResolveRouteMap( httpContext ).FindCommandRoute( httpContext.Request.Path, _options );
+            var commandRegistration = _registry.Find( httpContext.Request.Path );
             if( commandRegistration == null && _next != null )
             {
                 await _next( httpContext );
@@ -33,7 +33,7 @@ namespace CK.Infrastructure.Commands
             }
 
             ICommandRequestFactory commandRequestFactory = ResolveCommandFactory( httpContext );
-            ICommandRequest commandRequest = await commandRequestFactory.CreateCommand( commandRegistration, httpContext.Request, cancellationToken );
+            ICommandRequest commandRequest = await commandRequestFactory.CreateCommand( commandRegistration, httpContext.Request, httpContext.RequestAborted );
             if( commandRequest == null )
             {
                 string msg = String.Format( "A valid command definition has been infered from routes, but the command type {0} failed to be instanciated.", commandRegistration.CommandType.Name );
@@ -41,7 +41,7 @@ namespace CK.Infrastructure.Commands
             }
 
             ICommandReceiver commandReceiver = ResolveCommandReceiver( httpContext );
-            ICommandResponse commandResponse = await commandReceiver.ProcessCommandAsync( commandRequest, cancellationToken );
+            ICommandResponse commandResponse = await commandReceiver.ProcessCommandAsync( commandRequest, httpContext.RequestAborted );
             if( commandResponse == null )
             {
                 string msg = String.Format( "A valid command response must be received" );
@@ -54,16 +54,6 @@ namespace CK.Infrastructure.Commands
 
         #region Resolvers
 
-        protected virtual ICommandRouteMap ResolveRouteMap( HttpContext context )
-        {
-            ICommandRouteMap map = context.ApplicationServices.GetService<ICommandRouteMap>();
-            if( map == null )
-            {
-                throw new InvalidOperationException( "An implementation of ICommandRouteMap must be registered into the ApplicationServices" );
-            }
-            return map;
-        }
-
         protected virtual ICommandRequestFactory ResolveCommandFactory( HttpContext context )
         {
             ICommandRequestFactory commandFactory = context.ApplicationServices.GetService<ICommandRequestFactory>();
@@ -73,6 +63,7 @@ namespace CK.Infrastructure.Commands
             }
             return commandFactory;
         }
+
         protected virtual ICommandReceiver ResolveCommandReceiver( HttpContext context )
         {
             ICommandReceiver o = context.ApplicationServices.GetService<ICommandReceiver>();
@@ -102,12 +93,11 @@ namespace CK.Infrastructure.Commands
     {
         public static IApplicationBuilder UseCommandReceiver( this IApplicationBuilder builder, string routePrefix, Action<ICommandReceiverOptions> configuration )
         {
-            ICommandRouteMap map = builder.ApplicationServices.GetRequiredService<ICommandRouteMap>();
-            ICommandHandlerRegistry registry = builder.ApplicationServices.GetRequiredService<ICommandHandlerRegistry>();
-            ICommandReceiverOptions options = new DefaultReceiverOptions(routePrefix, map, registry);
+            ICommandRegistry map = new DefaultCommandRegistry();
+            ICommandReceiverOptions options = new DefaultReceiverOptions(routePrefix, map );
             configuration( options );
 
-            return builder.UseMiddleware<CommandReceiver>( options );
+            return builder.UseMiddleware<CommandReceiver>( map );
         }
 
         public static void AddCommandReceiver( this IServiceCollection services )
@@ -115,8 +105,7 @@ namespace CK.Infrastructure.Commands
             services.AddSingleton<ICommandReceiver, DefaultCommandReceiver>();
             services.AddSingleton<ICommandRequestFactory, DefaultCommandFactory>();
             services.AddSingleton<ICommandResponseSerializer, DefaultCommandResponseSerializer>();
-            services.AddSingleton<ICommandRouteMap, DefaultCommandRouteMap>();
-            services.AddSingleton<ICommandHandlerRegistry, DefaultCommandHandlerRegistry>();
+            services.AddSingleton<ICommandRunnerHostSelector, DefaultCommandRunnerHostSelector>();
             services.AddSingleton<ICommandHandlerFactory, DefaultCommandHandlerFactory>();
             services.AddSingleton<ICommandFileWriter, DefaultCommandFileStore>();
             services.AddSingleton<ICommandResponseDispatcher>( ( sp ) =>

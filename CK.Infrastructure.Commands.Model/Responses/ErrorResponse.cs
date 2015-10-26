@@ -7,7 +7,7 @@ namespace CK.Infrastructure.Commands
 {
     internal class ErrorResponse : CommandResponse
     {
-        public ErrorResponse( string msg, CommandProcessingContext ctx ) : base( ctx )
+        public ErrorResponse( string msg, Guid commandId ) : base( commandId )
         {
             ResponseType = CommandResponseType.Error;
             Payload = msg;

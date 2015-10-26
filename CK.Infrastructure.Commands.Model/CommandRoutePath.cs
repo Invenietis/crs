@@ -9,8 +9,6 @@ namespace CK.Infrastructure.Commands
 {
     public class CommandRoutePath : IEquatable<CommandRoutePath>
     {
-        private static readonly Regex DefaultRoute = new Regex( @"\/(\w+)\/(\w+)", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
-
         public string Value { get; set; }
 
         public CommandRoutePath( string requestPath )
@@ -27,14 +25,7 @@ namespace CK.Infrastructure.Commands
         {
             return Value;
         }
-
-        public string ExtractCommandClassName()
-        {
-            if( !DefaultRoute.IsMatch( Value ) ) return null;
-
-            return DefaultRoute.Match( Value ).Groups[3].Value;
-        }
-
+        
         public override int GetHashCode()
         {
             return Value.GetHashCode();
@@ -51,11 +42,6 @@ namespace CK.Infrastructure.Commands
         public bool Equals( CommandRoutePath other )
         {
             return other.Value == this.Value;
-        }
-
-        public bool IsValid( string routePrefix )
-        {
-            return Value.StartsWith( routePrefix ) && DefaultRoute.IsMatch( Value );
         }
     }
 }
