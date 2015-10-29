@@ -16,6 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using CK.Core;
 using CK.Infrastructure.Commands.Tests.Handlers;
+using Microsoft.Extensions.OptionsModel;
 
 namespace CK.Infrastructure.Commands.Tests
 {
@@ -71,16 +72,16 @@ namespace CK.Infrastructure.Commands.Tests
                 DestinationAccountId = Guid.NewGuid(),
                 Amount = 1000
             };
-            ICommandReceiverOptions options = new DefaultReceiverOptions( "/c", new DefaultCommandRegistry() );
+            OptionStub option = new OptionStub();
             {
-                Commands.CommandReceiver r = new Commands.CommandReceiver( ShouldNotInvokeDelegate, options.Registry );
+                Commands.CommandReceiver r = new Commands.CommandReceiver( ShouldNotInvokeDelegate, option, null  );
                 using( var httpContext = new FakeHttpContext( ApplicationServices, "/api", SerializeRequestBody( cmd ) ) )
                 {
                     var exc = await Assert.ThrowsAsync<CKException>( () => r.Invoke( httpContext ) );
                     Assert.Equal( "Next delegate invoked.", exc.Message );
                 }
 
-                options.Register<TransferAmountCommand, TransferAlwaysSuccessHandler>( typeof( TransferAmountCommand ).Name, false );
+                option.Value.Register<TransferAmountCommand, TransferAlwaysSuccessHandler>( typeof( TransferAmountCommand ).Name, false );
                 using( var httpContext = new FakeHttpContext( ApplicationServices, "/api", SerializeRequestBody( cmd ) ) )
                 {
                     var exc = await Assert.ThrowsAsync<CKException>( () => r.Invoke( httpContext ) );
@@ -88,7 +89,7 @@ namespace CK.Infrastructure.Commands.Tests
                 }
             }
             {
-                Commands.CommandReceiver r = new Commands.CommandReceiver( SuccessDelegate, options.Registry);
+                Commands.CommandReceiver r = new Commands.CommandReceiver( SuccessDelegate, option, "/c" );
 
                 using( var httpContext = new FakeHttpContext( ApplicationServices, "/c/TransferAmountCommand", SerializeRequestBody( cmd ) ) )
                 {

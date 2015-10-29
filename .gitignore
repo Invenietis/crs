@@ -31,3 +31,4 @@ packages/
 CK.Infrastructure.Commands.WebIntegration/wwwroot/libs/
 .bowerrc
 *.lock.json
+CK.Infrastructure.Commands.Model/project.lock.json

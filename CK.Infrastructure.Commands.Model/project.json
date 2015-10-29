@@ -8,14 +8,8 @@
 
     "frameworks": {
         "dnx451": {
-            "frameworkAssemblies": {
-                "System.Transactions": "4.0.0.0"
-            }
         }, 
         "net46": {
-            "dependencies": {
-                "System.Reflection": "4.1.0-beta-23409"
-            }
         }
     }
 }

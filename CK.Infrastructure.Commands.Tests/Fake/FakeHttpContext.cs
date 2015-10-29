@@ -29,6 +29,8 @@ namespace CK.Infrastructure.Commands.Tests.Fake
             _request = CreateRequest( requestPath, requestBody );
         }
 
+        public override string TraceIdentifier { get; set; }
+
         private HttpRequest CreateRequest( string requestPath, Stream requestBody )
         {
             return new FakeHttpRequest( this )

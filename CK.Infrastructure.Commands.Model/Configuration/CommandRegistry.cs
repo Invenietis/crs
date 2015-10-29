@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace CK.Infrastructure.Commands
 {
-    public class DefaultCommandRegistry : ICommandRegistry
+    internal class CommandRegistry : ICommandRegistry
     {
         Dictionary<CommandRoutePath, CommandDescriptor> Map { get; } = new Dictionary<CommandRoutePath, CommandDescriptor>();
 
@@ -13,11 +13,12 @@ namespace CK.Infrastructure.Commands
             return this;
         }
 
-        public CommandDescriptor Find( string requestPath )
+        public CommandDescriptor Find( string commandReceiverPath, string commandPath )
         {
             CommandDescriptor registration = null;
-            CommandRoutePath route = new CommandRoutePath( requestPath );
-            Map.TryGetValue( route, out registration );
+            CommandRoutePath commandRoute = new CommandRoutePath( commandReceiverPath, commandPath );
+
+            if( commandRoute.IsValidFor( commandReceiverPath ) ) Map.TryGetValue( commandRoute, out registration );
             return registration;
         }
     }

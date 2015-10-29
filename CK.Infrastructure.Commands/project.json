@@ -11,7 +11,8 @@
         "Microsoft.AspNet.Http.Abstractions": "1.0.0-*",
         "Microsoft.AspNet.SignalR.Server": "3.0.0-*",
         "Microsoft.Extensions.DependencyInjection": "1.0.0-*",
-        "CK.Infrastructure.Commands.Runtime": "1.0.0-*"
+        "CK.Infrastructure.Commands.Runtime": "1.0.0-*",
+        "Microsoft.Extensions.PlatformAbstractions": "1.0.0-rc1-16048"
     },
      
     "frameworks": {

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace CK.Infrastructure.Commands
 {
-    public class CommandRunnerLocalHost : ICommandRunnerHost
+    public class InProcessRunnerHost : ICommandRunnerHost
     {
         public Task HostJob( ICommandRunner runner, CommandExecutionContext ctx, CancellationToken cancellation = default( CancellationToken ) )
         {

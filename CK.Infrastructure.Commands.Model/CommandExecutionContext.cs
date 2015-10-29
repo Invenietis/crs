@@ -32,13 +32,10 @@ namespace CK.Infrastructure.Commands
         public ICommandResponse CreateResponse()
         {
             if( _response != null ) throw new InvalidOperationException( "There is already a Response created for this CommandContext" );
-            if( Exception != null )
-            {
-                _response = CreateErrorResponse( Exception.Message );
-            }
+            if( Exception != null ) _response = CreateErrorResponse( Exception.Message );
             else
             {
-                if( RuntimeContext.IsLongRunning ) _response = new DeferredResponse( RuntimeContext.CallbackId, RuntimeContext );
+                if( RuntimeContext.IsLongRunning ) _response = new DeferredResponse( RuntimeContext );
                 else _response = new DirectResponse( Result, RuntimeContext );
             }
             return _response;

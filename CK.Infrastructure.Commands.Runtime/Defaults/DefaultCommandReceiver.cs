@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.OptionsModel;
 
 namespace CK.Infrastructure.Commands
 {
@@ -11,14 +12,16 @@ namespace CK.Infrastructure.Commands
     {
         readonly ICommandHandlerFactory _handlerFactory;
         readonly ICommandRunnerHostSelector _hostSelector;
+        readonly IOptions<CommandReceiverOptions> _options;
 
-        public DefaultCommandReceiver( ICommandRunnerHostSelector hostSelector, ICommandHandlerFactory handlerFactory )
+        public DefaultCommandReceiver( ICommandRunnerHostSelector hostSelector, ICommandHandlerFactory handlerFactory, IOptions<CommandReceiverOptions> options )
         {
             if( hostSelector == null ) throw new ArgumentNullException( nameof( hostSelector ) );
             if( handlerFactory == null ) throw new ArgumentNullException( nameof( handlerFactory ) );
 
             _hostSelector = hostSelector;
             _handlerFactory = handlerFactory;
+            _options = options;
         }
 
         public async Task<ICommandResponse> ProcessCommandAsync( ICommandRequest commandRequest, CancellationToken cancellationToken = default( CancellationToken ) )
@@ -45,10 +48,12 @@ namespace CK.Infrastructure.Commands
             return executionContext.CreateResponse();
         }
 
-        static internal CommandContext CreateRuntimeContext( Guid commandId, ICommandRequest request )
+        internal CommandContext CreateRuntimeContext( Guid commandId, ICommandRequest request )
         {
             Type commandContextType = typeof( CommandContext<> ).MakeGenericType( request.CommandDescription.CommandType );
-            object instance = Activator.CreateInstance( commandContextType, request.Command, commandId, request.CommandDescription.IsLongRunning, request.CallbackId  );
+
+            bool isLongRunning = request.CommandDescription.IsLongRunning && _options.Value.EnableLongRunningSupport;
+            object instance = Activator.CreateInstance( commandContextType, request.Command, commandId, isLongRunning, request.CallbackId  );
             return (CommandContext)instance;
         }
     }

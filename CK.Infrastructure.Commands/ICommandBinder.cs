@@ -4,7 +4,7 @@ using Microsoft.AspNet.Http;
 
 namespace CK.Infrastructure.Commands
 {
-    public interface ICommandRequestFactory
+    public interface ICommandBinder
     {
         /// <summary>
         /// Creates a <see cref="ICommandRequest"/> from <see cref="CommandDescriptor"/> and a body stream payload
@@ -12,6 +12,6 @@ namespace CK.Infrastructure.Commands
         /// <param name="routeInfo"></param>
         /// <param name="request"></param>
         /// <returns></returns>
-        Task<ICommandRequest> CreateCommand( CommandDescriptor routeInfo, HttpRequest request, CancellationToken cancellationToken = default( CancellationToken ) );
+        Task<ICommandRequest> BindCommand( CommandDescriptor routeInfo, HttpRequest request, CancellationToken cancellationToken = default( CancellationToken ) );
     }
 }

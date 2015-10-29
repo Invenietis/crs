@@ -9,7 +9,7 @@ namespace CK.Infrastructure.Commands
 {
     public interface ICommandRegistry
     {
-        CommandDescriptor Find( string requestPath );
+        CommandDescriptor Find( string commandReceiverPath, string requestPath );
 
         ICommandRegistry Register( CommandDescriptor commandRegistration );
     }

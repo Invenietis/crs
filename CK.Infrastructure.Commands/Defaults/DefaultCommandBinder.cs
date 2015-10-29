@@ -8,23 +8,30 @@ using Microsoft.AspNet.Http;
 using System.Threading.Tasks;
 using Microsoft.Net.Http.Headers;
 using System.Threading;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.OptionsModel;
 
 namespace CK.Infrastructure.Commands
 {
-    public class DefaultCommandFactory : ICommandRequestFactory
+    public class DefaultCommandBinder : ICommandBinder
     {
+        readonly IServiceProvider _serviceProvider;
         readonly ICommandFileWriter _fileWriter;
-        public DefaultCommandFactory( ICommandFileWriter fileWriter )
+
+        public DefaultCommandBinder( ICommandFileWriter fileWriter, IServiceProvider serviceProvider )
         {
             _fileWriter = fileWriter;
+            _serviceProvider = serviceProvider;
         }
 
-        public async Task<ICommandRequest> CreateCommand( CommandDescriptor routeInfo, HttpRequest request, CancellationToken cancellationToken = default( CancellationToken ) )
+
+        public async Task<ICommandRequest> BindCommand( CommandDescriptor descriptor, HttpRequest request, CancellationToken cancellationToken = default( CancellationToken ) )
         {
-            CommandRequest commandRequest = new CommandRequest(routeInfo);
+            CommandRequest commandRequest = new CommandRequest(descriptor);
+            commandRequest.Command = CreateCommand( commandRequest.CommandDescription.CommandType );
+
             if( request.HasFormContentType )
             {
-                commandRequest.Command = Activator.CreateInstance( commandRequest.CommandDescription.CommandType );
 
                 request.Form = await request.ReadFormAsync( cancellationToken );
                 if( request.Form.Files.Count > 0 )
@@ -46,18 +53,22 @@ namespace CK.Infrastructure.Commands
             }
             else if( request.ContentType == "application/json" )
             {
-                commandRequest.Command = ReadJsonBody( request.Body, routeInfo.CommandType );
+                PopulateFromJsonRequest( commandRequest.Command, request.Body );
             }
             commandRequest.CallbackId = request.Query["c"];
             return commandRequest;
         }
 
-        protected virtual object ReadJsonBody( Stream requestPayload, Type commandType )
+        protected virtual object CreateCommand( Type commandType )
+        {
+            return ActivatorUtilities.CreateInstance( _serviceProvider, commandType );
+        }
+
+        protected virtual void PopulateFromJsonRequest( object command, Stream requestPayload )
         {
             using( var reader = new StreamReader( requestPayload ) )
             {
-                string json = reader.ReadToEnd();
-                return JsonConvert.DeserializeObject( json, commandType );
+                JsonConvert.PopulateObject( reader.ReadToEnd(), command );
             }
         }
     }

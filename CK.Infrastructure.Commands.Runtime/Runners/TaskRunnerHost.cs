@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace CK.Infrastructure.Commands
 {
-    internal class AsyncCommandRunner : ICommandRunnerHost
+    internal class TaskRunnerHost : ICommandRunnerHost
     {
         readonly ICommandResponseDispatcher _commandResponseDispatcher;
 
-        public AsyncCommandRunner( ICommandResponseDispatcher dispatcher )
+        public TaskRunnerHost( ICommandResponseDispatcher dispatcher )
         {
             if( dispatcher == null ) throw new ArgumentNullException( nameof( dispatcher ) );
             _commandResponseDispatcher = dispatcher;

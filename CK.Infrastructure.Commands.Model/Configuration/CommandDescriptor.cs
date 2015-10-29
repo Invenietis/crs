@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace CK.Infrastructure.Commands
 {
     /// <summary>
-    /// Holds the assoication of a command a route.
+    /// Describes a command and its environment.
     /// </summary>
     public class CommandDescriptor
     {
@@ -16,7 +16,7 @@ namespace CK.Infrastructure.Commands
         }
 
         /// <summary>
-        /// Gets or sets the <see cref="CommandRoutePath"/> this command should be handled.
+        /// Gets or sets the Route this command should be handled.
         /// </summary>
         public CommandRoutePath Route { get; set; }
 

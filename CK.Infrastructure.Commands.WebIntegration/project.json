@@ -7,7 +7,8 @@
         "Microsoft.AspNet.Hosting": "1.0.0-*",
         "Microsoft.AspNet.Server.WebListener": "1.0.0-*",
         "Microsoft.AspNet.SignalR.Server": "3.0.0-*",
-        "Microsoft.AspNet.StaticFiles": "1.0.0-*" 
+        "Microsoft.AspNet.StaticFiles": "1.0.0-*",
+        "Microsoft.Dnx.Runtime.Abstractions": "1.0.0-rc1-15838"
     },
 
     "commands": {

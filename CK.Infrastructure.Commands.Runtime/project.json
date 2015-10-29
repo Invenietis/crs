@@ -8,7 +8,8 @@
 
     "dependencies": {
         "CK.Core": "0.0.0-Absolutely-Invalid",
-        "CK.Infrastructure.Commands.Model": "1.0.0-*"
+        "CK.Infrastructure.Commands.Model": "1.0.0-*",
+        "Microsoft.Extensions.OptionsModel": "1.0.0-rc1-15748"
     },
 
     "frameworks": {
