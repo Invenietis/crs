@@ -1,6 +1,6 @@
 {
   "name": "CK.Infrastructure.Commands.WebIntegration",
-  "version": "0.0.0-alpha-01",
+  "version": "0.0.0-alpha-02",
   "authors": [
     "Cédric Legendre <albundy1385@gmail.com>"
   ],
@@ -13,7 +13,7 @@
     "tests"
   ],
   "dependencies": {
-    "CK.Infrastructure.CommandSender": "~0.1.0-alpha-01",
+    "CK.Infrastructure.CommandSender": "latest",
     "requirejs": "2.1.20"
   }
 }
