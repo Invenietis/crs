@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace CK.Infrastructure.Commands
 {
@@ -47,6 +48,11 @@ namespace CK.Infrastructure.Commands
             return _response;
         }
 
+        public ICommandResponse CreateInvalidResponse( ICollection<ValidationResult> results )
+        {
+            _response = new InvalidCommandResponse( results, RuntimeContext );
+            return _response;
+        }
         /// <summary>
         /// Gets or sets the result of the command.
         /// </summary>
@@ -56,5 +62,6 @@ namespace CK.Infrastructure.Commands
         /// Gets or sets if there is an <see cref="Exception"/>
         /// </summary>
         public Exception Exception { get; set; }
+
     }
 }

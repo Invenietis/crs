@@ -11,7 +11,6 @@ using Xunit.Abstractions;
 
 namespace CK.Infrastructure.Commands.Tests
 {
-    [Collection( "CK.Infrastructure.Commands.Tests collection" )]
     public class WithClientApiTest
     {
         public readonly ITestOutputHelper Output;
@@ -25,7 +24,7 @@ namespace CK.Infrastructure.Commands.Tests
         {
             string serverAddress = "http://MyDumbServer/c/";
 
-            using( var server = new CommandReceiverHost( serverAddress, new DefaultCommandReceiver( new CommandRunnerHostSelector( EventChannel.Instance ), new DefaultCommandHandlerFactory(), new OptionStub () ) ) )
+            using( var server = new CommandReceiverHost( serverAddress, new DefaultCommandReceiver( new DefaultCommandValidator(), new CommandRunnerHostSelector( EventChannel.Instance ), new DefaultCommandHandlerFactory(), new OptionStub () ) ) )
             {
                 // Server initialization
                 server.Run();

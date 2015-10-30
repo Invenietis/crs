@@ -109,6 +109,7 @@ namespace CK.Infrastructure.Commands
         {
             services.AddOptions();
             services.AddSingleton<ICommandReceiver, DefaultCommandReceiver>();
+            services.AddSingleton<ICommandValidator, DefaultCommandValidator>();
             services.AddSingleton<ICommandBinder, DefaultCommandBinder>();
             services.AddSingleton<ICommandResponseSerializer, DefaultCommandResponseSerializer>();
             services.AddSingleton<ICommandRunnerHostSelector, CommandRunnerHostSelector>();

@@ -2,7 +2,6 @@
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Http;
-using Microsoft.Framework.Internal;
 
 namespace CK.Infrastructure.Commands.Tests.Fake
 {

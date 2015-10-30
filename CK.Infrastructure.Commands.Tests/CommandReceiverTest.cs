@@ -27,7 +27,6 @@ namespace CK.Infrastructure.Commands.Tests
         }
     }
 
-    [CollectionDefinition( "CK.Infrastructure.Commands.Tests collection" )]
     public class CommandReceiverTestCollection : ICollectionFixture<SetupFixture>
     {
         // This class has no code, and is never created. Its purpose is simply
