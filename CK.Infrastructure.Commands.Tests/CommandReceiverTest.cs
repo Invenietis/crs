@@ -11,7 +11,6 @@ using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Http.Authentication;
 using Microsoft.AspNet.Http.Features;
-using Microsoft.Dnx.Runtime.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using CK.Core;

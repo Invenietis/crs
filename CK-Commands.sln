@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CK.Infrastructure.Commands", "CK.Infrastructure.Commands\CK.Infrastructure.Commands.xproj", "{0E843608-7752-44AD-9D82-AEDED5F8A723}"
 EndProject
@@ -14,6 +14,11 @@ EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CK.Infrastructure.Commands.Runtime", "CK.Infrastructure.Commands.Runtime\CK.Infrastructure.Commands.Runtime.xproj", "{52C1088B-F87D-489D-B592-38F3881B2271}"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CK.Infrastructure.Commands.Extensions", "CK.Infrastructure.Commands.Extensions\CK.Infrastructure.Commands.Extensions.xproj", "{D6009499-F1E5-40DC-BA95-3440A2E721A6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{22EC622B-B1FE-4EA5-B828-83D2FF952DA4}"
+	ProjectSection(SolutionItems) = preProject
+		RepositoryInfo.xml = RepositoryInfo.xml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

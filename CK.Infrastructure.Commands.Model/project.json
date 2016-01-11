@@ -18,5 +18,11 @@
                 "System.ComponentModel.DataAnnotations": "4.0.0.0"
             }
         }
+    },
+    "dependencies": {
+        "SimpleGitVersion.DNXCommands": "0.12.1"
+    },
+    "scripts": {
+        "prebuild": "sgv prebuild"
     }
 }

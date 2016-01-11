@@ -2,16 +2,181 @@
   "locked": false,
   "version": 2,
   "targets": {
-    "DNX,Version=v4.5.1": {},
-    ".NETFramework,Version=v4.6": {},
-    "DNX,Version=v4.5.1/win7-x86": {},
-    "DNX,Version=v4.5.1/win7-x64": {},
-    ".NETFramework,Version=v4.6/win7-x86": {},
-    ".NETFramework,Version=v4.6/win7-x64": {}
+    "DNX,Version=v4.5.1": {
+      "SimpleGitVersion.Core/0.12.1": {
+        "type": "package",
+        "compile": {
+          "lib/net45/SimpleGitVersion.Core.dll": {}
+        },
+        "runtime": {
+          "lib/net45/SimpleGitVersion.Core.dll": {}
+        }
+      },
+      "SimpleGitVersion.DNXCommands/0.12.1": {
+        "type": "package",
+        "dependencies": {
+          "SimpleGitVersion.Core": "0.12.1"
+        },
+        "compile": {
+          "lib/net45/SimpleGitVersion.DNXCommands.exe": {}
+        },
+        "runtime": {
+          "lib/net45/SimpleGitVersion.DNXCommands.exe": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.6": {
+      "SimpleGitVersion.Core/0.12.1": {
+        "type": "package",
+        "compile": {
+          "lib/net45/SimpleGitVersion.Core.dll": {}
+        },
+        "runtime": {
+          "lib/net45/SimpleGitVersion.Core.dll": {}
+        }
+      },
+      "SimpleGitVersion.DNXCommands/0.12.1": {
+        "type": "package",
+        "dependencies": {
+          "SimpleGitVersion.Core": "0.12.1"
+        },
+        "compile": {
+          "lib/net45/SimpleGitVersion.DNXCommands.exe": {}
+        },
+        "runtime": {
+          "lib/net45/SimpleGitVersion.DNXCommands.exe": {}
+        }
+      }
+    },
+    "DNX,Version=v4.5.1/win7-x86": {
+      "SimpleGitVersion.Core/0.12.1": {
+        "type": "package",
+        "compile": {
+          "lib/net45/SimpleGitVersion.Core.dll": {}
+        },
+        "runtime": {
+          "lib/net45/SimpleGitVersion.Core.dll": {}
+        }
+      },
+      "SimpleGitVersion.DNXCommands/0.12.1": {
+        "type": "package",
+        "dependencies": {
+          "SimpleGitVersion.Core": "0.12.1"
+        },
+        "compile": {
+          "lib/net45/SimpleGitVersion.DNXCommands.exe": {}
+        },
+        "runtime": {
+          "lib/net45/SimpleGitVersion.DNXCommands.exe": {}
+        }
+      }
+    },
+    "DNX,Version=v4.5.1/win7-x64": {
+      "SimpleGitVersion.Core/0.12.1": {
+        "type": "package",
+        "compile": {
+          "lib/net45/SimpleGitVersion.Core.dll": {}
+        },
+        "runtime": {
+          "lib/net45/SimpleGitVersion.Core.dll": {}
+        }
+      },
+      "SimpleGitVersion.DNXCommands/0.12.1": {
+        "type": "package",
+        "dependencies": {
+          "SimpleGitVersion.Core": "0.12.1"
+        },
+        "compile": {
+          "lib/net45/SimpleGitVersion.DNXCommands.exe": {}
+        },
+        "runtime": {
+          "lib/net45/SimpleGitVersion.DNXCommands.exe": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.6/win7-x86": {
+      "SimpleGitVersion.Core/0.12.1": {
+        "type": "package",
+        "compile": {
+          "lib/net45/SimpleGitVersion.Core.dll": {}
+        },
+        "runtime": {
+          "lib/net45/SimpleGitVersion.Core.dll": {}
+        }
+      },
+      "SimpleGitVersion.DNXCommands/0.12.1": {
+        "type": "package",
+        "dependencies": {
+          "SimpleGitVersion.Core": "0.12.1"
+        },
+        "compile": {
+          "lib/net45/SimpleGitVersion.DNXCommands.exe": {}
+        },
+        "runtime": {
+          "lib/net45/SimpleGitVersion.DNXCommands.exe": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.6/win7-x64": {
+      "SimpleGitVersion.Core/0.12.1": {
+        "type": "package",
+        "compile": {
+          "lib/net45/SimpleGitVersion.Core.dll": {}
+        },
+        "runtime": {
+          "lib/net45/SimpleGitVersion.Core.dll": {}
+        }
+      },
+      "SimpleGitVersion.DNXCommands/0.12.1": {
+        "type": "package",
+        "dependencies": {
+          "SimpleGitVersion.Core": "0.12.1"
+        },
+        "compile": {
+          "lib/net45/SimpleGitVersion.DNXCommands.exe": {}
+        },
+        "runtime": {
+          "lib/net45/SimpleGitVersion.DNXCommands.exe": {}
+        }
+      }
+    }
   },
-  "libraries": {},
+  "libraries": {
+    "SimpleGitVersion.Core/0.12.1": {
+      "type": "package",
+      "sha512": "Y+cEvh2V36M7pNPQR7DFHRQNV2+RwR7nFz4gV195LkLMuaMfWH3WiPqjECEW1w7SOfUfyzO1DUi2xClz3O2kzQ==",
+      "files": [
+        "Build/SimpleGitVersion.Core.props",
+        "lib/net45/SimpleGitVersion.Core.dll",
+        "lib/net45/SimpleGitVersion.Core.pdb",
+        "lib/net45/SimpleGitVersion.Core.xml",
+        "NativeBinaries/amd64/git2-e0902fb.dll",
+        "NativeBinaries/x86/git2-e0902fb.dll",
+        "RepositoryInfo.xsd",
+        "SimpleGitVersion.Core.0.12.1.nupkg",
+        "SimpleGitVersion.Core.0.12.1.nupkg.sha512",
+        "SimpleGitVersion.Core.nuspec"
+      ]
+    },
+    "SimpleGitVersion.DNXCommands/0.12.1": {
+      "type": "package",
+      "sha512": "i0bvUK0dn9tP59dJBFxAOCmUJQhmtdYlCY6xjJtzu6u4QSAuSZpWbJnQLJrwmCclu3JKbqNPN2KRxDa9ZS3lUA==",
+      "files": [
+        "app/project.json",
+        "app/sgv",
+        "app/sgv.cmd",
+        "lib/net45/SimpleGitVersion.DNXCommands.exe",
+        "lib/net45/SimpleGitVersion.DNXCommands.pdb",
+        "SimpleGitVersion.DNXCommands.0.12.1.nupkg",
+        "SimpleGitVersion.DNXCommands.0.12.1.nupkg.sha512",
+        "SimpleGitVersion.DNXCommands.nuspec"
+      ]
+    }
+  },
   "projectFileDependencyGroups": {
-    "": [],
+    "": [
+      "SimpleGitVersion.DNXCommands >= 0.12.1"
+    ],
     "DNX,Version=v4.5.1": [
       "fx/System.ComponentModel.DataAnnotations >= 4.0.0"
     ],

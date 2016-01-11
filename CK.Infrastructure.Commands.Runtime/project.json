@@ -7,9 +7,9 @@
     "licenseUrl": "",
 
     "dependencies": {
-        "CK.Core": "0.0.0-Absolutely-Invalid",
         "CK.Infrastructure.Commands.Model": "1.0.0-*",
-        "Microsoft.Extensions.OptionsModel": "1.0.0-rc1-15748"
+        "Microsoft.Extensions.OptionsModel": "1.0.0-rc1-final",
+        "SimpleGitVersion.DNXCommands": "0.12.1"
     },
 
     "frameworks": {
@@ -23,5 +23,8 @@
                 "System.ComponentModel.DataAnnotations": "4.0.0.0"
             }
         }
+    },
+    "scripts": {
+        "prebuild": "sgv prebuild"
     }
 }

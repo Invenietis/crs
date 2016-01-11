@@ -24,7 +24,7 @@ namespace CK.Infrastructure.Commands
         {
             get
             {
-                if( _refs == null ) return CK.Core.Util.Array.Empty<BlobRef>();
+                if( _refs == null ) return new BlobRef[0];
                 return _refs;
             }
         }

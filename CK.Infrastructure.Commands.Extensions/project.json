@@ -16,6 +16,10 @@
         }
     },
     "dependencies": {
-        "CK.Infrastructure.Commands.Model": "1.0.0-*"
+        "CK.Infrastructure.Commands.Model": "1.0.0-*",
+        "SimpleGitVersion.DNXCommands": "0.12.1"
+    },
+    "scripts": {
+        "prebuild": "sgv prebuild"
     }
 }

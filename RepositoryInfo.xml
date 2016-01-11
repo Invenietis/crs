@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RepositoryInfo xmlns="http://csemver.org/schemas/2015">
+  <PossibleVersionsMode>AllSuccessors</PossibleVersionsMode>
+  <Branches>
+    <Branch Name="develop" CIVersionMode="LastReleaseBased"  />
+  </Branches>
+<IgnoreModifiedFiles>
+  </IgnoreModifiedFiles>
+</RepositoryInfo>
