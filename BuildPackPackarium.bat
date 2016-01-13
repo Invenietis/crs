@@ -1,0 +1,1 @@
+dnu build CK.Infrastructure.Commands.Abstractions CK.Infrastructure.Commands.Runtime CK.Infrastructure.Commands & dnu pack CK.Infrastructure.Commands.Abstractions --out ../../Packarium --framework dnx451 & dnu pack CK.Infrastructure.Commands.Runtime --out ../../Packarium --framework dnx451 & dnu pack CK.Infrastructure.Commands --out ../../Packarium
