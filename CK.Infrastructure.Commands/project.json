@@ -8,10 +8,10 @@
 
     "dependencies": {
         "CK.Infrastructure.Commands.Runtime": "1.0.0-*",
-        "Microsoft.AspNet.Http.Abstractions": "1.0.0-*",
-        "Microsoft.AspNet.SignalR.Server": "3.0.0-*",
-        "Microsoft.Extensions.DependencyInjection": "1.0.0-*",
-        "Microsoft.Extensions.PlatformAbstractions": "1.0.0-*",
+        "Microsoft.AspNet.Http.Abstractions": "1.0.0-rc1-final",
+        "Microsoft.AspNet.SignalR.Server": "3.0.0-beta5",
+        "Microsoft.Extensions.DependencyInjection": "1.0.0-rc1-final",
+        "Microsoft.Extensions.PlatformAbstractions": "1.0.0-rc1-final",
         "Newtonsoft.Json": "8.0.1",
         "SimpleGitVersion.DNXCommands": "0.12.1"
     },
