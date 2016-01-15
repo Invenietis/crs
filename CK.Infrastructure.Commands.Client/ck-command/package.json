@@ -1,5 +1,5 @@
 {
-  "name": "ck-commands",
+  "name": "ck-command",
   "version": "0.1.0",
   "description": "",
   "main": "./dist/commandSender.js",

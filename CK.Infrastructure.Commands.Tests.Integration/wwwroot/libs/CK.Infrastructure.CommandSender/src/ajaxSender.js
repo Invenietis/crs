@@ -16,7 +16,7 @@ var CK;
                 });
             };
             return AjaxSender;
-        })();
+        }());
         Infrastructure.AjaxSender = AjaxSender;
     })(Infrastructure = CK.Infrastructure || (CK.Infrastructure = {}));
 })(CK || (CK = {}));

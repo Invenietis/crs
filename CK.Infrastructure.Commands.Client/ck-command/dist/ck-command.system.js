@@ -7,7 +7,7 @@ System.register("src/Command", [], function(exports_1) {
             Command = (function () {
                 function Command(name, properties) {
                     this.name = name;
-                    properties = this.properties;
+                    this.properties = properties;
                 }
                 return Command;
             }());
@@ -128,7 +128,7 @@ System.register("src/SignalRListener", [], function(exports_5) {
         }
     }
 });
-System.register("command", ["src/Command", "src/AjaxSender", "src/CommandEmitter"], function(exports_6) {
+System.register("command", ["src/Command", "src/AjaxSender", "src/CommandEmitter", "src/SignalRListener"], function(exports_6) {
     "use strict";
     function exportStar_1(m) {
         var exports = {};
@@ -147,6 +147,9 @@ System.register("command", ["src/Command", "src/AjaxSender", "src/CommandEmitter
             },
             function (CommandEmitter_1_1) {
                 exportStar_1(CommandEmitter_1_1);
+            },
+            function (SignalRListener_1_1) {
+                exportStar_1(SignalRListener_1_1);
             }],
         execute: function() {
         }

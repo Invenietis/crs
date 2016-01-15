@@ -7,7 +7,7 @@ System.register([], function(exports_1) {
             Command = (function () {
                 function Command(name, properties) {
                     this.name = name;
-                    properties = this.properties;
+                    this.properties = properties;
                 }
                 return Command;
             }());

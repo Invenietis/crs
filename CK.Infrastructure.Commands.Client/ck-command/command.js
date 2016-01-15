@@ -1,4 +1,4 @@
-System.register(['./src/Command', './src/AjaxSender', './src/CommandEmitter'], function(exports_1) {
+System.register(['./src/Command', './src/AjaxSender', './src/CommandEmitter', './src/SignalRListener'], function(exports_1) {
     "use strict";
     function exportStar_1(m) {
         var exports = {};
@@ -17,6 +17,9 @@ System.register(['./src/Command', './src/AjaxSender', './src/CommandEmitter'], f
             },
             function (CommandEmitter_1_1) {
                 exportStar_1(CommandEmitter_1_1);
+            },
+            function (SignalRListener_1_1) {
+                exportStar_1(SignalRListener_1_1);
             }],
         execute: function() {
         }

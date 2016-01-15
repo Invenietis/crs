@@ -5,6 +5,6 @@ export class Command{
     
     constructor(name: string, properties: {}){
         this.name = name;
-        properties = this.properties;
+        this.properties = properties;
     }
 }

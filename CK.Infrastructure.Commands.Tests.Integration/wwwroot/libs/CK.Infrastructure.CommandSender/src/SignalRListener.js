@@ -30,7 +30,7 @@ var CK;
                 return def.promise();
             };
             return SignalRListener;
-        })();
+        }());
         Infrastructure.SignalRListener = SignalRListener;
     })(Infrastructure = CK.Infrastructure || (CK.Infrastructure = {}));
 })(CK || (CK = {}));
