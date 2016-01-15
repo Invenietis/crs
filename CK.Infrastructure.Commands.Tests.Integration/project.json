@@ -3,7 +3,7 @@
     "version": "1.0.0-*",
 
     "dependencies": {
-        "CK.Infrastructure.Commands": "1.0.0-*",
+        "CK.Infrastructure.Commands": "",
         "Microsoft.AspNet.Hosting": "1.0.0-*",
         "Microsoft.AspNet.Server.WebListener": "1.0.0-*",
         "Microsoft.AspNet.SignalR.Server": "3.0.0-*",

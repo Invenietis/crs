@@ -13,9 +13,9 @@
         }
     },
     "dependencies": {
-        "CK.Infrastructure.Commands.Abstractions": "1.0.0-alpha-01",
+        "CK.Infrastructure.Commands.Abstractions": "",
         "CK.SqlServer.Setup.Model": "4.0.0",
-        "SimpleGitVersion.DNXCommands": "0.12.1"
+        "SimpleGitVersion.DNXCommands": "0.13.0"
     },
     "scripts": {
         "prebuild": "sgv prebuild"

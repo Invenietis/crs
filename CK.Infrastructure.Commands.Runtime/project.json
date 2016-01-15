@@ -7,9 +7,9 @@
     "licenseUrl": "",
 
     "dependencies": {
-        "CK.Infrastructure.Commands.Abstractions": "1.0.0-*",
+        "CK.Infrastructure.Commands.Abstractions": "",
         "Microsoft.Extensions.OptionsModel": "1.0.0-rc1-final",
-        "SimpleGitVersion.DNXCommands": "0.12.1"
+        "SimpleGitVersion.DNXCommands": "0.13.0"
     },
 
     "frameworks": {
