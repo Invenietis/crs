@@ -33,3 +33,7 @@ CK.Infrastructure.Commands.WebIntegration/wwwroot/libs/
 *.lock.json
 CK.Infrastructure.Commands.Model/project.lock.json
 SGVVersionInfo.cs
+CK.Infrastructure.Commands.Client/ck-crs/node_modules/
+CK.Infrastructure.Commands.Client/ck-command/typings/*
+CK.Infrastructure.Commands.Tests.Integration/bower_components
+node_modules/

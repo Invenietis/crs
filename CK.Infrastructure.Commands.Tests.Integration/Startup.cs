@@ -6,6 +6,7 @@ using CK.Infrastructure.Commands.Handlers;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNet.Builder;
 
 namespace CK.Infrastructure.Commands.WebIntegration
 {
@@ -23,6 +24,7 @@ namespace CK.Infrastructure.Commands.WebIntegration
                     .Register<TransferAmountCommand, TransferAlwaysSuccessHandler>( route: "/c/v1/TransferAmount", isLongRunning: true )
                     .Register<WithdrawMoneyCommand, WithDrawyMoneyHandler>( "/c/labs/WithdrawMoney", false );
             } );
+
         }
 
         public void Configure( IApplicationBuilder app )

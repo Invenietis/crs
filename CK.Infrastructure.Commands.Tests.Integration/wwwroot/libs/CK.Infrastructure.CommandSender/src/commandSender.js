@@ -46,7 +46,7 @@ var CK;
                 return deferred.promise();
             };
             return CommandSender;
-        })();
+        }());
         Infrastructure.CommandSender = CommandSender;
     })(Infrastructure = CK.Infrastructure || (CK.Infrastructure = {}));
 })(CK || (CK = {}));

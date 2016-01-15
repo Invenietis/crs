@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using CK.Infrastructure.Commands;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace CK.Infrastructure.Commands
 {
@@ -11,7 +12,10 @@ namespace CK.Infrastructure.Commands
         Newtonsoft.Json.JsonSerializer _serializer;
         public DefaultCommandResponseSerializer()
         {
-            _serializer = Newtonsoft.Json.JsonSerializer.Create();
+            _serializer = Newtonsoft.Json.JsonSerializer.Create( new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            } );
         }
 
         public void Serialize( ICommandResponse response, Stream outputStream )

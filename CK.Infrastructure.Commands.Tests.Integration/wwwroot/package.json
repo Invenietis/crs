@@ -1,0 +1,14 @@
+{
+  "name": "ck-infrastructure-command-tests-integration",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "ck-command": "../../CK.Infrastructure.Commands.Client/ck-command"
+  },
+  "author": "",
+  "license": "ISC"
+}
