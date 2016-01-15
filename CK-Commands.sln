@@ -7,21 +7,25 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CK.Infrastructure.Commands"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CK.Infrastructure.Commands.Tests", "CK.Infrastructure.Commands.Tests\CK.Infrastructure.Commands.Tests.xproj", "{732172E8-ECE3-48A6-A8D0-4DE7FC0EC419}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CK.Infrastructure.Commands.WebIntegration", "CK.Infrastructure.Commands.WebIntegration\CK.Infrastructure.Commands.WebIntegration.xproj", "{0506418E-9F16-4C48-9731-6513904913F2}"
-EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CK.Infrastructure.Commands.Abstractions", "CK.Infrastructure.Commands.Abstractions\CK.Infrastructure.Commands.Abstractions.xproj", "{7605F8FB-B447-4D6B-91F6-D85ACC9DDBB7}"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CK.Infrastructure.Commands.Runtime", "CK.Infrastructure.Commands.Runtime\CK.Infrastructure.Commands.Runtime.xproj", "{52C1088B-F87D-489D-B592-38F3881B2271}"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CK.Infrastructure.Commands.Extensions", "CK.Infrastructure.Commands.Extensions\CK.Infrastructure.Commands.Extensions.xproj", "{D6009499-F1E5-40DC-BA95-3440A2E721A6}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{22EC622B-B1FE-4EA5-B828-83D2FF952DA4}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".SolutionItems", ".SolutionItems", "{22EC622B-B1FE-4EA5-B828-83D2FF952DA4}"
 	ProjectSection(SolutionItems) = preProject
 		publish.cmd = publish.cmd
 		RepositoryInfo.xml = RepositoryInfo.xml
 	EndProjectSection
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CodeCakeBuilder", "CodeCakeBuilder\CodeCakeBuilder.xproj", "{99A89DF1-1D07-49E3-ADD5-FED45DE1DFCE}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CK.Infrastructure.Commands.Tests.Integration", "CK.Infrastructure.Commands.Tests.Integration\CK.Infrastructure.Commands.Tests.Integration.xproj", "{0506418E-9F16-4C48-9731-6513904913F2}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CK.Infrastructure.Commands.CodeCakeBuilder", "CK.Infrastructure.Commands.CodeCakeBuilder\CK.Infrastructure.Commands.CodeCakeBuilder.xproj", "{99A89DF1-1D07-49E3-ADD5-FED45DE1DFCE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{3CE4C342-9DE5-4B1F-B88F-668638BD3307}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{E40F348D-BC6C-456E-B765-26AFD6633112}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,10 +41,6 @@ Global
 		{732172E8-ECE3-48A6-A8D0-4DE7FC0EC419}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{732172E8-ECE3-48A6-A8D0-4DE7FC0EC419}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{732172E8-ECE3-48A6-A8D0-4DE7FC0EC419}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0506418E-9F16-4C48-9731-6513904913F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0506418E-9F16-4C48-9731-6513904913F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0506418E-9F16-4C48-9731-6513904913F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0506418E-9F16-4C48-9731-6513904913F2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7605F8FB-B447-4D6B-91F6-D85ACC9DDBB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7605F8FB-B447-4D6B-91F6-D85ACC9DDBB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7605F8FB-B447-4D6B-91F6-D85ACC9DDBB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -53,6 +53,10 @@ Global
 		{D6009499-F1E5-40DC-BA95-3440A2E721A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D6009499-F1E5-40DC-BA95-3440A2E721A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D6009499-F1E5-40DC-BA95-3440A2E721A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0506418E-9F16-4C48-9731-6513904913F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0506418E-9F16-4C48-9731-6513904913F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0506418E-9F16-4C48-9731-6513904913F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0506418E-9F16-4C48-9731-6513904913F2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{99A89DF1-1D07-49E3-ADD5-FED45DE1DFCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{99A89DF1-1D07-49E3-ADD5-FED45DE1DFCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{99A89DF1-1D07-49E3-ADD5-FED45DE1DFCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -60,5 +64,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{732172E8-ECE3-48A6-A8D0-4DE7FC0EC419} = {3CE4C342-9DE5-4B1F-B88F-668638BD3307}
+		{0506418E-9F16-4C48-9731-6513904913F2} = {3CE4C342-9DE5-4B1F-B88F-668638BD3307}
+		{99A89DF1-1D07-49E3-ADD5-FED45DE1DFCE} = {E40F348D-BC6C-456E-B765-26AFD6633112}
 	EndGlobalSection
 EndGlobal
