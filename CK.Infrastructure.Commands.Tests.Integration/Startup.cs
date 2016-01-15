@@ -23,10 +23,6 @@ namespace CK.Infrastructure.Commands.WebIntegration
                     .Register<TransferAmountCommand, TransferAlwaysSuccessHandler>( route: "/c/v1/TransferAmount", isLongRunning: true )
                     .Register<WithdrawMoneyCommand, WithDrawyMoneyHandler>( "/c/labs/WithdrawMoney", false );
             } );
-            //services.AddSignalR( o =>
-            //{
-            //    o.Hubs.EnableDetailedErrors = true;
-            //} );
         }
 
         public void Configure( IApplicationBuilder app )
@@ -34,8 +30,6 @@ namespace CK.Infrastructure.Commands.WebIntegration
             app.UseStaticFiles();
             app.UseCommandReceiver( "/c/v1" );
             app.UseCommandReceiver( "/c/labs" );
-
-            //app.UseSignalR( );
         }
     }
 }
