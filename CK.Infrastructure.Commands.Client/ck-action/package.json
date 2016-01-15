@@ -1,0 +1,22 @@
+{
+  "name": "ck-action",
+  "version": "0.1.0",
+  "description": "Bring the CK.CRS pattern inside your Javscript application. Build on top of CK.Commands.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "ck-command": "^0.1.0"
+  },
+  "devDependencies": {
+    "jasmine-core": "^2.4.1",
+    "ts-loader": "^0.7.2",
+    "typescript": "^1.7.5"
+  },
+  "scripts": {
+    "test": "lite-server --open ./test"
+  },
+  "author": "",
+  "license": "ISC"
+}

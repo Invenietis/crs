@@ -1,5 +1,5 @@
 module.exports = {  
-    entry: ['./CommandSender.spec.ts'],
+    entry: './ActionHandler.spec.ts',
     output: {
         filename: 'specs.js',
     },

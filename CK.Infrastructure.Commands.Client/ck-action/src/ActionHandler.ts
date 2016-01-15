@@ -1,11 +1,13 @@
+/// <reference path="../typings/tsd.d.ts" />
 import { Command } from 'ck-command/command';
 
-export function ActionHandler<TFunction extends Function>(Target: TFunction, actionName: string): TFunction {
-    (<any>Target)._ = '';
-    
-    return Target;
+export function ActionHandler<TFunction extends Function>( commandName: string): Function {
+    return function(target: Function){
+        (<any>target).__cmd = commandName;
+        return target
+    };
 }
 
 export interface IActionHandler {
-    handle(command: Command) : void;
+    handle(action: Command) : Promise<any>;
 }
