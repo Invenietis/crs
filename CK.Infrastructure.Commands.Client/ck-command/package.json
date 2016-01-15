@@ -1,0 +1,25 @@
+{
+  "name": "ck-commands",
+  "version": "0.1.0",
+  "description": "",
+  "main": "./dist/commandSender.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "ts-loader": "^0.7.2",
+    "jquery": "^2.2.0",
+    "es6-promise": "^3.0.2"    
+  },
+  "devDependencies": {
+    "jasmine-core": "^2.4.1",
+    "typescript": "^1.7.5",
+    "ts-loader": "^0.7.2"
+  },
+  "scripts": {
+    "test": "lite-server --open ./test",
+    "build": "tsc && webpack --config ./src/webpack.config.js && tsc --outFile ./dist/ck-command.system.js"
+  },
+  "author": "",
+  "license": "ISC"
+}

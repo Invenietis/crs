@@ -27,10 +27,7 @@ obj/
 [Rr]elease*/
 _ReSharper*/
 [Tt]est[Rr]esult*
-packages/
-CK.Infrastructure.Commands.WebIntegration/wwwroot/libs/
-.bowerrc
+bower_components/
 *.lock.json
-CK.Infrastructure.Commands.Model/project.lock.json
-CK.Infrastructure.Commands.Client/ck-crs/node_modules/
-CK.Infrastructure.Commands.Client/ck-command/typings/*
+*.map
+node_modules/

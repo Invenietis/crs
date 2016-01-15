@@ -1,0 +1,20 @@
+﻿{
+    "compilerOptions": {
+        "noEmitOnError": true,
+        "module": "system",
+        "moduleResolution": "node",
+        "noImplicitAny": false,
+        "removeComments": false,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "sourceMap": true,
+        "target": "es5"
+    },
+    "files": [
+        "./src/Command.ts",
+        "./src/AjaxSender.ts",
+        "./src/CommandEmitter.ts",
+        "./src/SignalRListener.ts",
+        "./command.ts"             
+    ]
+}
