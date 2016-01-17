@@ -100,7 +100,7 @@
 
 	/// <reference path="../typings/tsd.d.ts" />
 	/**
-	 * ActionExector decorator. This must be used on every executor class
+	 * Action executor decorator. This must be used on every executor class
 	 * @param metadata { actionName The name of the targeted action }
 	 */
 	function ActionExecutor(metadata) {
@@ -116,10 +116,19 @@
 /* 4 */
 /***/ function(module, exports) {
 
+	/**
+	 * Responsible of action invocation and execution
+	 */
 	var ActionInvoker = (function () {
 	    function ActionInvoker(_resolver) {
 	        this._resolver = _resolver;
 	    }
+	    /**
+	     * Invoke the specified action
+	     * @param actionName The action to invoke
+	     * @param parameters The action parameters
+	     * @return A promise that will wrap the action execution result
+	     */
 	    ActionInvoker.prototype.invoke = function (actionName, parameters) {
 	        var handler = this._resolver.resolve(actionName);
 	        return handler.execute(parameters);
@@ -144,6 +153,10 @@
 	        this._activator = _activator;
 	        this._executors = {};
 	    }
+	    /**
+	     * Register a new action executor
+	     * @param executor The executor to register
+	     */
 	    ActionResolver.prototype.registerExecutor = function (executor) {
 	        var ex = executor;
 	        if (!ex.__meta || !ex.__meta.actionName) {
@@ -163,6 +176,11 @@
 	            instance: undefined
 	        };
 	    };
+	    /**
+	     * Get the executor for the given action
+	     * @param actionName The action name to resolve
+	     * @return Return the @link{IActionExecutor} associated with the action
+	     */
 	    ActionResolver.prototype.resolve = function (actionName) {
 	        var executorInfo = this._executors[actionName];
 	        if (executorInfo == undefined)

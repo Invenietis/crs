@@ -9,6 +9,10 @@ System.register([], function(exports_1) {
                     this._activator = _activator;
                     this._executors = {};
                 }
+                /**
+                 * Register a new action executor
+                 * @param executor The executor to register
+                 */
                 ActionResolver.prototype.registerExecutor = function (executor) {
                     var ex = executor;
                     if (!ex.__meta || !ex.__meta.actionName) {
@@ -28,6 +32,11 @@ System.register([], function(exports_1) {
                         instance: undefined
                     };
                 };
+                /**
+                 * Get the executor for the given action
+                 * @param actionName The action name to resolve
+                 * @return Return the @link{IActionExecutor} associated with the action
+                 */
                 ActionResolver.prototype.resolve = function (actionName) {
                     var executorInfo = this._executors[actionName];
                     if (executorInfo == undefined)

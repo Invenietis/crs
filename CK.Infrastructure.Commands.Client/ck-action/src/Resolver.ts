@@ -7,6 +7,10 @@ export class ActionResolver{
    
     constructor(private _activator: Activator){}
     
+    /**
+     * Register a new action executor
+     * @param executor The executor to register
+     */
     registerExecutor( executor: Function ){
         var ex = <any>executor;
         if(!ex.__meta || !ex.__meta.actionName){
@@ -29,6 +33,11 @@ export class ActionResolver{
         };
     }
     
+    /**
+     * Get the executor for the given action
+     * @param actionName The action name to resolve
+     * @return Return the @link{IActionExecutor} associated with the action
+     */
     resolve(actionName: string): IActionExecutor {
         var executorInfo = this._executors[actionName];
         if(executorInfo == undefined) throw `No executor found for the action ${actionName}`;
