@@ -1,17 +1,17 @@
 System.register([], function(exports_1) {
     "use strict";
-    var Command;
+    var Action;
     return {
         setters:[],
         execute: function() {
-            Command = (function () {
-                function Command(name, properties) {
+            Action = (function () {
+                function Action(name, properties) {
                     this.name = name;
                     this.properties = properties;
                 }
-                return Command;
+                return Action;
             }());
-            exports_1("Command", Command);
+            exports_1("Action", Action);
         }
     }
 });

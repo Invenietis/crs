@@ -39,4 +39,3 @@ System.register([], function(exports_1) {
         }
     }
 });
-//# sourceMappingURL=CommandEmitter.js.map

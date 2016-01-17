@@ -1,5 +1,5 @@
 module.exports = {  
-    entry: './ActionHandler.spec.ts',
+    entry: ['./ActionHandler.spec.ts', './Resolver.spec.ts'],
     output: {
         filename: 'specs.js',
     },

@@ -1,14 +1,14 @@
 /// <reference path="../typings/tsd.d.ts" />
-import { Command } from 'ck-command/command';
-import { CommandResolver } from './Resolver';
+import { Action } from './Action';
+import { ActionResolver } from './Resolver';
 
 export class ActionSender {
-    constructor(private _resolver: CommandResolver){
+    constructor(private _resolver: ActionResolver){
     }
     
-    send (command: Command) : Promise<any>{
-        var handler = this._resolver.resolve( command );
+    send (action: Action) : Promise<any>{
+        var handler = this._resolver.resolve( action.name );
             
-        return handler.handle(command);
+        return handler.handle(action);
     }
 }

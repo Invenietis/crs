@@ -44,23 +44,24 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
+	__webpack_require__(1);
+	module.exports = __webpack_require__(9);
+
+
+/***/ },
+/* 1 */
+/***/ function(module, exports, __webpack_require__) {
+
 	/// <reference path="../typings/tsd.d.ts" />
-	var Ck = __webpack_require__(1);
-	var test = __webpack_require__(6);
-	var command_1 = __webpack_require__(7);
-	describe("Action Handler Test", function () {
-	    var activator = {
-	        activate: function (type) {
-	            if (type == test.TestHandler) {
-	                return new test.TestHandler();
-	            }
-	        }
-	    };
-	    var resolver = new Ck.CommandResolver(activator);
+	var Ck = __webpack_require__(2);
+	var test = __webpack_require__(8);
+	describe("Action Sender Test", function () {
+	    var activator = new test.DumbActivator();
+	    var resolver = new Ck.ActionResolver(activator);
 	    resolver.registerHandler(test.TestHandler);
 	    it("Handler should be executed", function (done) {
 	        var sender = new Ck.ActionSender(resolver);
-	        sender.send(new command_1.Command("test", {
+	        sender.send(new Ck.Action("test", {
 	            a: 1,
 	            b: 6
 	        })).then(function (r) {
@@ -71,35 +72,36 @@
 	    it("ActionSender should not found the handler and throw an exception", function () {
 	        var sender = new Ck.ActionSender(resolver);
 	        return expect(function () {
-	            sender.send(new command_1.Command("tests", {
+	            sender.send(new Ck.Action("tests", {
 	                a: 1,
 	                b: 6
 	            }));
-	        }).toThrow("No handler found for the command tests");
+	        }).toThrow("No handler found for the action tests");
 	    });
 	});
 
 
 /***/ },
-/* 1 */
+/* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
 	function __export(m) {
 	    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 	}
-	__export(__webpack_require__(2));
 	__export(__webpack_require__(3));
 	__export(__webpack_require__(4));
 	__export(__webpack_require__(5));
+	__export(__webpack_require__(6));
+	__export(__webpack_require__(7));
 
 
 /***/ },
-/* 2 */
+/* 3 */
 /***/ function(module, exports) {
 
-	function ActionHandler(commandName) {
+	function ActionHandler(actionName) {
 	    return function (target) {
-	        target.__cmd = commandName;
+	        target.__cmd = actionName;
 	        return target;
 	    };
 	}
@@ -107,16 +109,16 @@
 
 
 /***/ },
-/* 3 */
+/* 4 */
 /***/ function(module, exports) {
 
 	var ActionSender = (function () {
 	    function ActionSender(_resolver) {
 	        this._resolver = _resolver;
 	    }
-	    ActionSender.prototype.send = function (command) {
-	        var handler = this._resolver.resolve(command);
-	        return handler.handle(command);
+	    ActionSender.prototype.send = function (action) {
+	        var handler = this._resolver.resolve(action.name);
+	        return handler.handle(action);
 	    };
 	    return ActionSender;
 	})();
@@ -124,47 +126,70 @@
 
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports) {
 
 	
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports) {
 
-	var CommandResolver = (function () {
-	    function CommandResolver(_activator) {
+	var ActionResolver = (function () {
+	    function ActionResolver(_activator) {
 	        this._activator = _activator;
 	        this._handlers = {};
 	    }
-	    CommandResolver.prototype.registerHandler = function (handler) {
+	    ActionResolver.prototype.registerHandler = function (handler) {
 	        var h = handler;
 	        if (!h.__cmd) {
-	            throw "The handler " + handler + " has no associated command. Please use the ActionHandler decorator to specify one";
+	            throw "The handler " + handler.name + " has no associated action. Please use the ActionHandler decorator to specify one";
+	        }
+	        if (typeof handler.prototype.handle != 'function') {
+	            throw "The handler " + handler.name + " does not satisfy the IActionHandler interface";
+	        }
+	        if (this._handlers[h.__cmd] != undefined) {
+	            if (this._handlers[h.__cmd].type == handler) {
+	                throw "The handler " + handler.name + " is already registered";
+	            }
+	            throw "Cannot register " + handler.name + ": The handler " + this._handlers[h.__cmd].type.name + " is already registered for the command " + h.__cmd;
 	        }
 	        this._handlers[h.__cmd] = {
 	            type: handler,
 	            instance: undefined
 	        };
 	    };
-	    CommandResolver.prototype.resolve = function (command) {
-	        var handlerInfo = this._handlers[command.name];
+	    ActionResolver.prototype.resolve = function (actionName) {
+	        var handlerInfo = this._handlers[actionName];
 	        if (handlerInfo == undefined)
-	            throw "No handler found for the command " + command.name;
+	            throw "No handler found for the action " + actionName;
 	        //create and store the handler instance
 	        if (handlerInfo.instance == undefined) {
 	            handlerInfo.instance = this._activator.activate(handlerInfo.type);
 	        }
 	        return handlerInfo.instance;
 	    };
-	    return CommandResolver;
+	    return ActionResolver;
 	})();
-	exports.CommandResolver = CommandResolver;
+	exports.ActionResolver = ActionResolver;
 
 
 /***/ },
-/* 6 */
+/* 7 */
+/***/ function(module, exports) {
+
+	var Action = (function () {
+	    function Action(name, properties) {
+	        this.name = name;
+	        this.properties = properties;
+	    }
+	    return Action;
+	})();
+	exports.Action = Action;
+
+
+/***/ },
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -176,12 +201,11 @@
 	var __metadata = (this && this.__metadata) || function (k, v) {
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
-	var Ck = __webpack_require__(1);
+	var Ck = __webpack_require__(2);
 	var TestHandler = (function () {
 	    function TestHandler() {
 	    }
 	    TestHandler.prototype.handle = function (action) {
-	        console.log(action);
 	        return Promise.resolve(action.properties.a + action.properties.b);
 	    };
 	    TestHandler = __decorate([
@@ -191,136 +215,100 @@
 	    return TestHandler;
 	})();
 	exports.TestHandler = TestHandler;
-
-
-/***/ },
-/* 7 */
-/***/ function(module, exports, __webpack_require__) {
-
-	function __export(m) {
-	    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-	}
-	__export(__webpack_require__(8));
-	__export(__webpack_require__(9));
-	__export(__webpack_require__(10));
-	__export(__webpack_require__(11));
-	__export(__webpack_require__(12));
-
-
-/***/ },
-/* 8 */
-/***/ function(module, exports) {
-
-	var Command = (function () {
-	    function Command(name, properties) {
-	        this.name = name;
-	        this.properties = properties;
+	var WrongHandler = (function () {
+	    function WrongHandler() {
 	    }
-	    return Command;
+	    WrongHandler.prototype.handle = function (action) {
+	        return Promise.resolve(action.properties.a + action.properties.b);
+	    };
+	    return WrongHandler;
 	})();
-	exports.Command = Command;
+	exports.WrongHandler = WrongHandler;
+	var DuplicateTestHandler = (function () {
+	    function DuplicateTestHandler() {
+	    }
+	    DuplicateTestHandler.prototype.handle = function (action) {
+	        return Promise.resolve(action.properties.a + action.properties.b);
+	    };
+	    DuplicateTestHandler = __decorate([
+	        Ck.ActionHandler("test"), 
+	        __metadata('design:paramtypes', [])
+	    ], DuplicateTestHandler);
+	    return DuplicateTestHandler;
+	})();
+	exports.DuplicateTestHandler = DuplicateTestHandler;
+	var WrongTestHandler = (function () {
+	    function WrongTestHandler() {
+	    }
+	    WrongTestHandler.prototype.doStuff = function () {
+	    };
+	    WrongTestHandler = __decorate([
+	        Ck.ActionHandler("test"), 
+	        __metadata('design:paramtypes', [])
+	    ], WrongTestHandler);
+	    return WrongTestHandler;
+	})();
+	exports.WrongTestHandler = WrongTestHandler;
+	var DumbActivator = (function () {
+	    function DumbActivator() {
+	    }
+	    DumbActivator.prototype.activate = function (type) {
+	        if (type == TestHandler) {
+	            return new TestHandler();
+	        }
+	    };
+	    return DumbActivator;
+	})();
+	exports.DumbActivator = DumbActivator;
 
 
 /***/ },
 /* 9 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	var AjaxSender = (function () {
-	    function AjaxSender() {
-	    }
-	    AjaxSender.prototype.send = function (url, command) {
-	        var json = JSON.stringify(command.properties);
-	        return new Promise(function (resolve, reject) {
-	            $.ajax(url, {
-	                type: 'POST',
-	                data: json,
-	                contentType: 'application/json',
-	                dataType: 'JSON'
-	            }).then(resolve, reject);
-	        });
-	    };
-	    return AjaxSender;
-	})();
-	exports.AjaxSender = AjaxSender;
-
-
-/***/ },
-/* 10 */
-/***/ function(module, exports) {
-
-	var CommandEmitter = (function () {
-	    function CommandEmitter(prefix, commandRequestSender, commandResponseListener) {
-	        this._prefix = prefix;
-	        this._sender = commandRequestSender;
-	        this._listener = commandResponseListener;
-	    }
-	    CommandEmitter.prototype.emit = function (command) {
-	        var _this = this;
-	        console.info('Sending Command : ' + command.name);
-	        var url = this._prefix + '/' + command.name + '?c=' + (this._listener ? this._listener.callbackId : '');
-	        var xhr = this._sender.send(url, command);
-	        return xhr.then(function (data) {
-	            if (data !== null) {
-	                switch (data.responseType) {
-	                    case -1: throw new Error(data.payload);
-	                    // Direct resposne
-	                    case 0: return data;
-	                    // Deferred response
-	                    case 1: {
-	                        if (_this._listener == null) {
-	                            throw new Error("Deferred command execution is not supported by the Server. It should not answer a deferred response type.");
-	                        }
-	                        var callbackId = data.payload;
-	                        return _this._listener.listen(data.commandId, callbackId);
-	                    }
-	                }
-	            }
-	        });
-	    };
-	    return CommandEmitter;
-	})();
-	exports.CommandEmitter = CommandEmitter;
-
-
-/***/ },
-/* 11 */
-/***/ function(module, exports) {
-
-	
-
-/***/ },
-/* 12 */
-/***/ function(module, exports) {
-
-	var SignalRListener = (function () {
-	    function SignalRListener(connection, hubName) {
-	        var _this = this;
-	        this._receivedResponses = new Array();
-	        this._hubConnection = connection;
-	        this.callbackId = this._hubConnection.hub.id;
-	        this._hubConnection.proxies[hubName].client.ReceiveCommandResponse = function (data) {
-	            _this._receivedResponses.push(data);
-	        };
-	    }
-	    SignalRListener.prototype.listen = function (commandId, callbackId) {
-	        if (callbackId !== this._hubConnection.id)
-	            throw new Error('Try to listen to the wrong ConnectionId...');
-	        return new Promise(function (resolve, reject) {
-	            var _this = this;
-	            var interval = setInterval(function () {
-	                _this._receivedResponses.forEach(function (r, idx, ar) {
-	                    if (r.commandId === commandId) {
-	                        clearInterval(interval);
-	                        ar.splice(idx, 1);
-	                        resolve(r);
-	                    }
-	                });
-	            }, 200);
-	        });
-	    };
-	    return SignalRListener;
-	})();
-	exports.SignalRListener = SignalRListener;
+	/// <reference path="../typings/tsd.d.ts" />
+	var Ck = __webpack_require__(2);
+	var handlers = __webpack_require__(8);
+	describe("ActionResolver Tests", function () {
+	    it("Resolver should not accept a handler without the ActionHandler decorator", function () {
+	        var resolver = new Ck.ActionResolver(new handlers.DumbActivator());
+	        return expect(function () {
+	            resolver.registerHandler(handlers.WrongHandler);
+	        }).toThrow("The handler WrongHandler has no associated action. Please use the ActionHandler decorator to specify one");
+	    });
+	    it("Resolver should not accept a handler that not satisfy the IActionHandler interface", function () {
+	        var resolver = new Ck.ActionResolver(new handlers.DumbActivator());
+	        return expect(function () {
+	            resolver.registerHandler(handlers.WrongTestHandler);
+	        }).toThrow("The handler WrongTestHandler does not satisfy the IActionHandler interface");
+	    });
+	    it("Resolver should not allow the registration of a handler more than once", function () {
+	        var resolver = new Ck.ActionResolver(new handlers.DumbActivator());
+	        resolver.registerHandler(handlers.TestHandler);
+	        return expect(function () {
+	            resolver.registerHandler(handlers.TestHandler);
+	        }).toThrow("The handler TestHandler is already registered");
+	    });
+	    it("Resolver should not allow the registration of differents handlers for the same action", function () {
+	        var resolver = new Ck.ActionResolver(new handlers.DumbActivator());
+	        resolver.registerHandler(handlers.TestHandler);
+	        return expect(function () {
+	            resolver.registerHandler(handlers.DuplicateTestHandler);
+	        }).toThrow("Cannot register DuplicateTestHandler: The handler TestHandler is already registered for the command test");
+	    });
+	    it("Resolver should resolve the previously registered handler", function () {
+	        var resolver = new Ck.ActionResolver(new handlers.DumbActivator());
+	        resolver.registerHandler(handlers.TestHandler);
+	        var handler = resolver.resolve('test');
+	        return expect(handler instanceof handlers.TestHandler).toBeTruthy();
+	    });
+	    it("Resolver should not found the handler", function () {
+	        var resolver = new Ck.ActionResolver(new handlers.DumbActivator());
+	        return expect(function () {
+	            resolver.resolve('test');
+	        }).toThrow("No handler found for the action test");
+	    });
+	});
 
 
 /***/ }

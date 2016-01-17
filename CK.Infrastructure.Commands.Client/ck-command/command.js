@@ -25,4 +25,3 @@ System.register(['./src/Command', './src/AjaxSender', './src/CommandEmitter', '.
         }
     }
 });
-//# sourceMappingURL=command.js.map

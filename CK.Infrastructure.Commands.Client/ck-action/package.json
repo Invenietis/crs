@@ -6,9 +6,6 @@
   "directories": {
     "test": "test"
   },
-  "dependencies": {
-    "ck-command": "^0.1.0"
-  },
   "devDependencies": {
     "jasmine-core": "^2.4.1",
     "ts-loader": "^0.7.2",

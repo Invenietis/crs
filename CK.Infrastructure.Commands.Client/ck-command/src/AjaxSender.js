@@ -24,4 +24,3 @@ System.register([], function(exports_1) {
         }
     }
 });
-//# sourceMappingURL=AjaxSender.js.map
