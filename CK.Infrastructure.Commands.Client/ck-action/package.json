@@ -1,8 +1,8 @@
 {
   "name": "ck-action",
   "version": "0.1.0",
-  "description": "Bring the CK.CRS pattern inside your Javscript application. Build on top of CK.Commands.",
-  "main": "index.js",
+  "description": "ck-action is a lightweight Command Pattern implementation for JavaScript",
+  "main": "core.js",
   "directories": {
     "test": "test"
   },

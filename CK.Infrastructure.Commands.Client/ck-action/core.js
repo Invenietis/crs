@@ -1,4 +1,4 @@
-System.register(['./src/ActionHandler', './src/ActionSender', './src/Resolver', './src/Action'], function(exports_1) {
+System.register(['./src/ActionExecutor', './src/ActionInvoker', './src/Resolver'], function(exports_1) {
     "use strict";
     function exportStar_1(m) {
         var exports = {};
@@ -9,17 +9,14 @@ System.register(['./src/ActionHandler', './src/ActionSender', './src/Resolver', 
     }
     return {
         setters:[
-            function (ActionHandler_1_1) {
-                exportStar_1(ActionHandler_1_1);
+            function (ActionExecutor_1_1) {
+                exportStar_1(ActionExecutor_1_1);
             },
-            function (ActionSender_1_1) {
-                exportStar_1(ActionSender_1_1);
+            function (ActionInvoker_1_1) {
+                exportStar_1(ActionInvoker_1_1);
             },
             function (Resolver_1_1) {
                 exportStar_1(Resolver_1_1);
-            },
-            function (Action_1_1) {
-                exportStar_1(Action_1_1);
             }],
         execute: function() {
         }

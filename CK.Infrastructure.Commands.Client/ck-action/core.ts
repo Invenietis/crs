@@ -1,7 +1,4 @@
-export * from './src/ActionHandler';
-export * from './src/ActionSender';
+export * from './src/ActionExecutor';
+export * from './src/ActionInvoker';
 export * from './src/Activator';
 export * from './src/Resolver';
-export * from './src/Action';
-
-

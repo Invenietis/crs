@@ -1,44 +1,43 @@
 import { Activator } from './Activator';
-import { IActionHandler } from './ActionHandler';
+import { IActionExecutor } from './ActionExecutor';
 
-import { Action } from './Action';
 
 export class ActionResolver{
-    private _handlers : { [actionName: string]: { type: Function, instance: IActionHandler } } = {};
+    private _executors : { [actionName: string]: { type: Function, instance: IActionExecutor } } = {};
    
     constructor(private _activator: Activator){}
     
-    registerHandler( handler: Function ){
-        var h = <any>handler;
-        if(!h.__cmd){
-            throw `The handler ${handler.name} has no associated action. Please use the ActionHandler decorator to specify one`;
+    registerExecutor( executor: Function ){
+        var ex = <any>executor;
+        if(!ex.__meta || !ex.__meta.actionName){
+            throw `The executor ${ex.name} has no associated action. Please use the ActionExecutor decorator to specify one`;
         }
-        if(typeof handler.prototype.handle != 'function'){
-            throw `The handler ${handler.name} does not satisfy the IActionHandler interface`;
+        if(typeof executor.prototype.execute != 'function'){
+            throw `The executor ${ex.name} does not satisfy the IActionExecutor interface`;
         }
-        if(this._handlers[h.__cmd] != undefined){
-            if(this._handlers[h.__cmd].type == handler){
-                throw `The handler ${handler.name} is already registered`
+        if(this._executors[ex.__meta.actionName] != undefined){
+            if(this._executors[ex.__meta.actionName].type == executor){
+                throw `The executor ${ex.name} is already registered`
             }
             
-            throw `Cannot register ${handler.name}: The handler ${this._handlers[h.__cmd].type.name} is already registered for the command ${h.__cmd}`;
+            throw `Cannot register ${ex.name}: The executor ${(<any>this._executors[ex.__meta.actionName].type).name} is already registered for the action ${ex.__meta.actionName}`;
         }
         
-        this._handlers[h.__cmd] = { 
-            type: handler, 
+        this._executors[ex.__meta.actionName] = { 
+            type: executor, 
             instance: undefined 
         };
     }
     
-    resolve(actionName: string): IActionHandler {
-        var handlerInfo = this._handlers[actionName];
-        if(handlerInfo == undefined) throw `No handler found for the action ${actionName}`;
+    resolve(actionName: string): IActionExecutor {
+        var executorInfo = this._executors[actionName];
+        if(executorInfo == undefined) throw `No executor found for the action ${actionName}`;
         
-        //create and store the handler instance
-        if(handlerInfo.instance == undefined){
-            handlerInfo.instance = this._activator.activate<IActionHandler>(handlerInfo.type);
+        //create and store the executor instance
+        if(executorInfo.instance == undefined){
+            executorInfo.instance = this._activator.activate<IActionExecutor>(executorInfo.type);
         }
         
-        return handlerInfo.instance;
+        return executorInfo.instance;
     }
 }

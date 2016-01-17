@@ -1,12 +1,13 @@
+/// <reference path="../typings/tsd.d.ts" />
 System.register([], function(exports_1) {
     "use strict";
-    function ActionHandler(actionName) {
+    function ActionExecutor(metadata) {
         return function (target) {
-            target.__cmd = actionName;
+            target.__meta = metadata;
             return target;
         };
     }
-    exports_1("ActionHandler", ActionHandler);
+    exports_1("ActionExecutor", ActionExecutor);
     return {
         setters:[],
         execute: function() {

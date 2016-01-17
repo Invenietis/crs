@@ -7,36 +7,36 @@ System.register([], function(exports_1) {
             ActionResolver = (function () {
                 function ActionResolver(_activator) {
                     this._activator = _activator;
-                    this._handlers = {};
+                    this._executors = {};
                 }
-                ActionResolver.prototype.registerHandler = function (handler) {
-                    var h = handler;
-                    if (!h.__cmd) {
-                        throw "The handler " + handler.name + " has no associated action. Please use the ActionHandler decorator to specify one";
+                ActionResolver.prototype.registerExecutor = function (executor) {
+                    var ex = executor;
+                    if (!ex.__meta || !ex.__meta.actionName) {
+                        throw "The executor " + ex.name + " has no associated action. Please use the ActionExecutor decorator to specify one";
                     }
-                    if (typeof handler.prototype.handle != 'function') {
-                        throw "The handler " + handler.name + " does not satisfy the IActionHandler interface";
+                    if (typeof executor.prototype.execute != 'function') {
+                        throw "The executor " + ex.name + " does not satisfy the IActionExecutor interface";
                     }
-                    if (this._handlers[h.__cmd] != undefined) {
-                        if (this._handlers[h.__cmd].type == handler) {
-                            throw "The handler " + handler.name + " is already registered";
+                    if (this._executors[ex.__meta.actionName] != undefined) {
+                        if (this._executors[ex.__meta.actionName].type == executor) {
+                            throw "The executor " + ex.name + " is already registered";
                         }
-                        throw "Cannot register " + handler.name + ": The handler " + this._handlers[h.__cmd].type.name + " is already registered for the command " + h.__cmd;
+                        throw "Cannot register " + ex.name + ": The executor " + this._executors[ex.__meta.actionName].type.name + " is already registered for the action " + ex.__meta.actionName;
                     }
-                    this._handlers[h.__cmd] = {
-                        type: handler,
+                    this._executors[ex.__meta.actionName] = {
+                        type: executor,
                         instance: undefined
                     };
                 };
                 ActionResolver.prototype.resolve = function (actionName) {
-                    var handlerInfo = this._handlers[actionName];
-                    if (handlerInfo == undefined)
-                        throw "No handler found for the action " + actionName;
-                    //create and store the handler instance
-                    if (handlerInfo.instance == undefined) {
-                        handlerInfo.instance = this._activator.activate(handlerInfo.type);
+                    var executorInfo = this._executors[actionName];
+                    if (executorInfo == undefined)
+                        throw "No executor found for the action " + actionName;
+                    //create and store the executor instance
+                    if (executorInfo.instance == undefined) {
+                        executorInfo.instance = this._activator.activate(executorInfo.type);
                     }
-                    return handlerInfo.instance;
+                    return executorInfo.instance;
                 };
                 return ActionResolver;
             }());

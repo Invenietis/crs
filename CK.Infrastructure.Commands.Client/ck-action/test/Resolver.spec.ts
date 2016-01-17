@@ -1,54 +1,54 @@
 /// <reference path="../typings/tsd.d.ts" />
 import * as Ck from '../core'
-import * as handlers from './handlers'
+import * as executors from './executors'
 
 describe("ActionResolver Tests", function(){
-   it("Resolver should not accept a handler without the ActionHandler decorator", function(){
-        var resolver = new Ck.ActionResolver(new handlers.DumbActivator());
+   it("Resolver should not accept an executor without the ActionExecutor decorator", function(){
+        var resolver = new Ck.ActionResolver(new executors.DumbActivator());
         
          return expect(function(){
-           resolver.registerHandler(handlers.WrongHandler);
-        }).toThrow("The handler WrongHandler has no associated action. Please use the ActionHandler decorator to specify one");
+           resolver.registerExecutor(executors.WrongExecutor);
+        }).toThrow("The executor WrongExecutor has no associated action. Please use the ActionExecutor decorator to specify one");
     });
     
-    it("Resolver should not accept a handler that not satisfy the IActionHandler interface", function(){
-        var resolver = new Ck.ActionResolver(new handlers.DumbActivator());
+    it("Resolver should not accept an executor that not satisfy the IActionExecutor interface", function(){
+        var resolver = new Ck.ActionResolver(new executors.DumbActivator());
         
         return expect(function(){
-            resolver.registerHandler(handlers.WrongTestHandler);
-        }).toThrow("The handler WrongTestHandler does not satisfy the IActionHandler interface");
+            resolver.registerExecutor(executors.WrongTestExecutor);
+        }).toThrow("The executor WrongTestExecutor does not satisfy the IActionExecutor interface");
     });
     
-    it("Resolver should not allow the registration of a handler more than once", function(){
-        var resolver = new Ck.ActionResolver(new handlers.DumbActivator());
-        resolver.registerHandler(handlers.TestHandler);
+    it("Resolver should not allow the registration of an executor more than once", function(){
+        var resolver = new Ck.ActionResolver(new executors.DumbActivator());
+        resolver.registerExecutor(executors.TestExecutor);
         
         return expect(function(){
-           resolver.registerHandler(handlers.TestHandler);
-        }).toThrow("The handler TestHandler is already registered");
+           resolver.registerExecutor(executors.TestExecutor);
+        }).toThrow("The executor TestExecutor is already registered");
     });
     
-    it("Resolver should not allow the registration of differents handlers for the same action", function(){
-        var resolver = new Ck.ActionResolver(new handlers.DumbActivator());
-        resolver.registerHandler(handlers.TestHandler);
+    it("Resolver should not allow the registration of differents executors for the same action", function(){
+        var resolver = new Ck.ActionResolver(new executors.DumbActivator());
+        resolver.registerExecutor(executors.TestExecutor);
         
         return expect(function(){
-           resolver.registerHandler(handlers.DuplicateTestHandler);
-        }).toThrow("Cannot register DuplicateTestHandler: The handler TestHandler is already registered for the command test");
+           resolver.registerExecutor(executors.DuplicateTestExecutor);
+        }).toThrow("Cannot register DuplicateTestExecutor: The executor TestExecutor is already registered for the action test");
     });
     
-    it("Resolver should resolve the previously registered handler", function(){
-        var resolver = new Ck.ActionResolver(new handlers.DumbActivator());
-        resolver.registerHandler(handlers.TestHandler);
-        var handler = resolver.resolve('test');
+    it("Resolver should resolve the previously registered executor", function(){
+        var resolver = new Ck.ActionResolver(new executors.DumbActivator());
+        resolver.registerExecutor(executors.TestExecutor);
+        var executor = resolver.resolve('test');
         
-        return expect(handler instanceof handlers.TestHandler).toBeTruthy();
+        return expect(executor instanceof executors.TestExecutor).toBeTruthy();
     });
     
-    it("Resolver should not found the handler", function(){
-        var resolver = new Ck.ActionResolver(new handlers.DumbActivator());
+    it("Resolver should not found the executor", function(){
+        var resolver = new Ck.ActionResolver(new executors.DumbActivator());
         return expect(function(){
             resolver.resolve('test');
-        }).toThrow("No handler found for the action test");
+        }).toThrow("No executor found for the action test");
     });
 });

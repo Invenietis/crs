@@ -45,7 +45,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	__webpack_require__(1);
-	module.exports = __webpack_require__(9);
+	module.exports = __webpack_require__(8);
 
 
 /***/ },
@@ -54,29 +54,29 @@
 
 	/// <reference path="../typings/tsd.d.ts" />
 	var Ck = __webpack_require__(2);
-	var test = __webpack_require__(8);
+	var test = __webpack_require__(9);
 	describe("Action Sender Test", function () {
 	    var activator = new test.DumbActivator();
 	    var resolver = new Ck.ActionResolver(activator);
-	    resolver.registerHandler(test.TestHandler);
-	    it("Handler should be executed", function (done) {
-	        var sender = new Ck.ActionSender(resolver);
-	        sender.send(new Ck.Action("test", {
+	    resolver.registerExecutor(test.TestExecutor);
+	    it("Executor should be executed", function (done) {
+	        var sender = new Ck.ActionInvoker(resolver);
+	        sender.invoke("test", {
 	            a: 1,
 	            b: 6
-	        })).then(function (r) {
+	        }).then(function (r) {
 	            expect(r).toBe(7);
 	            done();
 	        });
 	    });
-	    it("ActionSender should not found the handler and throw an exception", function () {
-	        var sender = new Ck.ActionSender(resolver);
+	    it("ActionSender should not found the executor and throw an exception", function () {
+	        var sender = new Ck.ActionInvoker(resolver);
 	        return expect(function () {
-	            sender.send(new Ck.Action("tests", {
+	            sender.invoke("tests", {
 	                a: 1,
 	                b: 6
-	            }));
-	        }).toThrow("No handler found for the action tests");
+	            });
+	        }).toThrow("No executor found for the action tests");
 	    });
 	});
 
@@ -92,37 +92,41 @@
 	__export(__webpack_require__(4));
 	__export(__webpack_require__(5));
 	__export(__webpack_require__(6));
-	__export(__webpack_require__(7));
 
 
 /***/ },
 /* 3 */
 /***/ function(module, exports) {
 
-	function ActionHandler(actionName) {
+	/// <reference path="../typings/tsd.d.ts" />
+	/**
+	 * ActionExector decorator. This must be used on every executor class
+	 * @param metadata { actionName The name of the targeted action }
+	 */
+	function ActionExecutor(metadata) {
 	    return function (target) {
-	        target.__cmd = actionName;
+	        target.__meta = metadata;
 	        return target;
 	    };
 	}
-	exports.ActionHandler = ActionHandler;
+	exports.ActionExecutor = ActionExecutor;
 
 
 /***/ },
 /* 4 */
 /***/ function(module, exports) {
 
-	var ActionSender = (function () {
-	    function ActionSender(_resolver) {
+	var ActionInvoker = (function () {
+	    function ActionInvoker(_resolver) {
 	        this._resolver = _resolver;
 	    }
-	    ActionSender.prototype.send = function (action) {
-	        var handler = this._resolver.resolve(action.name);
-	        return handler.handle(action);
+	    ActionInvoker.prototype.invoke = function (actionName, parameters) {
+	        var handler = this._resolver.resolve(actionName);
+	        return handler.execute(parameters);
 	    };
-	    return ActionSender;
+	    return ActionInvoker;
 	})();
-	exports.ActionSender = ActionSender;
+	exports.ActionInvoker = ActionInvoker;
 
 
 /***/ },
@@ -138,36 +142,36 @@
 	var ActionResolver = (function () {
 	    function ActionResolver(_activator) {
 	        this._activator = _activator;
-	        this._handlers = {};
+	        this._executors = {};
 	    }
-	    ActionResolver.prototype.registerHandler = function (handler) {
-	        var h = handler;
-	        if (!h.__cmd) {
-	            throw "The handler " + handler.name + " has no associated action. Please use the ActionHandler decorator to specify one";
+	    ActionResolver.prototype.registerExecutor = function (executor) {
+	        var ex = executor;
+	        if (!ex.__meta || !ex.__meta.actionName) {
+	            throw "The executor " + ex.name + " has no associated action. Please use the ActionExecutor decorator to specify one";
 	        }
-	        if (typeof handler.prototype.handle != 'function') {
-	            throw "The handler " + handler.name + " does not satisfy the IActionHandler interface";
+	        if (typeof executor.prototype.execute != 'function') {
+	            throw "The executor " + ex.name + " does not satisfy the IActionExecutor interface";
 	        }
-	        if (this._handlers[h.__cmd] != undefined) {
-	            if (this._handlers[h.__cmd].type == handler) {
-	                throw "The handler " + handler.name + " is already registered";
+	        if (this._executors[ex.__meta.actionName] != undefined) {
+	            if (this._executors[ex.__meta.actionName].type == executor) {
+	                throw "The executor " + ex.name + " is already registered";
 	            }
-	            throw "Cannot register " + handler.name + ": The handler " + this._handlers[h.__cmd].type.name + " is already registered for the command " + h.__cmd;
+	            throw "Cannot register " + ex.name + ": The executor " + this._executors[ex.__meta.actionName].type.name + " is already registered for the action " + ex.__meta.actionName;
 	        }
-	        this._handlers[h.__cmd] = {
-	            type: handler,
+	        this._executors[ex.__meta.actionName] = {
+	            type: executor,
 	            instance: undefined
 	        };
 	    };
 	    ActionResolver.prototype.resolve = function (actionName) {
-	        var handlerInfo = this._handlers[actionName];
-	        if (handlerInfo == undefined)
-	            throw "No handler found for the action " + actionName;
-	        //create and store the handler instance
-	        if (handlerInfo.instance == undefined) {
-	            handlerInfo.instance = this._activator.activate(handlerInfo.type);
+	        var executorInfo = this._executors[actionName];
+	        if (executorInfo == undefined)
+	            throw "No executor found for the action " + actionName;
+	        //create and store the executor instance
+	        if (executorInfo.instance == undefined) {
+	            executorInfo.instance = this._activator.activate(executorInfo.type);
 	        }
-	        return handlerInfo.instance;
+	        return executorInfo.instance;
 	    };
 	    return ActionResolver;
 	})();
@@ -175,21 +179,57 @@
 
 
 /***/ },
-/* 7 */
-/***/ function(module, exports) {
+/* 7 */,
+/* 8 */
+/***/ function(module, exports, __webpack_require__) {
 
-	var Action = (function () {
-	    function Action(name, properties) {
-	        this.name = name;
-	        this.properties = properties;
-	    }
-	    return Action;
-	})();
-	exports.Action = Action;
+	/// <reference path="../typings/tsd.d.ts" />
+	var Ck = __webpack_require__(2);
+	var executors = __webpack_require__(9);
+	describe("ActionResolver Tests", function () {
+	    it("Resolver should not accept an executor without the ActionExecutor decorator", function () {
+	        var resolver = new Ck.ActionResolver(new executors.DumbActivator());
+	        return expect(function () {
+	            resolver.registerExecutor(executors.WrongExecutor);
+	        }).toThrow("The executor WrongExecutor has no associated action. Please use the ActionExecutor decorator to specify one");
+	    });
+	    it("Resolver should not accept an executor that not satisfy the IActionExecutor interface", function () {
+	        var resolver = new Ck.ActionResolver(new executors.DumbActivator());
+	        return expect(function () {
+	            resolver.registerExecutor(executors.WrongTestExecutor);
+	        }).toThrow("The executor WrongTestExecutor does not satisfy the IActionExecutor interface");
+	    });
+	    it("Resolver should not allow the registration of an executor more than once", function () {
+	        var resolver = new Ck.ActionResolver(new executors.DumbActivator());
+	        resolver.registerExecutor(executors.TestExecutor);
+	        return expect(function () {
+	            resolver.registerExecutor(executors.TestExecutor);
+	        }).toThrow("The executor TestExecutor is already registered");
+	    });
+	    it("Resolver should not allow the registration of differents executors for the same action", function () {
+	        var resolver = new Ck.ActionResolver(new executors.DumbActivator());
+	        resolver.registerExecutor(executors.TestExecutor);
+	        return expect(function () {
+	            resolver.registerExecutor(executors.DuplicateTestExecutor);
+	        }).toThrow("Cannot register DuplicateTestExecutor: The executor TestExecutor is already registered for the action test");
+	    });
+	    it("Resolver should resolve the previously registered executor", function () {
+	        var resolver = new Ck.ActionResolver(new executors.DumbActivator());
+	        resolver.registerExecutor(executors.TestExecutor);
+	        var executor = resolver.resolve('test');
+	        return expect(executor instanceof executors.TestExecutor).toBeTruthy();
+	    });
+	    it("Resolver should not found the executor", function () {
+	        var resolver = new Ck.ActionResolver(new executors.DumbActivator());
+	        return expect(function () {
+	            resolver.resolve('test');
+	        }).toThrow("No executor found for the action test");
+	    });
+	});
 
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -202,113 +242,70 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var Ck = __webpack_require__(2);
-	var TestHandler = (function () {
-	    function TestHandler() {
+	var TestExecutor = (function () {
+	    function TestExecutor() {
 	    }
-	    TestHandler.prototype.handle = function (action) {
-	        return Promise.resolve(action.properties.a + action.properties.b);
+	    TestExecutor.prototype.execute = function (parameters) {
+	        return Promise.resolve(parameters.a + parameters.b);
 	    };
-	    TestHandler = __decorate([
-	        Ck.ActionHandler("test"), 
+	    TestExecutor = __decorate([
+	        Ck.ActionExecutor({
+	            actionName: "test"
+	        }), 
 	        __metadata('design:paramtypes', [])
-	    ], TestHandler);
-	    return TestHandler;
+	    ], TestExecutor);
+	    return TestExecutor;
 	})();
-	exports.TestHandler = TestHandler;
-	var WrongHandler = (function () {
-	    function WrongHandler() {
+	exports.TestExecutor = TestExecutor;
+	var WrongExecutor = (function () {
+	    function WrongExecutor() {
 	    }
-	    WrongHandler.prototype.handle = function (action) {
-	        return Promise.resolve(action.properties.a + action.properties.b);
+	    WrongExecutor.prototype.execute = function (parameters) {
+	        return Promise.resolve(parameters.a + parameters.b);
 	    };
-	    return WrongHandler;
+	    return WrongExecutor;
 	})();
-	exports.WrongHandler = WrongHandler;
-	var DuplicateTestHandler = (function () {
-	    function DuplicateTestHandler() {
+	exports.WrongExecutor = WrongExecutor;
+	var DuplicateTestExecutor = (function () {
+	    function DuplicateTestExecutor() {
 	    }
-	    DuplicateTestHandler.prototype.handle = function (action) {
-	        return Promise.resolve(action.properties.a + action.properties.b);
+	    DuplicateTestExecutor.prototype.execute = function (parameters) {
+	        return Promise.resolve(parameters.a + parameters.b);
 	    };
-	    DuplicateTestHandler = __decorate([
-	        Ck.ActionHandler("test"), 
+	    DuplicateTestExecutor = __decorate([
+	        Ck.ActionExecutor({
+	            actionName: "test"
+	        }), 
 	        __metadata('design:paramtypes', [])
-	    ], DuplicateTestHandler);
-	    return DuplicateTestHandler;
+	    ], DuplicateTestExecutor);
+	    return DuplicateTestExecutor;
 	})();
-	exports.DuplicateTestHandler = DuplicateTestHandler;
-	var WrongTestHandler = (function () {
-	    function WrongTestHandler() {
+	exports.DuplicateTestExecutor = DuplicateTestExecutor;
+	var WrongTestExecutor = (function () {
+	    function WrongTestExecutor() {
 	    }
-	    WrongTestHandler.prototype.doStuff = function () {
+	    WrongTestExecutor.prototype.doStuff = function () {
 	    };
-	    WrongTestHandler = __decorate([
-	        Ck.ActionHandler("test"), 
+	    WrongTestExecutor = __decorate([
+	        Ck.ActionExecutor({
+	            actionName: "test"
+	        }), 
 	        __metadata('design:paramtypes', [])
-	    ], WrongTestHandler);
-	    return WrongTestHandler;
+	    ], WrongTestExecutor);
+	    return WrongTestExecutor;
 	})();
-	exports.WrongTestHandler = WrongTestHandler;
+	exports.WrongTestExecutor = WrongTestExecutor;
 	var DumbActivator = (function () {
 	    function DumbActivator() {
 	    }
 	    DumbActivator.prototype.activate = function (type) {
-	        if (type == TestHandler) {
-	            return new TestHandler();
+	        if (type == TestExecutor) {
+	            return new TestExecutor();
 	        }
 	    };
 	    return DumbActivator;
 	})();
 	exports.DumbActivator = DumbActivator;
-
-
-/***/ },
-/* 9 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/// <reference path="../typings/tsd.d.ts" />
-	var Ck = __webpack_require__(2);
-	var handlers = __webpack_require__(8);
-	describe("ActionResolver Tests", function () {
-	    it("Resolver should not accept a handler without the ActionHandler decorator", function () {
-	        var resolver = new Ck.ActionResolver(new handlers.DumbActivator());
-	        return expect(function () {
-	            resolver.registerHandler(handlers.WrongHandler);
-	        }).toThrow("The handler WrongHandler has no associated action. Please use the ActionHandler decorator to specify one");
-	    });
-	    it("Resolver should not accept a handler that not satisfy the IActionHandler interface", function () {
-	        var resolver = new Ck.ActionResolver(new handlers.DumbActivator());
-	        return expect(function () {
-	            resolver.registerHandler(handlers.WrongTestHandler);
-	        }).toThrow("The handler WrongTestHandler does not satisfy the IActionHandler interface");
-	    });
-	    it("Resolver should not allow the registration of a handler more than once", function () {
-	        var resolver = new Ck.ActionResolver(new handlers.DumbActivator());
-	        resolver.registerHandler(handlers.TestHandler);
-	        return expect(function () {
-	            resolver.registerHandler(handlers.TestHandler);
-	        }).toThrow("The handler TestHandler is already registered");
-	    });
-	    it("Resolver should not allow the registration of differents handlers for the same action", function () {
-	        var resolver = new Ck.ActionResolver(new handlers.DumbActivator());
-	        resolver.registerHandler(handlers.TestHandler);
-	        return expect(function () {
-	            resolver.registerHandler(handlers.DuplicateTestHandler);
-	        }).toThrow("Cannot register DuplicateTestHandler: The handler TestHandler is already registered for the command test");
-	    });
-	    it("Resolver should resolve the previously registered handler", function () {
-	        var resolver = new Ck.ActionResolver(new handlers.DumbActivator());
-	        resolver.registerHandler(handlers.TestHandler);
-	        var handler = resolver.resolve('test');
-	        return expect(handler instanceof handlers.TestHandler).toBeTruthy();
-	    });
-	    it("Resolver should not found the handler", function () {
-	        var resolver = new Ck.ActionResolver(new handlers.DumbActivator());
-	        return expect(function () {
-	            resolver.resolve('test');
-	        }).toThrow("No handler found for the action test");
-	    });
-	});
 
 
 /***/ }

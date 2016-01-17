@@ -1,35 +1,33 @@
 /// <reference path="../typings/tsd.d.ts" />
 import * as Ck from '../core'
-import * as test from './handlers'
+import * as test from './executors'
 
 describe("Action Sender Test", function(){
     var activator = new test.DumbActivator();
     
     var resolver = new Ck.ActionResolver(activator);
-    resolver.registerHandler(test.TestHandler);
+    resolver.registerExecutor(test.TestExecutor);
     
-    it("Handler should be executed", function(done){
+    it("Executor should be executed", function(done){
+        var sender = new Ck.ActionInvoker(resolver);
         
-        var sender = new Ck.ActionSender(resolver);
-        
-        sender.send(new Ck.Action("test", {
+        sender.invoke("test", {
             a: 1,
-            b: 6
-        })).then( r => {
+            b: 6 
+        }).then( r => {
             expect(r).toBe(7);
             done();
         });
     });
     
-    it("ActionSender should not found the handler and throw an exception", function(){
-        var sender = new Ck.ActionSender(resolver);
+    it("ActionSender should not found the executor and throw an exception", function(){
+        var sender = new Ck.ActionInvoker(resolver);
         
         return expect(function(){
-            sender.send(new Ck.Action("tests", {
+            sender.invoke("tests", {
                 a: 1,
                 b: 6
-            }));
-        }).toThrow("No handler found for the action tests");
+            });
+        }).toThrow("No executor found for the action tests");
     });
-    
 });
