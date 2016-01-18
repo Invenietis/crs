@@ -15,7 +15,7 @@
         }
     },
     "dependencies": {
-        "SimpleGitVersion.DNXCommands": "0.12.1"
+        "SimpleGitVersion.DNXCommands": "0.13.0"
     },
     "scripts": {
         "prebuild": "sgv prebuild"

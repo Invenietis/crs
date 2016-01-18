@@ -11,13 +11,13 @@
     },
 
     "dependencies": {
-        "Code.Cake": "0.7.1",
+        "Code.Cake": "0.7.3",
         "Microsoft.Extensions.PlatformAbstractions": "1.0.0-rc1-final",
-        "SimpleGitVersion.Cake": "0.12.1"
+        "SimpleGitVersion.Cake": "0.13.0"
     },
 
     "commands": {
-        "cake": "CK.Infrastructure.Commands.CodeCakeBuilder"
+        "CK.Infrastructure.Commands.CodeCakeBuilder": "build"
     },
 
     "frameworks": {

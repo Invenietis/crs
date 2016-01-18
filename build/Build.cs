@@ -104,17 +104,23 @@ namespace CodeCake
                     Cake.Information( "Found {0} packages (and {1} symbols) to push in {2}.", nugetPackages.Count, packagesSymbols.Count, configuration );
                     if( gitInfo.IsValid )
                     {
-                        if( Cake.IsInteractiveMode() )
+                        
+                        var localFeed = Cake.FindDirectoryAbove( "Packarium" );
+                        if( localFeed != null )
                         {
-                            var localFeed = Cake.FindDirectoryAbove( "Packarium" );
-                            if( localFeed != null )
+                            Cake.Information( "LocalFeed directory found: {0}", localFeed );
+                            if( Cake.IsInteractiveMode() )
                             {
-                                Cake.Information( "LocalFeed directory found: {0}", localFeed );
                                 if( Cake.ReadInteractiveOption( "Do you want to publish to LocalFeed?", 'Y', 'N' ) == 'Y' )
                                 {
                                     Cake.CopyFiles( nugetPackages, localFeed );
                                     Cake.CopyFiles( packagesSymbols, localFeed );
                                 }
+                            }
+                            else
+                            {
+                                 Cake.CopyFiles( nugetPackages, localFeed );
+                                 Cake.CopyFiles( packagesSymbols, localFeed );
                             }
                         }
                     }
