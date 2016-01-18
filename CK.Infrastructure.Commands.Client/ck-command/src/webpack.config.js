@@ -1,10 +1,6 @@
 module.exports = {  
-    context: __dirname,
-    entry: ['./ck-command.ts'],
     output: {
-        filename: './dist/ck-command.js',
-        library: 'CkCommands',
-        libraryTarget: 'var'
+        filename: 'ck-command.js'
     },
     resolve: {
         extensions: ['', '.webpack.js', '.web.js', '.ts', '.js']

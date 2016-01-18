@@ -1,4 +1,3 @@
-var CkCommands =
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -45,25 +44,14 @@ var CkCommands =
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(1);
+	__webpack_require__(1);
+	__webpack_require__(2);
+	__webpack_require__(3);
+	module.exports = __webpack_require__(4);
 
 
 /***/ },
 /* 1 */
-/***/ function(module, exports, __webpack_require__) {
-
-	function __export(m) {
-	    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-	}
-	__export(__webpack_require__(2));
-	__export(__webpack_require__(3));
-	__export(__webpack_require__(4));
-	__export(__webpack_require__(5));
-	__export(__webpack_require__(6));
-
-
-/***/ },
-/* 2 */
 /***/ function(module, exports) {
 
 	var Command = (function () {
@@ -77,9 +65,10 @@ var CkCommands =
 
 
 /***/ },
-/* 3 */
+/* 2 */
 /***/ function(module, exports) {
 
+	/// <reference path="../typings/tsd.d.ts" />
 	var AjaxSender = (function () {
 	    function AjaxSender() {
 	    }
@@ -100,9 +89,10 @@ var CkCommands =
 
 
 /***/ },
-/* 4 */
+/* 3 */
 /***/ function(module, exports) {
 
+	/// <reference path="../typings/tsd.d.ts" />
 	var CommandEmitter = (function () {
 	    function CommandEmitter(prefix, commandRequestSender, commandResponseListener) {
 	        this._prefix = prefix;
@@ -138,13 +128,7 @@ var CkCommands =
 
 
 /***/ },
-/* 5 */
-/***/ function(module, exports) {
-
-	
-
-/***/ },
-/* 6 */
+/* 4 */
 /***/ function(module, exports) {
 
 	var SignalRListener = (function () {
