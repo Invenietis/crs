@@ -7,6 +7,5 @@ namespace CK.Infrastructure.Commands
 {
     public interface ICommandRegistrar
     {
-        void RegisterCommands( ICommandRegistry registry );
     }
 }

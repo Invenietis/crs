@@ -44,7 +44,7 @@ namespace CK.Infrastructure.Commands
             if( String.IsNullOrEmpty( routePrefix ) ) throw new ArgumentNullException( "routePrefix" );
             if( String.IsNullOrEmpty( commandTypeName ) ) throw new ArgumentNullException( "commandTypeName" );
 
-            if( !routePrefix.StartsWith( PATH_SEPARATOR ) ) throw new ArgumentException( "The route prefix should start with a /" );
+            if( !routePrefix.StartsWith( PATH_SEPARATOR ) ) throw new ArgumentException( $"The route prefix should start with a {PATH_SEPARATOR}" );
 
             Prefix = routePrefix.ToLowerInvariant();
             if( Prefix.EndsWith( PATH_SEPARATOR ) ) Prefix = Prefix.Remove( Prefix.Length - 1 );
