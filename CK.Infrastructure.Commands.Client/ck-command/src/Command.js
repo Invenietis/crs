@@ -15,4 +15,3 @@ System.register([], function(exports_1) {
         }
     }
 });
-//# sourceMappingURL=Command.js.map

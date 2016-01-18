@@ -1,4 +1,5 @@
 ﻿/// <reference path="../typings/tsd.d.ts" />
+
 import { ICommandEmitter,ICommandResponseListener, ICommandRequestSender, ICommandResponse } from "./interfaces";
 import { Command }  from "./Command";
 

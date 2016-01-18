@@ -1,4 +1,4 @@
-#   ck-crs
+#   ck-action
 
-Bring the CK.CRS pattern inside your Javscript application. Build on top of CK.Commands.
+A lightweight Command Pattern implementation for JavaScript.
 
