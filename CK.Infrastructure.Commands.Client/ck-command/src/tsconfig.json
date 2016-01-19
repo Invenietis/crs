@@ -3,6 +3,8 @@
         "module": "commonjs",
         "noImplicitAny": false,
         "removeComments": false,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
         "sourceMap": true,
         "declaration": true,
         "target": "es5"

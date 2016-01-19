@@ -1,7 +1,9 @@
 module.exports = {  
     output: {
-        filename: 'ck-command.js'
+        filename: 'ck-command.js',
+        library: 'CRS'
     },
+    devtool: 'source-map',
     resolve: {
         extensions: ['', '.webpack.js', '.web.js', '.ts', '.js']
     },

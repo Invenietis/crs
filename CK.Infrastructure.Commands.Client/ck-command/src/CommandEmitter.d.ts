@@ -5,6 +5,7 @@ export declare class CommandEmitter implements ICommandEmitter {
     private _sender;
     private _listener;
     private _prefix;
-    constructor(prefix: string, commandRequestSender: ICommandRequestSender, commandResponseListener?: ICommandResponseListener);
+    constructor(prefix: string, commandRequestSender: ICommandRequestSender);
+    constructor(prefix: string, commandRequestSender: ICommandRequestSender, commandResponseListener: ICommandResponseListener);
     emit(command: Command): Promise<ICommandResponse>;
 }
