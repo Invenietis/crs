@@ -26,13 +26,9 @@ namespace CK.Infrastructure.Commands.Tests.Handlers
     }
 
 
+    [Transaction]
     public class TransferAlwaysSuccessHandlerWithDecoration : TransferAlwaysSuccessHandler
     {
-        [Transaction]
-        protected override Task<TransferAmountCommand.Result> DoHandleAsync( CommandContext<TransferAmountCommand> command )
-        {
-            return base.DoHandleAsync( command );
-        }
     }
 
     public class WithDrawyMoneyHandler : CommandHandler<WithdrawMoneyCommand, WithdrawMoneyCommand.Result>

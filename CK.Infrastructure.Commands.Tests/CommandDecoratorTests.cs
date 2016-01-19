@@ -65,30 +65,25 @@ namespace CK.Infrastructure.Commands.Tests
             Assert.False( sampleDecorator.OnExceptionCalled );
         }
 
-        [Fact]
-        public void Attribute_Lookup_Should_Register_Decorators()
+        [Theory]
+        [InlineData( 2, typeof( Handlers.TransferAmountCommand ), typeof( Handlers.TransferAlwaysSuccessHandlerWithDecoration ), new Type[] { typeof( SampleDecorator ) } )]
+        [InlineData( 2, typeof( Handlers.TransferAmountCommand ), typeof( Handlers.TransferAlwaysSuccessHandlerWithDecoration ), new Type[] { typeof( SampleDecorator ), typeof( TransactionAttribute ) } )]
+        [InlineData( 3, typeof( Handlers.TransferAmountCommand ), typeof( Handlers.TransferAlwaysSuccessHandlerWithDecoration ), new Type[] { typeof( SampleDecorator2 ), typeof( TransactionAttribute ), typeof( SampleDecorator ) } )]
+        [InlineData( 1, typeof( Handlers.TransferAmountCommand ), typeof( Handlers.TransferAlwaysSuccessHandlerWithDecoration ), new Type[0] )]
+        [InlineData( 0, typeof( Handlers.TransferAmountCommand ), typeof( Handlers.TransferAlwaysSuccessHandler ), new Type[0] )]
+        [InlineData( 3, typeof( Handlers.TransferAmountCommand ), typeof( Handlers.TransferAlwaysSuccessHandler ), new Type[] { typeof( SampleDecorator2 ), typeof( TransactionAttribute ), typeof( SampleDecorator ) } )]
+        [InlineData( 2, typeof( Handlers.TransferAmountCommand ), typeof( Handlers.TransferAlwaysSuccessHandler ), new Type[] { typeof( SampleDecorator2 ), typeof( TransactionAttribute ) } )]
+        [InlineData( 1, typeof( Handlers.TransferAmountCommand ), typeof( Handlers.TransferAlwaysSuccessHandler ), new Type[] { typeof( TransactionAttribute ) } )]
+        public void Attribute_Lookup_Should_Register_Decorators( int expected, Type commandType, Type handlerType, Type[] globalDecorators )
         {
-            var cmd = new Handlers.TransferAmountCommand
-            {
-                SourceAccountId = Guid.NewGuid(), 
-                DestinationAccountId = Guid.NewGuid(),
-                Amount = 1000
-            };
-            var commandDescription = new CommandDescriptor
-            {
-                CommandType = cmd.GetType(),
-                HandlerType = typeof(Handlers.TransferAlwaysSuccessHandlerWithDecoration),
-                IsLongRunning = false,
-                Route = ""
-            };
-
             CommandReceiverOptions o = new CommandReceiverOptions();
-            o.Register<Handlers.TransferAmountCommand, Handlers.TransferAlwaysSuccessHandlerWithDecoration>( "/c-tests/transferfounds", false );
-
-            var description = o.Registry.Find( "/c-tests", "transferfounds"  );
-            Assert.NotNull( description );
-            Assert.NotEmpty( description.Decorators );
-            Assert.Equal( 1, description.Decorators.Count );
+            foreach( var g in globalDecorators ) o.AddGlobalDecorator( g );
+            o.Register( commandType, handlerType, "/c-tests/transferfounds", false );
+            {
+                var description = o.Registry.Find( "/c-tests", "transferfounds"  );
+                Assert.NotNull( description );
+                Assert.Equal( expected, description.Decorators.Count );
+            }
         }
 
         private IEnumerable<Type> CreateSampleDecorators()
@@ -130,6 +125,29 @@ namespace CK.Infrastructure.Commands.Tests
             }
 
             public Action<ICommandDecorator> OnDecoratorCreated { get; set; }
+        }
+
+        class SampleDecorator2 : ICommandDecorator
+        {
+            public int Order
+            {
+                get
+                {
+                    return -10;
+                }
+            }
+
+            public void OnCommandExecuted( CommandExecutionContext ctx )
+            {
+            }
+
+            public void OnCommandExecuting( CommandExecutionContext ctx )
+            {
+            }
+
+            public void OnException( CommandExecutionContext ctx )
+            {
+            }
         }
 
         class SampleDecorator : ICommandDecorator

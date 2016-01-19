@@ -9,6 +9,28 @@ namespace CK.Infrastructure.Commands
 
     public static class CommandReceiverExtensions
     {
+        public static CommandReceiverOptions Register( 
+            this CommandReceiverOptions o, 
+            Type commandType, 
+            Type handlerType, 
+            string route, 
+            bool isLongRunning )
+        {
+            var desc = new CommandDescriptor
+            {
+                CommandType = commandType,
+                HandlerType = handlerType,
+                Route = route,
+                IsLongRunning = isLongRunning
+            };
+            desc.Decorators = ExtractDecoratorsFromHandlerAttributes( desc.CommandType, desc.HandlerType )
+                .Union( ApplyGlobalDecorators( o ), EqualityComparer<Type>.Default )
+                .ToArray();
+
+            o.Registry.Register( desc );
+
+            return o;
+        }
         /// <summary>
         /// 
         /// </summary>
@@ -21,51 +43,35 @@ namespace CK.Infrastructure.Commands
             where TCommand : class
             where THandler : class, ICommandHandler<TCommand>
         {
-            var desc = new CommandDescriptor
-            {
-                CommandType = typeof( TCommand ),
-                HandlerType = typeof( THandler ),
-                Route = route,
-                IsLongRunning = isLongRunning
-            };
-            desc.Decorators = ExtractDecoratorsFromHandlerAttributes( desc.CommandType, desc.HandlerType )
-                .Union( ApplyGlobalDecorators() )
-                .ToArray();
-
-            o.Registry.Register( desc );
-
-            return o;
+            return o.Register( typeof( TCommand ), typeof( THandler ), route, isLongRunning );
         }
 
-        private static IEnumerable<Type> ApplyGlobalDecorators()
+        private static IEnumerable<Type> ApplyGlobalDecorators( CommandReceiverOptions o )
         {
-            if( _globalDecorators.IsValueCreated )
+            if( _globalDecorators.IsValueCreated && _globalDecorators.Value.ContainsKey( o ) )
             {
-                return _globalDecorators.Value;
+                return _globalDecorators.Value[o];
             }
             return Enumerable.Empty<Type>();
         }
 
         private static IReadOnlyCollection<Type> ExtractDecoratorsFromHandlerAttributes( Type commandType, Type handlerType )
         {
-            var q = (from m in handlerType.GetMethods( System.Reflection.BindingFlags.FlattenHierarchy  )
-                     let commandTypeParameter = m.GetParameters()[0].ParameterType.GetGenericArguments()[0]
-                     where (m.Name == "DoHandleAsync" && commandType.IsAssignableFrom( commandTypeParameter ) )
-                     select new
-                     {
-                         Attributes = m.GetCustomAttributes( true ).OfType<HandlerAttributeBase>(),
-                         HandleMethod = m
-                     }).FirstOrDefault();
-
-            return q.Attributes.Select( a => a.GetType() ).ToArray();
+            return handlerType.GetCustomAttributes( true ).OfType<ICommandDecorator>().Select( a => a.GetType() ).ToArray();
         }
 
-        static Lazy<List<Type>> _globalDecorators = new Lazy<List<Type>>( () => new List<Type>());
+        static Lazy<Dictionary<CommandReceiverOptions,List<Type>>> _globalDecorators = new Lazy<Dictionary<CommandReceiverOptions,List<Type>>>( () => new Dictionary<CommandReceiverOptions, List<Type>>());
+
+        public static CommandReceiverOptions AddGlobalDecorator( this CommandReceiverOptions o, Type decoratorType )
+        {
+            if( !_globalDecorators.Value.ContainsKey( o ) ) _globalDecorators.Value.Add( o, new List<Type>() );
+            _globalDecorators.Value[o].Add( decoratorType );
+            return o;
+        }
 
         public static CommandReceiverOptions AddGlobalDecorator<TDecorator>( this CommandReceiverOptions o ) where TDecorator : ICommandDecorator
         {
-            _globalDecorators.Value.Add( typeof( TDecorator ) );
-            return o;
+            return AddGlobalDecorator( o, typeof( TDecorator ) ); ;
         }
     }
 }
