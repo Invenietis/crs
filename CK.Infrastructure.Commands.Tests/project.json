@@ -12,7 +12,8 @@
         "Microsoft.Extensions.DependencyInjection": "1.0.0-rc1-final",
         "Microsoft.AspNet.Http.Abstractions": "1.0.0-rc1-final",
         "CK.Infrastructure.Commands": "",
-        "CK.Core": "4.3.0"
+        "CK.Core": "4.3.0",
+        "CK.Infrastructure.Commands.Extensions": "1.0.0-*"
     },
     "commands": {
         "test": "xunit.runner.dnx"

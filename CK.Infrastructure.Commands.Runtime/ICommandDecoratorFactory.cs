@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 
 namespace CK.Infrastructure.Commands
 {
-    public interface ICommandRegistrar
+    public interface ICommandDecoratorFactory
     {
+        ICommandDecorator Create( Type decoratorType );
     }
 }

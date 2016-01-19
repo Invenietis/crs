@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using CK.Core;
 using CK.Infrastructure.Commands.Tests.Handlers;
 using Xunit;
 using Xunit.Abstractions;
@@ -23,8 +24,9 @@ namespace CK.Infrastructure.Commands.Tests
         public async Task SendCommandAndWaitForEvents()
         {
             string serverAddress = "http://MyDumbServer/c/";
+            var serviceProvider = TestHelper.CreateServiceProvider( Util.ActionVoid );
 
-            using( var server = new CommandReceiverHost( serverAddress, new DefaultCommandReceiver( new DefaultCommandValidator(), new CommandRunnerHostSelector( EventChannel.Instance ), new DefaultCommandHandlerFactory(), new OptionStub () ) ) )
+            using( var server = new CommandReceiverHost( serverAddress, new DefaultCommandReceiver( new DefaultCommandValidator(), new CommandRunnerHostSelector( EventChannel.Instance ), new DefaultCommandHandlerFactory( serviceProvider ), new DefaultCommandDecoratorFactory( serviceProvider ), new OptionStub() ) ) )
             {
                 // Server initialization
                 server.Run();
@@ -298,7 +300,7 @@ namespace CK.Infrastructure.Commands.Tests
                     PendingRequest pending = IncomingRequests.Take();
                     if( pending == null ) continue;
 
-                    ICommandResponse response = await _commandReceiver.ProcessCommandAsync( pending.CommandRequest );
+                    ICommandResponse response = await _commandReceiver.ProcessCommandAsync( pending.CommandRequest, new ActivityMonitor() );
                     pending.CommandResponsePromise.SetResult( response );
                     Thread.Sleep( 100 );
                 }

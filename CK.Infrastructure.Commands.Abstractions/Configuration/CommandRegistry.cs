@@ -13,10 +13,10 @@ namespace CK.Infrastructure.Commands
             return this;
         }
 
-        public CommandDescriptor Find( string commandReceiverPath, string commandPath )
+        public CommandDescriptor Find( string commandReceiverPath, string commandName )
         {
             CommandDescriptor registration = null;
-            CommandRoutePath commandRoute = new CommandRoutePath( commandReceiverPath, commandPath );
+            CommandRoutePath commandRoute = new CommandRoutePath( commandReceiverPath, commandName );
 
             if( commandRoute.IsValidFor( commandReceiverPath ) ) Map.TryGetValue( commandRoute, out registration );
             return registration;

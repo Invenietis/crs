@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using CK.Core;
 
 namespace CK.Infrastructure.Commands
 {
     public interface ICommandRunnerHost
     {
-        Task HostJob( ICommandRunner runner, CommandExecutionContext ctx, CancellationToken cancellation = default( CancellationToken ) );
+        Task HostJob( IActivityMonitor monitor, ICommandRunner runner, CommandExecutionContext ctx, CancellationToken cancellation = default( CancellationToken ) );
     }
 }

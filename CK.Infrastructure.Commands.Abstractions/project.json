@@ -15,7 +15,8 @@
         }
     },
     "dependencies": {
-        "SimpleGitVersion.DNXCommands": "0.13.0"
+        "SimpleGitVersion.DNXCommands": "0.13.0",
+        "CK.Core": "4.3.0"
     },
     "scripts": {
         "prebuild": "sgv prebuild"

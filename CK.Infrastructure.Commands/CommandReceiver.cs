@@ -26,6 +26,7 @@ namespace CK.Infrastructure.Commands
 
         public async Task Invoke( HttpContext httpContext )
         {
+            var monitor = new Core.ActivityMonitor(httpContext.Request.Path);
             var commandDescription = _options.Registry.Find( _routePrefix, httpContext.Request.Path );
             if( commandDescription == null )
             {
@@ -42,7 +43,7 @@ namespace CK.Infrastructure.Commands
                 }
 
                 ICommandReceiver commandReceiver = ResolveCommandReceiver( httpContext );
-                ICommandResponse commandResponse = await commandReceiver.ProcessCommandAsync( commandRequest, httpContext.RequestAborted );
+                ICommandResponse commandResponse = await commandReceiver.ProcessCommandAsync( commandRequest, monitor, httpContext.RequestAborted );
                 if( commandResponse == null )
                 {
                     string msg = String.Format( "A valid command response must be received" );

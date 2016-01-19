@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CK.Infrastructure.Commands.Handlers;
+﻿using CK.Infrastructure.Commands.Handlers;
 using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNet.Builder;
 
-namespace CK.Infrastructure.Commands.WebIntegration
+namespace CK.Infrastructure.Commands.Tests.Integration
 {
     public class Startup
     {
@@ -21,10 +15,11 @@ namespace CK.Infrastructure.Commands.WebIntegration
                 // TODO: when this option is enabled, 
                 // do we need to check that SignalR (or other long running stuff) is avalable and correctly setup?
                 options
-                    .Register<TransferAmountCommand, TransferAlwaysSuccessHandler>( route: "/c/v1/TransferAmount", isLongRunning: true )
+                    .Register<TransferAmountCommand, TransferAlwaysSuccessHandler>( 
+                        route: "/c/v1/TransferAmount", 
+                        isLongRunning: true )
                     .Register<WithdrawMoneyCommand, WithDrawyMoneyHandler>( "/c/labs/WithdrawMoney", false );
             } );
-
         }
 
         public void Configure( IApplicationBuilder app )

@@ -39,17 +39,17 @@ namespace CK.Infrastructure.Commands
             return commandReceiverPath.ToLowerInvariant().Equals( Prefix );
         }
 
-        public CommandRoutePath( string routePrefix, string commandTypeName )
+        public CommandRoutePath( string routePrefix, string commandName )
         {
-            if( String.IsNullOrEmpty( routePrefix ) ) throw new ArgumentNullException( "routePrefix" );
-            if( String.IsNullOrEmpty( commandTypeName ) ) throw new ArgumentNullException( "commandTypeName" );
+            if( String.IsNullOrEmpty( routePrefix ) ) throw new ArgumentNullException( nameof( routePrefix ) );
+            if( String.IsNullOrEmpty( commandName ) ) throw new ArgumentNullException( nameof( commandName ) );
 
             if( !routePrefix.StartsWith( PATH_SEPARATOR ) ) throw new ArgumentException( $"The route prefix should start with a {PATH_SEPARATOR}" );
 
             Prefix = routePrefix.ToLowerInvariant();
             if( Prefix.EndsWith( PATH_SEPARATOR ) ) Prefix = Prefix.Remove( Prefix.Length - 1 );
 
-            CommandName = commandTypeName.ToLowerInvariant();
+            CommandName = commandName.ToLowerInvariant();
             if( CommandName.StartsWith( PATH_SEPARATOR ) ) CommandName = CommandName.Remove( 0, 1 );
 
             FullPath = $"{Prefix}{PATH_SEPARATOR}{CommandName}".ToLowerInvariant();
@@ -78,7 +78,7 @@ namespace CK.Infrastructure.Commands
             return other.FullPath == this.FullPath;
         }
 
-        public static implicit operator string ( CommandRoutePath routePath )
+        public static implicit operator string( CommandRoutePath routePath )
         {
             return routePath.FullPath;
         }

@@ -12,7 +12,7 @@ namespace CK.Infrastructure.Commands
     {
         public CommandDescriptor()
         {
-            Decorators = Enumerable.Empty<ICommandDecorator>();
+            Decorators = CK.Core.Util.EmptyArray<Type>.Empty;
         }
 
         /// <summary>
@@ -39,6 +39,6 @@ namespace CK.Infrastructure.Commands
         /// <summary>
         /// Gets or sets a read-only collection of decorators that should be applied when this command is handled.
         /// </summary>
-        public IEnumerable<ICommandDecorator> Decorators { get; set; }
+        public IReadOnlyCollection<Type> Decorators { get; set; }
     }
 }

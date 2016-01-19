@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using CK.Core;
 
 namespace CK.Infrastructure.Commands
 {
@@ -15,9 +16,11 @@ namespace CK.Infrastructure.Commands
         /// <summary>
         /// Process a <see cref="ICommandRequest"/> and returns a <see cref="ICommandResponse"/>
         /// </summary>
-        /// <param name="command"></param>
+        /// <param name="command"><see cref="ICommandRequest"/></param>
+        /// <param name="monitor"><see cref="IActivityMonitor"/></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Task<ICommandResponse> ProcessCommandAsync( ICommandRequest command, CancellationToken cancellationToken = default( CancellationToken ) );
+        Task<ICommandResponse> ProcessCommandAsync( ICommandRequest command, IActivityMonitor monitor, CancellationToken cancellationToken = default( CancellationToken ) );
     }
 
 }

@@ -1,16 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CK.Infrastructure.Commands
 {
     public class DefaultCommandHandlerFactory : ICommandHandlerFactory
     {
+        readonly DefaultCreateInstanceStrategy _s;
+        public DefaultCommandHandlerFactory( IServiceProvider serviceProvider )
+        {
+            _s = new DefaultCreateInstanceStrategy( serviceProvider );
+        }
         public ICommandHandler Create( Type handlerType ) 
         {
-            return Activator.CreateInstance( handlerType ) as ICommandHandler;
+            return _s.CreateInstanceOrDefault<ICommandHandler>( handlerType );
         }
     }
 

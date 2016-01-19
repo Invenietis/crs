@@ -98,6 +98,7 @@ namespace CK.Infrastructure.Commands.Tests
             }
         }
 
+
         private Stream SerializeRequestBody<T>( T command )
         {
             Stream s = new MemoryStream();

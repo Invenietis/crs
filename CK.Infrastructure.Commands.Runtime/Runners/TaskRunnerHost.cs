@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using CK.Core;
 
 namespace CK.Infrastructure.Commands
 {
@@ -16,12 +17,19 @@ namespace CK.Infrastructure.Commands
             _commandResponseDispatcher = dispatcher;
         }
 
-        public Task HostJob( ICommandRunner runner, CommandExecutionContext ctx, CancellationToken cancellation = default( CancellationToken ) )
+        public Task HostJob( IActivityMonitor monitor, ICommandRunner runner, CommandExecutionContext ctx, CancellationToken cancellation = default( CancellationToken ) )
         {
+            var token = monitor.DependentActivity().CreateTokenWithTopic( GetType().Name );
+
             var t = new Task( async () =>
             {
-                await runner.RunAsync( ctx);
-                await _commandResponseDispatcher.DispatchAsync( ctx.RuntimeContext.CallbackId, ctx.CreateResponse() );
+                // We override the IActivityMonitor with a dependant one to be thread safe !
+                using( var dependentMonitor = token.CreateDependentMonitor() )
+                {
+                    ctx.RuntimeContext.Monitor = dependentMonitor;
+                    await runner.RunAsync( ctx);
+                    await _commandResponseDispatcher.DispatchAsync( ctx.RuntimeContext.CallbackId, ctx.CreateResponse() );
+                }
             } );
 
             t.Start( TaskScheduler.Current );

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CK.Core;
 
 namespace CK.Infrastructure.Commands.Tests.Handlers
 {
@@ -10,12 +11,27 @@ namespace CK.Infrastructure.Commands.Tests.Handlers
     {
         protected override Task<TransferAmountCommand.Result> DoHandleAsync( CommandContext<TransferAmountCommand> command )
         {
-            var result = new TransferAmountCommand.Result
+            using( command.Monitor.OpenInfo().Send( $"Transferring {command.Command.Amount} from {command.Command.SourceAccountId} to {command.Command.DestinationAccountId} " ) )
             {
-                EffectiveDate = DateTime.UtcNow.Date.AddDays( 2 ),
-                CancellableDate = DateTime.UtcNow.AddHours( 1 )
-            };
-            return Task.FromResult( result );
+                var result = new TransferAmountCommand.Result
+                {
+                    EffectiveDate = DateTime.UtcNow.Date.AddDays( 2 ),
+                    CancellableDate = DateTime.UtcNow.AddHours( 1 )
+                };
+                command.Monitor.Info().Send( $"Transfer will be effective at {result.EffectiveDate.ToString()}." );
+                command.Monitor.Info().Send( $"You have one hour to cancel it." );
+                return Task.FromResult( result );
+            }
+        }
+    }
+
+
+    public class TransferAlwaysSuccessHandlerWithDecoration : TransferAlwaysSuccessHandler
+    {
+        [Transaction]
+        protected override Task<TransferAmountCommand.Result> DoHandleAsync( CommandContext<TransferAmountCommand> command )
+        {
+            return base.DoHandleAsync( command );
         }
     }
 

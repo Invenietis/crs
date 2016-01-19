@@ -1,10 +1,13 @@
 ﻿using System;
+using CK.Core;
+
 namespace CK.Infrastructure.Commands
 {
     public abstract class CommandContext
     {
-        public CommandContext( object command, Guid commandId, bool longRunning, string callbackId )
+        public CommandContext( IActivityMonitor monitor, object command, Guid commandId, bool longRunning, string callbackId )
         {
+            Monitor = monitor;
             CommandId = commandId;
             IsLongRunning = longRunning;
             CallbackId = callbackId;
@@ -15,7 +18,7 @@ namespace CK.Infrastructure.Commands
 
         public object Command { get; }
 
-        //public IActivityMonitor Monitor { get; set; }
+        public IActivityMonitor Monitor { get; set; }
 
         public string CallbackId { get; }
 
@@ -24,7 +27,8 @@ namespace CK.Infrastructure.Commands
 
     public class CommandContext<T> : CommandContext where T : class
     {
-        public CommandContext( T command, Guid commandId, bool longRunning, string callbackId ) : base( command, commandId, longRunning, callbackId )
+        public CommandContext( IActivityMonitor monitor, T command, Guid commandId, bool longRunning, string callbackId ) :
+            base( monitor, command, commandId, longRunning, callbackId )
         {
             Command = command;
         }

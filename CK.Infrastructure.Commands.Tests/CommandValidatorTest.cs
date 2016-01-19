@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using CK.Core;
 using Microsoft.Dnx.Testing.Abstractions;
 using Xunit;
 
@@ -39,7 +40,7 @@ namespace CK.Infrastructure.Commands.Tests
                 SomeIntegerValue = integerValue
             };
             var descriptor = CreateCommandDescriptor<SomeCommand>();
-            var commandContext = new CommandContext<SomeCommand>( command, Guid.NewGuid(), descriptor.IsLongRunning, "3712" );
+            var commandContext = new CommandContext<SomeCommand>( new ActivityMonitor(), command, Guid.NewGuid(), descriptor.IsLongRunning, "3712" );
             var executionContext = new CommandExecutionContext( descriptor, commandContext );
 
             // Act
@@ -66,7 +67,7 @@ namespace CK.Infrastructure.Commands.Tests
             return new CommandDescriptor
             {
                 CommandType = typeof( T ),
-                Decorators = Enumerable.Empty<ICommandDecorator>(),
+                Decorators = CK.Core.Util.EmptyArray<Type>.Empty,
                 IsLongRunning = false,
                 Route = new CommandRoutePath( "/prefix", typeof( T ).Name )
             };
