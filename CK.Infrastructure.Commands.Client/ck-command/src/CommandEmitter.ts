@@ -9,6 +9,7 @@ export class CommandEmitter implements ICommandEmitter {
     private _prefix: string
     
     constructor(prefix: string, commandRequestSender: ICommandRequestSender);
+    constructor(prefix: string, commandRequestSender: ICommandRequestSender, commandResponseListener: ICommandResponseListener);
     constructor(prefix: string, commandRequestSender: ICommandRequestSender, commandResponseListener?: ICommandResponseListener) {
         this._prefix = prefix;
         this._sender = commandRequestSender;

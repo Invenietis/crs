@@ -1,4 +1,3 @@
-"use strict";
 /// <reference path="../typings/tsd.d.ts" />
 var CommandEmitter_1 = require('../src/CommandEmitter');
 var Command_1 = require('../src/Command');

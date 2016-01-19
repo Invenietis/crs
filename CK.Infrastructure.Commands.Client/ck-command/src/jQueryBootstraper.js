@@ -1,10 +1,4 @@
-System.register([], function(exports_1) {
-    return {
-        setters:[],
-        execute: function() {
-        }
-    }
-});
+/// <reference path="../typings/tsd.d.ts" />
 // var ajaxSender: ICommandRequestSender = new AjaxSender();
 // 
 // if ($.connection) {
@@ -25,4 +19,3 @@ System.register([], function(exports_1) {
 //     $.connection.hub.logging = true;
 //     $.connection.hub.start();
 // } 
-//# sourceMappingURL=jQueryBootstraper.js.map

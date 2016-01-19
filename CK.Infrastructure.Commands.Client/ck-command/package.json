@@ -1,6 +1,6 @@
 {
     "name": "ck-command",
-    "version": "0.1.0",
+    "version": "0.1.6",
     "description": "",
     "main": "./dist/commandSender.js",
     "directories": {
@@ -12,14 +12,17 @@
     },
     "devDependencies": {
         "gulp": "^3.9.0",
+        "gulp-concat": "^2.6.0",
+        "gulp-typescript": "^2.10.0",
         "ts-loader": "^0.7.2",
         "jasmine-core": "^2.4.1",
         "typescript": "^1.7.5",
         "webpack-stream": "*"
     },
-    
+    "exclude":["bundling"],
     "scripts": {
-        "test": "lite-server --open ./test",
+        "prepublish": "gulp build",
+        "test": "tsc -p test && lite-server --open ./test",
         "build": "tsc && webpack --config ./src/webpack.config.js && tsc --outFile ./dist/ck-command.system.js"
     },
     "author": "",
