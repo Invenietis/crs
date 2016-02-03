@@ -1,6 +1,5 @@
 ﻿{
     "compilerOptions": {
-        "noEmitOnError": true,
         "module": "system",
         "moduleResolution": "node",
         "noImplicitAny": false,
@@ -16,6 +15,6 @@
         "./src/AjaxSender.ts",
         "./src/CommandEmitter.ts",
         "./src/SignalRListener.ts",
-        "./command.ts"             
+        "./command.ts"    
     ]
 }
