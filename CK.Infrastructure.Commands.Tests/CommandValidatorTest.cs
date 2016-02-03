@@ -40,8 +40,14 @@ namespace CK.Infrastructure.Commands.Tests
                 SomeIntegerValue = integerValue
             };
             var descriptor = CreateCommandDescriptor<SomeCommand>();
-            var commandContext = new CommandContext<SomeCommand>( new ActivityMonitor(), command, Guid.NewGuid(), descriptor.IsLongRunning, "3712" );
-            var executionContext = new CommandExecutionContext( descriptor, commandContext );
+            var commandContext = new CommandContext<SomeCommand>(
+                new ActivityMonitor(),
+                command,
+                Guid.NewGuid(),
+                descriptor.Descriptor.IsLongRunning, 
+                "3712" );
+
+            var executionContext = new CommandExecutionContext( descriptor.Descriptor, commandContext );
 
             // Act
             DefaultCommandValidator v = new DefaultCommandValidator();
@@ -62,15 +68,14 @@ namespace CK.Infrastructure.Commands.Tests
             }
         }
 
-        private CommandDescriptor CreateCommandDescriptor<T>()
+        private RoutedCommandDescriptor CreateCommandDescriptor<T>()
         {
-            return new CommandDescriptor
+            return new RoutedCommandDescriptor( new CommandRoutePath( "/prefix", typeof( T ).Name ), new CommandDescriptor
             {
                 CommandType = typeof( T ),
                 Decorators = CK.Core.Util.EmptyArray<Type>.Empty,
                 IsLongRunning = false,
-                Route = new CommandRoutePath( "/prefix", typeof( T ).Name )
-            };
+            } );
         }
     }
 }

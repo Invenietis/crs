@@ -40,6 +40,7 @@ namespace CK.Infrastructure.Commands
             return HandleAsync( (CommandContext<T>)commandContext );
         }
     }
+
     internal class EmptyResult
     {
         public static EmptyResult Empty = new EmptyResult();

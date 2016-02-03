@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace CK.Infrastructure.Commands.Handlers
 {
+    [Transaction]
     public class TransferAlwaysSuccessHandler : CommandHandler<TransferAmountCommand, TransferAmountCommand.Result>
     {
         protected override Task<TransferAmountCommand.Result> DoHandleAsync( CommandContext<TransferAmountCommand> command )

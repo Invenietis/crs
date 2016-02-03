@@ -7,25 +7,23 @@ using CK.Core;
 
 namespace CK.Infrastructure.Commands
 {
-    internal class CommandRunner : ICommandRunner
+    public abstract class CommandExecutor : ICommandExecutor
     {
-        private readonly ICommandHandlerFactory _handlerFactory;
-        private readonly ICommandDecoratorFactory _commandDecoratorFactory;
+        private readonly ICommandReceiverFactories _factories;
 
-        public CommandRunner( ICommandHandlerFactory factory, ICommandDecoratorFactory commandDecoratorFactory )
+        public CommandExecutor( ICommandReceiverFactories factories )
         {
-            _handlerFactory = factory;
-            _commandDecoratorFactory = commandDecoratorFactory;
+            _factories = factories;
         }
 
-        public async virtual Task RunAsync( CommandExecutionContext exContext, CancellationToken cancellationToken = default( CancellationToken ) )
+        public async virtual Task ExecuteAsync( CommandExecutionContext exContext, CancellationToken cancellationToken = default( CancellationToken ) )
         {
             var mon = exContext.RuntimeContext.Monitor;
 
-            var decorators = exContext.CommandDescription.Decorators.Select( CreateDecorator ).ToArray();
+            var decorators = exContext.CommandDescription.Decorators.Select( _factories.CreateDecorator ).ToArray();
             using( mon.OpenTrace().Send( $"Running Command [{exContext.CommandDescription.CommandType.Name}]..." ) )
             {
-                ICommandHandler handler = _handlerFactory.Create( exContext.CommandDescription.HandlerType );
+                ICommandHandler handler = _factories.CreateHandler( exContext.CommandDescription.HandlerType );
                 if( handler == null ) throw new InvalidOperationException( $"Unable to create type {exContext.CommandDescription.HandlerType}" );
 
                 using( mon.OpenTrace().Send( "OnCommandExecuting..." ) )
@@ -69,11 +67,6 @@ namespace CK.Infrastructure.Commands
                     }
                 }
             }
-        }
-
-        private ICommandDecorator CreateDecorator( Type decoratorType )
-        {
-            return _commandDecoratorFactory.Create( decoratorType );
         }
     }
 }

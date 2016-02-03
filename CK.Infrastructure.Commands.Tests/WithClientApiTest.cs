@@ -25,8 +25,8 @@ namespace CK.Infrastructure.Commands.Tests
         {
             string serverAddress = "http://MyDumbServer/c/";
             var serviceProvider = TestHelper.CreateServiceProvider( Util.ActionVoid );
-
-            using( var server = new CommandReceiverHost( serverAddress, new DefaultCommandReceiver( new DefaultCommandValidator(), new CommandRunnerHostSelector( EventChannel.Instance ), new DefaultCommandHandlerFactory( serviceProvider ), new DefaultCommandDecoratorFactory( serviceProvider ), new OptionStub() ) ) )
+            var factories = new DefaultCommandReceiverFactories( serviceProvider );
+            using( var server = new CommandReceiverHost( serverAddress, new CommandReceiver( new CommandExecutorSelector( EventChannel.Instance, factories ), factories ) ) )
             {
                 // Server initialization
                 server.Run();
@@ -41,7 +41,15 @@ namespace CK.Infrastructure.Commands.Tests
                     Amount = 400
                 };
 
-                ClientCommandResult result = await sender.SendAsync(serverAddress, command, new CommandDescriptor { Route = new CommandRoutePath( "c", "TransferAmountCommand" ), CommandType = typeof( TransferAmountCommand ), HandlerType = typeof( TransferAlwaysSuccessHandler ) } );
+                var route = new RoutedCommandDescriptor(
+                    new CommandRoutePath( "/c", "TransferAmountCommand" ),
+                    new CommandDescriptor
+                    {
+                        Name = "TransferAmountCommand",
+                        CommandType = typeof( TransferAmountCommand ),
+                        HandlerType = typeof( TransferAlwaysSuccessHandler )
+                    });
+                ClientCommandResult result = await sender.SendAsync(serverAddress, command, route );
                 await result.OnResultAsync<TransferAmountCommand.Result>( @event =>
                 {
                     Output.WriteLine( @event.CancellableDate.ToString() );
@@ -61,20 +69,31 @@ namespace CK.Infrastructure.Commands.Tests
                     Amount = 20
                 };
 
-                result = await sender.SendAsync( serverAddress, withDrawCommand, new CommandDescriptor { Route = new CommandRoutePath( "c", "WithdrawMoneyCommand" ), CommandType = typeof( WithdrawMoneyCommand ), HandlerType = typeof( WithDrawyMoneyHandler ) } );
+                AutoResetEvent e = new AutoResetEvent(false);
+
+                var route2 = new RoutedCommandDescriptor(
+                    new CommandRoutePath( "c", "WithdrawMoneyCommand" ),
+                    new CommandDescriptor
+                    {
+                        CommandType = typeof( WithdrawMoneyCommand ),
+                        HandlerType = typeof( WithDrawyMoneyHandler )
+                    });
+                result = await sender.SendAsync( serverAddress, withDrawCommand, route2 );
                 await result.OnResultAsync<WithdrawMoneyCommand.Result>( @event =>
                 {
                     Output.WriteLine( @event.Success.ToString() );
+                    e.Set();
                     return Task.FromResult( 0 );
                 } );
 
                 await result.OnErrorAsync( ex =>
                 {
-                    Console.WriteLine( ex.ToString() );
+                    Output.WriteLine( ex.ToString() );
+                    e.Set();
                     return Task.FromResult( 0 );
                 } );
 
-                await Task.Delay( TimeSpan.FromSeconds( 60 ) );
+                e.WaitOne( TimeSpan.FromSeconds( 2 ) );
             }
         }
     }
@@ -87,13 +106,13 @@ namespace CK.Infrastructure.Commands.Tests
 
         public object Command { get; set; }
 
-        public CommandDescriptor CommandDescription { get; set; }
+        public RoutedCommandDescriptor CommandDescription { get; set; }
         public IReadOnlyCollection<BlobRef> Files { get; set; }
     }
 
     class ClientCommandSender
     {
-        public async Task<ClientCommandResult> SendAsync<T>( string address, T command, CommandDescriptor commandDescriptor )
+        public async Task<ClientCommandResult> SendAsync<T>( string address, T command, RoutedCommandDescriptor commandDescriptor )
         {
             ICommandRequest request = new CommandRequest
             {

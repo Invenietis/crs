@@ -19,32 +19,19 @@ using Microsoft.Extensions.OptionsModel;
 
 namespace CK.Infrastructure.Commands.Tests
 {
-    public class SetupFixture : IDisposable
-    {
-        public void Dispose()
-        {
-        }
-    }
-
-    public class CommandReceiverTestCollection : ICollectionFixture<SetupFixture>
-    {
-        // This class has no code, and is never created. Its purpose is simply
-        // to be the place to apply [CollectionDefinition] and all the
-        // ICollectionFixture<> interfaces.
-
-        // More information: http://xunit.github.io/docs/shared-context.html
-    }
-
     // This project can output the Class library as a NuGet Package.
     // To enable this option, right-click on the project and select the Properties menu item. In the Build tab select "Produce outputs on build".
     [Collection( "CK.Infrastructure.Commands.Tests collection" )]
     public class CommandReceiverTest
     {
-        public CommandReceiverTest( SetupFixture fixture )
+        public CommandReceiverTest()
         {
             ApplicationServices = TestHelper.CreateServiceProvider( services =>
             {
-                services.AddCommandReceiver();
+                services.AddCommandReceiver( c =>
+                {
+                    c.Register<TransferAmountCommand, TransferAlwaysSuccessHandler>();
+                } );
                 services.AddSingleton<ICommandResponseDispatcher, EventChannel>();
             } );
         }
@@ -70,28 +57,34 @@ namespace CK.Infrastructure.Commands.Tests
                 DestinationAccountId = Guid.NewGuid(),
                 Amount = 1000
             };
-            OptionStub option = new OptionStub();
+            var routes = new CommandRouteCollection( "/api");
             {
-                Commands.CommandReceiver r = new Commands.CommandReceiver( ShouldNotInvokeDelegate, option, null  );
+                var middleWare = new Commands.CommandReceiverMiddleware( ShouldNotInvokeDelegate, routes  );
                 using( var httpContext = new FakeHttpContext( ApplicationServices, "/api", SerializeRequestBody( cmd ) ) )
                 {
-                    var exc = await Assert.ThrowsAsync<CKException>( () => r.Invoke( httpContext ) );
+                    var exc = await Assert.ThrowsAsync<CKException>( () => middleWare.Invoke( httpContext ) );
                     Assert.Equal( "Next delegate invoked.", exc.Message );
                 }
 
-                option.Value.Register<TransferAmountCommand, TransferAlwaysSuccessHandler>( typeof( TransferAmountCommand ).Name, false );
+                routes.AddCommandRoute( new CommandDescriptor
+                {
+                    CommandType = typeof( TransferAmountCommand ),
+                    HandlerType = typeof( TransferAlwaysSuccessHandler ),
+                    IsLongRunning = false,
+                    Name = typeof( TransferAmountCommand ).Name
+                } );
                 using( var httpContext = new FakeHttpContext( ApplicationServices, "/api", SerializeRequestBody( cmd ) ) )
                 {
-                    var exc = await Assert.ThrowsAsync<CKException>( () => r.Invoke( httpContext ) );
+                    var exc = await Assert.ThrowsAsync<CKException>( () => middleWare.Invoke( httpContext ) );
                     Assert.Equal( "Next delegate invoked.", exc.Message );
                 }
             }
             {
-                Commands.CommandReceiver r = new Commands.CommandReceiver( SuccessDelegate, option, "/c" );
+                var middleWare = new Commands.CommandReceiverMiddleware( ShouldNotInvokeDelegate, routes  );
 
-                using( var httpContext = new FakeHttpContext( ApplicationServices, "/c/TransferAmountCommand", SerializeRequestBody( cmd ) ) )
+                using( var httpContext = new FakeHttpContext( ApplicationServices, "/api/TransferAmountCommand", SerializeRequestBody( cmd ) ) )
                 {
-                    await r.Invoke( httpContext );
+                    await middleWare.Invoke( httpContext );
                     Assert.NotNull( httpContext.Response.Body );
                     Assert.True( httpContext.Response.Body.Length > 0 );
                 }

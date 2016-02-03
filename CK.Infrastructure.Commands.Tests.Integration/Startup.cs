@@ -1,6 +1,7 @@
-﻿using CK.Infrastructure.Commands.Handlers;
-using Microsoft.AspNet.Builder;
+﻿using Microsoft.AspNet.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using System.Linq;
+using CK.Infrastructure.Commands.Handlers;
 
 namespace CK.Infrastructure.Commands.Tests.Integration
 {
@@ -11,22 +12,25 @@ namespace CK.Infrastructure.Commands.Tests.Integration
         {
             services.AddCommandReceiver( options =>
             {
-                options.EnableLongRunningSupport = false;
-                // TODO: when this option is enabled, 
-                // do we need to check that SignalR (or other long running stuff) is avalable and correctly setup?
-                options
-                    .Register<TransferAmountCommand, TransferAlwaysSuccessHandler>( 
-                        route: "/c/v1/TransferAmount", 
-                        isLongRunning: true )
-                    .Register<WithdrawMoneyCommand, WithDrawyMoneyHandler>( "/c/labs/WithdrawMoney", false );
+                options.Register<TransferAmountCommand, TransferAlwaysSuccessHandler>().CommandName( "transfer" ).IsLongRunning();
+                options.Register<WithdrawMoneyCommand, WithDrawyMoneyHandler>().CommandName( "withdraw" ).AddDecorator<TransactionAttribute>();
             } );
         }
 
         public void Configure( IApplicationBuilder app )
         {
             app.UseStaticFiles();
-            app.UseCommandReceiver( "/c/v1" );
-            app.UseCommandReceiver( "/c/labs" );
+
+            app.UseCommandReceiver( "/c/admin", options =>
+            {
+                options
+                    .AddFilter<HttpsRequiredFilter>()
+                    .AddCommands( registry => registry.Registration.Where( c => c.CommandType.Namespace.StartsWith( "CK.Infrastructure.Commands" ) ) )
+                    .AddCommand<TransferAmountCommand>().CommandName( "transfer" ).IsLongRunning().AddDecorator<TransactionAttribute>();
+            } );
+            app.UseCommandReceiver( "/c/public", options =>
+            {
+            } );
         }
     }
 }

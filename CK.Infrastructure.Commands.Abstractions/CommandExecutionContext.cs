@@ -53,6 +53,7 @@ namespace CK.Infrastructure.Commands
             _response = new InvalidCommandResponse( results, RuntimeContext );
             return _response;
         }
+
         /// <summary>
         /// Gets or sets the result of the command.
         /// </summary>
@@ -63,5 +64,9 @@ namespace CK.Infrastructure.Commands
         /// </summary>
         public Exception Exception { get; set; }
 
+        public ICommandResponse Response
+        {
+            get { return _response; }
+        }
     }
 }

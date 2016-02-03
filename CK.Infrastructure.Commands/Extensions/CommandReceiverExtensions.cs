@@ -14,27 +14,30 @@ namespace CK.Infrastructure.Commands
     // Extension method used to add the middleware to the HTTP request pipeline.
     public static class CommandReceiverExtensions
     {
-        public static IApplicationBuilder UseCommandReceiver( this IApplicationBuilder builder, PathString routePrefix )
+        public static IApplicationBuilder UseCommandReceiver( 
+            this IApplicationBuilder builder, 
+            PathString routePrefix, 
+            Action<CommandReceiverConfiguration> config  )
         {
             if( string.IsNullOrWhiteSpace( routePrefix ) ) throw new ArgumentNullException( nameof( routePrefix ) );
 
             return builder.Map( routePrefix, ( app ) =>
             {
-                app.UseMiddleware<CommandReceiver>( routePrefix );
+                var registry = builder.ApplicationServices.GetRequiredService<ICommandRegistry>();
+                var routeCollection = new CommandRouteCollection( routePrefix );
+                var middlewareConfiguration = new CommandReceiverConfiguration( registry, routeCollection);
+                config( middlewareConfiguration );
+                app.UseMiddleware<CommandReceiverMiddleware>( routePrefix );
             } );
         }
-        public static void AddCommandReceiver( this IServiceCollection services, bool enableLongRunningSupport = false )
-            => AddCommandReceiver( services, ( o ) => o.EnableLongRunningSupport = enableLongRunningSupport );
 
-        public static void AddCommandReceiver( this IServiceCollection services, Action<CommandReceiverOptions> options )
+        public static void AddCommandReceiver( this IServiceCollection services, Action<ICommandRegistry> configuration)
         {
-            services.AddOptions();
-            services.AddSingleton<ICommandReceiver, DefaultCommandReceiver>();
-            services.AddSingleton<ICommandValidator, DefaultCommandValidator>();
+            services.AddSingleton<ICommandReceiver, CommandReceiver>();
             services.AddSingleton<ICommandBinder, DefaultCommandBinder>();
             services.AddSingleton<ICommandResponseSerializer, DefaultCommandResponseSerializer>();
-            services.AddSingleton<ICommandRunnerHostSelector, CommandRunnerHostSelector>();
-            services.AddSingleton<ICommandHandlerFactory, CommandHandlerFactory>();
+            services.AddSingleton<ICommandExecutorSelector, CommandExecutorSelector>();
+            services.AddSingleton<ICommandReceiverFactories,DefaultCommandReceiverFactories>();
             services.AddSingleton<ICommandFileWriter, DefaultCommandFileStore>();
             services.AddSingleton<ICommandResponseDispatcher>( ( sp ) =>
             {
@@ -44,7 +47,9 @@ namespace CK.Infrastructure.Commands
                 return new NullResponseDispatcher();
             } );
 
-            services.Configure( options );
+            ICommandRegistry registry = new CommandRegistry();
+            configuration( registry );
+            services.AddInstance( registry );
         }
     }
 }

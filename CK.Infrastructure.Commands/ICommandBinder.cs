@@ -9,9 +9,9 @@ namespace CK.Infrastructure.Commands
         /// <summary>
         /// Creates a <see cref="ICommandRequest"/> from <see cref="CommandDescriptor"/> and a body stream payload
         /// </summary>
-        /// <param name="routeInfo"></param>
+        /// <param name="description"></param>
         /// <param name="request"></param>
         /// <returns></returns>
-        Task<ICommandRequest> BindCommand( CommandDescriptor routeInfo, HttpRequest request, CancellationToken cancellationToken = default( CancellationToken ) );
+        Task<ICommandRequest> BindCommand( RoutedCommandDescriptor description, HttpRequest request, CancellationToken cancellationToken = default( CancellationToken ) );
     }
 }

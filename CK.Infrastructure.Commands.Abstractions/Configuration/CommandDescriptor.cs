@@ -16,9 +16,9 @@ namespace CK.Infrastructure.Commands
         }
 
         /// <summary>
-        /// Gets or sets the Route this command should be handled.
+        /// The name of the command
         /// </summary>
-        public CommandRoutePath Route { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// The <see cref="Type"/> of the command to process.
@@ -40,5 +40,7 @@ namespace CK.Infrastructure.Commands
         /// Gets or sets a read-only collection of decorators that should be applied when this command is handled.
         /// </summary>
         public IReadOnlyCollection<Type> Decorators { get; set; }
+
+        public IReadOnlyCollection<ICommandExecutor> Executors { get; set; }
     }
 }

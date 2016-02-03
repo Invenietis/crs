@@ -10,11 +10,12 @@ namespace CK.Infrastructure.Commands
     {
         BlobRef[] _refs;
 
-        public CommandRequest( CommandDescriptor routeInfo )
+        public CommandRequest( RoutedCommandDescriptor routeInfo )
         {
             CommandDescription = routeInfo;
         }
-        public CommandDescriptor CommandDescription { get; private set; }
+
+        public RoutedCommandDescriptor CommandDescription { get; private set; }
 
         public object Command { get; set; }
 
@@ -28,7 +29,7 @@ namespace CK.Infrastructure.Commands
                 return _refs;
             }
         }
-
+        
         internal void AddFile( BlobRef blobRef )
         {
             if( blobRef == null ) throw new ArgumentNullException( nameof( blobRef ) );

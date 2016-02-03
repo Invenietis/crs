@@ -16,7 +16,7 @@ namespace CK.Infrastructure.Commands
         /// <summary>
         /// Command description
         /// </summary>
-        CommandDescriptor CommandDescription { get; }
+        RoutedCommandDescriptor CommandDescription { get; }
 
         /// <summary>
         /// The instance of the command to process. This should never be null.

@@ -11,34 +11,39 @@ using Microsoft.Extensions.PlatformAbstractions;
 namespace CK.Infrastructure.Commands
 {
     // You may need to install the Microsoft.AspNet.Http.Abstractions package into your project
-    public class CommandReceiver
+    public class CommandReceiverMiddleware
     {
-        private readonly CommandReceiverOptions _options;
+        /// <summary>
+        /// Shared options
+        /// </summary>
         private readonly RequestDelegate _next;
+        private readonly ICommandRouteCollection _routes;
 
-        private readonly PathString _routePrefix;
-        public CommandReceiver( RequestDelegate next, IOptions<CommandReceiverOptions> options, PathString routePrefix )
+        public CommandReceiverMiddleware( RequestDelegate next, ICommandRouteCollection routes )
         {
             _next = next;
-            _options = options.Value;
-            _routePrefix = routePrefix;
+            _routes = routes;
         }
 
         public async Task Invoke( HttpContext httpContext )
         {
             var monitor = new Core.ActivityMonitor(httpContext.Request.Path);
-            var commandDescription = _options.Registry.Find( _routePrefix, httpContext.Request.Path );
-            if( commandDescription == null )
+
+            var routedCommandDescriptor = _routes.FindCommandDescriptor( httpContext.Request.Path );
+            if( routedCommandDescriptor == null )
             {
                 if( _next != null ) await _next( httpContext );
             }
             else
             {
                 ICommandBinder binder = ResolveCommandBinder( httpContext );
-                ICommandRequest commandRequest = await binder.BindCommand( commandDescription, httpContext.Request, httpContext.RequestAborted );
+                ICommandRequest commandRequest = await binder.BindCommand( routedCommandDescriptor, httpContext.Request, httpContext.RequestAborted );
                 if( commandRequest == null )
                 {
-                    string msg = String.Format( "A valid command definition has been infered from routes, but the command type {0} failed to be instanciated.", commandDescription.CommandType.Name );
+                    string msg = String.Format(
+                        "A valid command definition has been infered from routes, but the command type {0} failed to be instanciated.",
+                        routedCommandDescriptor.Descriptor.CommandType.Name );
+
                     throw new InvalidOperationException( msg );
                 }
 

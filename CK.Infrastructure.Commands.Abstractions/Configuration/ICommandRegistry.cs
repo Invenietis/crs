@@ -9,8 +9,8 @@ namespace CK.Infrastructure.Commands
 {
     public interface ICommandRegistry
     {
-        CommandDescriptor Find( string commandReceiverPath, string commandName );
+        CommandDescriptor Register( Type commandType, Type handlerType, string commandName, bool isLongRunning, params Type[] decorators );
 
-        ICommandRegistry Register( CommandDescriptor commandRegistration );
+        IEnumerable<CommandDescriptor> Registration { get; }
     }
 }

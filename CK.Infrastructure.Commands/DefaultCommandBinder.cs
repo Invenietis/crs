@@ -25,10 +25,10 @@ namespace CK.Infrastructure.Commands
         }
 
 
-        public async Task<ICommandRequest> BindCommand( CommandDescriptor descriptor, HttpRequest request, CancellationToken cancellationToken = default( CancellationToken ) )
+        public async Task<ICommandRequest> BindCommand( RoutedCommandDescriptor descriptor, HttpRequest request, CancellationToken cancellationToken = default( CancellationToken ) )
         {
             CommandRequest commandRequest = new CommandRequest(descriptor);
-            commandRequest.Command = CreateCommand( commandRequest.CommandDescription.CommandType );
+            commandRequest.Command = CreateCommand( commandRequest.CommandDescription.Descriptor.CommandType );
 
             if( request.HasFormContentType )
             {
