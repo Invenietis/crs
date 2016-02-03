@@ -37,3 +37,4 @@ CK.Infrastructure.Commands.Client/ck-crs/node_modules/
 CK.Infrastructure.Commands.Client/ck-command/typings/*
 CK.Infrastructure.Commands.Tests.Integration/bower_components
 node_modules/
+client/ck-command/typings/

@@ -55,13 +55,14 @@ var CRS =
 /* 1 */
 /***/ function(module, exports) {
 
+	"use strict";
 	var Command = (function () {
 	    function Command(name, properties) {
 	        this.name = name;
 	        this.properties = properties;
 	    }
 	    return Command;
-	})();
+	}());
 	exports.Command = Command;
 
 
@@ -70,6 +71,7 @@ var CRS =
 /***/ function(module, exports) {
 
 	/// <reference path="../typings/tsd.d.ts" />
+	"use strict";
 	var AjaxSender = (function () {
 	    function AjaxSender() {
 	    }
@@ -85,7 +87,7 @@ var CRS =
 	        });
 	    };
 	    return AjaxSender;
-	})();
+	}());
 	exports.AjaxSender = AjaxSender;
 
 
@@ -94,6 +96,7 @@ var CRS =
 /***/ function(module, exports) {
 
 	/// <reference path="../typings/tsd.d.ts" />
+	"use strict";
 	var CommandEmitter = (function () {
 	    function CommandEmitter(prefix, commandRequestSender, commandResponseListener) {
 	        this._prefix = prefix;
@@ -124,7 +127,7 @@ var CRS =
 	        });
 	    };
 	    return CommandEmitter;
-	})();
+	}());
 	exports.CommandEmitter = CommandEmitter;
 
 
@@ -132,6 +135,7 @@ var CRS =
 /* 4 */
 /***/ function(module, exports) {
 
+	"use strict";
 	var SignalRListener = (function () {
 	    function SignalRListener(connection, hubName) {
 	        var _this = this;
@@ -159,7 +163,7 @@ var CRS =
 	        });
 	    };
 	    return SignalRListener;
-	})();
+	}());
 	exports.SignalRListener = SignalRListener;
 
 
