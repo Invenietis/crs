@@ -1,4 +1,5 @@
 ﻿using System;
+using CK.Core;
 
 namespace CK.Infrastructure.Commands
 {
@@ -26,21 +27,30 @@ namespace CK.Infrastructure.Commands
             return _s.CreateInstanceOrDefault<ICommandHandler>( handlerType );
         }
 
-        class DefaultCreateInstanceStrategy
+        internal class DefaultCreateInstanceStrategy
         {
+            readonly IActivityMonitor _monitor;
             readonly IServiceProvider _serviceProvider;
             public DefaultCreateInstanceStrategy( IServiceProvider serviceProvider )
             {
                 _serviceProvider = serviceProvider;
+                _monitor = new ActivityMonitor( "DefaultCreateInstanceStrategy" );
             }
 
             public T CreateInstanceOrDefault<T>( Type instanceType, Func<T> defaultActivator = null ) where T : class
             {
                 if( !typeof( T ).IsAssignableFrom( instanceType ) )
                     throw new InvalidOperationException( $"{typeof( T )} is not assignable from {instanceType}" );
-
-                T inst = _serviceProvider.GetService( instanceType ) as T;
-                return inst ?? (defaultActivator != null ? defaultActivator() : Activator.CreateInstance( instanceType) as T);
+                try
+                {
+                    T inst = _serviceProvider.GetService( instanceType ) as T;
+                    return inst ?? (defaultActivator != null ? defaultActivator() : Activator.CreateInstance( instanceType ) as T);
+                }
+                catch( Exception ex )
+                {
+                    _monitor.Error().Send( ex );
+                    return null;
+                }
             }
         }
     }

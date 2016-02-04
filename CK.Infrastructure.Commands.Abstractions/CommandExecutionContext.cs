@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using CK.Core;
 
 namespace CK.Infrastructure.Commands
 {
@@ -30,9 +31,61 @@ namespace CK.Infrastructure.Commands
         /// </summary>
         public IDictionary<object, object> Items { get; private set; }
 
+        /// <summary>
+        /// Gets or sets the result of the command.
+        /// </summary>
+        public object Result { get; private set; }
+
+        /// <summary>
+        /// Gets or sets if there is an <see cref="Exception"/>
+        /// </summary>
+        public Exception Exception { get; private set; }
+
+        public bool IsResponseCreated
+        {
+            get { return _response != null; }
+        }
+
+        public ICommandResponse Response
+        {
+            get { return _response; }
+        }
+
+        public void SetException( Exception ex )
+        {
+            if( Exception == null ) Exception = ex;
+            else
+            {
+                RuntimeContext.Monitor.Warn()
+                    .Send( "Try to set an Exception of type {0} but the context already has an exception set.", ex.GetType().Name );
+            }
+        }
+
+        public void SetResult( object result )
+        {
+            if( Result != null )
+            {
+                RuntimeContext.Monitor.Warn().Send( "A Result already exists. It has been overriden..." );
+            }
+            Result = result;
+        }
+
+        /// <summary>
+        /// Mutates the context by creating a <see cref="ICommandResponse"/>. 
+        /// </summary>
+        /// <returns></returns>
         public ICommandResponse CreateResponse()
         {
-            if( _response != null ) throw new InvalidOperationException( "There is already a Response created for this CommandContext" );
+            if( _response != null )
+            {
+                if( RuntimeContext.IsLongRunning )
+                {
+                    return new DirectResponse( Result, RuntimeContext );
+                }
+
+                throw new InvalidOperationException( "There is already a Response created for this CommandContext." );
+            }
+
             if( Exception != null ) _response = CreateErrorResponse( Exception.Message );
             else
             {
@@ -54,19 +107,5 @@ namespace CK.Infrastructure.Commands
             return _response;
         }
 
-        /// <summary>
-        /// Gets or sets the result of the command.
-        /// </summary>
-        public object Result { get; set; }
-
-        /// <summary>
-        /// Gets or sets if there is an <see cref="Exception"/>
-        /// </summary>
-        public Exception Exception { get; set; }
-
-        public ICommandResponse Response
-        {
-            get { return _response; }
-        }
     }
 }

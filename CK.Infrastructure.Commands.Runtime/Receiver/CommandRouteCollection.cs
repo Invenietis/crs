@@ -10,6 +10,8 @@ namespace CK.Infrastructure.Commands
         readonly string _path;
         readonly Dictionary<CommandRoutePath, RoutedCommandDescriptor> _routeStorage;
 
+        public string PathBase { get { return _path; } }
+
         public CommandRouteCollection( string path )
         {
             _path = path;
@@ -19,7 +21,7 @@ namespace CK.Infrastructure.Commands
         public RoutedCommandDescriptor FindCommandDescriptor( string path )
         {
             RoutedCommandDescriptor v;
-            var key = new CommandRoutePath( path );
+            var key = new CommandRoutePath( PathBase + path );
             _routeStorage.TryGetValue( key, out v );
             return v;
         }

@@ -73,7 +73,6 @@ namespace CK.Infrastructure.Commands
             }
         }
 
-
         internal CommandContext CreateRuntimeContext( IActivityMonitor monitor, Guid commandId, ICommandRequest request )
         {
             Type commandContextType = typeof( CommandContext<> ).MakeGenericType( request.CommandDescription.Descriptor.CommandType );

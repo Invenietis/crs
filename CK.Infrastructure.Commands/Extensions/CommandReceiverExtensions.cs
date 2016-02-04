@@ -14,10 +14,10 @@ namespace CK.Infrastructure.Commands
     // Extension method used to add the middleware to the HTTP request pipeline.
     public static class CommandReceiverExtensions
     {
-        public static IApplicationBuilder UseCommandReceiver( 
-            this IApplicationBuilder builder, 
-            PathString routePrefix, 
-            Action<CommandReceiverConfiguration> config  )
+        public static IApplicationBuilder UseCommandReceiver(
+            this IApplicationBuilder builder,
+            PathString routePrefix,
+            Action<CommandReceiverConfiguration> config )
         {
             if( string.IsNullOrWhiteSpace( routePrefix ) ) throw new ArgumentNullException( nameof( routePrefix ) );
 
@@ -31,13 +31,13 @@ namespace CK.Infrastructure.Commands
             } );
         }
 
-        public static void AddCommandReceiver( this IServiceCollection services, Action<ICommandRegistry> configuration)
+        public static void AddCommandReceiver( this IServiceCollection services, Action<ICommandRegistry> configuration )
         {
             services.AddSingleton<ICommandReceiver, CommandReceiver>();
             services.AddSingleton<ICommandBinder, DefaultCommandBinder>();
             services.AddSingleton<ICommandResponseSerializer, DefaultCommandResponseSerializer>();
             services.AddSingleton<ICommandExecutorSelector, CommandExecutorSelector>();
-            services.AddSingleton<ICommandReceiverFactories,DefaultCommandReceiverFactories>();
+            services.AddSingleton<ICommandReceiverFactories, DefaultCommandReceiverFactories>();
             services.AddSingleton<ICommandFileWriter, DefaultCommandFileStore>();
             services.AddSingleton<ICommandResponseDispatcher>( ( sp ) =>
             {

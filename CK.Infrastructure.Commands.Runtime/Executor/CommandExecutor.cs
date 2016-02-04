@@ -38,11 +38,11 @@ namespace CK.Infrastructure.Commands
                 {
                     try
                     {
-                        exContext.Result = await handler.HandleAsync( exContext.RuntimeContext );
+                        exContext.SetResult( await handler.HandleAsync( exContext.RuntimeContext ) );
                     }
                     catch( Exception ex )
                     {
-                        exContext.Exception = ex;
+                        exContext.SetException( ex );
                         mon.Error().Send( ex );
                     }
                 }

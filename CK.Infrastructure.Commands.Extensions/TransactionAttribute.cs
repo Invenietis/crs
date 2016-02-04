@@ -1,14 +1,15 @@
-﻿using System.Transactions;
+﻿using System;
+using System.Transactions;
 
 namespace CK.Infrastructure.Commands
 {
-    public sealed class TransactionAttribute : HandlerAttributeBase
+    public class TransactionAttribute : HandlerAttributeBase
     {
         public IsolationLevel IsolationLevel { get; set; }
 
-        public TransactionAttribute( IsolationLevel level = IsolationLevel.ReadCommitted )
+        public TransactionAttribute()
         {
-            IsolationLevel = level;
+            IsolationLevel = IsolationLevel.ReadUncommitted;
             Order = -100;
         }
 
@@ -16,11 +17,7 @@ namespace CK.Infrastructure.Commands
 
         public override void OnCommandExecuting( CommandExecutionContext ctx )
         {
-            TransactionScope scope = new TransactionScope(
-                TransactionScopeOption.Required,
-                new TransactionOptions { IsolationLevel = IsolationLevel },
-                TransactionScopeAsyncFlowOption.Enabled );
-
+            TransactionScope scope = BeginTransaction();
             var item = new Item { Scope = scope, ShouldRollback = false };
             ctx.Items.Add( Key, item );
         }
@@ -38,11 +35,24 @@ namespace CK.Infrastructure.Commands
             {
                 if( item.ShouldRollback == false )
                 {
-                    item.Scope.Complete();
+                    CommitTransaction( item.Scope );
                 }
                 item.Scope.Dispose();
                 item.Scope = null;
             }
+        }
+
+        protected virtual TransactionScope BeginTransaction()
+        {
+            return new TransactionScope(
+               TransactionScopeOption.Required,
+               new TransactionOptions { IsolationLevel = IsolationLevel },
+               TransactionScopeAsyncFlowOption.Enabled );
+        }
+
+        protected virtual void CommitTransaction( TransactionScope scope )
+        {
+            scope.Complete();
         }
 
         internal class Item

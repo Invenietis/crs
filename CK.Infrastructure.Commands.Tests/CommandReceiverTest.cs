@@ -57,7 +57,9 @@ namespace CK.Infrastructure.Commands.Tests
                 DestinationAccountId = Guid.NewGuid(),
                 Amount = 1000
             };
-            var routes = new CommandRouteCollection( "/api");
+
+            var prefix = "/api";
+            var routes = new CommandRouteCollection( prefix);
             {
                 var middleWare = new Commands.CommandReceiverMiddleware( ShouldNotInvokeDelegate, routes  );
                 using( var httpContext = new FakeHttpContext( ApplicationServices, "/api", SerializeRequestBody( cmd ) ) )

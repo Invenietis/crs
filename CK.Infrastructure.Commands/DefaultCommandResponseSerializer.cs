@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using CK.Infrastructure.Commands;
 using Newtonsoft.Json;
@@ -20,11 +21,14 @@ namespace CK.Infrastructure.Commands
 
         public void Serialize( ICommandResponse response, Stream outputStream )
         {
-            StreamWriter sw = new StreamWriter( outputStream );
-            JsonTextWriter jw = new JsonTextWriter( sw );
-
-            _serializer.Serialize( jw, response );
-            jw.Flush();
+            using( StreamWriter sw = new StreamWriter( outputStream, leaveOpen: true, bufferSize: 1024, encoding: Encoding.UTF8 ) )
+            {
+                using( JsonTextWriter jw = new JsonTextWriter( sw ) )
+                {
+                    _serializer.Serialize( jw, response );
+                    jw.Flush();
+                }
+            }
         }
     }
 }

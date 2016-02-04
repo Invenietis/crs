@@ -19,7 +19,7 @@ namespace CK.Infrastructure.Commands
         private readonly RequestDelegate _next;
         private readonly ICommandRouteCollection _routes;
 
-        public CommandReceiverMiddleware( RequestDelegate next,ICommandRouteCollection routes )
+        public CommandReceiverMiddleware( RequestDelegate next, ICommandRouteCollection routes )
         {
             _next = next;
             _routes = routes;
@@ -27,10 +27,9 @@ namespace CK.Infrastructure.Commands
 
         public async Task Invoke( HttpContext httpContext )
         {
-            string commandPath = httpContext.Request.PathBase + httpContext.Request.Path;
-            var monitor = new Core.ActivityMonitor(commandPath );
+            var monitor = new Core.ActivityMonitor(httpContext.Request.Path );
 
-            var routedCommandDescriptor = _routes.FindCommandDescriptor( commandPath );
+            var routedCommandDescriptor = _routes.FindCommandDescriptor( httpContext.Request.Path );
             if( routedCommandDescriptor == null )
             {
                 if( _next != null ) await _next( httpContext );

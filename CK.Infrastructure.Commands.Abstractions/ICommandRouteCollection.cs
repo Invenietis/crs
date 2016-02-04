@@ -7,6 +7,8 @@ namespace CK.Infrastructure.Commands
 {
     public interface ICommandRouteCollection
     {
+        string PathBase { get; }
+
         RoutedCommandDescriptor FindCommandDescriptor( string path );
 
         void AddCommandRoute( CommandDescriptor descriptor );
