@@ -29,7 +29,19 @@ namespace CK.Infrastructure.Commands
                 HandlerType = typeof(THandler),
                 IsLongRunning = false
             };
-            return new CommandRegistration<TCommand>( defaultCommandDescriptor );
+            defaultCommandDescriptor.Decorators = ExtractDecoratorsFromHandlerAttributes(
+                defaultCommandDescriptor.CommandType,
+                defaultCommandDescriptor.HandlerType )
+                .ToArray();
+
+            var registration = new CommandRegistration<TCommand>( defaultCommandDescriptor );
+            registry.Register( defaultCommandDescriptor );
+            return registration;
+        }
+
+        private static IReadOnlyCollection<Type> ExtractDecoratorsFromHandlerAttributes( Type commandType, Type handlerType )
+        {
+            return handlerType.GetCustomAttributes( true ).OfType<ICommandDecorator>().Select( a => a.GetType() ).ToArray();
         }
 
         private static string GetDefaultName( Type type )

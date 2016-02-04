@@ -27,7 +27,7 @@ namespace CK.Infrastructure.Commands
                 var routeCollection = new CommandRouteCollection( routePrefix );
                 var middlewareConfiguration = new CommandReceiverConfiguration( registry, routeCollection);
                 config( middlewareConfiguration );
-                app.UseMiddleware<CommandReceiverMiddleware>( routePrefix );
+                app.UseMiddleware<CommandReceiverMiddleware>( routeCollection );
             } );
         }
 

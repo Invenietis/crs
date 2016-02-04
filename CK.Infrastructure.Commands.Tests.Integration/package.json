@@ -1,0 +1,15 @@
+{
+  "name": "ck-infrastructure-command-tests-integration",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "jquery": "^2.2.0",
+    "ck-command": "../../../component-kitchen/src/ck-command" 
+  },
+  "author": "",
+  "license": "ISC"
+}
