@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace CK.Infrastructure.Commands
 {
-    internal class DeferredResponse : CommandResponse
+    internal class CommandDeferredResponse : CommandResponse
     {
-        public DeferredResponse( CommandContext ctx ) : base( ctx.CommandId )
+        public CommandDeferredResponse( CommandContext ctx ) : base( ctx.CommandId )
         {
             ResponseType = CommandResponseType.Deferred;
             Payload = ctx.CallbackId;

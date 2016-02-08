@@ -11,6 +11,6 @@ namespace CK.Infrastructure.Commands
 
         RoutedCommandDescriptor FindCommandDescriptor( string path );
 
-        void AddCommandRoute( CommandDescriptor descriptor );
+        RoutedCommandDescriptor AddCommandRoute( CommandDescriptor descriptor );
     }
 }

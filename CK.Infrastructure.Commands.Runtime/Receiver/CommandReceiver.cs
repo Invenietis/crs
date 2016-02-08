@@ -24,38 +24,35 @@ namespace CK.Infrastructure.Commands
             _factory = factory;
         }
 
+        private FilterInfo[] _internalFilters = new FilterInfo []{
+            new FilterInfo { Instance = new HandlerVerificationFilter(), Type = typeof(HandlerVerificationFilter) } };
+
         public async Task<ICommandResponse> ProcessCommandAsync( ICommandRequest commandRequest, IActivityMonitor monitor, CancellationToken cancellationToken = default( CancellationToken ) )
         {
             var commandId = Guid.NewGuid();
 
             using( monitor.OpenTrace().Send( $"Processing new command [commandId={commandId}]..." ) )
             {
-                var runtimeContext = CreateRuntimeContext( monitor, commandId, commandRequest );
+                var runtimeContext = CreateRuntimeContext( monitor, commandId, commandRequest, cancellationToken );
                 var executionContext = new CommandExecutionContext( commandRequest.CommandDescription.Descriptor, runtimeContext );
-                if( executionContext.CommandDescription.HandlerType == null )
-                {
-                    string msg = $"No handler found for command [type={commandRequest.CommandDescription.Descriptor.CommandType}].";
-                    monitor.Warn().Send( msg );
-                    return executionContext.CreateErrorResponse( msg );
-                }
 
                 using( monitor.OpenTrace().Send( "Applying filters..." )
                     .ConcludeWith( () => executionContext.Response != null ? "INVALID" : "OK" ) )
                 {
-                    foreach( var filterType in commandRequest.CommandDescription.Filters )
+                    foreach( var filter in _internalFilters.Union( commandRequest.CommandDescription.Filters.Select( f => new FilterInfo { Type = f, Instance = _factory.CreateFilter( f ) } ) ) )
                     {
-                        var filter = _factory.CreateFilter( filterType );
-                        if( filter == null )
+                        if( filter.Instance == null )
                         {
-                            string msg = $"Unable to create the filter {filterType.FullName}.";
-                            throw new ArgumentNullException( msg );
+                            string msg = $"Unable to create the filter {filter.Type.FullName}.";
+                            throw new InvalidOperationException( msg );
                         }
 
-                        filter.OnCommandReceived( executionContext );
-                        if( executionContext.Response != null ) return executionContext.Response;
+                        filter.Instance.OnCommandReceived( executionContext );
                     }
                 }
 
+                // Immediatly test if there is a response available.
+                if( executionContext.Response != null ) return executionContext.Response;
 
                 using( monitor.OpenTrace().Send( "Running command..." ) )
                 {
@@ -67,31 +64,43 @@ namespace CK.Infrastructure.Commands
                     }
                     monitor.Trace().Send( $"[hostType={executor.GetType().Name}]" );
                     await executor.ExecuteAsync( executionContext, cancellationToken );
+                }
 
-                    return executionContext.CreateResponse();
+                return executionContext.Response; 
+            }
+        }
+
+        internal CommandContext CreateRuntimeContext( IActivityMonitor monitor, Guid commandId, ICommandRequest request, CancellationToken cancellationToken )
+        {
+            Type commandContextType = typeof( CommandContext<> ).MakeGenericType( request.CommandDescription.Descriptor.CommandType );
+
+            object instance = Activator.CreateInstance( commandContextType, monitor, request.Command, commandId, request.CommandDescription.Descriptor.IsLongRunning, request.CallbackId, cancellationToken   );
+            return (CommandContext)instance;
+        }
+
+        class FilterInfo
+        {
+            public Type Type { get; set; }
+            public ICommandFilter Instance { get; set; }
+        }
+
+        class HandlerVerificationFilter : ICommandFilter
+        {
+            public int Order
+            {
+                get { return -1000; }
+            }
+
+            public void OnCommandReceived( CommandExecutionContext executionContext )
+            {
+                if( executionContext.CommandDescription.HandlerType == null )
+                {
+                    string msg = $"No handler found for command [type={executionContext.CommandDescription.CommandType}].";
+                    executionContext.RuntimeContext.Monitor.Warn().Send( msg );
+                    executionContext.SetException( new InvalidOperationException( msg ) );
                 }
             }
         }
 
-        internal CommandContext CreateRuntimeContext( IActivityMonitor monitor, Guid commandId, ICommandRequest request )
-        {
-            Type commandContextType = typeof( CommandContext<> ).MakeGenericType( request.CommandDescription.Descriptor.CommandType );
-
-            object instance = Activator.CreateInstance( commandContextType, monitor, request.Command, commandId, request.CommandDescription.Descriptor.IsLongRunning, request.CallbackId  );
-            return (CommandContext)instance;
-        }
-
-        //internal void CreateInvalidResponse()
-        //{
-        //    using( monitor.OpenWarn().Send( "Validation failed. See validation results below..." ) )
-        //    {
-        //        foreach( var validationResult in results )
-        //        {
-        //            string errorMessage = $"[{String.Join(", ", validationResult.MemberNames)}] --> {validationResult.ErrorMessage}";
-        //            monitor.Warn().Send( validationResult.ErrorMessage );
-        //        }
-        //    }
-        //    return executionContext.CreateInvalidResponse( results );
-        //}
     }
 }

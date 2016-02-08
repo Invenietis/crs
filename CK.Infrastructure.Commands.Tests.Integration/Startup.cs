@@ -12,6 +12,7 @@ namespace CK.Infrastructure.Commands.Tests.Integration
         {
             services.AddCommandReceiver( options =>
             {
+                options.EnableLongRunningCommands = false;
                 options.Register<TransferAmountCommand, TransferAlwaysSuccessHandler>().CommandName( "transfer" ).IsLongRunning();
                 options.Register<WithdrawMoneyCommand, WithDrawyMoneyHandler>().CommandName( "withdraw" ).AddDecorator<TransactionAttribute>();
             } );
@@ -25,8 +26,10 @@ namespace CK.Infrastructure.Commands.Tests.Integration
             {
                 options
                     .AddFilter<HttpsRequiredFilter>()
-                    .AddCommands( registry => registry.Registration.Where( c => c.CommandType.Namespace.StartsWith( "CK.Infrastructure.Commands" ) ) )
-                    .AddCommand<TransferAmountCommand>().CommandName( "transfer" ).IsLongRunning().AddDecorator<TransactionAttribute>();
+                    .AddCommands( 
+                        registry => registry.Registration.Where( c => c.CommandType.Namespace.StartsWith( "CK.Infrastructure.Commands" ) ),
+                         config => config.AddFilter<AuthorizedFilter>() )
+                    .AddCommand<TransferAmountCommand>().CommandName( "transfer" ).AddDecorator<TransactionAttribute>();
             } );
             app.UseCommandReceiver( "/c/public", options =>
             {

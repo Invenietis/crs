@@ -8,6 +8,5 @@ namespace CK.Infrastructure.Commands
 {
     public interface ICommandValidator
     {
-        bool TryValidate( CommandExecutionContext executionContext, out ICollection<ValidationResult> results );
     }
 }

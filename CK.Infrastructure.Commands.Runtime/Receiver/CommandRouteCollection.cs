@@ -26,11 +26,11 @@ namespace CK.Infrastructure.Commands
             return v;
         }
 
-        public void AddCommandRoute( CommandDescriptor descriptor )
+        public RoutedCommandDescriptor AddCommandRoute( CommandDescriptor descriptor )
         {
             var p = new CommandRoutePath(_path, descriptor.Name);
             // Overrides...
-            _routeStorage[p] = new RoutedCommandDescriptor( p, descriptor );
+            return _routeStorage[p] = new RoutedCommandDescriptor( p, descriptor );
         }
     }
 }

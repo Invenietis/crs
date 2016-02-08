@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace CK.Infrastructure.Commands
 {
-    internal class ErrorResponse : CommandResponse
+    internal class CommandErrorResponse : CommandResponse
     {
-        public ErrorResponse( string msg, Guid commandId ) : base( commandId )
+        public CommandErrorResponse( string msg, Guid commandId ) : base( commandId )
         {
             ResponseType = CommandResponseType.Error;
             Payload = msg;

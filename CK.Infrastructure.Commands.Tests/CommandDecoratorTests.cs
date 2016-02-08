@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using CK.Core;
 using Microsoft.Extensions.PlatformAbstractions;
@@ -11,6 +12,11 @@ namespace CK.Infrastructure.Commands.Tests
 {
     public class CommandDecoratorTests
     {
+        CancellationTokenSource _cancellationToken;
+        public CommandDecoratorTests()
+        {
+            _cancellationToken = new CancellationTokenSource();
+        }
 
         [Fact]
         public async Task Decorators_Should_Be_Invoked_When_A_Command_Is_Handled()
@@ -39,7 +45,8 @@ namespace CK.Infrastructure.Commands.Tests
                 cmd,
                 Guid.NewGuid(),
                 commandDescription.IsLongRunning,
-                "3712");
+                "3712",
+                _cancellationToken.Token);
 
             var factory = new FakeFactory<Handlers.TransferAlwaysSuccessHandler>();
 

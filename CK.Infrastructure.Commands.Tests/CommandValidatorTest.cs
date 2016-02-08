@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using CK.Core;
 using Microsoft.Dnx.Testing.Abstractions;
@@ -11,6 +12,11 @@ namespace CK.Infrastructure.Commands.Tests
 {
     public class CommandValidatorTest
     {
+        CancellationTokenSource _cancellationToken;
+        public CommandValidatorTest()
+        {
+            _cancellationToken = new CancellationTokenSource();
+        }
 
         class SomeCommand
         {
@@ -44,27 +50,27 @@ namespace CK.Infrastructure.Commands.Tests
                 new ActivityMonitor(),
                 command,
                 Guid.NewGuid(),
-                descriptor.Descriptor.IsLongRunning, 
-                "3712" );
+                descriptor.Descriptor.IsLongRunning,
+                "3712",
+                _cancellationToken.Token);
 
             var executionContext = new CommandExecutionContext( descriptor.Descriptor, commandContext );
 
             // Act
             DefaultCommandValidator v = new DefaultCommandValidator();
-            ICollection<ValidationResult> results;
-            bool valid = v.TryValidate( executionContext, out results );
+            v.OnCommandReceived( executionContext );
 
             // Assert
             if( assert == 0 )
             {
-                Assert.True( valid );
-                Assert.Empty( results );
+                Assert.Null( executionContext.Response );
             }
             else
             {
-                Assert.False( valid );
-                Assert.NotEmpty( results );
-                Assert.Equal( assert, results.Count );
+                Assert.NotNull( executionContext.Response );
+                Assert.IsType<CommandErrorResponse>( executionContext.Response );
+                string msg = executionContext.Response.Payload.ToString();
+                Assert.Equal( assert, msg.Split( new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries ).Length );
             }
         }
 

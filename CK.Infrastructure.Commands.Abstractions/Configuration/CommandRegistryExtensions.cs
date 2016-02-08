@@ -34,7 +34,7 @@ namespace CK.Infrastructure.Commands
                 defaultCommandDescriptor.HandlerType )
                 .ToArray();
 
-            var registration = new CommandRegistration<TCommand>( defaultCommandDescriptor );
+            var registration = new CommandRegistration( defaultCommandDescriptor );
             registry.Register( defaultCommandDescriptor );
             return registration;
         }

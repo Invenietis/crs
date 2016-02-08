@@ -40,7 +40,5 @@ namespace CK.Infrastructure.Commands
         /// Gets or sets a read-only collection of decorators that should be applied when this command is handled.
         /// </summary>
         public IReadOnlyCollection<Type> Decorators { get; set; }
-
-        public IReadOnlyCollection<ICommandExecutor> Executors { get; set; }
     }
 }

@@ -23,7 +23,7 @@ namespace CK.Infrastructure.Commands
         /// Gets the Route of this command
         /// </summary>
         public CommandRoutePath Route { get; }
-
+        
         public IReadOnlyCollection<Type> Filters { get; set; }
     }
 }

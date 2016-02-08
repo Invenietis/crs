@@ -12,5 +12,6 @@ namespace CK.Infrastructure.Commands
         void Register( CommandDescriptor descriptor );
 
         IEnumerable<CommandDescriptor> Registration { get; }
+        bool EnableLongRunningCommands { get; set; }
     }
 }

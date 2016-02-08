@@ -38,7 +38,9 @@ namespace CK.Infrastructure.Commands
                 {
                     try
                     {
-                        exContext.SetResult( await handler.HandleAsync( exContext.RuntimeContext ) );
+                        var result = await handler.HandleAsync( exContext.RuntimeContext );
+                        var response = new CommandResultResponse( result, exContext.RuntimeContext);
+                        exContext.SetResponse( response );
                     }
                     catch( Exception ex )
                     {

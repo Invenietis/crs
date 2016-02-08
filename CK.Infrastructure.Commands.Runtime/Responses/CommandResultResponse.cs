@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace CK.Infrastructure.Commands
 {
-    internal class DirectResponse : CommandResponse
+    internal class CommandResultResponse : CommandResponse
     {
-        public DirectResponse( object result, CommandContext ctx ) : base( ctx.CommandId )
+        public CommandResultResponse( object result, CommandContext ctx ) : base( ctx.CommandId )
         {
             ResponseType = CommandResponseType.Direct;
             Payload = result;

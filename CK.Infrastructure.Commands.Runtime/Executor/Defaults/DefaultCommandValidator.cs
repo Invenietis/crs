@@ -6,15 +6,26 @@ using System.Threading.Tasks;
 
 namespace CK.Infrastructure.Commands
 {
-    public class DefaultCommandValidator : ICommandValidator
+    public class DefaultCommandValidator : ICommandValidator, ICommandFilter
     {
-        public bool TryValidate( CommandExecutionContext executionContext, out ICollection<ValidationResult> results )
+        public int Order { get; set; }
+
+        public void OnCommandReceived( CommandExecutionContext executionContext )
         {
             object cmd =  executionContext.RuntimeContext.Command;
             var validationContext = new ValidationContext(cmd ) ;
-            results = new List<ValidationResult>();
-            
-            return Validator.TryValidateObject( cmd, validationContext, results, true );
+            var results = new List<ValidationResult>();
+
+            if( !Validator.TryValidateObject( cmd, validationContext, results, true ) )
+            {
+                string resultString = GetString( results);
+                executionContext.SetResponse( new CommandErrorResponse( resultString, executionContext.RuntimeContext.CommandId ) );
+            }
+        }
+
+        private string GetString( List<ValidationResult> results )
+        {
+            return String.Join( Environment.NewLine, results.Select( x => $"{x.ErrorMessage} [{String.Join( ",", x.MemberNames )}]" ) );
         }
     }
 }
