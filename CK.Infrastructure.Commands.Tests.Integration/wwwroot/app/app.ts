@@ -1,8 +1,9 @@
-﻿
+﻿/// <reference path="../libs/ck-command.d.ts" />
+
 $(function () {
     var sendCommand1 = function () {
         
-        CK.CRS.CRS.sendCommand('c/admin', 'transfer', {
+        CK.CRS.sendCommand('c/admin', 'transfer', {
             SourceAccountId: '7A8125D3-2BF9-45DE-A258-CE0D3C17892D',
             DestinationAccountId: '37EC9EA1-2A13-4A4D-B55E-6C844D822DAC',
             Amount: Math.random() * 1000
@@ -12,7 +13,7 @@ $(function () {
     }; 
     var sendCommand2 = function () {
 
-        CK.CRS.CRS.sendCommand('c/admin', 'withdraw', {
+        CK.CRS.sendCommand('c/admin', 'withdraw', {
             AccountId: '7A8125D3-2BF9-45DE-A258-CE0D3C17892D',
             Amount: Math.random() * 1000
         }).then(r => {

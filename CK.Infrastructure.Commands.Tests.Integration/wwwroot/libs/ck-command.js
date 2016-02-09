@@ -45,35 +45,15 @@ var CRS =
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/// <reference path="../typings/tsd.d.ts" />
 	"use strict";
-	var Command_1 = __webpack_require__(1);
-	var CommandEmitter_1 = __webpack_require__(2);
-	var AjaxSender_1 = __webpack_require__(3);
-	var SignalRListener_1 = __webpack_require__(4);
-	var CRS = (function () {
-	    function CRS() {
-	    }
-	    CRS.findEmitter = function (prefix) {
-	        return this._emitters.filter(function (t) { return t.prefix === prefix; })[0];
-	    };
-	    CRS.sendCommand = function (prefix, name, properties) {
-	        var cmd = new Command_1.Command(name, properties);
-	        var emitter = this.findEmitter(prefix);
-	        if (emitter == null) {
-	            var listener = null;
-	            if ($ && $.connection) {
-	                listener = new SignalRListener_1.SignalRListener($.connection.hub, 'crs' + prefix);
-	            }
-	            emitter = new CommandEmitter_1.CommandEmitter(prefix, new AjaxSender_1.AjaxSender(), listener);
-	            this._emitters.push(emitter);
-	        }
-	        return emitter.emit(cmd);
-	    };
-	    CRS._emitters = new Array();
-	    return CRS;
-	}());
-	exports.CRS = CRS;
+	function __export(m) {
+	    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+	}
+	__export(__webpack_require__(1));
+	__export(__webpack_require__(2));
+	__export(__webpack_require__(3));
+	__export(__webpack_require__(4));
+	__export(__webpack_require__(5));
 
 
 /***/ },
@@ -95,7 +75,32 @@ var CRS =
 /* 2 */
 /***/ function(module, exports) {
 
-	/// <reference path="../typings/tsd.d.ts" />
+	/// <reference path="../../typings/tsd.d.ts" />
+	"use strict";
+	var AjaxSender = (function () {
+	    function AjaxSender() {
+	    }
+	    AjaxSender.prototype.send = function (url, command) {
+	        var json = JSON.stringify(command.properties);
+	        return new Promise(function (resolve, reject) {
+	            $.ajax(url, {
+	                type: 'POST',
+	                data: json,
+	                contentType: 'application/json',
+	                dataType: 'JSON'
+	            }).then(resolve, reject);
+	        });
+	    };
+	    return AjaxSender;
+	}());
+	exports.AjaxSender = AjaxSender;
+
+
+/***/ },
+/* 3 */
+/***/ function(module, exports) {
+
+	/// <reference path="../../typings/tsd.d.ts" />
 	"use strict";
 	var CommandEmitter = (function () {
 	    function CommandEmitter(prefix, commandRequestSender, commandResponseListener) {
@@ -132,31 +137,6 @@ var CRS =
 
 
 /***/ },
-/* 3 */
-/***/ function(module, exports) {
-
-	/// <reference path="../typings/tsd.d.ts" />
-	"use strict";
-	var AjaxSender = (function () {
-	    function AjaxSender() {
-	    }
-	    AjaxSender.prototype.send = function (url, command) {
-	        var json = JSON.stringify(command.properties);
-	        return new Promise(function (resolve, reject) {
-	            $.ajax(url, {
-	                type: 'POST',
-	                data: json,
-	                contentType: 'application/json',
-	                dataType: 'JSON'
-	            }).then(resolve, reject);
-	        });
-	    };
-	    return AjaxSender;
-	}());
-	exports.AjaxSender = AjaxSender;
-
-
-/***/ },
 /* 4 */
 /***/ function(module, exports) {
 
@@ -190,6 +170,35 @@ var CRS =
 	    return SignalRListener;
 	}());
 	exports.SignalRListener = SignalRListener;
+
+
+/***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/// <reference path="../../typings/tsd.d.ts" />
+	"use strict";
+	var Command_1 = __webpack_require__(1);
+	var CommandEmitter_1 = __webpack_require__(3);
+	var AjaxSender_1 = __webpack_require__(2);
+	var SignalRListener_1 = __webpack_require__(4);
+	var _emitters = new Array();
+	exports.findEmitter = function (prefix) {
+	    return _emitters.filter(function (t) { return t.prefix === prefix; })[0];
+	};
+	exports.sendCommand = function (prefix, name, properties) {
+	    var cmd = new Command_1.Command(name, properties);
+	    var emitter = exports.findEmitter(prefix);
+	    if (emitter == null) {
+	        var listener = null;
+	        if ($ && $.connection) {
+	            listener = new SignalRListener_1.SignalRListener($.connection.hub, 'crs' + prefix);
+	        }
+	        emitter = new CommandEmitter_1.CommandEmitter(prefix, new AjaxSender_1.AjaxSender(), listener);
+	        _emitters.push(emitter);
+	    }
+	    return emitter.emit(cmd);
+	};
 
 
 /***/ }
