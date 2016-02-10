@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace CK.Infrastructure.Commands
 {
-    internal class CommandErrorResponse : CommandResponse
+    public class CommandErrorResponse : CommandResponse
     {
         public CommandErrorResponse( string msg, Guid commandId ) : base( commandId )
         {

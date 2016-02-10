@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace CK.Infrastructure.Commands
 {
-    internal class CommandInvalidResponse : CommandResponse
+    public class CommandInvalidResponse : CommandResponse
     {
-        public CommandInvalidResponse( ICollection<ValidationResult> results, CommandContext ctx ) : base( ctx.CommandId )
+        public CommandInvalidResponse( CommandContext ctx, params ValidationResult[] results ) : base( ctx.CommandId )
         {
             ResponseType = CommandResponseType.ValidationFailed;
             Payload = results;

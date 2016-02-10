@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CK.Infrastructure.Commands
 {
-    internal abstract class CommandResponse : ICommandResponse
+    public abstract class CommandResponse : ICommandResponse
     {
         internal CommandResponse( Guid commandId )
         {

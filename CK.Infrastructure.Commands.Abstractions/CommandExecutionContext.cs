@@ -48,7 +48,10 @@ namespace CK.Infrastructure.Commands
 
         public void SetException( Exception ex )
         {
-            if( Exception == null ) Exception = ex;
+            if( Exception == null )
+            {
+                Exception = ex;
+            }
             else
             {
                 RuntimeContext.Monitor.Warn()

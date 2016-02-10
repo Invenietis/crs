@@ -10,7 +10,7 @@ namespace CK.Infrastructure.Commands
     {
         public int Order { get; set; }
 
-        public void OnCommandReceived( CommandExecutionContext executionContext )
+        public Task OnCommandReceived( CommandExecutionContext executionContext )
         {
             object cmd =  executionContext.RuntimeContext.Command;
             var validationContext = new ValidationContext(cmd ) ;
@@ -21,6 +21,8 @@ namespace CK.Infrastructure.Commands
                 string resultString = GetString( results);
                 executionContext.SetResponse( new CommandErrorResponse( resultString, executionContext.RuntimeContext.CommandId ) );
             }
+
+            return Task.FromResult<object>( null );
         }
 
         private string GetString( List<ValidationResult> results )

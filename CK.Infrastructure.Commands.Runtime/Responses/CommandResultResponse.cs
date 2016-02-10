@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace CK.Infrastructure.Commands
 {
-    internal class CommandResultResponse : CommandResponse
+    public class CommandResultResponse : CommandResponse
     {
         public CommandResultResponse( object result, CommandContext ctx ) : base( ctx.CommandId )
         {

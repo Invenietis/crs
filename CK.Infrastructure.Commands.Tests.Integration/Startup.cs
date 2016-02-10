@@ -25,6 +25,7 @@ namespace CK.Infrastructure.Commands.Tests.Integration
             app.UseCommandReceiver( "/c/admin", options =>
             {
                 options
+                    .AddFilter<ClaimsAuthenticationFilter>()
                     .AddFilter<HttpsRequiredFilter>()
                     .AddCommands( 
                         registry => registry.Registration.Where( c => c.CommandType.Namespace.StartsWith( "CK.Infrastructure.Commands" ) ),

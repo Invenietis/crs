@@ -20,7 +20,7 @@ namespace CK.Infrastructure.Commands.Tests
             Output = output;
         }
 
-        [Fact]
+        //[Fact]
         public async Task SendCommandAndWaitForEvents()
         {
             string serverAddress = "http://MyDumbServer/c/";

@@ -1,8 +1,10 @@
-﻿namespace CK.Infrastructure.Commands
+﻿using System.Threading.Tasks;
+
+namespace CK.Infrastructure.Commands
 {
     public interface ICommandFilter
     {
         int Order { get; }
-        void OnCommandReceived( CommandExecutionContext executionContext );
+        Task OnCommandReceived( CommandExecutionContext executionContext );
     }
 }

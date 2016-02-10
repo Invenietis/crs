@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace CK.Infrastructure.Commands
 {
-    internal class CommandDeferredResponse : CommandResponse
+    public class CommandDeferredResponse : CommandResponse
     {
         public CommandDeferredResponse( CommandContext ctx ) : base( ctx.CommandId )
         {

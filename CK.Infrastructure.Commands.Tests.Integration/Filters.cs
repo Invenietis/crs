@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Microsoft.AspNet.Http;
 
 namespace CK.Infrastructure.Commands.Tests.Integration
 {
@@ -12,8 +15,9 @@ namespace CK.Infrastructure.Commands.Tests.Integration
             }
         }
 
-        public void OnCommandReceived( CommandExecutionContext executionContext )
+        public Task OnCommandReceived( CommandExecutionContext executionContext )
         {
+            return Task.FromResult<object>( null );
         }
     }
 
@@ -27,8 +31,9 @@ namespace CK.Infrastructure.Commands.Tests.Integration
             }
         }
 
-        public void OnCommandReceived( CommandExecutionContext executionContext )
+        public Task OnCommandReceived( CommandExecutionContext executionContext )
         {
+            return Task.FromResult<object>( null );
         }
     }
 }

@@ -46,13 +46,21 @@ namespace CK.Infrastructure.Commands
                             string msg = $"Unable to create the filter {filter.Type.FullName}.";
                             throw new InvalidOperationException( msg );
                         }
+                        using( monitor.OpenTrace().Send( $"Executing filter {filter.Type.Name}" ) )
+                        {
+                            await filter.Instance.OnCommandReceived( executionContext );
 
-                        filter.Instance.OnCommandReceived( executionContext );
+                            // Immediatly test if there is a response available.
+                            if( executionContext.Response != null )
+                            {
+                                monitor.Info()
+                                    .Send( $"A response of type {executionContext.Response.ResponseType.ToString()} has been set by the filter." );
+
+                                return executionContext.Response;
+                            }
+                        }
                     }
                 }
-
-                // Immediatly test if there is a response available.
-                if( executionContext.Response != null ) return executionContext.Response;
 
                 using( monitor.OpenTrace().Send( "Running command..." ) )
                 {
@@ -66,7 +74,7 @@ namespace CK.Infrastructure.Commands
                     await executor.ExecuteAsync( executionContext, cancellationToken );
                 }
 
-                return executionContext.Response; 
+                return executionContext.Response;
             }
         }
 
@@ -91,16 +99,18 @@ namespace CK.Infrastructure.Commands
                 get { return -1000; }
             }
 
-            public void OnCommandReceived( CommandExecutionContext executionContext )
+            public Task OnCommandReceived( CommandExecutionContext executionContext )
             {
                 if( executionContext.CommandDescription.HandlerType == null )
                 {
                     string msg = $"No handler found for command [type={executionContext.CommandDescription.CommandType}].";
                     executionContext.RuntimeContext.Monitor.Warn().Send( msg );
-                    executionContext.SetException( new InvalidOperationException( msg ) );
+                    executionContext.SetResponse(
+                        new CommandInvalidResponse( executionContext.RuntimeContext, new ValidationResult( msg ) ) );
                 }
+
+                return Task.FromResult<object>( null );
             }
         }
-
     }
 }
