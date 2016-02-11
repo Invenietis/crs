@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using CK.Authentication;
 using Microsoft.AspNet.Http;
 
 namespace CK.Infrastructure.Commands
@@ -25,10 +26,10 @@ namespace CK.Infrastructure.Commands
 
         public async Task OnCommandReceived( CommandExecutionContext executionContext )
         {
-            var result = await _identityChecker.CheckIdentityAsync( 
-                executionContext.RuntimeContext.Monitor,
-                _accessor.HttpContext.User,
-                executionContext.RuntimeContext.Command );
+            var monitor = executionContext.RuntimeContext.Monitor;
+            var model = executionContext.RuntimeContext.Command;
+            var principal = _accessor.HttpContext.User;
+            var result = await _identityChecker.CheckIdentityAsync(  monitor, principal, model );
 
             if( !result.Success )
             {
