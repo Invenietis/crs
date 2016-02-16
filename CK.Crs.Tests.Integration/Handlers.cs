@@ -36,12 +36,12 @@ namespace CK.Crs.Handlers
     [Transaction]
     public class UserHandler : CommandHandler<UserCommand, UserCommand.Result>
     {
-        protected override Task<UserCommand.Result> DoHandleAsync( CommandContext<UserCommand> command )
+        protected override Task<UserCommand.Result> DoHandleAsync( Command<UserCommand> command )
         {
-            UserRepository.Add( new UserModel {
-                FirstName = command.Command.FirstName,
-                LastName = command.Command.LastName
-            } );
+            //UserRepository.Add( new UserModel {
+            //    FirstName = command.Model.FirstName,
+            //    LastName = command.Model.LastName
+            //} );
             return Task.FromResult( new UserCommand.Result { Success = true } );
         }
     }

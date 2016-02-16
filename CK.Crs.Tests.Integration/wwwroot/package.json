@@ -8,7 +8,16 @@
   },
     "dependencies": {
         "jquery": "^2.2.0",
-        "ck-command": "../../../../component-kitchen/src/ck-command"
+        "ck-command": "../../../../component-kitchen/src/ck-command",
+        "ck-qrs": "../../../../component-kitchen/src/ck-qrs",
+         "angular2": "2.0.0-beta.6",
+            "systemjs": "0.19.20",
+            "es6-promise": "^3.0.2",
+            "es6-shim": "^0.33.3",
+            "reflect-metadata": "0.1.2",
+            "rxjs": "5.0.0-beta.0",
+        "zone.js": "0.5.14",
+        "immutable": "3.7.6"
     },
     "devDependencies": {
         "gulp": "3.8.11",

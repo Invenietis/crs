@@ -56,4 +56,4 @@ export class AppComponent {
     addUser() {
         this._emitter.emit(new Command('addUser', this.user));
     }
-}
+} 
