@@ -1,6 +1,6 @@
 /// <reference path="../typings/tsd.d.ts" />
 
-declare namespace CK{
+declare namespace CK {
     export class Command {
     
         name: string;
