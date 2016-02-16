@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace CK.Infrastructure.Commands
+namespace CK.Crs
 {
     public interface ICommandHandler
     {
@@ -9,7 +9,7 @@ namespace CK.Infrastructure.Commands
 
     public interface ICommandHandler<T> : ICommandHandler where T : class
     {
-        Task<object> HandleAsync( CommandContext<T> commandContext );
+        Task<object> HandleAsync( Command<T> commandContext );
     }
 
 }

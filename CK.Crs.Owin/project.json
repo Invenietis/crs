@@ -1,0 +1,21 @@
+﻿{
+    "version": "1.0.0-*",
+    "description": "CK.Crs.Owin Class Library",
+    "authors": [ "cedri_000" ],
+    "tags": [ "" ],
+    "projectUrl": "",
+    "licenseUrl": "",
+    "frameworks": {
+        "dnx451": {
+            "dependencies": {
+                "Owin": "1.0.0",
+                "Microsoft.Owin": "3.0.1",
+                "CK.Crs.Abstractions": ""
+            }
+        }
+    },
+    "dependencies": {
+        "CK.Crs.Runtime": "1.0.0-alpha-01",
+        "Newtonsoft.Json": "8.0.2"
+    }
+}

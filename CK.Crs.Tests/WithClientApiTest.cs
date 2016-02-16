@@ -6,10 +6,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CK.Core;
-using CK.Infrastructure.Commands.Tests.Handlers;
+using CK.Crs;
+using CK.Crs.Tests.Handlers;
 using NUnit.Framework;
 
-namespace CK.Infrastructure.Commands.Tests
+namespace CK.Crs.Tests
 {
     [TestFixture]
     public class WithClientApiTest
@@ -20,7 +21,7 @@ namespace CK.Infrastructure.Commands.Tests
             string serverAddress = "http://MyDumbServer/c/";
             var serviceProvider = TestHelper.CreateServiceProvider( Util.ActionVoid );
             var factories = new DefaultCommandReceiverFactories( serviceProvider );
-            using( var server = new CommandReceiverHost( serverAddress, new CommandReceiver( new CommandExecutorSelector( EventChannel.Instance, factories ), factories ) ) )
+            using( var server = new CommandReceiverHost( serverAddress, new CommandReceiver( new ExecutionStrategySelector( factories ), factories ) ) )
             {
                 // Server initialization
                 server.Run();
@@ -66,7 +67,7 @@ namespace CK.Infrastructure.Commands.Tests
                 AutoResetEvent e = new AutoResetEvent(false);
 
                 var route2 = new RoutedCommandDescriptor(
-                    new CommandRoutePath( "c", "WithdrawMoneyCommand" ),
+                    new CommandRoutePath( "/c", "WithdrawMoneyCommand" ),
                     new CommandDescriptor
                     {
                         CommandType = typeof( WithdrawMoneyCommand ),
@@ -85,7 +86,7 @@ namespace CK.Infrastructure.Commands.Tests
                     Console.WriteLine( ex.ToString() );
                     e.Set();
                     return Task.FromResult( 0 );
-                } ); 
+                } );
 
                 e.WaitOne( TimeSpan.FromSeconds( 2 ) );
             }
@@ -94,21 +95,11 @@ namespace CK.Infrastructure.Commands.Tests
 
     #region Client SDK
 
-    class CommandRequest : ICommandRequest
-    {
-        public string CallbackId { get; set; }
-
-        public object Command { get; set; }
-
-        public RoutedCommandDescriptor CommandDescription { get; set; }
-        public IReadOnlyCollection<BlobRef> Files { get; set; }
-    }
-
     class ClientCommandSender
     {
         public async Task<ClientCommandResult> SendAsync<T>( string address, T command, RoutedCommandDescriptor commandDescriptor )
         {
-            ICommandRequest request = new CommandRequest
+            CommandRequest request = new CommandRequest
             {
                 Command = command,
                 CallbackId = EventChannel.Instance.ConnectionId,
@@ -117,7 +108,7 @@ namespace CK.Infrastructure.Commands.Tests
             ClientCommandResult result = null;
             try
             {
-                ICommandResponse response = await CommandChannel.SendAsync( address, request );
+                CommandResponse response = await CommandChannel.SendAsync( address, request );
                 if( response.ResponseType == CommandResponseType.Deferred )
                 {
                     result = new DeferredResult();
@@ -189,7 +180,7 @@ namespace CK.Infrastructure.Commands.Tests
 
     public static class CommandChannel
     {
-        internal static Task<ICommandResponse> SendAsync( string serverAddress, ICommandRequest request )
+        internal static Task<CommandResponse> SendAsync( string serverAddress, CommandRequest request )
         {
             return Servers.GetCommandReceiverHost( serverAddress ).ProcessRequestAsync( request );
         }
@@ -277,7 +268,7 @@ namespace CK.Infrastructure.Commands.Tests
             } );
         }
 
-        public Task DispatchAsync( string callbackId, ICommandResponse response, CancellationToken cancellationToken = default( CancellationToken ) )
+        public Task DispatchAsync( string callbackId, CommandResponse response, CancellationToken cancellationToken = default( CancellationToken ) )
         {
             if( String.IsNullOrEmpty( callbackId ) ) throw new ArgumentNullException( nameof( callbackId ) );
             if( response == null ) throw new ArgumentNullException( nameof( response ) );
@@ -313,7 +304,7 @@ namespace CK.Infrastructure.Commands.Tests
                     PendingRequest pending = IncomingRequests.Take();
                     if( pending == null ) continue;
 
-                    ICommandResponse response = await _commandReceiver.ProcessCommandAsync( pending.CommandRequest, new ActivityMonitor() );
+                    CommandResponse response = await _commandReceiver.ProcessCommandAsync( pending.CommandRequest, new ActivityMonitor() );
                     pending.CommandResponsePromise.SetResult( response );
                     Thread.Sleep( 100 );
                 }
@@ -322,16 +313,16 @@ namespace CK.Infrastructure.Commands.Tests
 
         class PendingRequest
         {
-            public ICommandRequest CommandRequest { get; set; }
+            public CommandRequest CommandRequest { get; set; }
 
-            public TaskCompletionSource<ICommandResponse> CommandResponsePromise { get; set; }
+            public TaskCompletionSource<CommandResponse> CommandResponsePromise { get; set; }
         }
 
-        public Task<ICommandResponse> ProcessRequestAsync( ICommandRequest command )
+        public Task<CommandResponse> ProcessRequestAsync( CommandRequest command )
         {
             if( command == null ) throw new ArgumentNullException( nameof( command ) );
 
-            TaskCompletionSource<ICommandResponse> future = new TaskCompletionSource<ICommandResponse>();
+            TaskCompletionSource<CommandResponse> future = new TaskCompletionSource<CommandResponse>();
 
             IncomingRequests.Add( new PendingRequest
             {

@@ -1,3 +1,3 @@
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("CK.Infrastructure.Commands.Tests")]
+[assembly: InternalsVisibleTo( "CK.Crs.Tests" )]

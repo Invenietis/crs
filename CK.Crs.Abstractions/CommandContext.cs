@@ -1,58 +1,66 @@
 ﻿using System;
-using System.Threading;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using CK.Core;
 
-namespace CK.Infrastructure.Commands
+namespace CK.Crs
 {
-    public interface IMutableCommandContext
+    public class CommandContext
     {
-        IActivityMonitor Monitor { get; }
-
-        CancellationToken CommandAborted { get; }
-    }
-
-    public abstract class CommandContext : IMutableCommandContext
-    {
-        public CommandContext( IActivityMonitor monitor, object command, Guid commandId, bool longRunning, string callbackId, CancellationToken cancellationToken )
+        public CommandContext( CommandDescriptor commandDescription, Command command )
         {
-            Monitor = monitor;
-            CommandId = commandId;
-            IsLongRunning = longRunning;
-            CallbackId = callbackId;
+            if( commandDescription == null ) throw new ArgumentNullException( "commandDescription" );
+            if( command == null ) throw new ArgumentNullException( "commandContext" );
+
+            Description = commandDescription;
             Command = command;
-            CommandAborted = cancellationToken;
+            Items = new Dictionary<object, object>();
         }
 
-        public Guid CommandId { get; }
+        public Command Command { get; private set; }
 
-        public object Command { get; }
-
-        public string CallbackId { get; }
-
-        public bool IsLongRunning { get; }
-
-        public IActivityMonitor Monitor { get; private set; }
+        public CommandDescriptor Description { get; private set; }
 
         /// <summary>
-        /// Notify when an underlying component has cancel the execution of this command...
+        /// Gets a bag of data that can hold data during the command execution
         /// </summary>
-        public CancellationToken CommandAborted { get; private set; }
+        public IDictionary<object, object> Items { get; private set; }
 
-        public void Mutate( IMutableCommandContext ctx )
+        /// <summary>
+        /// Gets the result of the command.
+        /// </summary>
+        public object Result { get; private set; }
+
+        /// <summary>
+        /// Gets or sets if there is an <see cref="Exception"/>
+        /// </summary>
+        public Exception Exception { get; private set; }
+
+        public bool IsDirty
         {
-            Monitor = ctx.Monitor;
-            CommandAborted = ctx.CommandAborted;
+            get { return Result != null || Exception != null; }
         }
-    }
 
-    public class CommandContext<T> : CommandContext where T : class
-    {
-        public CommandContext( IActivityMonitor monitor, T command, Guid commandId, bool longRunning, string callbackId, CancellationToken cancellationToken ) :
-            base( monitor, command, commandId, longRunning, callbackId, cancellationToken )
+        public void SetException( Exception ex )
         {
-            Command = command;
+            if( Exception == null )
+            {
+                Exception = ex;
+            }
+            else
+            {
+                Command.Monitor.Warn().Send( "Try to set an Exception of type {0} but the context already has an exception set.", ex.GetType().Name );
+            }
         }
 
-        public new T Command { get; private set; }
+        public void SetResult( object result )
+        {
+            if( Result != null )
+            {
+                Command.Monitor.Warn().Send( "A Result already exists. It has been overriden..." );
+            }
+            Result = result;
+        }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CK.Core;
 
-namespace CK.Infrastructure.Commands
+namespace CK.Crs
 {
     /// <summary>
     /// Defines the contract a command receiver should implement
@@ -14,13 +14,13 @@ namespace CK.Infrastructure.Commands
     public interface ICommandReceiver
     {
         /// <summary>
-        /// Process a <see cref="ICommandRequest"/> and returns a <see cref="ICommandResponse"/>
+        /// Process a <see cref="CommandRequest"/> and returns a <see cref="CommandResponse"/>
         /// </summary>
-        /// <param name="command"><see cref="ICommandRequest"/></param>
+        /// <param name="command"><see cref="CommandRequest"/></param>
         /// <param name="monitor"><see cref="IActivityMonitor"/></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Task<ICommandResponse> ProcessCommandAsync( ICommandRequest command, IActivityMonitor monitor, CancellationToken cancellationToken = default( CancellationToken ) );
+        Task<CommandResponse> ProcessCommandAsync( CommandRequest command, IActivityMonitor monitor, CancellationToken cancellationToken = default( CancellationToken ) );
     }
 
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using NUnit.Framework;
 
-namespace CK.Infrastructure.Commands.Tests
+namespace CK.Crs.Tests
 {
     [TestFixture]
     public class CommandReceiverFactoriesTest

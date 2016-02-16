@@ -6,38 +6,37 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CK.Core;
-using Microsoft.Extensions.OptionsModel;
 
-namespace CK.Infrastructure.Commands
+namespace CK.Crs
 {
     public class CommandReceiver : ICommandReceiver
     {
-        readonly ICommandExecutorSelector _cmdExecutorSelector;
+        readonly IExecutionStrategySelector _executorSelector;
         readonly ICommandReceiverFactories _factory;
 
-        public CommandReceiver( ICommandExecutorSelector cmdExecutorSelector, ICommandReceiverFactories factory )
+        public CommandReceiver( IExecutionStrategySelector executor, ICommandReceiverFactories factory )
         {
-            if( cmdExecutorSelector == null ) throw new ArgumentNullException( nameof( cmdExecutorSelector ) );
+            if( executor == null ) throw new ArgumentNullException( nameof( executor ) );
             if( factory == null ) throw new ArgumentNullException( nameof( factory ) );
 
-            _cmdExecutorSelector = cmdExecutorSelector;
+            _executorSelector = executor;
             _factory = factory;
         }
 
         private FilterInfo[] _internalFilters = new FilterInfo []{
             new FilterInfo { Instance = new HandlerVerificationFilter(), Type = typeof(HandlerVerificationFilter) } };
 
-        public async Task<ICommandResponse> ProcessCommandAsync( ICommandRequest commandRequest, IActivityMonitor monitor, CancellationToken cancellationToken = default( CancellationToken ) )
+        public async Task<CommandResponse> ProcessCommandAsync( CommandRequest commandRequest, IActivityMonitor monitor, CancellationToken cancellationToken = default( CancellationToken ) )
         {
             var commandId = Guid.NewGuid();
 
             using( monitor.OpenTrace().Send( $"Processing new command [commandId={commandId}]..." ) )
             {
-                var runtimeContext = CreateRuntimeContext( monitor, commandId, commandRequest, cancellationToken );
-                var executionContext = new CommandExecutionContext( commandRequest.CommandDescription.Descriptor, runtimeContext );
+                var command = CreateCommand( monitor, commandId, commandRequest, cancellationToken );
+                var context = new CommandContext( commandRequest.CommandDescription.Descriptor, command );
 
                 using( monitor.OpenTrace().Send( "Applying filters..." )
-                    .ConcludeWith( () => executionContext.Response != null ? "INVALID" : "OK" ) )
+                    .ConcludeWith( () => context.Result != null ? "INVALID" : "OK" ) )
                 {
                     foreach( var filter in _internalFilters.Union( commandRequest.CommandDescription.Filters.Select( f => new FilterInfo { Type = f, Instance = _factory.CreateFilter( f ) } ) ) )
                     {
@@ -48,15 +47,12 @@ namespace CK.Infrastructure.Commands
                         }
                         using( monitor.OpenTrace().Send( $"Executing filter {filter.Type.Name}" ) )
                         {
-                            await filter.Instance.OnCommandReceived( executionContext );
+                            await filter.Instance.OnCommandReceived( context );
 
                             // Immediatly test if there is a response available.
-                            if( executionContext.Response != null )
+                            if( context.Result != null )
                             {
-                                monitor.Info()
-                                    .Send( $"A response of type {executionContext.Response.ResponseType.ToString()} has been set by the filter." );
-
-                                return executionContext.Response;
+                                return CommandResponse.CreateFromContext( context );
                             }
                         }
                     }
@@ -64,26 +60,25 @@ namespace CK.Infrastructure.Commands
 
                 using( monitor.OpenTrace().Send( "Running command..." ) )
                 {
-                    var executor = _cmdExecutorSelector.SelectExecutor( runtimeContext );
-                    if( executor == null )
+                    var strategy = _executorSelector.SelectExecutionStrategy( context );
+                    if( strategy == null )
                     {
                         string msg = "The Selector should returns a valid, non null executor... otherwise, commands will produce nothing!";
                         throw new ArgumentNullException( msg );
                     }
-                    monitor.Trace().Send( $"[hostType={executor.GetType().Name}]" );
-                    await executor.ExecuteAsync( executionContext, cancellationToken );
-                }
 
-                return executionContext.Response;
+                    monitor.Trace().Send( $"[ExecutionStrategy={strategy.GetType().Name}]" );
+                    return await strategy.ExecuteAsync( context );
+                }
             }
         }
 
-        internal CommandContext CreateRuntimeContext( IActivityMonitor monitor, Guid commandId, ICommandRequest request, CancellationToken cancellationToken )
+        internal Command CreateCommand( IActivityMonitor monitor, Guid commandId, CommandRequest request, CancellationToken cancellationToken )
         {
-            Type commandContextType = typeof( CommandContext<> ).MakeGenericType( request.CommandDescription.Descriptor.CommandType );
+            Type commandContextType = typeof( Command<> ).MakeGenericType( request.CommandDescription.Descriptor.CommandType );
 
             object instance = Activator.CreateInstance( commandContextType, monitor, request.Command, commandId, request.CommandDescription.Descriptor.IsLongRunning, request.CallbackId, cancellationToken   );
-            return (CommandContext)instance;
+            return (Command)instance;
         }
 
         class FilterInfo
@@ -99,14 +94,13 @@ namespace CK.Infrastructure.Commands
                 get { return -1000; }
             }
 
-            public Task OnCommandReceived( CommandExecutionContext executionContext )
+            public Task OnCommandReceived( CommandContext context )
             {
-                if( executionContext.CommandDescription.HandlerType == null )
+                if( context.Description.HandlerType == null )
                 {
-                    string msg = $"No handler found for command [type={executionContext.CommandDescription.CommandType}].";
-                    executionContext.RuntimeContext.Monitor.Warn().Send( msg );
-                    executionContext.SetResponse(
-                        new CommandInvalidResponse( executionContext.RuntimeContext, new ValidationResult( msg ) ) );
+                    string msg = $"No handler found for command [type={context.Description.CommandType}].";
+                    context.Command.Monitor.Warn().Send( msg );
+                    context.SetResult( new ValidationResult( msg ) );
                 }
 
                 return Task.FromResult<object>( null );

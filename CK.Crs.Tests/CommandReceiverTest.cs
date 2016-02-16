@@ -5,19 +5,19 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using CK.Infrastructure.Commands;
-using CK.Infrastructure.Commands.Tests.Fake;
+using CK.Crs;
+using CK.Crs.Tests.Fake;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Http.Authentication;
 using Microsoft.AspNet.Http.Features;
 using Microsoft.Extensions.DependencyInjection;
 using CK.Core;
-using CK.Infrastructure.Commands.Tests.Handlers;
-using Microsoft.Extensions.OptionsModel;
+using CK.Crs.Tests.Handlers;
 using NUnit.Framework;
+using Microsoft.Owin;
 
-namespace CK.Infrastructure.Commands.Tests
+namespace CK.Crs.Tests
 {
     // This project can output the Class library as a NuGet Package.
     // To enable this option, right-click on the project and select the Properties menu item. In the Build tab select "Produce outputs on build".
@@ -43,12 +43,30 @@ namespace CK.Infrastructure.Commands.Tests
             return Task.FromResult<object>( null );
         } );
 
-        public RequestDelegate ShouldNotInvokeDelegate { get; } = new RequestDelegate( ( HttpContext httpContext ) =>
+        class ShouldNotInvokeMiddleware : OwinMiddleware
         {
-            throw new CKException( "Next delegate invoked." );
-        } );
+            public ShouldNotInvokeMiddleware( OwinMiddleware next ) : base( next )
+            {
+            }
 
-        //[Fact]
+            public override Task Invoke( IOwinContext context )
+            {
+                throw new CKException( "Next delegate invoked." );
+            }
+        }
+        class ShouldInvokeMiddleware : OwinMiddleware
+        {
+            public ShouldInvokeMiddleware( OwinMiddleware next ) : base( next )
+            {
+            }
+
+            public override Task Invoke( IOwinContext context )
+            {
+                return Task.FromResult<object>( null );
+            }
+        }
+
+        [Test]
         public async Task CommandReceiver_Should_Be_Scoped_To_A_Route_Prefix()
         {
             var cmd =new Handlers.TransferAmountCommand
@@ -59,13 +77,21 @@ namespace CK.Infrastructure.Commands.Tests
             };
 
             var prefix = "/api";
+
             var routes = new CommandRouteCollection( prefix);
             {
-                var middleWare = new Commands.CommandReceiverMiddleware( ShouldNotInvokeDelegate, routes  );
+                var middleWare = new CommandReceiverMiddleware( new ShouldNotInvokeMiddleware(null), routes, ApplicationServices );
                 using( var httpContext = new FakeHttpContext( ApplicationServices, "/api", SerializeRequestBody( cmd ) ) )
                 {
-                    var exc =  Assert.Throws<CKException>( async () => await middleWare.Invoke( httpContext ) );
-                    Assert.That( exc.Message, Is.EqualTo( "Next delegate invoked." ) );
+                    try
+                    {
+                        await middleWare.Invoke( new OwinContext() );
+                    }
+                    catch( Exception ex )
+                    {
+                        Assert.That( ex, Is.InstanceOf<CKException>() );
+                        Assert.That( ex.Message, Is.EqualTo( "Next delegate invoked." ) );
+                    }
                 }
 
                 routes.AddCommandRoute( new CommandDescriptor
@@ -77,16 +103,23 @@ namespace CK.Infrastructure.Commands.Tests
                 } );
                 using( var httpContext = new FakeHttpContext( ApplicationServices, "/api", SerializeRequestBody( cmd ) ) )
                 {
-                    var exc =  Assert.Throws<CKException>( async () => await middleWare.Invoke( httpContext ) );
-                    Assert.That( exc.Message, Is.EqualTo( "Next delegate invoked." ) );
+                    try
+                    {
+                        await middleWare.Invoke( new OwinContext() );
+                    }
+                    catch( Exception ex )
+                    {
+                        Assert.That( ex, Is.InstanceOf<CKException>() );
+                        Assert.That( ex.Message, Is.EqualTo( "Next delegate invoked." ) );
+                    }
                 }
             }
             {
-                var middleWare = new Commands.CommandReceiverMiddleware( ShouldNotInvokeDelegate, routes  );
+                var middleWare = new CommandReceiverMiddleware( new ShouldNotInvokeMiddleware(null), routes, ApplicationServices );
 
                 using( var httpContext = new FakeHttpContext( ApplicationServices, "/api/TransferAmountCommand", SerializeRequestBody( cmd ) ) )
                 {
-                    await middleWare.Invoke( httpContext );
+                    await middleWare.Invoke( new OwinContext() );
                     Assert.NotNull( httpContext.Response.Body );
                     Assert.True( httpContext.Response.Body.Length > 0 );
                 }

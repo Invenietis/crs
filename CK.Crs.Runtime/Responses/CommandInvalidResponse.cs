@@ -4,14 +4,14 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CK.Infrastructure.Commands
+namespace CK.Crs
 {
     public class CommandInvalidResponse : CommandResponse
     {
-        public CommandInvalidResponse( CommandContext ctx, params ValidationResult[] results ) : base( ctx.CommandId )
+        public CommandInvalidResponse( Command ctx, object result ) : base( ctx.CommandId )
         {
             ResponseType = CommandResponseType.ValidationFailed;
-            Payload = results;
+            Payload = result;
         }
     }
 

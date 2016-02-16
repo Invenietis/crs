@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CK.Infrastructure.Commands
+namespace CK.Crs
 {
     public interface ICommandRegistry
     {

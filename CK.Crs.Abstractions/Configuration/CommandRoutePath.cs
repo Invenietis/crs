@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace CK.Infrastructure.Commands
+namespace CK.Crs
 {
     public class CommandRoutePath : IEquatable<CommandRoutePath>
     {
@@ -44,13 +44,13 @@ namespace CK.Infrastructure.Commands
             if( String.IsNullOrEmpty( routePrefix ) ) throw new ArgumentNullException( nameof( routePrefix ) );
             if( String.IsNullOrEmpty( commandName ) ) throw new ArgumentNullException( nameof( commandName ) );
 
-            if( !routePrefix.StartsWith( PATH_SEPARATOR ) ) throw new ArgumentException( $"The route prefix should start with a {PATH_SEPARATOR}" );
+            if( !routePrefix.StartsWith( PATH_SEPARATOR, StringComparison.InvariantCultureIgnoreCase ) ) throw new ArgumentException( $"The route prefix should start with a {PATH_SEPARATOR}" );
 
             Prefix = routePrefix.ToLowerInvariant();
-            if( Prefix.EndsWith( PATH_SEPARATOR ) ) Prefix = Prefix.Remove( Prefix.Length - 1 );
+            if( Prefix.EndsWith( PATH_SEPARATOR, StringComparison.InvariantCultureIgnoreCase ) ) Prefix = Prefix.Remove( Prefix.Length - 1 );
 
             CommandName = commandName.ToLowerInvariant();
-            if( CommandName.StartsWith( PATH_SEPARATOR ) ) CommandName = CommandName.Remove( 0, 1 );
+            if( CommandName.StartsWith( PATH_SEPARATOR, StringComparison.InvariantCultureIgnoreCase ) ) CommandName = CommandName.Remove( 0, 1 );
 
             FullPath = $"{Prefix}{PATH_SEPARATOR}{CommandName}".ToLowerInvariant();
         }

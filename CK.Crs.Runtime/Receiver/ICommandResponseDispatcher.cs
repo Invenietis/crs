@@ -5,19 +5,19 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CK.Infrastructure.Commands
+namespace CK.Crs
 {
     /// <summary>
     /// </summary>
     public interface ICommandResponseDispatcher
     {
         /// <summary>
-        /// Dispatch a <see cref="ICommandResponse"/> to the identified callback identifier.
+        /// Dispatch a <see cref="CommandResponse"/> to the identified callback identifier.
         /// </summary>
         /// <param name="callbackId"></param>
         /// <param name="response"></param>
         /// <returns></returns>
-        Task DispatchAsync( string callbackId, ICommandResponse response, CancellationToken cancellationToken = default( CancellationToken ) );
+        Task DispatchAsync( string callbackId, CommandResponse response, CancellationToken cancellationToken = default( CancellationToken ) );
     }
 
 }

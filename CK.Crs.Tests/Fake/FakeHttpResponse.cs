@@ -3,7 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Http;
 
-namespace CK.Infrastructure.Commands.Tests.Fake
+namespace CK.Crs.Tests.Fake
 {
     internal class FakeHttpResponse : HttpResponse
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Transactions;
 
-namespace CK.Infrastructure.Commands
+namespace CK.Crs
 {
     public class TransactionAttribute : HandlerAttributeBase
     {
@@ -15,20 +15,20 @@ namespace CK.Infrastructure.Commands
 
         internal const string Key =  "CK:Infrastructure:Commands:TransactionAttribute";
 
-        public override void OnCommandExecuting( CommandExecutionContext ctx )
+        public override void OnCommandExecuting( CommandContext ctx )
         {
             TransactionScope scope = BeginTransaction();
             var item = new Item { Scope = scope, ShouldRollback = false };
             ctx.Items.Add( Key, item );
         }
 
-        public override void OnException( CommandExecutionContext ctx )
+        public override void OnException( CommandContext ctx )
         {
             Item item = Item.GetFrom( ctx );
             item.ShouldRollback = true;
         }
 
-        public override void OnCommandExecuted( CommandExecutionContext ctx )
+        public override void OnCommandExecuted( CommandContext ctx )
         {
             Item item = Item.GetFrom( ctx );
             if( item != null )
@@ -61,7 +61,7 @@ namespace CK.Infrastructure.Commands
 
             public TransactionScope Scope { get; set; }
 
-            internal static Item GetFrom( CommandExecutionContext ctx )
+            internal static Item GetFrom( CommandContext ctx )
             {
                 Item i = ctx.Items[Key] as Item;
                 return i;

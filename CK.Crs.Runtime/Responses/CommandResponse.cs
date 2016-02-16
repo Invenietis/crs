@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CK.Infrastructure.Commands
+namespace CK.Crs
 {
-    public abstract class CommandResponse : ICommandResponse
+    public abstract class CommandResponse
     {
         internal CommandResponse( Guid commandId )
         {
@@ -19,30 +20,24 @@ namespace CK.Infrastructure.Commands
 
         public Guid CommandId { get; private set; }
 
-        ///// <summary>
-        ///// Mutates the context by creating a <see cref="ICommandResponse"/>. 
-        ///// </summary>
-        ///// <returns></returns>
-        //public static void SetResponse( CommandExecutionContext ctx )
-        //{
-        //    if( ctx.IsResponseCreated )
-        //    {
-        //        if( ctx.RuntimeContext.IsLongRunning )
-        //        {
-        //            ctx.Response = new CommandResultResponse( ctx.Response, ctx.RuntimeContext );
-        //        }
+        internal static CommandResponse CreateFromContext( CommandContext context )
+        {
+            if( context.IsDirty )
+            {
+                if( context.Exception != null )
+                    return new CommandErrorResponse( context.Exception.Message, context.Command.CommandId );
 
-        //        throw new InvalidOperationException( "There is already a Response created for this CommandContext." );
-        //    }
+                if( context.Result != null )
+                {
+                    if( context.Result is ValidationResult )
+                        return new CommandInvalidResponse( context.Command, context.Result );
 
-        //    if( ctx.Exception != null ) ctx.Response = new CommandErrorResponse( ctx.Exception.Message, ctx.RuntimeContext.CommandId );
-        //    else
-        //    {
-        //        if( ctx.RuntimeContext.IsLongRunning ) ctx.Response = new CommandDeferredResponse( ctx.RuntimeContext );
-        //        else ctx.Response = new CommandResultResponse( ctx.Response, ctx.RuntimeContext );
-        //    }
-        //}
+                    return new CommandResultResponse( context.Result, context.Command );
+                }
+            }
 
+            return new CommandDeferredResponse( context.Command );
+        }
     }
 
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CK.Infrastructure.Commands.Tests.Handlers
+namespace CK.Crs.Tests.Handlers
 {
 
     public class UploadVideoCommand

@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CK.Infrastructure.Commands.Handlers
+namespace CK.Crs.Handlers
 {
     [Transaction]
     public class TransferAlwaysSuccessHandler : CommandHandler<TransferAmountCommand, TransferAmountCommand.Result>
     {
-        protected override Task<TransferAmountCommand.Result> DoHandleAsync( CommandContext<TransferAmountCommand> command )
+        protected override Task<TransferAmountCommand.Result> DoHandleAsync( Command<TransferAmountCommand> command )
         {
             var result = new TransferAmountCommand.Result
             {
@@ -22,7 +22,7 @@ namespace CK.Infrastructure.Commands.Handlers
 
     public class WithDrawyMoneyHandler : CommandHandler<WithdrawMoneyCommand, WithdrawMoneyCommand.Result>
     {
-        protected override Task<WithdrawMoneyCommand.Result> DoHandleAsync( CommandContext<WithdrawMoneyCommand> command )
+        protected override Task<WithdrawMoneyCommand.Result> DoHandleAsync( Command<WithdrawMoneyCommand> command )
         {
             var result =  new WithdrawMoneyCommand.Result
             {

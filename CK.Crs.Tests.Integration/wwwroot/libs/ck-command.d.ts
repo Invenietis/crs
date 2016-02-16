@@ -9,7 +9,7 @@ declare namespace CK{
         constructor(name: string, properties: {});
     }
     
-    export interface ICommandResponse {
+    export interface CommandResponse {
         /**
         * The identifier of the command. */
         commandId: string,
@@ -22,21 +22,21 @@ declare namespace CK{
 
     export interface ICommandEmitter {
         
-        emit: (command: Command) => Promise<ICommandResponse>;
+        emit: (command: Command) => Promise<CommandResponse>;
     }
 
-    export interface ICommandResponseListener {
+    export interface CommandResponseListener {
         
-        listen: (commandId: string, callbackId: string) => Promise<ICommandResponse>;
+        listen: (commandId: string, callbackId: string) => Promise<CommandResponse>;
         
         callbackId: string;
     }
 
-    export interface ICommandRequestSender {
+    export interface CommandRequestSender {
         send: (endpoint: string, command: Command) => Promise<any>;
     }
     
-    export class AjaxSender implements ICommandRequestSender {
+    export class AjaxSender implements CommandRequestSender {
         send(url: string, command: Command): Promise<any>;
     }
     
@@ -44,15 +44,15 @@ declare namespace CK{
         private _sender;
         private _listener;
         private _prefix;
-        constructor(prefix: string, commandRequestSender: ICommandRequestSender, commandResponseListener?: ICommandResponseListener);
-        emit(command: Command): Promise<ICommandResponse>;
+        constructor(prefix: string, commandRequestSender: CommandRequestSender, commandResponseListener?: CommandResponseListener);
+        emit(command: Command): Promise<CommandResponse>;
     }
     
-    export class SignalRListener implements ICommandResponseListener {
+    export class SignalRListener implements CommandResponseListener {
         private _hubConnection;
         private _receivedResponses;
         constructor(connection: HubConnection, hubName: string);
         callbackId: string;
-        listen(commandId: string, callbackId: string): Promise<ICommandResponse>;
+        listen(commandId: string, callbackId: string): Promise<CommandResponse>;
     }
 }

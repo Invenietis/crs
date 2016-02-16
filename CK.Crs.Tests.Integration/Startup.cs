@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNet.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
-using CK.Infrastructure.Commands.Handlers;
+using CK.Crs.Handlers;
 
-namespace CK.Infrastructure.Commands.Tests.Integration
+namespace CK.Crs.Tests.Integration
 {
     public class Startup
     {
@@ -27,7 +27,7 @@ namespace CK.Infrastructure.Commands.Tests.Integration
                     .AddFilter<ClaimsAuthenticationFilter>()
                     .AddFilter<HttpsRequiredFilter>()
                     .AddCommands( 
-                        registry => registry.Registration.Where( c => c.CommandType.Namespace.StartsWith( "CK.Infrastructure.Commands" ) ),
+                        registry => registry.Registration.Where( c => c.CommandType.Namespace.StartsWith( "CK.Crs" ) ),
                          config => config.AddFilter<AuthorizedFilter>() )
                     .AddCommand<TransferAmountCommand>().CommandName( "transfer" ).AddDecorator<TransactionAttribute>();
             } );

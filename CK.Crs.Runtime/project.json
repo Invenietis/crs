@@ -8,7 +8,6 @@
 
     "dependencies": {
         "CK.Crs.Abstractions": "",
-        "Microsoft.Extensions.OptionsModel": "1.0.0-rc1-final",
         "SimpleGitVersion.DNXCommands": "0.14.0"
     },
 

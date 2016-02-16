@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
 
-namespace CK.Infrastructure.Commands
+namespace CK.Crs
 {
     public interface ICommandFilter
     {
         int Order { get; }
-        Task OnCommandReceived( CommandExecutionContext executionContext );
+        Task OnCommandReceived( CommandContext context );
     }
 }

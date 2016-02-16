@@ -1,4 +1,4 @@
-﻿namespace CK.Infrastructure.Commands
+﻿namespace CK.Crs
 {
     public interface ICommandConfiguration<TConfig>: CK.Core.IFluentInterface
         where TConfig : ICommandConfiguration<TConfig>

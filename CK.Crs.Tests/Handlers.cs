@@ -5,13 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using CK.Core;
 
-namespace CK.Infrastructure.Commands.Tests.Handlers
+namespace CK.Crs.Tests.Handlers
 {
     public class TransferAlwaysSuccessHandler : CommandHandler<TransferAmountCommand, TransferAmountCommand.Result>
     {
-        protected override Task<TransferAmountCommand.Result> DoHandleAsync( CommandContext<TransferAmountCommand> command )
+        protected override Task<TransferAmountCommand.Result> DoHandleAsync( Command<TransferAmountCommand> command )
         {
-            using( command.Monitor.OpenInfo().Send( $"Transferring {command.Command.Amount} from {command.Command.SourceAccountId} to {command.Command.DestinationAccountId} " ) )
+            using( command.Monitor.OpenInfo().Send( $"Transferring {command.Model.Amount} from {command.Model.SourceAccountId} to {command.Model.DestinationAccountId} " ) )
             {
                 var result = new TransferAmountCommand.Result
                 {
@@ -33,7 +33,7 @@ namespace CK.Infrastructure.Commands.Tests.Handlers
 
     public class WithDrawyMoneyHandler : CommandHandler<WithdrawMoneyCommand, WithdrawMoneyCommand.Result>
     {
-        protected override Task<WithdrawMoneyCommand.Result> DoHandleAsync( CommandContext<WithdrawMoneyCommand> command )
+        protected override Task<WithdrawMoneyCommand.Result> DoHandleAsync( Command<WithdrawMoneyCommand> command )
         {
             var result =  new WithdrawMoneyCommand.Result
             {

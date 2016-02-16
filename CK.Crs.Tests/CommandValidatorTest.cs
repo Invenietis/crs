@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using CK.Core;
 using NUnit.Framework;
 
-namespace CK.Infrastructure.Commands.Tests
+namespace CK.Crs.Tests
 {
     [TestFixture]
     public class CommandValidatorTest
@@ -46,7 +46,7 @@ namespace CK.Infrastructure.Commands.Tests
                 SomeIntegerValue = integerValue
             };
             var descriptor = CreateCommandDescriptor<SomeCommand>();
-            var commandContext = new CommandContext<SomeCommand>(
+            var commandContext = new Command<SomeCommand>(
                 new ActivityMonitor(),
                 command,
                 Guid.NewGuid(),
@@ -54,22 +54,22 @@ namespace CK.Infrastructure.Commands.Tests
                 "3712",
                 _cancellationToken.Token);
 
-            var executionContext = new CommandExecutionContext( descriptor.Descriptor, commandContext );
+            var context = new CommandContext( descriptor.Descriptor, commandContext );
 
             // Act
             DefaultCommandValidator v = new DefaultCommandValidator();
-            v.OnCommandReceived( executionContext );
+            v.OnCommandReceived( context );
 
             // Assert
             if( assert == 0 )
             {
-                Assert.That( executionContext.Response, Is.Null );
+                Assert.That( context.Result, Is.Null );
             }
             else
             {
-                Assert.That( executionContext.Response, Is.Not.Null );
-                Assert.That( executionContext.Response, Is.InstanceOf<CommandErrorResponse>() );
-                string msg = executionContext.Response.Payload.ToString();
+                Assert.That( context.Result, Is.Not.Null );
+                Assert.That( context.Result, Is.InstanceOf<ValidationResult>() );
+                string msg = context.Result.ToString();
                 Assert.That( assert, Is.EqualTo( msg.Split( new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries ).Length ) );
             }
         }

@@ -11,7 +11,7 @@ using Microsoft.AspNet.Http.Authentication;
 using Microsoft.AspNet.Http.Features;
 using Microsoft.Extensions.Primitives;
 
-namespace CK.Infrastructure.Commands.Tests.Fake
+namespace CK.Crs.Tests.Fake
 {
 
     internal class FakeHttpContext : HttpContext, IDisposable

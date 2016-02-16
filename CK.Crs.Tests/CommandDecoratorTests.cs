@@ -5,10 +5,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CK.Core;
-using Microsoft.Extensions.PlatformAbstractions;
 using NUnit.Framework;
 
-namespace CK.Infrastructure.Commands.Tests
+namespace CK.Crs.Tests
 {
     [TestFixture]
     public class CommandDecoratorTests
@@ -26,26 +25,26 @@ namespace CK.Infrastructure.Commands.Tests
 
             var monitor = CreateMonitor();
 
-            var cmd = new Handlers.TransferAmountCommand
+            var model = new Handlers.TransferAmountCommand
             {
                 SourceAccountId = Guid.NewGuid(),
                 DestinationAccountId = Guid.NewGuid(),
                 Amount = 1000
             };
 
-            var commandDescription = new CommandDescriptor
+            var description = new CommandDescriptor
             {
-                CommandType = cmd.GetType(),
+                CommandType = model.GetType(),
                 HandlerType = typeof(Handlers.TransferAlwaysSuccessHandler),
                 IsLongRunning = false,
                 Decorators = decorators
             };
 
-            var commandContext = new CommandContext<Handlers.TransferAmountCommand>(
+            var command = new Command<Handlers.TransferAmountCommand>(
                 monitor,
-                cmd,
+                model,
                 Guid.NewGuid(),
-                commandDescription.IsLongRunning,
+                description.IsLongRunning,
                 "3712",
                 _cancellationToken.Token);
 
@@ -59,9 +58,9 @@ namespace CK.Infrastructure.Commands.Tests
                 decoratorInstanciated++;
             };
 
-            var runner = new InProcessCommandExecutor( factory );
-
-            await runner.ExecuteAsync( new CommandExecutionContext( commandDescription, commandContext ) );
+            var strategy = new InProcessExecutionStrategy( new CommandRunner( factory) );
+            var commandContext = new CommandContext( description, command );
+            var response = await strategy.ExecuteAsync( commandContext );
 
             Assert.AreEqual( 1, decoratorInstanciated );
             Assert.NotNull( sampleDecorator );
@@ -133,6 +132,11 @@ namespace CK.Infrastructure.Commands.Tests
                 throw new NotImplementedException();
             }
 
+            public ICommandResponseDispatcher CreateResponseDispatcher()
+            {
+                return null;
+            }
+
             public Action<ICommandDecorator> OnDecoratorCreated { get; set; }
         }
 
@@ -146,15 +150,15 @@ namespace CK.Infrastructure.Commands.Tests
                 }
             }
 
-            public void OnCommandExecuted( CommandExecutionContext ctx )
+            public void OnCommandExecuted( CommandContext ctx )
             {
             }
 
-            public void OnCommandExecuting( CommandExecutionContext ctx )
+            public void OnCommandExecuting( CommandContext ctx )
             {
             }
 
-            public void OnException( CommandExecutionContext ctx )
+            public void OnException( CommandContext ctx )
             {
             }
         }
@@ -167,17 +171,17 @@ namespace CK.Infrastructure.Commands.Tests
 
             public int Order { get; set; }
 
-            public void OnCommandExecuting( CommandExecutionContext ctx )
+            public void OnCommandExecuting( CommandContext ctx )
             {
                 OnCommandExecutingCalled = true;
             }
 
-            public void OnCommandExecuted( CommandExecutionContext ctx )
+            public void OnCommandExecuted( CommandContext ctx )
             {
                 OnCommandExecutedCalled = true;
             }
 
-            public void OnException( CommandExecutionContext ctx )
+            public void OnException( CommandContext ctx )
             {
                 OnExceptionCalled = true;
             }

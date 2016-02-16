@@ -1,4 +1,4 @@
-﻿namespace CK.Infrastructure.Commands
+﻿namespace CK.Crs
 {
     public class BlobRef
     {

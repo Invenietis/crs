@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CK.Infrastructure.Commands
+namespace CK.Crs
 {
-    public class CommandResultResponse : CommandResponse
+    internal class CommandResultResponse : CommandResponse
     {
-        public CommandResultResponse( object result, CommandContext ctx ) : base( ctx.CommandId )
+        public CommandResultResponse( object result, Command ctx ) : base( ctx.CommandId )
         {
             ResponseType = CommandResponseType.Direct;
             Payload = result;

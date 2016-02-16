@@ -3,7 +3,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Http;
 
-namespace CK.Infrastructure.Commands.Tests.Integration
+namespace CK.Crs.Tests.Integration
 {
     internal class HttpsRequiredFilter : ICommandFilter
     {
@@ -15,7 +15,7 @@ namespace CK.Infrastructure.Commands.Tests.Integration
             }
         }
 
-        public Task OnCommandReceived( CommandExecutionContext executionContext )
+        public Task OnCommandReceived( CommandContext executionContext )
         {
             return Task.FromResult<object>( null );
         }
@@ -31,7 +31,7 @@ namespace CK.Infrastructure.Commands.Tests.Integration
             }
         }
 
-        public Task OnCommandReceived( CommandExecutionContext executionContext )
+        public Task OnCommandReceived( CommandContext executionContext )
         {
             return Task.FromResult<object>( null );
         }

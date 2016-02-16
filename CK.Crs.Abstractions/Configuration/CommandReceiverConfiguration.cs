@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CK.Core;
 
-namespace CK.Infrastructure.Commands
+namespace CK.Crs
 {
     public class CommandReceiverConfiguration : CK.Core.IFluentInterface
     {

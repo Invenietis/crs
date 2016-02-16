@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CK.Infrastructure.Commands
+namespace CK.Crs
 {
-    public class CommandErrorResponse : CommandResponse
+    internal class CommandErrorResponse : CommandResponse
     {
         public CommandErrorResponse( string msg, Guid commandId ) : base( commandId )
         {

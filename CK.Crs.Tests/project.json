@@ -9,12 +9,15 @@
     "dependencies": {
         "Microsoft.Extensions.DependencyInjection": "1.0.0-rc1-final",
         "Microsoft.AspNet.Http.Abstractions": "1.0.0-rc1-final",
-        "CK.Crs.AspNet": "",
+        "Microsoft.AspNet.Owin": "1.0.0-rc1-final",
+        "CK.Crs.Owin": "",
         "CK.Core": "4.3.0",
         "CK.Crs.Extensions": "",
         "NSubstitute": "1.9.2",
         "NUnit": "3.0.1",
-        "NUnitLite": "3.0.1"
+        "NUnitLite": "3.0.1",
+        "Microsoft.Extensions.PlatformAbstractions": "1.0.0-rc1-final",
+        "CK.Crs.AspNet": "1.0.0-alpha-01"
     },
     "commands": {
         "test": "CK.Crs.Tests"

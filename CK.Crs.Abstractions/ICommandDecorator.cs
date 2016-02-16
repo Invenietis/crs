@@ -1,13 +1,13 @@
-﻿namespace CK.Infrastructure.Commands
+﻿namespace CK.Crs
 {
     public interface ICommandDecorator
     {
         int Order { get; }
 
-        void OnCommandExecuting( CommandExecutionContext ctx );
+        void OnCommandExecuting( CommandContext ctx );
 
-        void OnException( CommandExecutionContext ctx );
+        void OnException( CommandContext ctx );
 
-        void OnCommandExecuted( CommandExecutionContext ctx );
+        void OnCommandExecuted( CommandContext ctx );
     }
 }

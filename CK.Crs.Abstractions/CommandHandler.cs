@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace CK.Infrastructure.Commands
+namespace CK.Crs
 {
     public abstract class CommandHandler<T, TResult> : ICommandHandler<T> where T : class
         where TResult : class
     {
-        public async Task<object> HandleAsync( CommandContext<T> commandContext )
+        public async Task<object> HandleAsync( Command<T> commandContext )
         {
 #if DEBUG
             const string msg = "The result of the command must be a nested class of the Command itself named Result.";
@@ -17,27 +17,27 @@ namespace CK.Infrastructure.Commands
             return result as TResult;
         }
 
-        protected abstract Task<TResult> DoHandleAsync( CommandContext<T> command );
+        protected abstract Task<TResult> DoHandleAsync( Command<T> command );
 
         Task<object> ICommandHandler.HandleAsync( object commandContext )
         {
-            return HandleAsync( (CommandContext<T>)commandContext );
+            return HandleAsync( (Command<T>)commandContext );
         }
     }
 
     public abstract class CommandHandler<T> : ICommandHandler<T> where T : class
     {
-        public async Task<object> HandleAsync( CommandContext<T> commandContext )
+        public async Task<object> HandleAsync( Command<T> commandContext )
         {
             await DoHandleAsync( commandContext );
             return EmptyResult.Empty;
         }
 
-        protected abstract Task DoHandleAsync( CommandContext<T> command );
+        protected abstract Task DoHandleAsync( Command<T> command );
 
         Task<object> ICommandHandler.HandleAsync( object commandContext )
         {
-            return HandleAsync( (CommandContext<T>)commandContext );
+            return HandleAsync( (Command<T>)commandContext );
         }
     }
 
