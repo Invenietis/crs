@@ -1,0 +1,23 @@
+{
+    "version": "1.0.0-*",
+    "description": "CK.Crs.Extensions Class Library",
+    "authors": [ "cedri_000" ],
+    "tags": [ "" ],
+    "projectUrl": "",
+    "licenseUrl": "",
+    "frameworks": {
+        "dnx451": {
+            "frameworkAssemblies": {
+                "System.Transactions": "4.0.0.0"
+            }
+        }
+    },
+    "dependencies": {
+        "CK.Crs.Abstractions": "",
+        "CK.SqlServer.Setup.Model": "4.0.0",
+        "SimpleGitVersion.DNXCommands": "0.14.0"
+    },
+    "scripts": {
+        "prebuild": "sgv prebuild"
+    }
+}

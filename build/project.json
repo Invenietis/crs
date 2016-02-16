@@ -17,7 +17,7 @@
     },
 
     "commands": {
-        "CK.Infrastructure.Commands.CodeCakeBuilder": "build"
+        "CK.Crs.CodeCakeBuilder": "build"
     },
 
     "frameworks": {
