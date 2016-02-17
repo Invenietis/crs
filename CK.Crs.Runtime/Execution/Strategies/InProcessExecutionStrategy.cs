@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using CK.Core;
@@ -24,9 +25,12 @@ namespace CK.Crs.Runtime
             catch( Exception ex )
             {
                 mon.Error().Send( ex );
+                context.SetException( ex );
             }
 
-            return CommandResponse.CreateFromContext( context );
+            var response = CommandResponse.CreateFromContext( context );
+            Debug.Assert( response.ResponseType != CommandResponseType.Deferred );
+            return response;
         }
     }
 }
