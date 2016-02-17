@@ -21,6 +21,9 @@ namespace CK.Crs.Tests.Integration
             } );
 
             services.AddMvc();
+
+            services.AddSingleton<IRepository<UserModel>, UserRepository>();
+            services.AddTransient<UserHandler>();
         }
 
         public void Configure( IApplicationBuilder app )

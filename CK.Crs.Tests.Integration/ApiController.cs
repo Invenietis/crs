@@ -11,11 +11,17 @@ namespace CK.Crs.Tests.Integration
     [Route("api")]
     public class ApiController : Controller
     {
+        readonly IRepository<UserModel> _repository;
+        public ApiController( IRepository<UserModel> repository )
+        {
+            _repository = repository;
+        }
+
         // GET: api/values
         [HttpGet("user")]
-        public IEnumerable<string> Get()
+        public IEnumerable<UserModel> Get()
         {
-            return new string[] { "value1", "value2" };
+            return _repository.Query.ToArray();
         }
     }
 }
