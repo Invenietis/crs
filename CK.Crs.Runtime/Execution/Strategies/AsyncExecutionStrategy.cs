@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CK.Core;
 
-namespace CK.Crs
+namespace CK.Crs.Runtime
 {
     class AsyncExecutionStrategy : IExecutionStrategy
     {

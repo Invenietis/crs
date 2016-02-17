@@ -7,14 +7,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using CK.Core;
 
-namespace CK.Crs
+namespace CK.Crs.Runtime
 {
     public class CommandReceiver : ICommandReceiver
     {
         readonly IExecutionStrategySelector _executorSelector;
-        readonly ICommandReceiverFactories _factory;
+        readonly IFactories _factory;
 
-        public CommandReceiver( IExecutionStrategySelector executor, ICommandReceiverFactories factory )
+        public CommandReceiver( IExecutionStrategySelector executor, IFactories factory )
         {
             if( executor == null ) throw new ArgumentNullException( nameof( executor ) );
             if( factory == null ) throw new ArgumentNullException( nameof( factory ) );

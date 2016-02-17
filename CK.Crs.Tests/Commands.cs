@@ -10,8 +10,6 @@ namespace CK.Crs.Tests.Handlers
     public class UploadVideoCommand
     {
         public string Name { get; set; }
-
-        public BlobRef Videos { get; set; }
     }
 
     public class TransferAmountCommand

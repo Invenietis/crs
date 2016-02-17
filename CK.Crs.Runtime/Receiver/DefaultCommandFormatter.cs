@@ -6,18 +6,17 @@ using System.Reflection;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
-using Microsoft.Owin;
 using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json.Serialization;
 
-namespace CK.Crs
+namespace CK.Crs.Runtime
 {
-    public class DefaultCommandBinder : ICommandFormatter
+    public class DefaultCommandFormatter : ICommandFormatter
     {
         readonly JsonSerializer _serializer;
 
-        public DefaultCommandBinder()
+        public DefaultCommandFormatter()
         {
             _serializer = Newtonsoft.Json.JsonSerializer.Create( new JsonSerializerSettings
             {

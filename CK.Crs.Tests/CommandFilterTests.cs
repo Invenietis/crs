@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CK.Crs.Runtime;
 using NSubstitute;
 using NUnit.Framework;
 
@@ -16,7 +17,7 @@ namespace CK.Crs.Tests
             var filter = Substitute.For<ICommandFilter>();
             await filter.OnCommandReceived( Arg.Any<CommandContext>() );
 
-            var factories = Substitute.For<ICommandReceiverFactories>();
+            var factories = Substitute.For<IFactories>();
             factories.CreateFilter( Arg.Any<Type>() ).Returns( filter );
 
             CommandReceiver receiver = new CommandReceiver( Substitute.For<IExecutionStrategySelector>(), factories );

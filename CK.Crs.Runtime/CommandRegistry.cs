@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using CK.Core;
 using System.Linq;
 
-namespace CK.Crs
+namespace CK.Crs.Runtime
 {
     public class CommandRegistry : ICommandRegistry
     {

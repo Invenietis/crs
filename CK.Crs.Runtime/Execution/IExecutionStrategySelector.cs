@@ -1,4 +1,4 @@
-﻿namespace CK.Crs
+﻿namespace CK.Crs.Runtime
 {
     /// <summary>
     /// Implementations should uses the <see cref="CommandContext"/> informations to select the appropriate execution strategy to execute the command.

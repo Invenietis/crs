@@ -5,13 +5,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using CK.Core;
 
-namespace CK.Crs
+namespace CK.Crs.Runtime
 {
     class CommandRunner
     {
-        private readonly ICommandReceiverFactories _factories;
+        private readonly IFactories _factories;
 
-        public CommandRunner( ICommandReceiverFactories factories )
+        public CommandRunner( IFactories factories )
         {
             _factories = factories;
         }

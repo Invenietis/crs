@@ -16,6 +16,7 @@ using CK.Core;
 using CK.Crs.Tests.Handlers;
 using NUnit.Framework;
 using Microsoft.Owin;
+using CK.Crs.Runtime;
 
 namespace CK.Crs.Tests
 {

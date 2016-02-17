@@ -1,13 +1,13 @@
 ﻿using System;
 using CK.Core;
 
-namespace CK.Crs
+namespace CK.Crs.Runtime
 {
-    public class DefaultCommandReceiverFactories : ICommandReceiverFactories
+    public class DefaultFactories : IFactories
     {
         readonly DefaultCreateInstanceStrategy _s;
 
-        public DefaultCommandReceiverFactories( IServiceProvider serviceProvider )
+        public DefaultFactories( IServiceProvider serviceProvider )
         {
             _s = new DefaultCreateInstanceStrategy( serviceProvider );
         }

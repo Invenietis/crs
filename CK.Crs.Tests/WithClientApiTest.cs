@@ -9,6 +9,7 @@ using CK.Core;
 using CK.Crs;
 using CK.Crs.Tests.Handlers;
 using NUnit.Framework;
+using CK.Crs.Runtime;
 
 namespace CK.Crs.Tests
 {
@@ -20,8 +21,8 @@ namespace CK.Crs.Tests
         {
             string serverAddress = "http://MyDumbServer/c/";
             var serviceProvider = TestHelper.CreateServiceProvider( Util.ActionVoid );
-            var factories = new DefaultCommandReceiverFactories( serviceProvider );
-            using( var server = new CommandReceiverHost( serverAddress, new CommandReceiver( new ExecutionStrategySelector( factories ), factories ) ) )
+            var factories = new DefaultFactories( serviceProvider );
+            using( var server = new CommandReceiverHost( serverAddress, new CommandReceiver( new BasicExecutionStrategySelector( factories ), factories ) ) )
             {
                 // Server initialization
                 server.Run();

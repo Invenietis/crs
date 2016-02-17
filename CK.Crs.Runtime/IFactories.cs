@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace CK.Crs
+namespace CK.Crs.Runtime
 {
-    public interface ICommandReceiverFactories
+    public interface IFactories
     {
         /// <summary>
         /// Creates an instance of the given type or return null if the type cannot be instanciated.

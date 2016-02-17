@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CK.Crs
+namespace CK.Crs.Runtime
 {
     /// <summary>
     /// </summary>

@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CK.Core;
 
-namespace CK.Crs
+namespace CK.Crs.Runtime
 {
     /// <summary>
     /// Defines the contract a command receiver should implement

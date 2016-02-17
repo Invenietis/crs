@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using NUnit.Framework;
+using CK.Crs.Runtime;
 
 namespace CK.Crs.Tests
 {
@@ -18,7 +16,7 @@ namespace CK.Crs.Tests
 
             });
             // Act
-            DefaultCommandReceiverFactories.DefaultCreateInstanceStrategy s = new DefaultCommandReceiverFactories.DefaultCreateInstanceStrategy( sp );
+            DefaultFactories.DefaultCreateInstanceStrategy s = new DefaultFactories.DefaultCreateInstanceStrategy( sp );
             ISomeType result = s.CreateInstanceOrDefault<ISomeType>( typeof( TypeWithConstructorWithParameters ) );
 
             // Assert
@@ -34,7 +32,7 @@ namespace CK.Crs.Tests
 
             });
             // Act
-            DefaultCommandReceiverFactories.DefaultCreateInstanceStrategy s = new DefaultCommandReceiverFactories.DefaultCreateInstanceStrategy( sp );
+            DefaultFactories.DefaultCreateInstanceStrategy s = new DefaultFactories.DefaultCreateInstanceStrategy( sp );
             ISomeType result = s.CreateInstanceOrDefault<ISomeType>( 
                 typeof( TypeWithConstructorWithParameters ), 
                 () => new TypeWithConstructorWithParameters( "WTF!!") );

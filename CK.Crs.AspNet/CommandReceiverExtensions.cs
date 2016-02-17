@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using CK.Crs.Runtime;
 using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.SignalR.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Owin;
 
 namespace CK.Crs
 {
-
 
     // Extension method used to add the middleware to the HTTP request pipeline.
     public static class CommandReceiverExtensions
@@ -39,9 +33,10 @@ namespace CK.Crs
         public static void AddCommandReceiver( this IServiceCollection services, Action<ICommandRegistry> configuration )
         {
             services.AddSingleton<ICommandReceiver, CommandReceiver>();
-            services.AddSingleton<ICommandFormatter, DefaultCommandBinder>();
-            services.AddSingleton<IExecutionStrategySelector, ExecutionStrategySelector>();
-            services.AddSingleton<ICommandReceiverFactories, DefaultCommandReceiverFactories>();
+            services.AddSingleton<ICommandFormatter, DefaultCommandFormatter>();
+            services.AddSingleton<IExecutionStrategySelector, BasicExecutionStrategySelector>();
+            services.AddSingleton<IFactories, DefaultFactories>();
+            services.AddSingleton<IPrincipalAccessor, AspNetPrincipalAccessor>();
 
             ICommandRegistry registry = new CommandRegistry();
             configuration( registry );

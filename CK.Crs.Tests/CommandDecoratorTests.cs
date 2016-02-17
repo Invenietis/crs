@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CK.Core;
 using NUnit.Framework;
+using CK.Crs.Runtime;
 
 namespace CK.Crs.Tests
 {
@@ -113,7 +114,7 @@ namespace CK.Crs.Tests
             return mon;
         }
 
-        class FakeFactory<THandler> : ICommandReceiverFactories where THandler : ICommandHandler, new()
+        class FakeFactory<THandler> : IFactories where THandler : ICommandHandler, new()
         {
             public ICommandDecorator CreateDecorator( Type type )
             {

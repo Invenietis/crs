@@ -1,14 +1,14 @@
 ﻿
 using System;
 
-namespace CK.Crs
+namespace CK.Crs.Runtime
 {
-    public class ExecutionStrategySelector : IExecutionStrategySelector
+    public class BasicExecutionStrategySelector : IExecutionStrategySelector
     {
         readonly Func<InProcessExecutionStrategy> _inprocess;
         readonly Func<AsyncExecutionStrategy> _async;
 
-        public ExecutionStrategySelector( ICommandReceiverFactories factory )
+        public BasicExecutionStrategySelector( IFactories factory )
         {
             var runner = new CommandRunner( factory);
             _inprocess = () => new InProcessExecutionStrategy( runner );

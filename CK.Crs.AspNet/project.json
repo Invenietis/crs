@@ -8,7 +8,6 @@
 
     "dependencies": {
         "Microsoft.AspNet.Http.Abstractions": "1.0.0-rc1-final",
-        "Microsoft.AspNet.SignalR.Server": "3.0.0-beta5",
         "Microsoft.Extensions.DependencyInjection": "1.0.0-rc1-final",
         "Microsoft.Extensions.PlatformAbstractions": "1.0.0-rc1-final",
         "Microsoft.AspNet.Owin": "1.0.0-rc1-final",

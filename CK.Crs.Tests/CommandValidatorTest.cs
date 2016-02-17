@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CK.Core;
 using NUnit.Framework;
+using CK.Crs.Runtime;
 
 namespace CK.Crs.Tests
 {

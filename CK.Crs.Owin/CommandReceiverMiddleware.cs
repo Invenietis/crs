@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Owin;
 using CK.Core;
+using CK.Crs.Runtime;
 
 namespace CK.Crs
 {
@@ -16,20 +17,13 @@ namespace CK.Crs
         private readonly ICommandReceiver _receiver;
         private readonly ICommandFormatter _formatter;
 
-        public CommandReceiverMiddleware( OwinMiddleware next, ICommandRouteCollection routes, IServiceProvider serviceProvider ) : this(
-            next,
-            routes,
-            serviceProvider.GetService<ICommandReceiver>(),
-            serviceProvider.GetService<ICommandFormatter>() )
+        public CommandReceiverMiddleware( OwinMiddleware next, ICommandRouteCollection routes, IServiceProvider serviceProvider )
+            : this( next, routes, serviceProvider.GetService<ICommandReceiver>(), serviceProvider.GetService<ICommandFormatter>() )
         {
         }
 
-        public CommandReceiverMiddleware(
-            OwinMiddleware next,
-            ICommandRouteCollection routes,
-            ICommandReceiver receiver,
-            ICommandFormatter formatter
-            ) : base( next )
+        public CommandReceiverMiddleware( OwinMiddleware next, ICommandRouteCollection routes, ICommandReceiver receiver, ICommandFormatter formatter )
+            : base( next )
         {
             if( routes == null ) throw new ArgumentNullException( nameof( routes ) );
             if( receiver == null ) throw new ArgumentNullException( nameof( receiver ) );
