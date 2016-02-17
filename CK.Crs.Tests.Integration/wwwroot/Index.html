@@ -5,6 +5,16 @@
     <title></title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <script src="/libs/jquery.min.js"></script>
+    <script src="node_modules/es6-shim/es6-shim.min.js"></script>
+    <script src="node_modules/systemjs/dist/system-polyfills.js"></script>
+
+    <script src="node_modules/angular2/bundles/angular2-polyfills.js"></script>
+    <script src="node_modules/systemjs/dist/system.src.js"></script>
+    <script src="node_modules/rxjs/bundles/Rx.js"></script>
+    <script src="node_modules/angular2/bundles/angular2.dev.js"></script>
+    <script src="node_modules/angular2/bundles/http.dev.js"></script>
+    <script src="node_modules/immutable/dist/immutable.min.js"></script>
+
     <!--<script src="libs/signalr/jquery.signalR.min.js"></script>
     <script src="signalr/hubs" type="text/javascript"></script>-->
     
@@ -13,15 +23,39 @@
             color:palevioletred;
         }
     </style>
+    <script>
+        System.config({
+            map: {
+                'ck-command': 'node_modules/ck-command',
+                'ck-qrs': 'node_modules/ck-qrs',
+                'url-pattern': '/node_modules/url-pattern/lib/url-pattern.js'
+            },
+            packages: {
+                app: {
+                    format: 'register',
+                    defaultExtension: 'js'
+                },
+                'ck-command': {
+                    defaultExtension: 'js',
+                },
+                'ck-qrs': {
+                    defaultExtension: 'js',
+                }
+            }
+        });
+        System.import('app/main').then(null, console.error.bind(console));
+    </script>
+
 </head>
 <body>
-    <div id="app"></div>
+    <!--<div id="app"></div>
     <button id="btn1">Send long running CMD</button>
     <button id="btn2">Send direct CMD</button>
     <button id="btn3">Send both CMD</button>
     <ul id="results">
     </ul>
-    <script src="libs/ck-command.js"></script>
-    <script src="app/app.js"></script>
+    <script src="node_modules/ck-command/dist/ck-command.js"></script>
+    <script src="app/app.js"></script>-->
+    <ck-command></ck-command>
 </body>
 </html>

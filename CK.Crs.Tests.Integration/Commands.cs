@@ -12,6 +12,17 @@ namespace CK.Crs.Handlers
         public string Name { get; set; }
     }
 
+    public class UserCommand
+    {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+
+        public class Result
+        {
+            public bool Success { get; set; }
+        }
+    }
+
     public class TransferAmountCommand
     {
         public Guid SourceAccountId { get; set; }

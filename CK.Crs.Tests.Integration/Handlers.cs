@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace CK.Crs.Handlers
 {
+
     [Transaction]
     public class TransferAlwaysSuccessHandler : CommandHandler<TransferAmountCommand, TransferAmountCommand.Result>
     {
@@ -32,4 +33,16 @@ namespace CK.Crs.Handlers
         }
     }
 
+    [Transaction]
+    public class UserHandler : CommandHandler<UserCommand, UserCommand.Result>
+    {
+        protected override Task<UserCommand.Result> DoHandleAsync( Command<UserCommand> command )
+        {
+            //UserRepository.Add( new UserModel {
+            //    FirstName = command.Model.FirstName,
+            //    LastName = command.Model.LastName
+            //} );
+            return Task.FromResult( new UserCommand.Result { Success = true } );
+        }
+    }
 }

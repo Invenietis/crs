@@ -2,6 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
 using CK.Crs.Handlers;
+using Microsoft.AspNet.Mvc;
+using Microsoft.AspNet.Diagnostics;
 
 namespace CK.Crs.Tests.Integration
 {
@@ -15,7 +17,10 @@ namespace CK.Crs.Tests.Integration
                 options.EnableLongRunningCommands = false;
                 options.Register<TransferAmountCommand, TransferAlwaysSuccessHandler>().CommandName( "transfer" ).IsLongRunning();
                 options.Register<WithdrawMoneyCommand, WithDrawyMoneyHandler>().CommandName( "withdraw" ).AddDecorator<TransactionAttribute>();
+                options.Register<UserCommand, UserHandler>().CommandName( "addUser" ).AddDecorator<TransactionAttribute>();
             } );
+
+            services.AddMvc();
         }
 
         public void Configure( IApplicationBuilder app )
@@ -28,12 +33,15 @@ namespace CK.Crs.Tests.Integration
                     .AddFilter<HttpsRequiredFilter>()
                     .AddCommands( 
                         registry => registry.Registration.Where( c => c.CommandType.Namespace.StartsWith( "CK.Crs" ) ),
-                         config => config.AddFilter<AuthorizedFilter>() )
+                        config => config.AddFilter<AuthorizedFilter>() )
                     .AddCommand<TransferAmountCommand>().CommandName( "transfer" ).AddDecorator<TransactionAttribute>();
             } );
             app.UseCommandReceiver( "/c/public", options =>
             {
             } );
+
+            app.UseMvc();
+
         }
     }
 }
