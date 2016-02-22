@@ -34,8 +34,8 @@
 // });
 
 import { Component } from 'angular2/core';
-import { CommandEmitter, Command } from 'ck-command/command';
-import {CkModelComponent} from 'ck-qrs/angular2';
+import { CommandEmitter, Command } from 'ck-crs/core';
+import {CkModelComponent} from 'ck-qrs/angular2'; 
 
 @Component({
     selector: 'ck-command',

@@ -8,7 +8,7 @@
   },
     "dependencies": {
         "jquery": "^2.2.0",
-        "ck-command": "../../../../component-kitchen/src/ck-command",
+        "ck-crs": "../../../../component-kitchen/src/ck-crs",
         "ck-qrs": "../../../../component-kitchen/src/ck-qrs",
          "angular2": "2.0.0-beta.6",
             "systemjs": "0.19.20",

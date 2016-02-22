@@ -1,5 +1,5 @@
 /// <reference path="../libs/ck-command.d.ts" />
-System.register(['angular2/core', 'ck-command/command', 'ck-qrs/angular2'], function(exports_1) {
+System.register(['angular2/core', 'ck-crs/core', 'ck-qrs/angular2'], function(exports_1) {
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -9,15 +9,15 @@ System.register(['angular2/core', 'ck-command/command', 'ck-qrs/angular2'], func
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, command_1, angular2_1;
+    var core_1, core_2, angular2_1;
     var AppComponent;
     return {
         setters:[
             function (core_1_1) {
                 core_1 = core_1_1;
             },
-            function (command_1_1) {
-                command_1 = command_1_1;
+            function (core_2_1) {
+                core_2 = core_2_1;
             },
             function (angular2_1_1) {
                 angular2_1 = angular2_1_1;
@@ -33,7 +33,7 @@ System.register(['angular2/core', 'ck-command/command', 'ck-qrs/angular2'], func
                     this.model = {};
                 }
                 AppComponent.prototype.addUser = function () {
-                    this._emitter.emit(new command_1.Command('addUser', this.user));
+                    this._emitter.emit(new core_2.Command('addUser', this.user));
                 };
                 AppComponent = __decorate([
                     core_1.Component({
@@ -41,7 +41,7 @@ System.register(['angular2/core', 'ck-command/command', 'ck-qrs/angular2'], func
                         templateUrl: 'app/app.html',
                         directives: [angular2_1.CkModelComponent]
                     }), 
-                    __metadata('design:paramtypes', [command_1.CommandEmitter])
+                    __metadata('design:paramtypes', [core_2.CommandEmitter])
                 ], AppComponent);
                 return AppComponent;
             })();

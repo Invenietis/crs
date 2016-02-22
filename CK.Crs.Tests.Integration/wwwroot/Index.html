@@ -7,7 +7,6 @@
     <script src="/libs/jquery.min.js"></script>
     <script src="node_modules/es6-shim/es6-shim.min.js"></script>
     <script src="node_modules/systemjs/dist/system-polyfills.js"></script>
-
     <script src="node_modules/angular2/bundles/angular2-polyfills.js"></script>
     <script src="node_modules/systemjs/dist/system.src.js"></script>
     <script src="node_modules/rxjs/bundles/Rx.js"></script>
@@ -26,7 +25,7 @@
     <script>
         System.config({
             map: {
-                'ck-command': 'node_modules/ck-command',
+                'ck-crs': 'node_modules/ck-crs',
                 'ck-qrs': 'node_modules/ck-qrs',
                 'url-pattern': '/node_modules/url-pattern/lib/url-pattern.js'
             },
@@ -35,7 +34,7 @@
                     format: 'register',
                     defaultExtension: 'js'
                 },
-                'ck-command': {
+                'ck-crs': {
                     defaultExtension: 'js',
                 },
                 'ck-qrs': {
@@ -48,14 +47,6 @@
 
 </head>
 <body>
-    <!--<div id="app"></div>
-    <button id="btn1">Send long running CMD</button>
-    <button id="btn2">Send direct CMD</button>
-    <button id="btn3">Send both CMD</button>
-    <ul id="results">
-    </ul>
-    <script src="node_modules/ck-command/dist/ck-command.js"></script>
-    <script src="app/app.js"></script>-->
     <ck-command></ck-command>
 </body>
 </html>
