@@ -14,7 +14,6 @@
     },
     "dependencies": {
         "CK.Crs.Abstractions": "",
-        "CK.Authentication": "",
         "CK.SqlServer.Setup.Model": "4.0.0",
         "SimpleGitVersion.DNXCommands": "0.14.0"
     },

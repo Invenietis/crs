@@ -16,7 +16,7 @@ namespace CK.Crs.Runtime
 
         public async Task<CommandResponse> ExecuteAsync( CommandContext context )
         {
-            var mon = context.Command.Monitor;
+            var mon = context.ExecutionContext.Monitor;
             try
             {
                 await _runner.ExecuteAsync( context );

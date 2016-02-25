@@ -36,7 +36,6 @@ namespace CK.Crs
             services.AddSingleton<ICommandFormatter, DefaultCommandFormatter>();
             services.AddSingleton<IExecutionStrategySelector, BasicExecutionStrategySelector>();
             services.AddSingleton<IFactories, DefaultFactories>();
-            services.AddSingleton<IPrincipalAccessor, AspNetPrincipalAccessor>();
 
             ICommandRegistry registry = new CommandRegistry();
             configuration( registry );

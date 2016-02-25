@@ -1,4 +1,6 @@
-﻿namespace CK.Crs
+﻿using CK.Core;
+
+namespace CK.Crs
 {
     public interface ICommandDecorator
     {

@@ -25,7 +25,7 @@ namespace CK.Crs.Runtime
 
         public Task<CommandResponse> ExecuteAsync( CommandContext context )
         {
-            var token = context.Command.Monitor.DependentActivity().CreateTokenWithTopic( GetType().Name );
+            var token = context.ExecutionContext.Monitor.DependentActivity().CreateTokenWithTopic( GetType().Name );
 
             // This implementation does not guarantee that the command will be correctly handled...
             // We need some retry mechanism and a pending command persistence mechanism to be resilient.
@@ -34,7 +34,7 @@ namespace CK.Crs.Runtime
                 // We override the IActivityMonitor with a dependant one to be thread safe !
                 using( var dependentMonitor = token.CreateDependentMonitor() )
                 {
-                    var mutableCommand = context.Command as IMutableCommand;
+                    var mutableCommand = context.ExecutionContext as IMutableCommand;
                     mutableCommand.Mutate( new UpdateContextParts
                     {
                         Monitor = dependentMonitor,
@@ -43,16 +43,16 @@ namespace CK.Crs.Runtime
 
                     await _runner.ExecuteAsync( context );
 
-                    var response = new CommandResultResponse( context.Result, context.Command );
+                    var response = new CommandResultResponse( context.Result, context.ExecutionContext );
                     var responseDispatcher = _commandResponseDispatcher();
                     if( responseDispatcher == null ) 
                         dependentMonitor.Warn().Send("No response dispatcher were available...");
                     else
-                        await responseDispatcher.DispatchAsync( context.Command.CallbackId, response );
+                        await responseDispatcher.DispatchAsync( context.ExecutionContext.CallbackId, response );
                 }
             } );
 
-            var deferredResponse = new CommandDeferredResponse( context.Command );
+            var deferredResponse = new CommandDeferredResponse( context.ExecutionContext );
             t.Start( TaskScheduler.Current );
             return Task.FromResult<CommandResponse>( deferredResponse );
         }

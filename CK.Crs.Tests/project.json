@@ -13,14 +13,19 @@
         "CK.Crs.Owin": "",
         "CK.Core": "4.3.0",
         "CK.Crs.Extensions": "",
-        "NSubstitute": "1.9.2",
-        "NUnit": "3.0.1",
-        "NUnitLite": "3.0.1",
+        "CK.Authentication": "",
+        "Moq": "4.2.1510.2205",
         "Microsoft.Extensions.PlatformAbstractions": "1.0.0-rc1-final",
-        "CK.Crs.AspNet": "1.0.0-alpha-01"
+        "CK.Crs.AspNet": "",
+        "xunit": "2.1.0-*",
+        "xunit.runner.dnx": "2.1.0-*",
+        "NUnit": "3.0.1",
+        "Microsoft.Dnx.Testing.Abstractions": "1.0.0-rc1-final",
+        "CK.StObj.Model": "4.1.0-a01"
     },
+
     "commands": {
-        "test": "CK.Crs.Tests"
+        "test": "xunit.runner.dnx"
     },
 
     "frameworks": {

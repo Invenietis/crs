@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 using CK.Core;
 using NUnit.Framework;
 using CK.Crs.Runtime;
+using Xunit;
+using Assert = NUnit.Framework.Assert;
+using Is = NUnit.Framework.Is;
 
 namespace CK.Crs.Tests
 {
@@ -19,7 +22,7 @@ namespace CK.Crs.Tests
             _cancellationToken = new CancellationTokenSource();
         }
 
-        [Test]
+        [Test][Fact]
         public async Task Decorators_Should_Be_Invoked_When_A_Command_Is_Handled()
         {
             var decorators = CreateSampleDecorators().ToArray();
@@ -41,7 +44,7 @@ namespace CK.Crs.Tests
                 Decorators = decorators
             };
 
-            var command = new Command<Handlers.TransferAmountCommand>(
+            var command = new CommandExecutionContext(
                 monitor,
                 model,
                 Guid.NewGuid(),

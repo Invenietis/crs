@@ -17,7 +17,7 @@ namespace CK.Crs.Runtime
 
         public virtual IExecutionStrategy SelectExecutionStrategy( CommandContext context )
         {
-            if( context.Command.IsLongRunning ) return _async();
+            if( context.ExecutionContext.IsLongRunning ) return _async();
             return _inprocess();
         }
     }

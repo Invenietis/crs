@@ -1,13 +1,16 @@
 ﻿using System;
 using NUnit.Framework;
 using CK.Crs.Runtime;
+using Xunit;
+using Assert = NUnit.Framework.Assert;
+using Is = NUnit.Framework.Is;
 
 namespace CK.Crs.Tests
 {
     [TestFixture]
     public class CommandReceiverFactoriesTest
     {
-        [Test]
+        [Test][Fact]
         public void When_Failed_Should_Return_Null()
         {
             // Arrange
@@ -23,7 +26,7 @@ namespace CK.Crs.Tests
             Assert.Null( result );
         }
 
-        [Test]
+        [Test][Fact]
         public void When_DefaultLambda_Should_InvokeIt()
         {
             // Arrange

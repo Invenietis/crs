@@ -32,8 +32,8 @@ namespace CK.Crs.Runtime
 
             using( monitor.OpenTrace().Send( $"Processing new command [commandId={commandId}]..." ) )
             {
-                var command = CreateCommand( monitor, commandId, commandRequest, cancellationToken );
-                var context = new CommandContext( commandRequest.CommandDescription.Descriptor, command );
+                var executionContext = new CommandExecutionContext( monitor, commandRequest.Command, commandId, commandRequest.CommandDescription.Descriptor.IsLongRunning, commandRequest.CallbackId, cancellationToken );
+                var context = new CommandContext( commandRequest.CommandDescription.Descriptor, executionContext );
 
                 using( monitor.OpenTrace().Send( "Applying filters..." )
                     .ConcludeWith( () => context.Result != null ? "INVALID" : "OK" ) )
@@ -72,15 +72,7 @@ namespace CK.Crs.Runtime
                 }
             }
         }
-
-        internal Command CreateCommand( IActivityMonitor monitor, Guid commandId, CommandRequest request, CancellationToken cancellationToken )
-        {
-            Type commandContextType = typeof( Command<> ).MakeGenericType( request.CommandDescription.Descriptor.CommandType );
-
-            object instance = Activator.CreateInstance( commandContextType, monitor, request.Command, commandId, request.CommandDescription.Descriptor.IsLongRunning, request.CallbackId, cancellationToken   );
-            return (Command)instance;
-        }
-
+        
         class FilterInfo
         {
             public Type Type { get; set; }
@@ -99,7 +91,7 @@ namespace CK.Crs.Runtime
                 if( context.Description.HandlerType == null )
                 {
                     string msg = $"No handler found for command [type={context.Description.CommandType}].";
-                    context.Command.Monitor.Warn().Send( msg );
+                    context.ExecutionContext.Monitor.Warn().Send( msg );
                     context.SetResult( new ValidationResult( msg ) );
                 }
 

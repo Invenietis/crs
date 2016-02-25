@@ -11,7 +11,7 @@ namespace CK.Crs.Handlers
     [Transaction]
     public class TransferAlwaysSuccessHandler : CommandHandler<TransferAmountCommand, TransferAmountCommand.Result>
     {
-        protected override Task<TransferAmountCommand.Result> DoHandleAsync( Command<TransferAmountCommand> command )
+        protected override Task<TransferAmountCommand.Result> DoHandleAsync( ICommandExecutionContext commandContext, TransferAmountCommand command )
         {
             var result = new TransferAmountCommand.Result
             {
@@ -24,7 +24,7 @@ namespace CK.Crs.Handlers
 
     public class WithDrawyMoneyHandler : CommandHandler<WithdrawMoneyCommand, WithdrawMoneyCommand.Result>
     {
-        protected override Task<WithdrawMoneyCommand.Result> DoHandleAsync( Command<WithdrawMoneyCommand> command )
+        protected override Task<WithdrawMoneyCommand.Result> DoHandleAsync( ICommandExecutionContext commandContext, WithdrawMoneyCommand command )
         {
             var result =  new WithdrawMoneyCommand.Result
             {
@@ -42,13 +42,13 @@ namespace CK.Crs.Handlers
         {
             _repository = repository;
         }
-        protected override Task<UserCommand.Result> DoHandleAsync( Command<UserCommand> command )
+        protected override Task<UserCommand.Result> DoHandleAsync( ICommandExecutionContext commandContext, UserCommand command )
         {
             _repository.Add( new UserModel
             {
                 Id = Guid.NewGuid(),
-                FirstName = command.Model.FirstName,
-                LastName = command.Model.LastName
+                FirstName = command.FirstName,
+                LastName = command.LastName
             } );
             return Task.FromResult( new UserCommand.Result { Success = true } );
         }

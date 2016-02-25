@@ -18,7 +18,7 @@ namespace CK.Crs.Runtime
 
         public async virtual Task ExecuteAsync( CommandContext context )
         {
-            var mon = context.Command.Monitor;
+            var mon = context.ExecutionContext.Monitor;
 
             var decorators = context.Description.Decorators.Select( _factories.CreateDecorator ).ToArray();
             using( mon.OpenTrace().Send( $"Running Command [{context.Description.CommandType.Name}]..." ) )
@@ -38,7 +38,7 @@ namespace CK.Crs.Runtime
                 {
                     try
                     {
-                        var result = await handler.HandleAsync( context.Command );
+                        var result = await handler.HandleAsync( context.ExecutionContext, context.ExecutionContext.Model );
                         context.SetResult( result );
                     }
                     catch( Exception ex )
