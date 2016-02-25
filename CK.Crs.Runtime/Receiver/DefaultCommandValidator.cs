@@ -12,7 +12,7 @@ namespace CK.Crs.Runtime
 
         public Task OnCommandReceived( CommandContext context )
         {
-            object cmd =  context.Command.Model;
+            object cmd =  context.ExecutionContext.Model;
             var validationContext = new ValidationContext(cmd ) ;
             var results = new List<ValidationResult>();
 

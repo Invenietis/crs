@@ -8,7 +8,7 @@ namespace CK.Crs.Runtime
 {
     public class CommandInvalidResponse : CommandResponse
     {
-        public CommandInvalidResponse( Command ctx, object result ) : base( ctx.CommandId )
+        public CommandInvalidResponse( CommandExecutionContext ctx, object result ) : base( ctx.CommandId )
         {
             ResponseType = CommandResponseType.ValidationFailed;
             Payload = result;

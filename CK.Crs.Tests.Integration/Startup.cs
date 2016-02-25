@@ -4,11 +4,17 @@ using System.Linq;
 using CK.Crs.Handlers;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Diagnostics;
+using Microsoft.AspNet.Authentication.OAuth;
+using Microsoft.AspNet.Http;
+using System.Threading.Tasks;
+using System;
 
 namespace CK.Crs.Tests.Integration
 {
     public class Startup
     {
+        public int IDatabase { get; private set; }
+
         // For more information on how to configure your application, visit http://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices( IServiceCollection services )
         {
@@ -21,7 +27,6 @@ namespace CK.Crs.Tests.Integration
             } );
 
             services.AddMvc();
-
             services.AddSingleton<IRepository<UserModel>, UserRepository>();
             services.AddTransient<UserHandler>();
         }
@@ -32,9 +37,9 @@ namespace CK.Crs.Tests.Integration
             app.UseCommandReceiver( "/c/admin", options =>
             {
                 options
-                    .AddFilter<ClaimsAuthenticationFilter>()
+                    .AddFilter<AmbientValuesFilter>()
                     .AddFilter<HttpsRequiredFilter>()
-                    .AddCommands( 
+                    .AddCommands(
                         registry => registry.Registration.Where( c => c.CommandType.Namespace.StartsWith( "CK.Crs" ) ),
                         config => config.AddFilter<AuthorizedFilter>() )
                     .AddCommand<TransferAmountCommand>().CommandName( "transfer" ).AddDecorator<TransactionAttribute>();
@@ -43,6 +48,7 @@ namespace CK.Crs.Tests.Integration
             {
             } );
 
+            //options.OnCommandEvent( x => Azure.Publish );
             app.UseMvc();
 
         }

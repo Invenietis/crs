@@ -8,17 +8,17 @@ namespace CK.Crs
 {
     public class CommandContext
     {
-        public CommandContext( CommandDescriptor commandDescription, Command command )
+        public CommandContext( CommandDescriptor commandDescription, CommandExecutionContext executionContext )
         {
             if( commandDescription == null ) throw new ArgumentNullException( "commandDescription" );
-            if( command == null ) throw new ArgumentNullException( "commandContext" );
+            if( executionContext == null ) throw new ArgumentNullException( "executionContext" );
 
             Description = commandDescription;
-            Command = command;
+            ExecutionContext = executionContext;
             Items = new Dictionary<object, object>();
         }
 
-        public Command Command { get; private set; }
+        public CommandExecutionContext ExecutionContext { get; private set; }
 
         public CommandDescriptor Description { get; private set; }
 
@@ -50,7 +50,7 @@ namespace CK.Crs
             }
             else
             {
-                Command.Monitor.Warn().Send( "Try to set an Exception of type {0} but the context already has an exception set.", ex.GetType().Name );
+                ExecutionContext.Monitor.Warn().Send( "Try to set an Exception of type {0} but the context already has an exception set.", ex.GetType().Name );
             }
         }
 
@@ -58,7 +58,7 @@ namespace CK.Crs
         {
             if( Result != null )
             {
-                Command.Monitor.Warn().Send( "A Result already exists. It has been overriden..." );
+                ExecutionContext.Monitor.Warn().Send( "A Result already exists. It has been overriden..." );
             }
             Result = result;
         }

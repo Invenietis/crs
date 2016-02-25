@@ -5,7 +5,7 @@ using CK.Core;
 
 namespace CK.Crs
 {
-    public class CommandReceiverConfiguration : CK.Core.IFluentInterface
+    public class CommandReceiverConfiguration : IFluentInterface
     {
         internal ICommandRegistry _registry;
         internal ICommandRouteCollection _routes;

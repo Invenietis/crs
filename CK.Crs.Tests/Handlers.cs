@@ -9,17 +9,17 @@ namespace CK.Crs.Tests.Handlers
 {
     public class TransferAlwaysSuccessHandler : CommandHandler<TransferAmountCommand, TransferAmountCommand.Result>
     {
-        protected override Task<TransferAmountCommand.Result> DoHandleAsync( Command<TransferAmountCommand> command )
+        protected override Task<TransferAmountCommand.Result> DoHandleAsync( ICommandExecutionContext commandContext, TransferAmountCommand command )
         {
-            using( command.Monitor.OpenInfo().Send( $"Transferring {command.Model.Amount} from {command.Model.SourceAccountId} to {command.Model.DestinationAccountId} " ) )
+            using( commandContext.Monitor.OpenInfo().Send( $"Transferring {command.Amount} from {command.SourceAccountId} to {command.DestinationAccountId} " ) )
             {
                 var result = new TransferAmountCommand.Result
                 {
                     EffectiveDate = DateTime.UtcNow.Date.AddDays( 2 ),
                     CancellableDate = DateTime.UtcNow.AddHours( 1 )
                 };
-                command.Monitor.Info().Send( $"Transfer will be effective at {result.EffectiveDate.ToString()}." );
-                command.Monitor.Info().Send( $"You have one hour to cancel it." );
+                commandContext.Monitor.Info().Send( $"Transfer will be effective at {result.EffectiveDate.ToString()}." );
+                commandContext.Monitor.Info().Send( $"You have one hour to cancel it." );
                 return Task.FromResult( result );
             }
         }
@@ -33,7 +33,7 @@ namespace CK.Crs.Tests.Handlers
 
     public class WithDrawyMoneyHandler : CommandHandler<WithdrawMoneyCommand, WithdrawMoneyCommand.Result>
     {
-        protected override Task<WithdrawMoneyCommand.Result> DoHandleAsync( Command<WithdrawMoneyCommand> command )
+        protected override Task<WithdrawMoneyCommand.Result> DoHandleAsync( ICommandExecutionContext commandContext, WithdrawMoneyCommand command )
         {
             var result =  new WithdrawMoneyCommand.Result
             {

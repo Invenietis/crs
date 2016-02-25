@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace CK.Crs
 {
@@ -12,6 +7,7 @@ namespace CK.Crs
         void Register( CommandDescriptor descriptor );
 
         IEnumerable<CommandDescriptor> Registration { get; }
+
         bool EnableLongRunningCommands { get; set; }
     }
 }

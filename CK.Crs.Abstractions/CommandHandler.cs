@@ -6,48 +6,43 @@ namespace CK.Crs
     public abstract class CommandHandler<T, TResult> : ICommandHandler<T> where T : class
         where TResult : class
     {
-        public async Task<object> HandleAsync( Command<T> commandContext )
+        public async Task<object> HandleAsync( ICommandExecutionContext commandContext, T command )
         {
 #if DEBUG
             const string msg = "The result of the command must be a nested class of the Command itself named Result.";
             Type resultType = typeof( TResult );
             if( !resultType.IsNested || resultType.Name != "Result" ) throw new InvalidOperationException( msg );
 #endif
-            var result = await DoHandleAsync( commandContext  );
+            var result = await DoHandleAsync( commandContext, command  );
             return result as TResult;
         }
 
-        protected abstract Task<TResult> DoHandleAsync( Command<T> command );
+        protected abstract Task<TResult> DoHandleAsync( ICommandExecutionContext commandContext, T command );
 
-        Task<object> ICommandHandler.HandleAsync( object commandContext )
+        Task<object> ICommandHandler.HandleAsync( ICommandExecutionContext commandContext, object command )
         {
-            return HandleAsync( (Command<T>)commandContext );
+            return HandleAsync( commandContext, (T)command );
         }
     }
 
     public abstract class CommandHandler<T> : ICommandHandler<T> where T : class
     {
-        public async Task<object> HandleAsync( Command<T> commandContext )
+        public async Task<object> HandleAsync( ICommandExecutionContext commandContext, T command )
         {
-            await DoHandleAsync( commandContext );
+            await DoHandleAsync( commandContext, command );
             return EmptyResult.Empty;
         }
 
-        protected abstract Task DoHandleAsync( Command<T> command );
+        protected abstract Task DoHandleAsync( ICommandExecutionContext commandContext, T command );
 
-        Task<object> ICommandHandler.HandleAsync( object commandContext )
+        Task<object> ICommandHandler.HandleAsync( ICommandExecutionContext commandContext, object command )
         {
-            return HandleAsync( (Command<T>)commandContext );
+            return HandleAsync( commandContext, (T)command );
         }
     }
 
     internal class EmptyResult
     {
         public static EmptyResult Empty = new EmptyResult();
-
-        public override int GetHashCode()
-        {
-            return 0;
-        }
     }
 }

@@ -14,15 +14,16 @@ using Microsoft.AspNet.Http.Features;
 using Microsoft.Extensions.DependencyInjection;
 using CK.Core;
 using CK.Crs.Tests.Handlers;
-using NUnit.Framework;
 using Microsoft.Owin;
 using CK.Crs.Runtime;
+using Xunit;
+using Assert = NUnit.Framework.Assert;
+using Is = NUnit.Framework.Is;
 
 namespace CK.Crs.Tests
 {
     // This project can output the Class library as a NuGet Package.
     // To enable this option, right-click on the project and select the Properties menu item. In the Build tab select "Produce outputs on build".
-    [TestFixture]
     public class CommandReceiverTest
     {
         public CommandReceiverTest()
@@ -67,7 +68,6 @@ namespace CK.Crs.Tests
             }
         }
 
-        [Test]
         public async Task CommandReceiver_Should_Be_Scoped_To_A_Route_Prefix()
         {
             var cmd =new Handlers.TransferAmountCommand

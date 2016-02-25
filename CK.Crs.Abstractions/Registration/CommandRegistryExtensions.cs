@@ -9,7 +9,6 @@ namespace CK.Crs
 {
     public static class CommandRegistryExtensions
     {
-
         /// <summary>
         /// 
         /// </summary>

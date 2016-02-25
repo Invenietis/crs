@@ -5,12 +5,14 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CK.Core;
-using NUnit.Framework;
 using CK.Crs.Runtime;
+using Xunit;
+using NUnit;
+using Assert = NUnit.Framework.Assert;
+using Is = NUnit.Framework.Is;
 
 namespace CK.Crs.Tests
 {
-    [TestFixture]
     public class CommandValidatorTest
     {
         CancellationTokenSource _cancellationToken;
@@ -30,14 +32,14 @@ namespace CK.Crs.Tests
             public string SomeField { get; set; }
         }
 
-        [Test]
-        [TestCase( "Success", 42, 0 )]
-        [TestCase( null, 42, 1 )]
-        [TestCase( "Value", 0, 1 )]
-        [TestCase( null, 0, 2 )]
-        [TestCase( "azeazeazeaze", 75, 1 )]
-        [TestCase( "123456789", 100, 1 )]
-        [TestCase( "123456789", 101, 2 )]
+        [Theory]
+        [InlineData( "Success", 42, 0 )]
+        [InlineData( null, 42, 1 )]
+        [InlineData( "Value", 0, 1 )]
+        [InlineData( null, 0, 2 )]
+        [InlineData( "azeazeazeaze", 75, 1 )]
+        [InlineData( "123456789", 100, 1 )]
+        [InlineData( "123456789", 101, 2 )]
         public void DefaultCommandValidator( string fieldValue, int integerValue, int assert )
         {
             // Arrange
@@ -47,7 +49,7 @@ namespace CK.Crs.Tests
                 SomeIntegerValue = integerValue
             };
             var descriptor = CreateCommandDescriptor<SomeCommand>();
-            var commandContext = new Command<SomeCommand>(
+            var commandContext = new CommandExecutionContext(
                 new ActivityMonitor(),
                 command,
                 Guid.NewGuid(),

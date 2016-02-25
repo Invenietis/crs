@@ -26,10 +26,10 @@ namespace CK.Crs.Tests
             get { return PlatformServices.Default.Application; }
         }
 
-        public static IActivityMonitor Monitor( TextWriter output )
+        public static IActivityMonitor Monitor( Action<string> writer )
         {
             var mon = new ActivityMonitor();
-            mon.Output.RegisterClient( new ActivityMonitorTextWriterClient( output.WriteLine ) );
+            mon.Output.RegisterClient( new ActivityMonitorTextWriterClient( writer ) );
             return mon;
         }
 
