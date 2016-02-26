@@ -34,7 +34,7 @@ namespace CK.Crs
         Task<T> GetValueAsync<T>( string name );
     }
 
-    public interface IAmbientValueProvider : IInjectable
+    public interface IAmbientValueProvider
     {
         /// <summary>
         /// Gets the value of an ambient parameter. 
