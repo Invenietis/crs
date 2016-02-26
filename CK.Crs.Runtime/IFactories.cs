@@ -26,5 +26,11 @@ namespace CK.Crs.Runtime
         ICommandFilter CreateFilter( Type filterType );
 
         ICommandResponseDispatcher CreateResponseDispatcher();
+
+        /// <summary>
+        /// Creates an instance of <see cref="IExternalEventPublisher"/> used during the execution of the command.
+        /// </summary>
+        /// <returns></returns>
+        IExternalEventPublisher CreateExternalEventPublisher( ICommandExecutionContext context );
     }
 }

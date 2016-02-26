@@ -21,15 +21,16 @@ namespace CK.Crs
             return _lazyBag.Keys.Contains( name );
         }
 
-        public async Task<object> GetValueAsync( string name )
+        public async Task<T> GetValueAsync<T>( string name )
         {
-            if( !IsDefined( name ) ) return null;
+            if( !IsDefined( name ) ) return default( T );
             var valueProvider = _lazyBag[name]();
             var value = await valueProvider.GetValueAsync( this );
+            
             var disposable = valueProvider as IDisposable;
             if( disposable != null ) disposable.Dispose();
 
-            return value;
+            return (T)value;
         }
 
         public void Register( string key, Func<IAmbientValueProvider> provider )

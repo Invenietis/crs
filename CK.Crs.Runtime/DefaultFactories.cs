@@ -17,6 +17,11 @@ namespace CK.Crs.Runtime
             return _s.CreateInstanceOrDefault<ICommandDecorator>( decoratorType );
         }
 
+        public virtual IExternalEventPublisher CreateExternalEventPublisher( ICommandExecutionContext context )
+        {
+            return new TransactionnalEventPublisher( context );
+        }
+
         public virtual ICommandFilter CreateFilter( Type filterType )
         {
             return _s.CreateInstanceOrDefault<ICommandFilter>( filterType );

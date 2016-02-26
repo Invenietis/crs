@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Claims;
 using System.Security.Principal;
 using System.Threading;
 using CK.Authentication;
@@ -11,7 +12,7 @@ namespace CK.Crs.Tests
         {
             get
             {
-                return Thread.CurrentPrincipal;
+                return ClaimsPrincipal.Current;
             }
         }
     }

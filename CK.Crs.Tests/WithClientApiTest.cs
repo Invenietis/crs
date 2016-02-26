@@ -10,13 +10,14 @@ using CK.Crs;
 using CK.Crs.Tests.Handlers;
 using NUnit.Framework;
 using CK.Crs.Runtime;
+using Xunit;
 
 namespace CK.Crs.Tests
 {
     [TestFixture]
     public class WithClientApiTest
     {
-        [Test]
+        [Test][Fact]
         public async Task SendCommandAndWaitForEvents()
         {
             string serverAddress = "http://MyDumbServer/c/";

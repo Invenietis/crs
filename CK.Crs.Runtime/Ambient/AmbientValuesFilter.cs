@@ -48,7 +48,7 @@ namespace CK.Crs
                 int? actorId = dModel.ActorId;
                 if( actorId.HasValue )
                 {
-                    int ambientActorId = (int)await ambientValues.GetValueAsync( "ActorId" );
+                    int ambientActorId = await ambientValues.GetValueAsync<int>( "ActorId" );
                     if( !ambientActorId.Equals( actorId.Value ) )
                     {
                         return AmbientValueCheckResult.Failure;
@@ -58,7 +58,7 @@ namespace CK.Crs
                 int? authenticatedActorId = dModel.AuthenticatedActorId;
                 if( authenticatedActorId.HasValue )
                 {
-                    int ambientAuthenticatedActorId = (int)await ambientValues.GetValueAsync( "AuthenticatedActorId" );
+                    int ambientAuthenticatedActorId = await ambientValues.GetValueAsync<int>( "AuthenticatedActorId" );
                     if( !ambientAuthenticatedActorId.Equals( actorId.Value ) )
                     {
                         return AmbientValueCheckResult.Failure;

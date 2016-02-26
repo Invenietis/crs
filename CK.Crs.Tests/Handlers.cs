@@ -7,19 +7,39 @@ using CK.Core;
 
 namespace CK.Crs.Tests.Handlers
 {
+    public class AmountTransferredEvent
+    {
+        public Guid AccountId { get; internal set; }
+
+        public decimal Amount { get; internal set; }
+    }
+
     public class TransferAlwaysSuccessHandler : CommandHandler<TransferAmountCommand, TransferAmountCommand.Result>
     {
-        protected override Task<TransferAmountCommand.Result> DoHandleAsync( ICommandExecutionContext commandContext, TransferAmountCommand command )
+        protected override Task<TransferAmountCommand.Result> DoHandleAsync( ICommandExecutionContext context, TransferAmountCommand command )
         {
-            using( commandContext.Monitor.OpenInfo().Send( $"Transferring {command.Amount} from {command.SourceAccountId} to {command.DestinationAccountId} " ) )
+            using( context.Monitor.OpenInfo().Send( $"Transferring {command.Amount} from {command.SourceAccountId} to {command.DestinationAccountId} " ) )
             {
                 var result = new TransferAmountCommand.Result
                 {
                     EffectiveDate = DateTime.UtcNow.Date.AddDays( 2 ),
                     CancellableDate = DateTime.UtcNow.AddHours( 1 )
                 };
-                commandContext.Monitor.Info().Send( $"Transfer will be effective at {result.EffectiveDate.ToString()}." );
-                commandContext.Monitor.Info().Send( $"You have one hour to cancel it." );
+                context.Monitor.Info().Send( $"Transfer will be effective at {result.EffectiveDate.ToString()}." );
+                context.Monitor.Info().Send( $"You have one hour to cancel it." );
+
+                context.ExternalEvents.Push( new AmountTransferredEvent
+                {
+                    AccountId = command.DestinationAccountId,
+                    Amount = command.Amount
+                } );
+
+                context.ExternalEvents.ForcePush( new AmountTransferredEvent
+                {
+                    AccountId = command.DestinationAccountId,
+                    Amount = command.Amount
+                } );
+
                 return Task.FromResult( result );
             }
         }

@@ -54,26 +54,26 @@ namespace CK.Crs.Tests
         [Fact]
         public async Task register_provider_and_get_value()
         {
+            var mockDatabase = new Mock<IUserTable>();
+            mockDatabase.Setup( x => x.GetIdByName( It.IsAny<ISqlCommandExecutor>(), It.IsAny<string>() ) ).Returns( Task.FromResult<int>(12)).Verifiable();
             var sp = TestHelper.CreateServiceProvider( serviceCollection =>
             {
                 serviceCollection
+                    .AddSingleton<ISqlCallContextProvider<IDisposableSqlCallContext>, SqlStandardCallContextProvider>()
                     .AddSingleton<ActorIdProvider>()
-                    .AddSingleton<IUserTable>()
-                    .AddSingleton<IPrincipalAccessor>();
+                    .AddInstance<IUserTable>( mockDatabase.Object )
+                    .AddInstance<IPrincipalAccessor>( new TestPrincipalAccessor() );
             } );
             IAmbientValues ambientValues = new AmbientValues( new DefaultAmbientValueFactory( sp) );
             ambientValues.Register<ActorIdProvider>( "ActorId" );
-
-            var principal = new ClaimsPrincipal( new ClaimsIdentity( new Claim[] { new Claim( ClaimTypes.Name, "john" ) } ));
-            var mockDatabase = new Mock<IUserTable>()
-                .Setup( x => x.GetIdByName( It.IsAny<ISqlCommandExecutor>(), It.IsAny<string>() ) ).Returns( Task.FromResult<int>(12));
-            //.Setup( x => x.Zones.GetZoneIdByHostNameAsync( It.IsAny<string>() ) ).Returns( Task.FromResult<int>(0))
-            //.Setup( x => x.Cultures.GetXLCIDByCultureNameAsync( It.IsAny<string>() ) ).Returns( Task.FromResult<int>(9));
-
-
-            var value = await ambientValues.GetValueAsync( "ActorId");
+             
+            ClaimsPrincipal.ClaimsPrincipalSelector = () =>
+                new ClaimsPrincipal( new ClaimsIdentity( new Claim[] { new Claim( ClaimTypes.Name, "john" ) }, "Local" ));
+             
+            var value = await ambientValues.GetValueAsync<int>( "ActorId");
 
             Assert.That( value, Is.EqualTo( 12 ) );
+            mockDatabase.VerifyAll();
         }
     }
 }
