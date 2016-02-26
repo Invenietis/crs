@@ -10,6 +10,7 @@ using Is = NUnit.Framework.Is;
 using Microsoft.Extensions.DependencyInjection;
 using CK.Authentication;
 using Moq;
+using CK.SqlServer;
 
 namespace CK.Crs.Tests
 {
@@ -33,6 +34,7 @@ namespace CK.Crs.Tests
             var sp = TestHelper.CreateServiceProvider( serviceCollection =>
             {
                 serviceCollection
+                    .AddSingleton<ISqlCallContextProvider<IDisposableSqlCallContext>, SqlStandardCallContextProvider>()
                     .AddSingleton<ActorIdProvider>()
                     .AddInstance<IUserTable>( Mock.Of<IUserTable>())
                     .AddInstance<IPrincipalAccessor>( new TestPrincipalAccessor() );
@@ -45,7 +47,14 @@ namespace CK.Crs.Tests
                 ActorId = 12,
                 AuthenticatedActorId = 1
             };
-            var command = new CommandExecutionContext( TestHelper.Monitor( Console.Out.WriteLine), commandModel, Guid.NewGuid(), false, String.Empty, default( CancellationToken));
+            var command = new CommandExecutionContext(
+                ( ctx ) => TestHelper.MockEventPublisher(),
+                TestHelper.Monitor( Console.Out.WriteLine),
+                commandModel,
+                Guid.NewGuid(),
+                false,
+                String.Empty,
+                default( CancellationToken));
             await filter.OnCommandReceived( new CommandContext( description, command ) );
 
         }

@@ -15,7 +15,8 @@
     "frameworks": {
         "dnx451": {
             "frameworkAssemblies": {
-                "System.ComponentModel.DataAnnotations": "4.0.0.0"
+                "System.ComponentModel.DataAnnotations": "4.0.0.0",
+                "System.Transactions": "4.0.0.0"
             }
         }
     },

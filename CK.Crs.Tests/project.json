@@ -21,7 +21,8 @@
         "xunit.runner.dnx": "2.1.0-*",
         "NUnit": "3.0.1",
         "Microsoft.Dnx.Testing.Abstractions": "1.0.0-rc1-final",
-        "CK.StObj.Model": "4.1.0-a01"
+        "CK.SqlServer.Setup.Model": "4.1.0-a01",
+        "CK.SqlServer.Core": "4.1.0-a01"
     },
 
     "commands": {

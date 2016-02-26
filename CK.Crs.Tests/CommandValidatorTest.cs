@@ -10,15 +10,18 @@ using Xunit;
 using NUnit;
 using Assert = NUnit.Framework.Assert;
 using Is = NUnit.Framework.Is;
+using Xunit.Abstractions;
 
 namespace CK.Crs.Tests
 {
     public class CommandValidatorTest
     {
+        ITestOutputHelper _output;
         CancellationTokenSource _cancellationToken;
-        public CommandValidatorTest()
+        public CommandValidatorTest( ITestOutputHelper output )
         {
             _cancellationToken = new CancellationTokenSource();
+            _output = output;
         }
 
         class SomeCommand
@@ -50,7 +53,8 @@ namespace CK.Crs.Tests
             };
             var descriptor = CreateCommandDescriptor<SomeCommand>();
             var commandContext = new CommandExecutionContext(
-                new ActivityMonitor(),
+                (ctx ) => TestHelper.MockEventPublisher(),
+                TestHelper.Monitor( _output.WriteLine),
                 command,
                 Guid.NewGuid(),
                 descriptor.Descriptor.IsLongRunning,

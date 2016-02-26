@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CK.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.PlatformAbstractions;
+using Moq;
 
 namespace CK.Crs.Tests
 {
@@ -36,6 +37,14 @@ namespace CK.Crs.Tests
         internal static string GeneratorResultPath( string testName )
         {
             return Path.Combine( ApplicationEnv.ApplicationBasePath, "TestOutputs", $"{testName}_{DateTime.UtcNow.ToString( "HHmmss" )}.log" );
+        }
+
+        public static IExternalEventPublisher MockEventPublisher()
+        {
+            var e = new Mock<IExternalEventPublisher>();
+            e.Setup( x => x.Push( It.IsAny<object>() ) );
+            e.Setup( x => x.ForcePush( It.IsAny<object>() ) );
+            return e.Object;
         }
     }
 }

@@ -68,6 +68,7 @@ namespace CK.Crs.Tests
             }
         }
 
+        [Fact]
         public async Task CommandReceiver_Should_Be_Scoped_To_A_Route_Prefix()
         {
             var cmd =new Handlers.TransferAmountCommand

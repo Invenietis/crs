@@ -34,12 +34,8 @@ namespace CK.Crs.Runtime
                 // We override the IActivityMonitor with a dependant one to be thread safe !
                 using( var dependentMonitor = token.CreateDependentMonitor() )
                 {
-                    var mutableCommand = context.ExecutionContext as IMutableCommand;
-                    mutableCommand.Mutate( new UpdateContextParts
-                    {
-                        Monitor = dependentMonitor,
-                        CommandAborted = _cancellationSource.Token
-                    });
+                    context.ExecutionContext.Monitor = dependentMonitor;
+                    context.ExecutionContext.CommandAborted = _cancellationSource.Token;
 
                     await _runner.ExecuteAsync( context );
 
@@ -55,17 +51,6 @@ namespace CK.Crs.Runtime
             var deferredResponse = new CommandDeferredResponse( context.ExecutionContext );
             t.Start( TaskScheduler.Current );
             return Task.FromResult<CommandResponse>( deferredResponse );
-        }
-
-        class UpdateContextParts : IMutableCommand
-        {
-            public CancellationToken CommandAborted { get; set; }
-
-            public IActivityMonitor Monitor { get; set; }
-
-            public void Mutate( IMutableCommand command )
-            {
-            }
         }
     }
 }

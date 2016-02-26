@@ -5,10 +5,16 @@ using CK.Core;
 
 namespace CK.Crs
 {
-    public class CommandExecutionContext : IMutableCommand, ICommandExecutionContext
+    public class CommandExecutionContext : ICommandExecutionContext
     {
-        public CommandExecutionContext( IActivityMonitor monitor, object model, Guid commandId, bool longRunning, string callbackId, CancellationToken cancellationToken )
+        Func<ICommandExecutionContext, IExternalEventPublisher> _eventPublisherFactory;
+  
+        public CommandExecutionContext( Func<ICommandExecutionContext, IExternalEventPublisher> eventPublisher, IActivityMonitor monitor, object model, Guid commandId, bool longRunning, string callbackId, CancellationToken cancellationToken )
         {
+            if( eventPublisher == null ) throw new ArgumentNullException( nameof( eventPublisher ) );
+
+            _eventPublisherFactory = eventPublisher;
+
             Monitor = monitor;
             CommandId = commandId;
             IsLongRunning = longRunning;
@@ -25,35 +31,15 @@ namespace CK.Crs
 
         public bool IsLongRunning { get; }
 
-        public IActivityMonitor Monitor { get; protected set; }
+        public IActivityMonitor Monitor { get; set; }
 
-        /// <summary>
-        /// Notify when an underlying component has cancel the execution of this command...
-        /// </summary>
-        public CancellationToken CommandAborted { get; protected set; }
+        public CancellationToken CommandAborted { get; set; }
 
-        void IMutableCommand.Mutate( IMutableCommand command )
+        IExternalEventPublisher _eventPublisherCacher;
+
+        public IExternalEventPublisher ExternalEvents
         {
-            Monitor = command.Monitor;
-            CommandAborted = command.CommandAborted;
-        }
-
-        static Func<Event, Task> _delegate;
-
-        public virtual Task PublishEventAsync<T>( T @event )
-        {
-            if( _delegate == null ) throw new InvalidOperationException( "An event emitter must be configured by calling CommandExecutionContext.SetEventEmitter" );
-
-            var token = Monitor.DependentActivity().CreateToken();
-            var eventEnvelope = new Event( token, @event, typeof(T));
-
-            return _delegate( eventEnvelope );
-        }
-
-
-        public static void SetEventEmitter( Func<Event, Task> emitter )
-        {
-            _delegate = emitter;
+            get { return _eventPublisherCacher ?? (_eventPublisherCacher = _eventPublisherFactory( this )); }
         }
     }
 }
