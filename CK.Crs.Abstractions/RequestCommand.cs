@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CK.Core
+namespace CK.Crs
 {
-    public interface IInjectable
+    public abstract class RequestCommand
     {
     }
 }
