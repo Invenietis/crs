@@ -49,6 +49,7 @@ namespace CK.Crs.Tests
             };
             var command = new CommandExecutionContext(
                 ( ctx ) => TestHelper.MockEventPublisher(),
+                ( ctx ) => TestHelper.MockCommandScheduler(),
                 TestHelper.Monitor( Console.Out.WriteLine),
                 commandModel,
                 Guid.NewGuid(),

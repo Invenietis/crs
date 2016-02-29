@@ -7,14 +7,23 @@ namespace CK.Crs
 {
     public class CommandExecutionContext : ICommandExecutionContext
     {
-        Func<ICommandExecutionContext, IExternalEventPublisher> _eventPublisherFactory;
-  
-        public CommandExecutionContext( Func<ICommandExecutionContext, IExternalEventPublisher> eventPublisher, IActivityMonitor monitor, object model, Guid commandId, bool longRunning, string callbackId, CancellationToken cancellationToken )
+        Lazy<IExternalEventPublisher> _eventPublisherLazy;
+        Lazy<ICommandScheduler> _cSchedulerLazy;
+
+        public CommandExecutionContext( 
+            Func<ICommandExecutionContext, IExternalEventPublisher> eventPublisher, 
+            Func<ICommandExecutionContext, ICommandScheduler> commandScheduler, 
+            IActivityMonitor monitor, 
+            object model, 
+            Guid commandId, 
+            bool longRunning, 
+            string callbackId, 
+            CancellationToken cancellationToken )
         {
             if( eventPublisher == null ) throw new ArgumentNullException( nameof( eventPublisher ) );
 
-            _eventPublisherFactory = eventPublisher;
-
+            _eventPublisherLazy = new Lazy<IExternalEventPublisher>( () => eventPublisher( this ) );
+            _cSchedulerLazy = new Lazy<ICommandScheduler>( () => commandScheduler( this ) );
             Monitor = monitor;
             CommandId = commandId;
             IsLongRunning = longRunning;
@@ -35,11 +44,14 @@ namespace CK.Crs
 
         public CancellationToken CommandAborted { get; set; }
 
-        IExternalEventPublisher _eventPublisherCacher;
-
         public IExternalEventPublisher ExternalEvents
         {
-            get { return _eventPublisherCacher ?? (_eventPublisherCacher = _eventPublisherFactory( this )); }
+            get { return _eventPublisherLazy.Value; }
+        }
+
+        public ICommandScheduler Scheduler
+        {
+            get { return _cSchedulerLazy.Value; }
         }
     }
 }

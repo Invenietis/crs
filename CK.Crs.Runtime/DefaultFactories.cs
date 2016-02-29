@@ -17,11 +17,6 @@ namespace CK.Crs.Runtime
             return _s.CreateInstanceOrDefault<ICommandDecorator>( decoratorType );
         }
 
-        public virtual IExternalEventPublisher CreateExternalEventPublisher( ICommandExecutionContext context )
-        {
-            return new TransactionnalEventPublisher( context );
-        }
-
         public virtual ICommandFilter CreateFilter( Type filterType )
         {
             return _s.CreateInstanceOrDefault<ICommandFilter>( filterType );
@@ -35,6 +30,15 @@ namespace CK.Crs.Runtime
         public virtual ICommandResponseDispatcher CreateResponseDispatcher()
         {
             return null;
+        }
+        public ICommandScheduler CreateCommandScheduler( ICommandExecutionContext context )
+        {
+            return new TransactionnalCommandScheduler( context );
+        }
+
+        public virtual IExternalEventPublisher CreateExternalEventPublisher( ICommandExecutionContext context )
+        {
+            return new TransactionnalEventPublisher( context );
         }
 
         public class DefaultCreateInstanceStrategy

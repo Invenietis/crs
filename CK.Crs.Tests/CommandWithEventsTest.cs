@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
+using CK.Core;
 using CK.Crs.Runtime;
 using Moq;
 using Xunit;
@@ -29,6 +30,7 @@ namespace CK.Crs.Tests
             SimpleCommand command = new SimpleCommand();
             CommandExecutionContext ctx = new CommandExecutionContext(
                 ( cctx ) => TestHelper.MockEventPublisher(),
+                ( cctx ) => TestHelper.MockCommandScheduler(),
                 TestHelper.Monitor(_output.WriteLine ),
                 command,
                 Guid.NewGuid(),
@@ -53,14 +55,14 @@ namespace CK.Crs.Tests
 
             ManualResetEvent evt = new ManualResetEvent( false);
             bool eventEmitted = false;
-            TransactionnalEventPublisher.SetEventEmitter( e =>
+            TransactionnalEventPublisher.SetEventEmitter( TestOperationExecutor.FromLambda( e =>
             {
                 string json = Newtonsoft.Json.JsonConvert.SerializeObject( e );
                 _output.WriteLine( json );
                 eventEmitted = true;
                 evt.Set();
                 return Task.FromResult<object>( null );
-            } );
+            } ) );
 
             Assert.That( eventEmitted, Is.False );
             ctx.ExternalEvents.Push( new SimpleEvent() );
@@ -77,7 +79,7 @@ namespace CK.Crs.Tests
 
             ManualResetEvent evt = new ManualResetEvent( false);
             int eventEmitted = 0;
-            TransactionnalEventPublisher.SetEventEmitter( e =>
+            TransactionnalEventPublisher.SetEventEmitter( TestOperationExecutor.FromLambda( e =>
             {
                 string json = Newtonsoft.Json.JsonConvert.SerializeObject( e );
                 _output.WriteLine( json );
@@ -87,7 +89,7 @@ namespace CK.Crs.Tests
                     evt.Set();
                 }
                 return Task.FromResult<object>( null );
-            } );
+            } ) );
 
             using( var tr = CreateTransactionScope() )
             {
@@ -108,10 +110,10 @@ namespace CK.Crs.Tests
             SimpleCommand command = new SimpleCommand();
             CommandExecutionContext ctx = CreateContext( command );
 
-            TransactionnalEventPublisher.SetEventEmitter( e =>
+            TransactionnalEventPublisher.SetEventEmitter( TestOperationExecutor.FromLambda( e =>
             {
                 throw new InvalidOperationException( "This should never been called in this scenario" );
-            } );
+            } ) );
 
             try
             {
@@ -130,11 +132,11 @@ namespace CK.Crs.Tests
             }
             ManualResetEvent evt = new ManualResetEvent( false);
             int eventEmitted = 0;
-            TransactionnalEventPublisher.SetEventEmitter( e =>
+            TransactionnalEventPublisher.SetEventEmitter( TestOperationExecutor.FromLambda( e =>
             {
                 eventEmitted++;
                 return Task.FromResult<object>( null );
-            } );
+            } ) );
             ctx.ExternalEvents.Push( new SimpleEvent() );
 
             evt.WaitOne( 1000 );
@@ -147,10 +149,10 @@ namespace CK.Crs.Tests
             SimpleCommand command = new SimpleCommand();
             CommandExecutionContext ctx = CreateContext( command );
 
-            TransactionnalEventPublisher.SetEventEmitter( e =>
+            TransactionnalEventPublisher.SetEventEmitter( TestOperationExecutor.FromLambda( e =>
             {
                 throw new InvalidOperationException( "OUPS EventEmitter is totally aux fraises..." );
-            } );
+            } ) );
 
             Assert.That( () =>
             {
@@ -165,7 +167,7 @@ namespace CK.Crs.Tests
                     tr.Complete();
                 }
             }, NUnit.Framework.Throws.Exception.InstanceOf<TransactionAbortedException>() );
-        } 
+        }
 
         TransactionScope CreateTransactionScope( IsolationLevel level = IsolationLevel.ReadUncommitted )
         {
@@ -179,12 +181,32 @@ namespace CK.Crs.Tests
         {
             return new CommandExecutionContext(
                 ( cctx ) => new TransactionnalEventPublisher( cctx ),
+                ( cctx ) => TestHelper.MockCommandScheduler(),
                 TestHelper.Monitor( _output.WriteLine ),
                 command,
                 Guid.NewGuid(),
                 false,
                 String.Empty,
                 default( CancellationToken ) );
+        }
+
+
+        class TestOperationExecutor : IOperationExecutor<Event>
+        {
+            Func<Event, Task> _asyncOperationExecution;
+            public TestOperationExecutor( Func<Event, Task> asyncOperationExecution )
+            {
+                _asyncOperationExecution = asyncOperationExecution;
+            }
+            public void Execute( IActivityMonitor monitor, Event operation )
+            {
+                _asyncOperationExecution( operation );
+            }
+
+            public static Func<IOperationExecutor<Event>> FromLambda( Func<Event, Task> asyncOperationExecution )
+            {
+                return () => new TestOperationExecutor( asyncOperationExecution );
+            }
         }
     }
 }

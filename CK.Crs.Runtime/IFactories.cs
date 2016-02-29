@@ -32,5 +32,12 @@ namespace CK.Crs.Runtime
         /// </summary>
         /// <returns></returns>
         IExternalEventPublisher CreateExternalEventPublisher( ICommandExecutionContext context );
+
+        /// <summary>
+        /// Creates an instance of <see cref="ICommandScheduler"/>
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        ICommandScheduler CreateCommandScheduler( ICommandExecutionContext context );
     }
 }

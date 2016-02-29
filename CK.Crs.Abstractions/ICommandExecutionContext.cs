@@ -27,5 +27,10 @@ namespace CK.Crs
         /// Gets the <see cref="IExternalEventPublisher"/> where command events can be published to the world!
         /// </summary>
         IExternalEventPublisher ExternalEvents { get; }
+
+        /// <summary>
+        /// Gets the <see cref="ICommandScheduler"/> for this execution context.
+        /// </summary>
+        ICommandScheduler Scheduler { get; }
     }
 }

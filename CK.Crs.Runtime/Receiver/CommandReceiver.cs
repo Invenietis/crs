@@ -32,7 +32,16 @@ namespace CK.Crs.Runtime
 
             using( monitor.OpenTrace().Send( $"Processing new command [commandId={commandId}]..." ) )
             {
-                var executionContext = new CommandExecutionContext( _factory.CreateExternalEventPublisher, monitor, commandRequest.Command, commandId, commandRequest.CommandDescription.Descriptor.IsLongRunning, commandRequest.CallbackId, cancellationToken );
+                var executionContext = new CommandExecutionContext( 
+                    _factory.CreateExternalEventPublisher,
+                    _factory.CreateCommandScheduler, 
+                    monitor, 
+                    commandRequest.Command, 
+                    commandId, 
+                    commandRequest.CommandDescription.Descriptor.IsLongRunning, 
+                    commandRequest.CallbackId, 
+                    cancellationToken );
+
                 var context = new CommandContext( commandRequest.CommandDescription.Descriptor, executionContext );
 
                 using( monitor.OpenTrace().Send( "Applying filters..." )

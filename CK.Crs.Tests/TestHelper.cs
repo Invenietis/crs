@@ -46,5 +46,13 @@ namespace CK.Crs.Tests
             e.Setup( x => x.ForcePush( It.IsAny<object>() ) );
             return e.Object;
         }
+
+        internal static ICommandScheduler MockCommandScheduler()
+        {
+            var e = new Mock<ICommandScheduler>();
+            e.Setup( x => x.Schedule( It.IsAny<object>(), It.IsAny<CommandSchedulingOption>() ) ).Returns( () => Guid.NewGuid() );
+            e.Setup( x => x.CancelScheduling( It.IsAny<Guid>() ) ).Returns( false );
+            return e.Object;
+        }
     }
 }

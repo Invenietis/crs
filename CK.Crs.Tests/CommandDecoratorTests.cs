@@ -46,6 +46,7 @@ namespace CK.Crs.Tests
 
             var command = new CommandExecutionContext(
                 (ctx ) => TestHelper.MockEventPublisher(),
+                ( ctx ) => TestHelper.MockCommandScheduler(),
                 monitor,
                 model,
                 Guid.NewGuid(),
@@ -143,6 +144,11 @@ namespace CK.Crs.Tests
             }
 
             public IExternalEventPublisher CreateExternalEventPublisher( ICommandExecutionContext context )
+            {
+                return null;
+            }
+
+            public ICommandScheduler CreateCommandScheduler( ICommandExecutionContext context )
             {
                 return null;
             }

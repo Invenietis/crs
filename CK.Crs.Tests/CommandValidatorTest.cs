@@ -54,6 +54,7 @@ namespace CK.Crs.Tests
             var descriptor = CreateCommandDescriptor<SomeCommand>();
             var commandContext = new CommandExecutionContext(
                 (ctx ) => TestHelper.MockEventPublisher(),
+                ( ctx ) => TestHelper.MockCommandScheduler(),
                 TestHelper.Monitor( _output.WriteLine),
                 command,
                 Guid.NewGuid(),

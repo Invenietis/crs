@@ -25,7 +25,18 @@ namespace CK.Crs.Tests.Handlers
             public DateTime EffectiveDate { get; set; }
 
             public DateTime CancellableDate { get; set; }
+
+            public Guid OperationId { get; set; }
         }
+    }
+
+    public class PerformTransferAmountCommand
+    {
+        public Guid SourceAccountId { get; set; }
+
+        public Guid DestinationAccountId { get; set; }
+
+        public decimal Amount { get; set; }
     }
 
     public class WithdrawMoneyCommand

@@ -16,6 +16,7 @@ namespace CK.Crs.Tests.Handlers
 
     public class TransferAlwaysSuccessHandler : CommandHandler<TransferAmountCommand, TransferAmountCommand.Result>
     {
+        [Transaction]
         protected override Task<TransferAmountCommand.Result> DoHandleAsync( ICommandExecutionContext context, TransferAmountCommand command )
         {
             using( context.Monitor.OpenInfo().Send( $"Transferring {command.Amount} from {command.SourceAccountId} to {command.DestinationAccountId} " ) )
@@ -39,6 +40,13 @@ namespace CK.Crs.Tests.Handlers
                     AccountId = command.DestinationAccountId,
                     Amount = command.Amount
                 } );
+
+                result.OperationId = context.Scheduler.Schedule( new PerformTransferAmountCommand
+                {
+                    Amount = command.Amount,
+                    DestinationAccountId = command.DestinationAccountId,
+                    SourceAccountId = command.SourceAccountId
+                }, new CommandSchedulingOption( result.CancellableDate, true ) );
 
                 return Task.FromResult( result );
             }
