@@ -109,10 +109,12 @@ namespace CK.Crs.Tests
         {
             SimpleCommand command = new SimpleCommand();
             CommandExecutionContext ctx = CreateContext( command );
-
+            ManualResetEvent evt = new ManualResetEvent( false);
+            int eventEmitted = 0;
             TransactionnalEventPublisher.SetEventEmitter( TestOperationExecutor.FromLambda( e =>
             {
-                throw new InvalidOperationException( "This should never been called in this scenario" );
+                eventEmitted++;
+                return Task.FromResult<object>( null );
             } ) );
 
             try
@@ -130,13 +132,9 @@ namespace CK.Crs.Tests
             {
 
             }
-            ManualResetEvent evt = new ManualResetEvent( false);
-            int eventEmitted = 0;
-            TransactionnalEventPublisher.SetEventEmitter( TestOperationExecutor.FromLambda( e =>
-            {
-                eventEmitted++;
-                return Task.FromResult<object>( null );
-            } ) );
+            evt.WaitOne( 500 );
+            Assert.That( eventEmitted, Is.EqualTo( 0 ) );
+
             ctx.ExternalEvents.Push( new SimpleEvent() );
 
             evt.WaitOne( 1000 );
