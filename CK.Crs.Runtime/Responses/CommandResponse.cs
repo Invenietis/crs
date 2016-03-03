@@ -29,9 +29,6 @@ namespace CK.Crs.Runtime
 
                 if( context.Result != null )
                 {
-                    if( context.Result is ValidationResult )
-                        return new CommandInvalidResponse( context.ExecutionContext, context.Result );
-
                     return new CommandResultResponse( context.Result, context.ExecutionContext );
                 }
             }

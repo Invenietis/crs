@@ -39,7 +39,7 @@ namespace CK.Crs
 
             ICommandRegistry registry = new CommandRegistry();
             configuration( registry );
-            services.AddInstance( registry );
+            services.AddSingleton( registry );
         }
     }
 }

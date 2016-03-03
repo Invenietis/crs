@@ -21,16 +21,13 @@ namespace CK.Crs
             get { return 0; }
         }
 
-        public async Task OnCommandReceived( CommandContext context )
+        public async Task OnCommandReceived( ICommandFilterContext context )
         {
-            var monitor = context.ExecutionContext.Monitor;
-            var model = context.ExecutionContext.Model;
-
-            var result = await CheckValueAsync( monitor, _ambientValues, model);
+            var result = await CheckValueAsync( context.Monitor, _ambientValues, context.Command);
             if( result == AmbientValueCheckResult.Failure )
             {
                 string errorMessage = $"Identity check failed...";
-                context.SetResult( new ValidationResult( errorMessage ) );
+                context.Reject( errorMessage );
             }
         }
 

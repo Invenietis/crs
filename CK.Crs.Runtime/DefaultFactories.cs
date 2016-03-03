@@ -41,6 +41,12 @@ namespace CK.Crs.Runtime
             return new TransactionnalEventPublisher( context );
         }
 
+        public virtual void ReleaseHandler( ICommandHandler handler )
+        {
+            var d = handler as IDisposable;
+            if( d != null ) d.Dispose();
+        }
+
         public class DefaultCreateInstanceStrategy
         {
             readonly IActivityMonitor _monitor;

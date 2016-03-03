@@ -12,6 +12,12 @@ namespace CK.Crs.Runtime
         ICommandHandler CreateHandler( Type handlerType );
 
         /// <summary>
+        /// Releases a <see cref="ICommandHandler"/>.
+        /// </summary>
+        /// <param name="handler">The command handler to release.</param>
+        void ReleaseHandler( ICommandHandler handler );
+
+        /// <summary>
         /// Creates an instance of the given type or return null if the type cannot be instanciated.
         /// </summary>
         /// <param name="handlerType"></param>

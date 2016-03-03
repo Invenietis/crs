@@ -153,6 +153,12 @@ namespace CK.Crs.Tests
                 return null;
             }
 
+            public void ReleaseHandler( ICommandHandler handler )
+            {
+                var d = handler as IDisposable;
+                if( d != null ) d.Dispose();
+            }
+
             public Action<ICommandDecorator> OnDecoratorCreated { get; set; }
         }
 

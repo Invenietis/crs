@@ -13,6 +13,7 @@ namespace CK.Crs
         public CommandDescriptor()
         {
             Decorators = CK.Core.Util.EmptyArray<Type>.Empty;
+            Permissions = CK.Core.Util.EmptyArray<object>.Empty;
         }
 
         /// <summary>
@@ -40,5 +41,7 @@ namespace CK.Crs
         /// Gets or sets a read-only collection of decorators that should be applied when this command is handled.
         /// </summary>
         public IReadOnlyCollection<Type> Decorators { get; set; }
+
+        public IReadOnlyCollection<object> Permissions { get; set; }
     }
 }

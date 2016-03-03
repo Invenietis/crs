@@ -39,9 +39,10 @@ namespace CK.Crs.Tests.Integration
                 options
                     .AddFilter<AmbientValuesFilter>()
                     .AddFilter<HttpsRequiredFilter>()
+                    .AddFilter<CK.Crs.Extensions.AuthorizationFilter>()
                     .AddCommands(
                         registry => registry.Registration.Where( c => c.CommandType.Namespace.StartsWith( "CK.Crs" ) ),
-                        config => config.AddFilter<AuthorizedFilter>() )
+                        config => config.AddPermission( CK.Authorization.MinGrantLevel.Administrator ) )
                     .AddCommand<TransferAmountCommand>().CommandName( "transfer" ).AddDecorator<TransactionAttribute>();
             } );
             app.UseCommandReceiver( "/c/public", options =>

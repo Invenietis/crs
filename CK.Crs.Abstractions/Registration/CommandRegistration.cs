@@ -6,7 +6,7 @@ using CK.Core;
 
 namespace CK.Crs
 {
-    class CommandRegistration : ICommandRegistrationWithFilter, ICommandRegistration
+    public class CommandRegistration : ICommandRegistrationWithFilter, ICommandRegistration
     {
         RoutedCommandDescriptor _routedCommandDescriptor;
         CommandDescriptor _commandDescription;
@@ -31,6 +31,12 @@ namespace CK.Crs
         CommandRegistration AddDecorator<TDecorator>() where TDecorator : ICommandDecorator
         {
             _commandDescription.Decorators = _commandDescription.Decorators.Union( new[] { typeof( TDecorator ) } ).ToArray();
+            return this;
+        }
+
+        CommandRegistration AddPermission( object permission )
+        {
+            _commandDescription.Permissions = _commandDescription.Permissions.Union( new[] { permission } ).ToArray();
             return this;
         }
 
@@ -66,6 +72,10 @@ namespace CK.Crs
         {
             return IsLongRunning();
         }
+        ICommandConfiguration<ICommandRegistrationWithFilter> ICommandConfiguration<ICommandRegistrationWithFilter>.AddPermission( object permission )
+        {
+            return AddPermission( permission );
+        }
 
         ICommandConfigurationWithFilter<ICommandRegistrationWithFilter> ICommandConfigurationWithFilter<ICommandRegistrationWithFilter>.AddFilter<T1>()
         {
@@ -75,6 +85,11 @@ namespace CK.Crs
         ICommandConfiguration<ICommandRegistration> ICommandConfiguration<ICommandRegistration>.AddDecorator<T1>()
         {
             return AddDecorator<T1>();
+        }
+
+        ICommandConfiguration<ICommandRegistration> ICommandConfiguration<ICommandRegistration>.AddPermission( object permission )
+        {
+            return AddPermission( permission );
         }
 
         ICommandConfiguration<ICommandRegistration> ICommandConfiguration<ICommandRegistration>.CommandName( string commandName )

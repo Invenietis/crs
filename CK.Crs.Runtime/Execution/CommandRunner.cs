@@ -25,47 +25,53 @@ namespace CK.Crs.Runtime
             {
                 ICommandHandler handler = _factories.CreateHandler( context.Description.HandlerType );
                 if( handler == null ) throw new InvalidOperationException( $"Unable to create type {context.Description.HandlerType}" );
+                try
+                {
+                    using( mon.OpenTrace().Send( "OnCommandExecuting..." ) )
+                    {
+                        foreach( var attr in decorators.OrderBy( a => a.Order ) )
+                        {
+                            mon.Trace().Send( $"{attr.GetType().Name}" );
+                            attr.OnCommandExecuting( context );
+                        }
+                    }
+                    using( mon.OpenTrace().Send( "Handling..." ) )
+                    {
+                        try
+                        {
+                            var result = await handler.HandleAsync( context.ExecutionContext, context.ExecutionContext.Model );
+                            context.SetResult( result );
+                        }
+                        catch( Exception ex )
+                        {
+                            context.SetException( ex );
+                            mon.Error().Send( ex );
+                        }
+                    }
 
-                using( mon.OpenTrace().Send( "OnCommandExecuting..." ) )
-                {
-                    foreach( var attr in decorators.OrderBy( a => a.Order ) )
+                    if( context.Exception != null )
                     {
-                        mon.Trace().Send( $"{attr.GetType().Name}" );
-                        attr.OnCommandExecuting( context );
+                        using( mon.OpenTrace().Send( "OnException..." ) )
+                        {
+                            foreach( var attr in decorators.OrderByDescending( a => a.Order ) )
+                            {
+                                mon.Trace().Send( $"{attr.GetType().Name}" );
+                                attr.OnException( context );
+                            }
+                        }
                     }
-                }
-                using( mon.OpenTrace().Send( "Handling..." ) )
-                {
-                    try
-                    {
-                        var result = await handler.HandleAsync( context.ExecutionContext, context.ExecutionContext.Model );
-                        context.SetResult( result );
-                    }
-                    catch( Exception ex )
-                    {
-                        context.SetException( ex );
-                        mon.Error().Send( ex );
-                    }
-                }
-
-                if( context.Exception != null )
-                {
-                    using( mon.OpenTrace().Send( "OnException..." ) )
+                    using( mon.OpenTrace().Send( "OnCommandExecuted..." ) )
                     {
                         foreach( var attr in decorators.OrderByDescending( a => a.Order ) )
                         {
                             mon.Trace().Send( $"{attr.GetType().Name}" );
-                            attr.OnException( context );
+                            attr.OnCommandExecuted( context );
                         }
                     }
                 }
-                using( mon.OpenTrace().Send( "OnCommandExecuted..." ) )
+                finally
                 {
-                    foreach( var attr in decorators.OrderByDescending( a => a.Order ) )
-                    {
-                        mon.Trace().Send( $"{attr.GetType().Name}" );
-                        attr.OnCommandExecuted( context );
-                    }
+                    _factories.ReleaseHandler( handler );
                 }
             }
         }

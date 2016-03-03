@@ -8,10 +8,10 @@ namespace CK.Crs.Runtime
 {
     public class CommandInvalidResponse : CommandResponse
     {
-        public CommandInvalidResponse( CommandExecutionContext ctx, object result ) : base( ctx.CommandId )
+        public CommandInvalidResponse( Guid commandID, string reason ) : base( commandID )
         {
-            ResponseType = CommandResponseType.ValidationFailed;
-            Payload = result;
+            ResponseType = CommandResponseType.PreConditionFailed;
+            Payload = reason;
         }
     }
 

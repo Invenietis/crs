@@ -32,20 +32,10 @@ namespace CK.Crs.Runtime
 
             using( monitor.OpenTrace().Send( $"Processing new command [commandId={commandId}]..." ) )
             {
-                var executionContext = new CommandExecutionContext( 
-                    _factory.CreateExternalEventPublisher,
-                    _factory.CreateCommandScheduler, 
-                    monitor, 
-                    commandRequest.Command, 
-                    commandId, 
-                    commandRequest.CommandDescription.Descriptor.IsLongRunning, 
-                    commandRequest.CallbackId, 
-                    cancellationToken );
-
-                var context = new CommandContext( commandRequest.CommandDescription.Descriptor, executionContext );
+                var filterContext = new FilterContext(monitor, commandRequest.CommandDescription, commandRequest.Command);
 
                 using( monitor.OpenTrace().Send( "Applying filters..." )
-                    .ConcludeWith( () => context.Result != null ? "INVALID" : "OK" ) )
+                    .ConcludeWith( () => filterContext.IsRejected ? "INVALID" : "OK" ) )
                 {
                     foreach( var filter in _internalFilters.Union( commandRequest.CommandDescription.Filters.Select( f => new FilterInfo { Type = f, Instance = _factory.CreateFilter( f ) } ) ) )
                     {
@@ -56,16 +46,28 @@ namespace CK.Crs.Runtime
                         }
                         using( monitor.OpenTrace().Send( $"Executing filter {filter.Type.Name}" ) )
                         {
-                            await filter.Instance.OnCommandReceived( context );
+                            await filter.Instance.OnCommandReceived( filterContext );
 
                             // Immediatly test if there is a response available.
-                            if( context.Result != null )
+                            if( filterContext.IsRejected )
                             {
-                                return CommandResponse.CreateFromContext( context );
+                                return new CommandInvalidResponse( commandId, filterContext.RejectReason );
                             }
                         }
                     }
                 }
+
+                var executionContext = new CommandExecutionContext(
+                    _factory.CreateExternalEventPublisher,
+                    _factory.CreateCommandScheduler,
+                    monitor,
+                    commandRequest.Command,
+                    commandId,
+                    commandRequest.CommandDescription.Descriptor.IsLongRunning,
+                    commandRequest.CallbackId,
+                    cancellationToken );
+
+                var context = new CommandContext( commandRequest.CommandDescription.Descriptor, executionContext );
 
                 using( monitor.OpenTrace().Send( "Running command..." ) )
                 {
@@ -81,7 +83,7 @@ namespace CK.Crs.Runtime
                 }
             }
         }
-        
+
         class FilterInfo
         {
             public Type Type { get; set; }
@@ -95,13 +97,13 @@ namespace CK.Crs.Runtime
                 get { return -1000; }
             }
 
-            public Task OnCommandReceived( CommandContext context )
+            public Task OnCommandReceived( ICommandFilterContext context )
             {
-                if( context.Description.HandlerType == null )
+                if( context.Description.Descriptor.HandlerType == null )
                 {
-                    string msg = $"No handler found for command [type={context.Description.CommandType}].";
-                    context.ExecutionContext.Monitor.Warn().Send( msg );
-                    context.SetResult( new ValidationResult( msg ) );
+                    string msg = $"No handler found for command [type={context.Description.Descriptor.CommandType}].";
+                    context.Monitor.Warn().Send( msg );
+                    context.Reject( msg );
                 }
 
                 return Task.FromResult<object>( null );

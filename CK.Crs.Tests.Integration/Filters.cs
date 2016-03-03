@@ -15,23 +15,7 @@ namespace CK.Crs.Tests.Integration
             }
         }
 
-        public Task OnCommandReceived( CommandContext executionContext )
-        {
-            return Task.FromResult<object>( null );
-        }
-    }
-
-    internal class AuthorizedFilter : ICommandFilter
-    {
-        public int Order
-        {
-            get
-            {
-                return 0;
-            }
-        }
-
-        public Task OnCommandReceived( CommandContext executionContext )
+        public Task OnCommandReceived( ICommandFilterContext filterContext )
         {
             return Task.FromResult<object>( null );
         }

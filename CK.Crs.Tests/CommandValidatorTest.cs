@@ -45,6 +45,7 @@ namespace CK.Crs.Tests
         [InlineData( "123456789", 101, 2 )]
         public void DefaultCommandValidator( string fieldValue, int integerValue, int assert )
         {
+            var monitor =  TestHelper.Monitor( _output.WriteLine);
             // Arrange
             var command = new SomeCommand
             {
@@ -55,30 +56,29 @@ namespace CK.Crs.Tests
             var commandContext = new CommandExecutionContext(
                 (ctx ) => TestHelper.MockEventPublisher(),
                 ( ctx ) => TestHelper.MockCommandScheduler(),
-                TestHelper.Monitor( _output.WriteLine),
+                monitor,
                 command,
                 Guid.NewGuid(),
                 descriptor.Descriptor.IsLongRunning,
                 "3712",
                 _cancellationToken.Token);
 
-            var context = new CommandContext( descriptor.Descriptor, commandContext );
-
+            var filterContext= new FilterContext( monitor, descriptor, command);
             // Act
             DefaultCommandValidator v = new DefaultCommandValidator();
-            v.OnCommandReceived( context );
+            v.OnCommandReceived( filterContext );
 
             // Assert
             if( assert == 0 )
             {
-                Assert.That( context.Result, Is.Null );
+                Assert.That( filterContext.IsRejected, Is.False );
             }
             else
             {
-                Assert.That( context.Result, Is.Not.Null );
-                Assert.That( context.Result, Is.InstanceOf<ValidationResult>() );
-                string msg = context.Result.ToString();
-                Assert.That( assert, Is.EqualTo( msg.Split( new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries ).Length ) );
+                Assert.That( filterContext.IsRejected, Is.True );
+                Assert.That( filterContext.RejectReason, Is.Not.Null.And.Not.Empty );
+
+                Assert.That( assert, Is.EqualTo( filterContext.RejectReason.Split( new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries ).Length ) );
             }
         }
 

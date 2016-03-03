@@ -22,6 +22,8 @@
         /// </summary>
         /// <returns></returns>
         ICommandConfiguration<TConfig> IsLongRunning();
+
+        ICommandConfiguration<TConfig> AddPermission( object permission );
     }
 
     public interface ICommandConfigurationWithHandling<TConfig> : CK.Core.IFluentInterface

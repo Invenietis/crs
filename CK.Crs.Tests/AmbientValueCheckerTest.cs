@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using CK.Authentication;
 using Moq;
 using CK.SqlServer;
+using CK.Crs.Runtime;
 
 namespace CK.Crs.Tests
 {
@@ -36,12 +37,12 @@ namespace CK.Crs.Tests
                 serviceCollection
                     .AddSingleton<ISqlCallContextProvider<IDisposableSqlCallContext>, SqlStandardCallContextProvider>()
                     .AddSingleton<ActorIdProvider>()
-                    .AddInstance<IUserTable>( Mock.Of<IUserTable>())
-                    .AddInstance<IPrincipalAccessor>( new TestPrincipalAccessor() );
+                    .AddSingleton<IAuthenticationStore>( Mock.Of<IAuthenticationStore>())
+                    .AddSingleton<IPrincipalAccessor>( new TestPrincipalAccessor() );
             } );
             IAmbientValues ambientValues = new AmbientValues( new DefaultAmbientValueFactory( sp) );
             AmbientValuesFilter filter = new AmbientValuesFilter( ambientValues );
-            var description = new CommandDescriptor();
+            var description = new RoutedCommandDescriptor( new CommandRoutePath("/a", "simpleCommand"), new CommandDescriptor());
             var commandModel = new SimpleCommand
             {
                 ActorId = 12,
@@ -56,7 +57,7 @@ namespace CK.Crs.Tests
                 false,
                 String.Empty,
                 default( CancellationToken));
-            await filter.OnCommandReceived( new CommandContext( description, command ) );
+            await filter.OnCommandReceived( new FilterContext( command.Monitor, description, command ) );
 
         }
     }

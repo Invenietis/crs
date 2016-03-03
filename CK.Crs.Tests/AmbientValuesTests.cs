@@ -16,15 +16,13 @@ namespace CK.Crs.Tests
 {
     public class ActorIdProvider : IAmbientValueProvider
     {
-        readonly IUserTable _userTable;
+        readonly IAuthenticationStore _userTable;
         readonly IPrincipalAccessor _principalAccessor;
-        readonly ISqlCallContextProvider<IDisposableSqlCallContext> _callContextProvider;
 
-        public ActorIdProvider( IUserTable userTable, ISqlCallContextProvider<IDisposableSqlCallContext> callContextProvider, IPrincipalAccessor principalAccessor )
+        public ActorIdProvider( IAuthenticationStore userTable, IPrincipalAccessor principalAccessor )
         {
             _userTable = userTable;
             _principalAccessor = principalAccessor;
-            _callContextProvider = callContextProvider;
         }
 
         public string Name
@@ -39,10 +37,8 @@ namespace CK.Crs.Tests
             var currentIdentity = _principalAccessor.User.Identity;
             if( currentIdentity.IsAuthenticated )
             {
-                using( var sqlContext = _callContextProvider.Acquire() )
-                {
-                    return await _userTable.GetIdByName( sqlContext.Executor, currentIdentity.Name );
-                }
+                var user = await _userTable.GetUserByName( currentIdentity.Name );
+                return user?.UserId;
             }
 
             return Default;
@@ -54,22 +50,22 @@ namespace CK.Crs.Tests
         [Fact]
         public async Task register_provider_and_get_value()
         {
-            var mockDatabase = new Mock<IUserTable>();
-            mockDatabase.Setup( x => x.GetIdByName( It.IsAny<ISqlCommandExecutor>(), It.IsAny<string>() ) ).Returns( Task.FromResult<int>(12)).Verifiable();
+            var mockDatabase = new Mock<IAuthenticationStore>();
+            mockDatabase.Setup( x => x.GetUserByName( It.IsAny<string>(), It.IsAny<CancellationToken>() ) ).Returns( Task.FromResult( new User { UserId = 12, IsEnabled = true, UserName = "john" } ) ).Verifiable();
             var sp = TestHelper.CreateServiceProvider( serviceCollection =>
             {
                 serviceCollection
                     .AddSingleton<ISqlCallContextProvider<IDisposableSqlCallContext>, SqlStandardCallContextProvider>()
                     .AddSingleton<ActorIdProvider>()
-                    .AddInstance<IUserTable>( mockDatabase.Object )
-                    .AddInstance<IPrincipalAccessor>( new TestPrincipalAccessor() );
+                    .AddSingleton( mockDatabase.Object )
+                    .AddSingleton<IPrincipalAccessor>( new TestPrincipalAccessor() );
             } );
             IAmbientValues ambientValues = new AmbientValues( new DefaultAmbientValueFactory( sp) );
             ambientValues.Register<ActorIdProvider>( "ActorId" );
-             
+
             ClaimsPrincipal.ClaimsPrincipalSelector = () =>
-                new ClaimsPrincipal( new ClaimsIdentity( new Claim[] { new Claim( ClaimTypes.Name, "john" ) }, "Local" ));
-             
+                new ClaimsPrincipal( new ClaimsIdentity( new Claim[] { new Claim( ClaimTypes.Name, "john" ) }, "Local" ) );
+
             var value = await ambientValues.GetValueAsync<int>( "ActorId");
 
             Assert.That( value, Is.EqualTo( 12 ) );

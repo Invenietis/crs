@@ -24,6 +24,7 @@ namespace CK.Crs.Tests
         {
             _output = output;
         }
+
         [Fact]
         public void an_event_emitter_should_be_set_when_events_are_published()
         {
@@ -130,8 +131,8 @@ namespace CK.Crs.Tests
             }
             catch( Exception ex ) when( ex.Message == "OUPS" )
             {
-
             }
+            
             evt.WaitOne( 500 );
             Assert.That( eventEmitted, Is.EqualTo( 0 ) );
 

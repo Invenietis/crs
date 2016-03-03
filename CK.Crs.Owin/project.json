@@ -6,7 +6,7 @@
     "projectUrl": "",
     "licenseUrl": "",
     "frameworks": {
-        "dnx451": {
+        "net451": {
             "dependencies": {
                 "Owin": "1.0.0",
                 "Microsoft.Owin": "3.0.1",

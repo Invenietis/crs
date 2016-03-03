@@ -10,16 +10,15 @@ namespace CK.Crs.Runtime
     {
         public int Order { get; set; }
 
-        public Task OnCommandReceived( CommandContext context )
+        public Task OnCommandReceived( ICommandFilterContext filterContext )
         {
-            object cmd =  context.ExecutionContext.Model;
-            var validationContext = new ValidationContext(cmd ) ;
+            var validationContext = new ValidationContext(filterContext.Command ) ;
             var results = new List<ValidationResult>();
 
-            if( !Validator.TryValidateObject( cmd, validationContext, results, true ) )
+            if( !Validator.TryValidateObject( filterContext.Command, validationContext, results, true ) )
             {
                 string resultString = GetString( results);
-                context.SetResult( new ValidationResult( resultString ) );
+                filterContext.Reject( resultString );
             }
 
             return Task.FromResult<object>( null );

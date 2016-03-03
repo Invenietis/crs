@@ -9,11 +9,11 @@
     "dependencies": {
         "CK.Crs.Abstractions": "",
         "Newtonsoft.Json": "8.0.2",
-        "SimpleGitVersion.DNXCommands": "0.14.0"
+        "SimpleGitVersion.DNXCommands": "0.14.2"
     },
 
     "frameworks": {
-        "dnx451": {
+        "net451": {
             "frameworkAssemblies": {
                 "System.ComponentModel.DataAnnotations": "4.0.0.0",
                 "System.Transactions": "4.0.0.0"
