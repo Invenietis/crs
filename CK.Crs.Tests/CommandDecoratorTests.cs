@@ -13,7 +13,6 @@ using Is = NUnit.Framework.Is;
 
 namespace CK.Crs.Tests
 {
-    [TestFixture]
     public class CommandDecoratorTests
     {
         CancellationTokenSource _cancellationToken;

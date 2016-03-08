@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if NET451
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,7 +7,6 @@ using System.Transactions;
 
 namespace CK.Core
 {
-
     internal class TransactionOperationManager<T> : IEnlistmentNotification
     {
         readonly IOperationExecutor<T> _operationExecutor;
@@ -74,3 +74,4 @@ namespace CK.Core
         }
     }
 }
+#endif

@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if NET451
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -209,3 +210,4 @@ namespace CK.Crs.Tests
         }
     }
 }
+#endif

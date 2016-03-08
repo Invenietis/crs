@@ -8,18 +8,16 @@
 
     "dependencies": {
         "Microsoft.AspNetCore.Http.Abstractions": "1.0.0-*",
+        "Microsoft.AspNetCore.Owin": "1.0.0-*",
         "Microsoft.Extensions.DependencyInjection": "1.0.0-*",
         "Microsoft.Extensions.PlatformAbstractions": "1.0.0-*",
-        "Microsoft.AspNet.Owin": "1.0.0-rc1-final",
-        "CK.Crs.Owin": "",
-        "Newtonsoft.Json": "8.0.1",
-        "SimpleGitVersionTask": "0.14.2"
+        "CK.Crs.Runtime": "1.0.0-*"
     },
 
     "frameworks": {
         "net451": {
-            "dependencies": {
-            }
+        },
+        "netstandard1.3": {
         }
     }
 }

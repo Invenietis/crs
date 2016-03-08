@@ -10,12 +10,6 @@ namespace CK.Crs
 {
     public class AmbientValuesFilter : ICommandFilter
     {
-        readonly IAmbientValues _ambientValues;
-        public AmbientValuesFilter( IAmbientValues ambientValues )
-        {
-            _ambientValues = ambientValues;
-        }
-
         public int Order
         {
             get { return 0; }
@@ -23,7 +17,7 @@ namespace CK.Crs
 
         public async Task OnCommandReceived( ICommandFilterContext context )
         {
-            var result = await CheckValueAsync( context.Monitor, _ambientValues, context.Command);
+            var result = await CheckValueAsync( context.Monitor, context.AmbientValues, context.Command);
             if( result == AmbientValueCheckResult.Failure )
             {
                 string errorMessage = $"Identity check failed...";

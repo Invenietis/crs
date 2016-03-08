@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using CK.Core;
 
 namespace CK.Crs.Runtime
@@ -33,12 +34,20 @@ namespace CK.Crs.Runtime
         }
         public ICommandScheduler CreateCommandScheduler( ICommandExecutionContext context )
         {
+#if NET451
             return new TransactionnalCommandScheduler( context );
+#else
+            return null;
+#endif
         }
 
         public virtual IExternalEventPublisher CreateExternalEventPublisher( ICommandExecutionContext context )
         {
+#if NET451
             return new TransactionnalEventPublisher( context );
+#else
+            return null;
+#endif
         }
 
         public virtual void ReleaseHandler( ICommandHandler handler )

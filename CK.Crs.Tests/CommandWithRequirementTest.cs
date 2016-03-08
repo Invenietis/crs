@@ -53,7 +53,7 @@ namespace CK.Crs.Tests
         public async Task Permission_Should_be_Challenged_By_AuthorizationFilter()
         {
             // Arrange
-            var secureStore = new Mock<ISecureStore>();
+            var secureStore = new Mock<IProtectedResourceStore>();
 
             var serviceProvider = TestHelper.CreateServiceProvider( sp =>
             {
@@ -68,7 +68,7 @@ namespace CK.Crs.Tests
                         ResultingLevel = GrantLevel.Administrator
                     }))
                     .Verifiable();
-                sp.AddSingleton<ISecureStore>( secureStore.Object );
+                sp.AddSingleton<IProtectedResourceStore>( secureStore.Object );
             });
 
             var monitor = TestHelper.Monitor(_output .WriteLine );
@@ -80,15 +80,16 @@ namespace CK.Crs.Tests
             var description = new RoutedCommandDescriptor( new CommandRoutePath("/c/a"), new CommandDescriptor
             {
                 CommandType = command.GetType(),
-                HandlerType = typeof( SimpleHandler ),
-                Permissions = new [] { MinGrantLevel.Administrator }
+                HandlerType = typeof( SimpleHandler )
             });
-            var filerContext = new FilterContext( monitor, description, command);
+            description.Descriptor.ExtraData.Add( "Permission", MinGrantLevel.Administrator );
+            var ambientValues = TestHelper.CreateAmbientValues( serviceProvider );
+            var filerContext = new FilterContext(  monitor, description, ClaimsPrincipal.Current, ambientValues, command);
 
             var authorizationService = serviceProvider.GetRequiredService<IAuthorizationService>();
 
             ClaimsPrincipal.ClaimsPrincipalSelector = () => new ClaimsPrincipal( new ClaimsIdentity( new[] { new Claim( ClaimTypes.Name, "John" ) }, "Test" ) );
-            var authorizationFilter = new AuthorizationFilter( authorizationService, new TestPrincipalAccessor() );
+            var authorizationFilter = new AuthorizationFilter( authorizationService );
 
             // Act
             await authorizationFilter.OnCommandReceived( filerContext );

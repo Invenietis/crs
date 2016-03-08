@@ -11,30 +11,12 @@ namespace CK.Crs
     {
         int Order { get; }
 
+        /// <summary>
+        /// Used to filter the command. To a command, you should call context.Reject() and specify the reason.
+        /// </summary>
+        /// <param name="context">The <see cref="ICommandFilterContext"/>.</param>
+        /// <returns></returns>
         Task OnCommandReceived( ICommandFilterContext context );
     }
 
-    public interface ICommandFilterContext
-    {
-        /// <summary>
-        /// Gets the <see cref="IActivityMonitor"/> for the current command processing
-        /// </summary>
-        IActivityMonitor Monitor { get; }
-
-        /// <summary>
-        /// Gets the command description.
-        /// </summary>
-        RoutedCommandDescriptor Description { get; }
-
-        /// <summary>
-        /// Gets the command instance
-        /// </summary>
-        object Command { get; }
-
-        /// <summary>
-        /// Rejects the command before execution.
-        /// </summary>
-        /// <param name="reason"></param>
-        void Reject( string reason );
-    }
 }

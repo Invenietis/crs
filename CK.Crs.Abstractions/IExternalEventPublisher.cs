@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace CK.Crs
 {
-    public interface IExternalEventPublisher : CK.Core.IFluentInterface
+    public interface IExternalEventPublisher
     {
         void Push<T>( T @event );
         void ForcePush<T>( T @event );

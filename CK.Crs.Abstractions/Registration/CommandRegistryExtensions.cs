@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -29,8 +30,8 @@ namespace CK.Crs
                 IsLongRunning = false
             };
             defaultCommandDescriptor.Decorators = ExtractDecoratorsFromHandlerAttributes(
-                defaultCommandDescriptor.CommandType,
-                defaultCommandDescriptor.HandlerType )
+                defaultCommandDescriptor.CommandType.GetTypeInfo(),
+                defaultCommandDescriptor.HandlerType.GetTypeInfo() )
                 .ToArray();
 
             var registration = new CommandRegistration( defaultCommandDescriptor );
@@ -38,7 +39,7 @@ namespace CK.Crs
             return registration;
         }
 
-        private static IReadOnlyCollection<Type> ExtractDecoratorsFromHandlerAttributes( Type commandType, Type handlerType )
+        private static IReadOnlyCollection<Type> ExtractDecoratorsFromHandlerAttributes( TypeInfo commandType, TypeInfo handlerType )
         {
             return handlerType.GetCustomAttributes( true ).OfType<ICommandDecorator>().Select( a => a.GetType() ).ToArray();
         }
@@ -53,7 +54,7 @@ namespace CK.Crs
         {
             foreach( var suf in suffixes )
             {
-                if( s.EndsWith( suf, StringComparison.InvariantCultureIgnoreCase ) )
+                if( s.EndsWith( suf, StringComparison.OrdinalIgnoreCase ) )
                 {
                     int idx = s.IndexOf(suf);
                     return s.Substring( 0, idx );

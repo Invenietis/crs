@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Reflection;
 using CK.Core;
 
 namespace CK.Crs.Runtime
@@ -18,10 +19,10 @@ namespace CK.Crs.Runtime
 
         public virtual IExecutionStrategy SelectExecutionStrategy( CommandContext context )
         {
-            if( context.ExecutionContext.IsLongRunning && typeof( RequestCommand ).IsAssignableFrom( context.Description.CommandType ) )
+            if( context.ExecutionContext.IsLongRunning && typeof( RequestCommand ).GetTypeInfo().IsAssignableFrom( context.Description.CommandType.GetTypeInfo() ) )
                 context.ExecutionContext.Monitor.Warn().Send( "The command {0} is describes as a long running command, but inherits from RequestCommand.", context.Description.Name );
 
-            if( context.ExecutionContext.IsLongRunning && !typeof( RequestCommand ).IsAssignableFrom( context.Description.CommandType ) )
+            if( context.ExecutionContext.IsLongRunning && !typeof( RequestCommand ).GetTypeInfo().IsAssignableFrom( context.Description.CommandType.GetTypeInfo() ) )
                 return _async();
 
             return _inprocess();

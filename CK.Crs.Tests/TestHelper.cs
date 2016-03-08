@@ -7,9 +7,14 @@ using CK.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.PlatformAbstractions;
 using Moq;
+using NUnit.Framework;
 
 namespace CK.Crs.Tests
 {
+    class TestAttribute : Xunit.FactAttribute
+    {
+    }
+
     public class TestHelper
     {
         public static IServiceProvider CreateServiceProvider( Action<IServiceCollection> setup )
@@ -53,6 +58,15 @@ namespace CK.Crs.Tests
             e.Setup( x => x.Schedule( It.IsAny<object>(), It.IsAny<CommandSchedulingOption>() ) ).Returns( () => Guid.NewGuid() );
             e.Setup( x => x.CancelScheduling( It.IsAny<Guid>() ) ).Returns( false );
             return e.Object;
+        }
+
+        internal static IAmbientValues CreateAmbientValues( IServiceProvider sp = null )
+        {
+            sp = sp ?? TestHelper.CreateServiceProvider( Util.ActionVoid );
+
+            IAmbientValues ambientValues = new AmbientValues( new DefaultAmbientValueFactory( sp) );
+
+            return ambientValues;
         }
     }
 }

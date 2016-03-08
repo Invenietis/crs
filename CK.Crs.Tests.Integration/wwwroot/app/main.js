@@ -1,4 +1,6 @@
-System.register(['ck-crs/core', './app', 'angular2/platform/browser', 'angular2/core', 'ck-qrs/core', 'ck-qrs/angular2'], function(exports_1) {
+System.register(['ck-crs/core', './app', 'angular2/platform/browser', 'angular2/core', 'ck-qrs/core', 'ck-qrs/angular2'], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var core_1, app_1, browser_1, core_2, core_3, angular2_1;
     var httpListener, hub, emitter, registry;
     return {

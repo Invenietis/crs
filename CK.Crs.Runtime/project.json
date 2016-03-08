@@ -7,9 +7,8 @@
     "licenseUrl": "",
 
     "dependencies": {
-        "CK.Crs.Abstractions": "",
-        "Newtonsoft.Json": "8.0.2",
-        "SimpleGitVersion.DNXCommands": "0.14.2"
+        "CK.Crs.Abstractions": "1.0.0-*",
+        "Newtonsoft.Json": "8.0.1"
     },
 
     "frameworks": {
@@ -17,6 +16,15 @@
             "frameworkAssemblies": {
                 "System.ComponentModel.DataAnnotations": "4.0.0.0",
                 "System.Transactions": "4.0.0.0"
+            },
+            "dependencies": {
+                "SimpleGitVersion.DNXCommands": "0.14.2"
+            }
+        },
+        "netstandard1.3": {
+            "dependencies": {
+                "System.ComponentModel.Annotations": "4.1.0-*",
+                "System.Threading.Timer": "4.0.1-*"
             }
         }
     },

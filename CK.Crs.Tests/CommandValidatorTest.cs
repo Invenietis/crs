@@ -11,6 +11,7 @@ using NUnit;
 using Assert = NUnit.Framework.Assert;
 using Is = NUnit.Framework.Is;
 using Xunit.Abstractions;
+using System.Security.Claims;
 
 namespace CK.Crs.Tests
 {
@@ -63,7 +64,8 @@ namespace CK.Crs.Tests
                 "3712",
                 _cancellationToken.Token);
 
-            var filterContext= new FilterContext( monitor, descriptor, command);
+            var ambientValues = TestHelper.CreateAmbientValues();
+            var filterContext= new FilterContext( monitor, descriptor, ClaimsPrincipal.Current, ambientValues, command);
             // Act
             DefaultCommandValidator v = new DefaultCommandValidator();
             v.OnCommandReceived( filterContext );
@@ -87,7 +89,7 @@ namespace CK.Crs.Tests
             return new RoutedCommandDescriptor( new CommandRoutePath( "/prefix", typeof( T ).Name ), new CommandDescriptor
             {
                 CommandType = typeof( T ),
-                Decorators = CK.Core.Util.EmptyArray<Type>.Empty,
+                Decorators = CK.Core.Util.Array.Empty<Type>(),
                 IsLongRunning = false,
             } );
         }

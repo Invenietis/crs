@@ -14,6 +14,11 @@ namespace CK.Crs
         /// <param name="name">The name of the ambient parameter managed by this <see cref="IAmbientValueProvider"/></param>
         void Register<T>( string name ) where T : IAmbientValueProvider;
 
+        /// <summary>
+        /// Register a deferred pointer to an instance of <see cref="IAmbientValueProvider"/>
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="provider"></param>
         void Register( string name, Func<IAmbientValueProvider> provider );
     }
 

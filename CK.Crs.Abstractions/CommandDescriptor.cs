@@ -12,8 +12,6 @@ namespace CK.Crs
     {
         public CommandDescriptor()
         {
-            Decorators = CK.Core.Util.EmptyArray<Type>.Empty;
-            Permissions = CK.Core.Util.EmptyArray<object>.Empty;
         }
 
         /// <summary>
@@ -42,6 +40,13 @@ namespace CK.Crs
         /// </summary>
         public IReadOnlyCollection<Type> Decorators { get; set; }
 
-        public IReadOnlyCollection<object> Permissions { get; set; }
+        IDictionary<string, object> _extraData;
+        /// <summary>
+        /// Gets or sets a read-only dictionary of extra data.
+        /// </summary>
+        public IDictionary<string, object> ExtraData
+        {
+            get { return _extraData ?? (_extraData = new Dictionary<string, object>()); }
+        }
     }
 }

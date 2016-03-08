@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
+using System.Reflection;
 using System.Threading.Tasks;
 using CK.Authentication;
 using CK.Authorization;
@@ -12,18 +12,15 @@ namespace CK.Crs.Extensions
     public class AuthorizationFilter : ICommandFilter
     {
         readonly IAuthorizationService _authorizationService;
-        readonly IPrincipalAccessor _principalAccessor;
 
-        public AuthorizationFilter( IAuthorizationService authorizationService, IPrincipalAccessor principalAccessor )
+        public AuthorizationFilter( IAuthorizationService authorizationService )
         {
             _authorizationService = authorizationService;
-            _principalAccessor = principalAccessor;
         }
 
         public async Task OnCommandReceived( ICommandFilterContext context )
         {
-            var user = _principalAccessor.User as ClaimsPrincipal;
-            if( user == null ) throw new NotSupportedException( "Only claim based authentication is supported" );
+            if( context.User == null ) throw new NotSupportedException( "A command MUST be linked to a principal, even if anonymous command is issued." );
 
             IReadOnlyCollection<ProtectedResource> resources = GetSecuredResourceDescription( context ).ToArray();
             IReadOnlyCollection<IAuthorizationRequirement> requirements = ReadRequirements( context );
@@ -32,7 +29,7 @@ namespace CK.Crs.Extensions
             {
                 foreach( var resource in resources )
                 {
-                    var resourceAuthorized = await _authorizationService.AuthorizeAsync( user, resource, requirements );
+                    var resourceAuthorized = await _authorizationService.AuthorizeAsync( context.User, resource, requirements );
                     if( !resourceAuthorized )
                     {
                         context.Reject( $"User not authorized for resource {resource.ResourceType}." );
@@ -41,7 +38,7 @@ namespace CK.Crs.Extensions
                 }
             }
 
-            var authorized = await _authorizationService.AuthorizeAsync( user, null, requirements );
+            var authorized = await _authorizationService.AuthorizeAsync( context.User, null, requirements );
             if( !authorized )
             {
                 context.Reject( "User not authorized." );
@@ -51,8 +48,8 @@ namespace CK.Crs.Extensions
 
         private IEnumerable<ProtectedResource> GetSecuredResourceDescription( ICommandFilterContext context )
         {
-            var securityAttributes = context.Description.Descriptor.CommandType
-                    .GetProperties()
+            var securityAttributes = context.Description.Descriptor.CommandType.GetTypeInfo()
+                    .DeclaredProperties
                     .Select(
                         m => new
                         {
@@ -79,7 +76,7 @@ namespace CK.Crs.Extensions
 
         private IReadOnlyCollection<IAuthorizationRequirement> ReadRequirements( ICommandFilterContext context )
         {
-            return context.Description.Descriptor.Permissions.OfType<IAuthorizationRequirement>().ToArray();
+            return context.Description.Descriptor.ExtraData.OfType<IAuthorizationRequirement>().ToArray();
         }
 
         public int Order

@@ -16,7 +16,9 @@ namespace CK.Crs.Tests.Handlers
 
     public class TransferAlwaysSuccessHandler : CommandHandler<TransferAmountCommand, TransferAmountCommand.Result>
     {
+#if NET451
         [Transaction]
+#endif
         protected override Task<TransferAmountCommand.Result> DoHandleAsync( ICommandExecutionContext context, TransferAmountCommand command )
         {
             using( context.Monitor.OpenInfo().Send( $"Transferring {command.Amount} from {command.SourceAccountId} to {command.DestinationAccountId} " ) )
@@ -54,7 +56,6 @@ namespace CK.Crs.Tests.Handlers
     }
 
 
-    [Transaction]
     public class TransferAlwaysSuccessHandlerWithDecoration : TransferAlwaysSuccessHandler
     {
     }

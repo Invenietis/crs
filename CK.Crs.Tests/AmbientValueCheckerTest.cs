@@ -10,7 +10,6 @@ using Is = NUnit.Framework.Is;
 using Microsoft.Extensions.DependencyInjection;
 using CK.Authentication;
 using Moq;
-using CK.SqlServer;
 using CK.Crs.Runtime;
 
 namespace CK.Crs.Tests
@@ -35,13 +34,11 @@ namespace CK.Crs.Tests
             var sp = TestHelper.CreateServiceProvider( serviceCollection =>
             {
                 serviceCollection
-                    .AddSingleton<ISqlCallContextProvider<IDisposableSqlCallContext>, SqlStandardCallContextProvider>()
                     .AddSingleton<ActorIdProvider>()
-                    .AddSingleton<IAuthenticationStore>( Mock.Of<IAuthenticationStore>())
-                    .AddSingleton<IPrincipalAccessor>( new TestPrincipalAccessor() );
+                    .AddSingleton<IAuthenticationStore>( Mock.Of<IAuthenticationStore>());
             } );
-            IAmbientValues ambientValues = new AmbientValues( new DefaultAmbientValueFactory( sp) );
-            AmbientValuesFilter filter = new AmbientValuesFilter( ambientValues );
+
+            AmbientValuesFilter filter = new AmbientValuesFilter();
             var description = new RoutedCommandDescriptor( new CommandRoutePath("/a", "simpleCommand"), new CommandDescriptor());
             var commandModel = new SimpleCommand
             {
@@ -57,7 +54,10 @@ namespace CK.Crs.Tests
                 false,
                 String.Empty,
                 default( CancellationToken));
-            await filter.OnCommandReceived( new FilterContext( command.Monitor, description, command ) );
+
+            var ambientValues = TestHelper.CreateAmbientValues( sp );
+
+            await filter.OnCommandReceived( new FilterContext( command.Monitor, description, ClaimsPrincipal.Current, ambientValues, command ) );
 
         }
     }

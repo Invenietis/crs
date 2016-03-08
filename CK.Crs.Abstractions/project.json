@@ -8,18 +8,16 @@
 
     "frameworks": {
         "net451": {
-            "frameworkAssemblies": {
-                "System.ComponentModel.DataAnnotations": "4.0.0.0"
+        },
+        "netstandard1.3": {
+            "dependencies": {
+                "System.ComponentModel.Annotations": "4.1.0-*",
+                "System.Security.Claims": "4.0.1-*"
             }
         }
     },
     "dependencies": {
-        "CK.Core": "4.3.0",
-        "SimpleGitVersion.DNXCommands": "0.14.2",
-        "SimpleGitVersionTask": "0.14.2",
-        "System.Linq.Expressions": "4.0.11-beta-23516"
-    },
-    "scripts": {
-        "prebuild": "sgv prebuild"
+        "CK.Core": "5.0.0",
+        "CK.ActivityMonitor": "5.0.0"
     }
 }

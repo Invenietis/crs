@@ -5,24 +5,24 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using CK.Authentication;
-using CK.SqlServer;
 using Moq;
 using Xunit;
 using Assert = NUnit.Framework.Assert;
 using Is = NUnit.Framework.Is;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Http;
 
 namespace CK.Crs.Tests
 {
     public class ActorIdProvider : IAmbientValueProvider
     {
         readonly IAuthenticationStore _userTable;
-        readonly IPrincipalAccessor _principalAccessor;
+        readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ActorIdProvider( IAuthenticationStore userTable, IPrincipalAccessor principalAccessor )
+        public ActorIdProvider( IAuthenticationStore userTable, IHttpContextAccessor httpContextAccessor )
         {
             _userTable = userTable;
-            _principalAccessor = principalAccessor;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public string Name
@@ -34,7 +34,7 @@ namespace CK.Crs.Tests
 
         public async Task<object> GetValueAsync( IAmbientValues values )
         {
-            var currentIdentity = _principalAccessor.User.Identity;
+            var currentIdentity = _httpContextAccessor.HttpContext.User.Identity;
             if( currentIdentity.IsAuthenticated )
             {
                 var user = await _userTable.GetUserByName( currentIdentity.Name );
@@ -55,10 +55,8 @@ namespace CK.Crs.Tests
             var sp = TestHelper.CreateServiceProvider( serviceCollection =>
             {
                 serviceCollection
-                    .AddSingleton<ISqlCallContextProvider<IDisposableSqlCallContext>, SqlStandardCallContextProvider>()
                     .AddSingleton<ActorIdProvider>()
-                    .AddSingleton( mockDatabase.Object )
-                    .AddSingleton<IPrincipalAccessor>( new TestPrincipalAccessor() );
+                    .AddSingleton( mockDatabase.Object );
             } );
             IAmbientValues ambientValues = new AmbientValues( new DefaultAmbientValueFactory( sp) );
             ambientValues.Register<ActorIdProvider>( "ActorId" );

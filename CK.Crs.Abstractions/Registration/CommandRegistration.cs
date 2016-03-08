@@ -34,9 +34,9 @@ namespace CK.Crs
             return this;
         }
 
-        CommandRegistration AddPermission( object permission )
+        CommandRegistration AddExtraData( string key, object value )
         {
-            _commandDescription.Permissions = _commandDescription.Permissions.Union( new[] { permission } ).ToArray();
+            _commandDescription.ExtraData.Add( key, value );
             return this;
         }
 
@@ -72,9 +72,9 @@ namespace CK.Crs
         {
             return IsLongRunning();
         }
-        ICommandConfiguration<ICommandRegistrationWithFilter> ICommandConfiguration<ICommandRegistrationWithFilter>.AddPermission( object permission )
+        ICommandConfiguration<ICommandRegistrationWithFilter> ICommandConfiguration<ICommandRegistrationWithFilter>.AddExtraData( string key, object value )
         {
-            return AddPermission( permission );
+            return AddExtraData( key, value );
         }
 
         ICommandConfigurationWithFilter<ICommandRegistrationWithFilter> ICommandConfigurationWithFilter<ICommandRegistrationWithFilter>.AddFilter<T1>()
@@ -87,9 +87,9 @@ namespace CK.Crs
             return AddDecorator<T1>();
         }
 
-        ICommandConfiguration<ICommandRegistration> ICommandConfiguration<ICommandRegistration>.AddPermission( object permission )
+        ICommandConfiguration<ICommandRegistration> ICommandConfiguration<ICommandRegistration>.AddExtraData( string key, object value )
         {
-            return AddPermission( permission );
+            return AddExtraData( key, value );
         }
 
         ICommandConfiguration<ICommandRegistration> ICommandConfiguration<ICommandRegistration>.CommandName( string commandName )

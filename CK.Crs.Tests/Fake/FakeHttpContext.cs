@@ -6,9 +6,9 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Http.Authentication;
-using Microsoft.AspNet.Http.Features;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Authentication;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Primitives;
 
 namespace CK.Crs.Tests.Fake
@@ -41,7 +41,7 @@ namespace CK.Crs.Tests.Fake
             };
         }
 
-        class ReadableStringCollection : IReadableStringCollection
+        class ReadableStringCollection : IQueryCollection
         {
             private string c; private string v;
 
@@ -85,22 +85,14 @@ namespace CK.Crs.Tests.Fake
                 throw new NotImplementedException();
             }
 
-            IEnumerator IEnumerable.GetEnumerator()
+            public bool TryGetValue( string key, out StringValues value )
             {
                 throw new NotImplementedException();
             }
-        }
 
-        public override IServiceProvider ApplicationServices
-        {
-            get
+            IEnumerator IEnumerable.GetEnumerator()
             {
-                return _sp;
-            }
-
-            set
-            {
-                _sp = value;
+                throw new NotImplementedException();
             }
         }
 

@@ -8,13 +8,14 @@
     "frameworks": {
         "net451": {
             "dependencies": {
-                "Owin": "1.0.0",
                 "Microsoft.Owin": "3.0.1",
-                "CK.Crs.Abstractions": ""
+                "Owin": "1.0.0",
+                "CK.Crs.Abstractions": "1.0.0-*",
+                "CK.Crs.Runtime": "1.0.0-*"
             }
         }
     },
     "dependencies": {
-        "CK.Crs.Runtime": "1.0.0-alpha-01"
+
     }
 }

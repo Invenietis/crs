@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,8 +24,11 @@ namespace CK.Crs.Runtime
             _factory = factory;
         }
 
-        private FilterInfo[] _internalFilters = new FilterInfo []{
-            new FilterInfo { Instance = new HandlerVerificationFilter(), Type = typeof(HandlerVerificationFilter) } };
+        private FilterInfo[] _internalFilters = new FilterInfo []
+        {
+            new FilterInfo( new HandlerVerificationFilter() ),
+            new FilterInfo( new AmbientValuesFilter() )
+        };
 
         public async Task<CommandResponse> ProcessCommandAsync( CommandRequest commandRequest, IActivityMonitor monitor, CancellationToken cancellationToken = default( CancellationToken ) )
         {
@@ -32,12 +36,14 @@ namespace CK.Crs.Runtime
 
             using( monitor.OpenTrace().Send( $"Processing new command [commandId={commandId}]..." ) )
             {
-                var filterContext = new FilterContext(monitor, commandRequest.CommandDescription, commandRequest.Command);
+                var principal = CreateIdentityFromCommand( commandRequest.Command );
+                var ambientValues = CreateAmbientValues( commandRequest.Command);
+                var filterContext = new FilterContext(monitor, commandRequest.CommandDescription, principal, ambientValues, commandRequest.Command);
 
                 using( monitor.OpenTrace().Send( "Applying filters..." )
                     .ConcludeWith( () => filterContext.IsRejected ? "INVALID" : "OK" ) )
                 {
-                    foreach( var filter in _internalFilters.Union( commandRequest.CommandDescription.Filters.Select( f => new FilterInfo { Type = f, Instance = _factory.CreateFilter( f ) } ) ) )
+                    foreach( var filter in _internalFilters.Union( commandRequest.CommandDescription.Filters.Select( f => new FilterInfo( _factory.CreateFilter( f ) ) ) ) )
                     {
                         if( filter.Instance == null )
                         {
@@ -84,8 +90,24 @@ namespace CK.Crs.Runtime
             }
         }
 
+        protected virtual IAmbientValues CreateAmbientValues( object command )
+        {
+            throw new NotImplementedException();
+        }
+
+        protected virtual ClaimsPrincipal CreateIdentityFromCommand( object command )
+        {
+            throw new NotImplementedException();
+        }
+
         class FilterInfo
         {
+            public FilterInfo( ICommandFilter instance )
+            {
+                instance = Instance;
+                Type = instance.GetType();
+            }
+
             public Type Type { get; set; }
             public ICommandFilter Instance { get; set; }
         }

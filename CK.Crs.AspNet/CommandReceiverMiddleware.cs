@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.Owin;
+using CK.Core;
 using CK.Crs.Runtime;
+using Microsoft.AspNetCore.Http;
 
 namespace CK.Crs
 {
     // You may need to install the Microsoft.AspNet.Http.Abstractions package into your project
-    public class CommandReceiverMiddleware : OwinMiddleware
+    public class CommandReceiverMiddleware
     {
         /// <summary>
         /// Shared options
@@ -16,24 +17,20 @@ namespace CK.Crs
         private readonly ICommandReceiver _receiver;
         private readonly ICommandFormatter _formatter;
 
-        public CommandReceiverMiddleware( OwinMiddleware next, ICommandRouteCollection routes, ICommandReceiver receiver, ICommandFormatter formatter )
-            : base( next )
+        RequestDelegate _next;
+        public CommandReceiverMiddleware( RequestDelegate next, ICommandRouteCollection routes, ICommandReceiver receiver, ICommandFormatter formatter )
         {
             if( routes == null ) throw new ArgumentNullException( nameof( routes ) );
             if( receiver == null ) throw new ArgumentNullException( nameof( receiver ) );
             if( formatter == null ) throw new ArgumentNullException( nameof( formatter ) );
 
+            _next = next;
             _routes = routes;
             _receiver = receiver;
             _formatter = formatter;
         }
 
-        public Task InvokeAsync( IDictionary<string, object> environment )
-        {
-            return Invoke( new OwinContext( environment ) );
-        }
-
-        public async override Task Invoke( IOwinContext context )
+        public async Task Invoke( HttpContext context )
         {
             // __types -> 
             var monitor = new Core.ActivityMonitor(context.Request.Path.Value );
@@ -41,11 +38,11 @@ namespace CK.Crs
             var routedCommandDescriptor = _routes.FindCommandDescriptor( context.Request.Path.Value );
             if( routedCommandDescriptor == null )
             {
-                if( Next != null ) await Next.Invoke( context );
+                if( _next != null ) await _next.Invoke( context );
             }
             else
             {
-                CommandRequest commandRequest =  _formatter.Deserialize( routedCommandDescriptor, context.Request.Body, context.Request.Environment );
+                CommandRequest commandRequest =  _formatter.Deserialize( routedCommandDescriptor, context.Request.Body, null );
                 if( commandRequest == null )
                 {
                     string msg = String.Format(

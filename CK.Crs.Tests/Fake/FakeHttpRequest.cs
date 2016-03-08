@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Http;
+using Microsoft.AspNetCore.Http;
 
 namespace CK.Crs.Tests.Fake
 {
@@ -23,7 +23,7 @@ namespace CK.Crs.Tests.Fake
 
         public override string ContentType { get; set; }
 
-        public override IReadableStringCollection Cookies { get; set; }
+        public override IRequestCookieCollection Cookies { get; set; }
 
         public override IFormCollection Form { get; set; }
 
@@ -63,8 +63,7 @@ namespace CK.Crs.Tests.Fake
 
         public override string Protocol { get; set; }
 
-        public override IReadableStringCollection Query { get; set; }
-
+        public override IQueryCollection Query { get; set; }
         public override QueryString QueryString { get; set; }
 
         public override string Scheme { get; set; }

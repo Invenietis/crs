@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using CK.Core;
 
@@ -8,11 +9,13 @@ namespace CK.Crs.Runtime
 {
     public class FilterContext : ICommandFilterContext
     {
-        public FilterContext( IActivityMonitor monitor, RoutedCommandDescriptor description, object command )
+        public FilterContext( IActivityMonitor monitor, RoutedCommandDescriptor description, ClaimsPrincipal principal, IAmbientValues ambientValues, object command )
         {
             Monitor = monitor;
             Description = description;
             Command = command;
+            User = principal;
+            AmbientValues = ambientValues;
         }
 
         public IActivityMonitor Monitor { get; }
@@ -34,5 +37,9 @@ namespace CK.Crs.Runtime
         public bool IsRejected { get; private set; }
 
         public string RejectReason { get; private set; }
+
+        public ClaimsPrincipal User { get; }
+
+        public IAmbientValues AmbientValues { get; set; }
     }
 }

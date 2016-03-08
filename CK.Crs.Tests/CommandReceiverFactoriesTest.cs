@@ -7,7 +7,6 @@ using Is = NUnit.Framework.Is;
 
 namespace CK.Crs.Tests
 {
-    [TestFixture]
     public class CommandReceiverFactoriesTest
     {
         [Test][Fact]

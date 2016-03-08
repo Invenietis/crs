@@ -1,6 +1,7 @@
 ﻿using System;
 using CK.Crs.Runtime;
-using Microsoft.AspNet.Builder;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CK.Crs
@@ -9,9 +10,8 @@ namespace CK.Crs
     // Extension method used to add the middleware to the HTTP request pipeline.
     public static class CommandReceiverExtensions
     {
-        public static IApplicationBuilder UseCommandReceiver(
-            this IApplicationBuilder builder,
-            Microsoft.AspNet.Http.PathString routePrefix,
+        public static IApplicationBuilder UseCommandReceiver( this IApplicationBuilder builder,
+            PathString routePrefix,
             Action<CommandReceiverConfiguration> config )
         {
             if( string.IsNullOrWhiteSpace( routePrefix ) ) throw new ArgumentNullException( nameof( routePrefix ) );
@@ -22,11 +22,7 @@ namespace CK.Crs
                 var routeCollection = new CommandRouteCollection( routePrefix );
                 var middlewareConfiguration = new CommandReceiverConfiguration( registry, routeCollection);
                 config( middlewareConfiguration );
-                app.UseOwin( pipeline =>
-                {
-                    var receiverMiddleware = new CommandReceiverMiddleware( null, routeCollection, builder.ApplicationServices );
-                    pipeline( next => receiverMiddleware.InvokeAsync );
-                } );
+                app.UseMiddleware<CommandReceiverMiddleware>( routeCollection );
             } );
         }
 

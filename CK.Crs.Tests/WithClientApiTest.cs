@@ -14,7 +14,6 @@ using Xunit;
 
 namespace CK.Crs.Tests
 {
-    [TestFixture]
     public class WithClientApiTest
     {
         [Test][Fact]

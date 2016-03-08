@@ -1,6 +1,6 @@
 ﻿namespace CK.Crs
 {
-    public interface ICommandConfiguration<TConfig>: CK.Core.IFluentInterface
+    public interface ICommandConfiguration<TConfig>
         where TConfig : ICommandConfiguration<TConfig>
     {
         /// <summary>
@@ -23,15 +23,15 @@
         /// <returns></returns>
         ICommandConfiguration<TConfig> IsLongRunning();
 
-        ICommandConfiguration<TConfig> AddPermission( object permission );
+        ICommandConfiguration<TConfig> AddExtraData( string key, object data );
     }
 
-    public interface ICommandConfigurationWithHandling<TConfig> : CK.Core.IFluentInterface
+    public interface ICommandConfigurationWithHandling<TConfig>
     {
         ICommandConfigurationWithHandling<TConfig> HandledBy<THandler>() where THandler : ICommandHandler;
     }
 
-    public interface ICommandConfigurationWithFilter<TConfig> : CK.Core.IFluentInterface
+    public interface ICommandConfigurationWithFilter<TConfig>
     {
         /// <summary>
         /// Add a <see cref="ICommandFilter"/> to this command that will be invoked as soon as the command is received by the server.
@@ -41,11 +41,11 @@
         ICommandConfigurationWithFilter<TConfig> AddFilter<T>() where T : ICommandFilter;
     }
 
-    public interface ICommandRegistration : ICommandConfiguration<ICommandRegistration>, ICommandConfigurationWithHandling<ICommandRegistration>, CK.Core.IFluentInterface
+    public interface ICommandRegistration : ICommandConfiguration<ICommandRegistration>, ICommandConfigurationWithHandling<ICommandRegistration>
     {
     }
 
-    public interface ICommandRegistrationWithFilter : ICommandConfiguration<ICommandRegistrationWithFilter>, ICommandConfigurationWithFilter<ICommandRegistrationWithFilter>, CK.Core.IFluentInterface
+    public interface ICommandRegistrationWithFilter : ICommandConfiguration<ICommandRegistrationWithFilter>, ICommandConfigurationWithFilter<ICommandRegistrationWithFilter>
     {
     }
 }

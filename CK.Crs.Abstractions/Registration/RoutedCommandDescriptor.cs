@@ -11,7 +11,7 @@ namespace CK.Crs
         {
             Route = Route;
             Descriptor = commandDescriptor;
-            Filters = CK.Core.Util.EmptyArray<Type>.Empty;
+            Filters = Core.Util.Array.Empty<Type>();
         }
 
         /// <summary>
@@ -23,7 +23,10 @@ namespace CK.Crs
         /// Gets the Route of this command
         /// </summary>
         public CommandRoutePath Route { get; }
-        
+
+        /// <summary>
+        /// 
+        /// </summary>
         public IReadOnlyCollection<Type> Filters { get; set; }
     }
 }

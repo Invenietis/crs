@@ -1,5 +1,7 @@
 /// <reference path="../libs/ck-command.d.ts" />
-System.register(['angular2/core', 'ck-crs/core', 'ck-qrs/angular2'], function(exports_1) {
+System.register(['angular2/core', 'ck-crs/core', 'ck-qrs/angular2'], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -41,10 +43,11 @@ System.register(['angular2/core', 'ck-crs/core', 'ck-qrs/angular2'], function(ex
                         templateUrl: 'app/app.html',
                         directives: [angular2_1.CkModelComponent]
                     }), 
-                    __metadata('design:paramtypes', [core_2.CommandEmitter])
+                    __metadata('design:paramtypes', [(typeof (_a = typeof core_2.CommandEmitter !== 'undefined' && core_2.CommandEmitter) === 'function' && _a) || Object])
                 ], AppComponent);
                 return AppComponent;
-            })();
+                var _a;
+            }());
             exports_1("AppComponent", AppComponent);
         }
     }

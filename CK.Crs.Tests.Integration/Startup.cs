@@ -1,11 +1,7 @@
-﻿using Microsoft.AspNet.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
 using CK.Crs.Handlers;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Diagnostics;
-using Microsoft.AspNet.Authentication.OAuth;
-using Microsoft.AspNet.Http;
 using System.Threading.Tasks;
 using System;
 
@@ -42,7 +38,7 @@ namespace CK.Crs.Tests.Integration
                     .AddFilter<CK.Crs.Extensions.AuthorizationFilter>()
                     .AddCommands(
                         registry => registry.Registration.Where( c => c.CommandType.Namespace.StartsWith( "CK.Crs" ) ),
-                        config => config.AddPermission( CK.Authorization.MinGrantLevel.Administrator ) )
+                        config => config.AddExtraData( "Permission", CK.Authorization.MinGrantLevel.Administrator ) )
                     .AddCommand<TransferAmountCommand>().CommandName( "transfer" ).AddDecorator<TransactionAttribute>();
             } );
             app.UseCommandReceiver( "/c/public", options =>
