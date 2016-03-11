@@ -1,10 +1,8 @@
 {
     "projects": [
-        ".",
-        "wrap",
-        "../Auth",
-        "../Core",
-        "../../../ck-core"
+        "../ck-auth",
+        "../ck-core",
+        "../ck-framework"
     ],
     "sdk": {
         "version": "1.0.0-rc2-16595"

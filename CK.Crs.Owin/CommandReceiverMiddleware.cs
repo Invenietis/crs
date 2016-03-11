@@ -35,34 +35,18 @@ namespace CK.Crs
 
         public async override Task Invoke( IOwinContext context )
         {
-            // __types -> 
             var monitor = new Core.ActivityMonitor(context.Request.Path.Value );
 
-            var routedCommandDescriptor = _routes.FindCommandDescriptor( context.Request.Path.Value );
-            if( routedCommandDescriptor == null )
+            var commandRequest = new CommandRequest( context.Request.Path.Value,context.Request.Body, context.Authentication.User, monitor);
+
+            CommandResponse commandResponse = await _receiver.ProcessCommandAsync( commandRequest );
+            if( commandResponse != null )
             {
-                if( Next != null ) await Next.Invoke( context );
+                commandResponse.Write( context.Response.Body );
             }
             else
             {
-                CommandRequest commandRequest =  _formatter.Deserialize( routedCommandDescriptor, context.Request.Body, context.Request.Environment );
-                if( commandRequest == null )
-                {
-                    string msg = String.Format(
-                        "A valid command definition has been infered from routes, but the command type {0} failed to be instanciated.",
-                        routedCommandDescriptor.Descriptor.CommandType.Name );
-
-                    throw new InvalidOperationException( msg );
-                }
-
-                CommandResponse commandResponse = await _receiver.ProcessCommandAsync( commandRequest, monitor );
-                if( commandResponse == null )
-                {
-                    string msg = String.Format( "A valid command response must be received" );
-                    throw new InvalidOperationException( msg );
-                }
-
-                _formatter.Serialize( commandResponse, context.Response.Body );
+                await Next?.Invoke( context );
             }
         }
 

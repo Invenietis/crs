@@ -6,11 +6,9 @@
         "CK.Crs.Extensions": "1.0.0-*",
         "Microsoft.AspNetCore.Mvc": "1.0.0-*",
         "Microsoft.AspNetCore.Authentication.Cookies": "1.0.0-*",
-        "Microsoft.AspNetCore.Authentication.Facebook": "1.0.0-*",
         "Microsoft.AspNetCore.Server.Kestrel": "1.0.0-*",
         "Microsoft.AspNetCore.StaticFiles": "1.0.0-*",
-        "Microsoft.Extensions.PlatformAbstractions": "1.0.0-*",
-        "SimpleGitVersion.DNXCommands": "0.14.2"
+        "Microsoft.Extensions.PlatformAbstractions": "1.0.0-*"
     },
   "commands": {
     "web": "Microsoft.AspNet.Server.Kestrel"

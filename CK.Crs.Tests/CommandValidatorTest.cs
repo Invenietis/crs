@@ -62,10 +62,11 @@ namespace CK.Crs.Tests
                 Guid.NewGuid(),
                 descriptor.Descriptor.IsLongRunning,
                 "3712",
+                ClaimsPrincipal.Current,
                 _cancellationToken.Token);
 
             var ambientValues = TestHelper.CreateAmbientValues();
-            var filterContext= new FilterContext( monitor, descriptor, ClaimsPrincipal.Current, ambientValues, command);
+            var filterContext= new FilterContext( monitor, descriptor, ClaimsPrincipal.Current, command);
             // Act
             DefaultCommandValidator v = new DefaultCommandValidator();
             v.OnCommandReceived( filterContext );
@@ -89,7 +90,7 @@ namespace CK.Crs.Tests
             return new RoutedCommandDescriptor( new CommandRoutePath( "/prefix", typeof( T ).Name ), new CommandDescriptor
             {
                 CommandType = typeof( T ),
-                Decorators = CK.Core.Util.Array.Empty<Type>(),
+                Decorators = Util.Array.Empty<Type>(),
                 IsLongRunning = false,
             } );
         }

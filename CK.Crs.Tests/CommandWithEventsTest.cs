@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
@@ -38,6 +39,7 @@ namespace CK.Crs.Tests
                 Guid.NewGuid(),
                 false,
                 String.Empty,
+                ClaimsPrincipal.Current,
                 default( CancellationToken));
             try
             {
@@ -187,6 +189,7 @@ namespace CK.Crs.Tests
                 Guid.NewGuid(),
                 false,
                 String.Empty,
+                ClaimsPrincipal.Current,
                 default( CancellationToken ) );
         }
 

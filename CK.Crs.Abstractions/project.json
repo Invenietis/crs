@@ -10,8 +10,8 @@
         "net451": {
         },
         "netstandard1.3": {
+            "imports": [ "dotnet5.4" ],
             "dependencies": {
-                "System.ComponentModel.Annotations": "4.1.0-*",
                 "System.Security.Claims": "4.0.1-*"
             }
         }

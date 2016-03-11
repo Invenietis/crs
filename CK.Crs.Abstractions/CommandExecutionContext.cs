@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using CK.Core;
@@ -17,18 +18,22 @@ namespace CK.Crs
             object model, 
             Guid commandId, 
             bool longRunning, 
-            string callbackId, 
+            string callbackId,
+            ClaimsPrincipal user,
             CancellationToken cancellationToken )
         {
             if( eventPublisher == null ) throw new ArgumentNullException( nameof( eventPublisher ) );
+            if( commandScheduler == null ) throw new ArgumentNullException( nameof( commandScheduler ) );
 
             _eventPublisherLazy = new Lazy<IExternalEventPublisher>( () => eventPublisher( this ) );
             _cSchedulerLazy = new Lazy<ICommandScheduler>( () => commandScheduler( this ) );
+
             Monitor = monitor;
             CommandId = commandId;
             IsLongRunning = longRunning;
             CallbackId = callbackId;
             Model = model;
+            User = user;
             CommandAborted = cancellationToken;
         }
 
@@ -53,5 +58,7 @@ namespace CK.Crs
         {
             get { return _cSchedulerLazy.Value; }
         }
+
+        public ClaimsPrincipal User { get; }
     }
 }

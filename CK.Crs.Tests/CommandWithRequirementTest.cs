@@ -84,7 +84,7 @@ namespace CK.Crs.Tests
             });
             description.Descriptor.ExtraData.Add( "Permission", MinGrantLevel.Administrator );
             var ambientValues = TestHelper.CreateAmbientValues( serviceProvider );
-            var filerContext = new FilterContext(  monitor, description, ClaimsPrincipal.Current, ambientValues, command);
+            var filerContext = new FilterContext(  monitor, description, ClaimsPrincipal.Current,  command);
 
             var authorizationService = serviceProvider.GetRequiredService<IAuthorizationService>();
 

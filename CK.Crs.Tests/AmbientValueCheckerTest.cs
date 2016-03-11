@@ -53,11 +53,12 @@ namespace CK.Crs.Tests
                 Guid.NewGuid(),
                 false,
                 String.Empty,
+                ClaimsPrincipal.Current,
                 default( CancellationToken));
 
             var ambientValues = TestHelper.CreateAmbientValues( sp );
 
-            await filter.OnCommandReceived( new FilterContext( command.Monitor, description, ClaimsPrincipal.Current, ambientValues, command ) );
+            await filter.OnCommandReceived( new FilterContext( command.Monitor, description, ClaimsPrincipal.Current, command ) );
 
         }
     }

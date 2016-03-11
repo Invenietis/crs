@@ -7,128 +7,43 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CK.Core;
+using CK.Crs.Runtime.Pipeline;
 
 namespace CK.Crs.Runtime
 {
     public class CommandReceiver : ICommandReceiver
     {
+        readonly IPipelineEvents _events;
+        readonly ICommandRouteCollection _routes;
         readonly IExecutionStrategySelector _executorSelector;
         readonly IFactories _factory;
+        readonly IAmbientValues _ambientValues;
 
-        public CommandReceiver( IExecutionStrategySelector executor, IFactories factory )
+        public CommandReceiver( IPipelineEvents events, IAmbientValues ambientValues, IExecutionStrategySelector executor, ICommandRouteCollection routes, IFactories factory )
         {
+            if( events == null ) throw new ArgumentNullException( nameof( events ) );
+            if( ambientValues == null ) throw new ArgumentNullException( nameof( ambientValues ) );
             if( executor == null ) throw new ArgumentNullException( nameof( executor ) );
             if( factory == null ) throw new ArgumentNullException( nameof( factory ) );
+            if( routes == null ) throw new ArgumentNullException( nameof( routes ) );
 
+            _events = events;
+            _ambientValues = ambientValues;
             _executorSelector = executor;
             _factory = factory;
+            _routes = routes;
         }
 
-        private FilterInfo[] _internalFilters = new FilterInfo []
+        public async Task<CommandResponse> ProcessCommandAsync( CommandRequest request, CancellationToken cancellationToken = default( CancellationToken ) )
         {
-            new FilterInfo( new HandlerVerificationFilter() ),
-            new FilterInfo( new AmbientValuesFilter() )
-        };
-
-        public async Task<CommandResponse> ProcessCommandAsync( CommandRequest commandRequest, IActivityMonitor monitor, CancellationToken cancellationToken = default( CancellationToken ) )
-        {
-            var commandId = Guid.NewGuid();
-
-            using( monitor.OpenTrace().Send( $"Processing new command [commandId={commandId}]..." ) )
+            using( var pipeline = new CommandReceivingPipeline( _factory, request, cancellationToken ) )
             {
-                var principal = CreateIdentityFromCommand( commandRequest.Command );
-                var ambientValues = CreateAmbientValues( commandRequest.Command);
-                var filterContext = new FilterContext(monitor, commandRequest.CommandDescription, principal, ambientValues, commandRequest.Command);
-
-                using( monitor.OpenTrace().Send( "Applying filters..." )
-                    .ConcludeWith( () => filterContext.IsRejected ? "INVALID" : "OK" ) )
-                {
-                    foreach( var filter in _internalFilters.Union( commandRequest.CommandDescription.Filters.Select( f => new FilterInfo( _factory.CreateFilter( f ) ) ) ) )
-                    {
-                        if( filter.Instance == null )
-                        {
-                            string msg = $"Unable to create the filter {filter.Type.FullName}.";
-                            throw new InvalidOperationException( msg );
-                        }
-                        using( monitor.OpenTrace().Send( $"Executing filter {filter.Type.Name}" ) )
-                        {
-                            await filter.Instance.OnCommandReceived( filterContext );
-
-                            // Immediatly test if there is a response available.
-                            if( filterContext.IsRejected )
-                            {
-                                return new CommandInvalidResponse( commandId, filterContext.RejectReason );
-                            }
-                        }
-                    }
-                }
-
-                var executionContext = new CommandExecutionContext(
-                    _factory.CreateExternalEventPublisher,
-                    _factory.CreateCommandScheduler,
-                    monitor,
-                    commandRequest.Command,
-                    commandId,
-                    commandRequest.CommandDescription.Descriptor.IsLongRunning,
-                    commandRequest.CallbackId,
-                    cancellationToken );
-
-                var context = new CommandContext( commandRequest.CommandDescription.Descriptor, executionContext );
-
-                using( monitor.OpenTrace().Send( "Running command..." ) )
-                {
-                    var strategy = _executorSelector.SelectExecutionStrategy( context );
-                    if( strategy == null )
-                    {
-                        string msg = "The Selector should returns a valid, non null executor... otherwise, commands will produce nothing!";
-                        throw new ArgumentNullException( msg );
-                    }
-
-                    monitor.Trace().Send( $"[ExecutionStrategy={strategy.GetType().Name}]" );
-                    return await strategy.ExecuteAsync( context );
-                }
-            }
-        }
-
-        protected virtual IAmbientValues CreateAmbientValues( object command )
-        {
-            throw new NotImplementedException();
-        }
-
-        protected virtual ClaimsPrincipal CreateIdentityFromCommand( object command )
-        {
-            throw new NotImplementedException();
-        }
-
-        class FilterInfo
-        {
-            public FilterInfo( ICommandFilter instance )
-            {
-                instance = Instance;
-                Type = instance.GetType();
-            }
-
-            public Type Type { get; set; }
-            public ICommandFilter Instance { get; set; }
-        }
-
-        class HandlerVerificationFilter : ICommandFilter
-        {
-            public int Order
-            {
-                get { return -1000; }
-            }
-
-            public Task OnCommandReceived( ICommandFilterContext context )
-            {
-                if( context.Description.Descriptor.HandlerType == null )
-                {
-                    string msg = $"No handler found for command [type={context.Description.Descriptor.CommandType}].";
-                    context.Monitor.Warn().Send( msg );
-                    context.Reject( msg );
-                }
-
-                return Task.FromResult<object>( null );
+                await pipeline.UseCommandRouter( _routes );
+                await pipeline.UseCommandBuilder();
+                await pipeline.UseAmbientValuesValidator( _ambientValues );
+                await pipeline.UseFiltersInvoker();
+                await pipeline.UseCommandExecutor( _executorSelector );
+                return pipeline.Response;
             }
         }
     }

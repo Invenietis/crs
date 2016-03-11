@@ -9,13 +9,12 @@ namespace CK.Crs.Runtime
 {
     public class FilterContext : ICommandFilterContext
     {
-        public FilterContext( IActivityMonitor monitor, RoutedCommandDescriptor description, ClaimsPrincipal principal, IAmbientValues ambientValues, object command )
+        public FilterContext( IActivityMonitor monitor, RoutedCommandDescriptor description, ClaimsPrincipal principal, object command )
         {
             Monitor = monitor;
             Description = description;
             Command = command;
             User = principal;
-            AmbientValues = ambientValues;
         }
 
         public IActivityMonitor Monitor { get; }
@@ -39,7 +38,5 @@ namespace CK.Crs.Runtime
         public string RejectReason { get; private set; }
 
         public ClaimsPrincipal User { get; }
-
-        public IAmbientValues AmbientValues { get; set; }
     }
 }

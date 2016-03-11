@@ -9,6 +9,7 @@
     "dependencies": {
         "CK.Authentication": "1.0.0-*",
         "CK.Core": "5.0.0",
+        "CK.Crs.Abstractions": "1.0.0-*",
         "CK.Crs.AspNet": "1.0.0-*",
         "CK.Crs.Extensions": "1.0.0-*",
         "Microsoft.Extensions.DependencyInjection": "1.0.0-*",
@@ -30,6 +31,7 @@
             }
         },
         "netstandardapp1.5": {
+            "imports": [ "dotnet5.4", "portable-net451+win8" ],
             "dependencies": {
                 "moq.netcore": "4.4.0-beta8"
             }

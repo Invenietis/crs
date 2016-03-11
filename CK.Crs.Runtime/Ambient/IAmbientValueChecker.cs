@@ -5,7 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using CK.Core;
 
-namespace CK.Crs
+namespace CK.Crs.Runtime
 {
     public enum AmbientValueCheckResult
     {

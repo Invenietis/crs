@@ -12,5 +12,6 @@ namespace CK.Crs
         RoutedCommandDescriptor FindCommandDescriptor( string path );
 
         RoutedCommandDescriptor AddCommandRoute( CommandDescriptor descriptor );
+        object FindCommandDescriptor( object path );
     }
 }

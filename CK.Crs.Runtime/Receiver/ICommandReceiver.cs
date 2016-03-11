@@ -17,10 +17,9 @@ namespace CK.Crs.Runtime
         /// Process a <see cref="CommandRequest"/> and returns a <see cref="CommandResponse"/>
         /// </summary>
         /// <param name="command"><see cref="CommandRequest"/></param>
-        /// <param name="monitor"><see cref="IActivityMonitor"/></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Task<CommandResponse> ProcessCommandAsync( CommandRequest command, IActivityMonitor monitor, CancellationToken cancellationToken = default( CancellationToken ) );
+        Task<CommandResponse> ProcessCommandAsync( CommandRequest command, CancellationToken cancellationToken = default( CancellationToken ) );
     }
 
 }

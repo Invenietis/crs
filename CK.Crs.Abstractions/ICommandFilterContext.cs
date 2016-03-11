@@ -34,7 +34,5 @@ namespace CK.Crs
         /// Gets the principal which wants to execute this command.
         /// </summary>
         ClaimsPrincipal User { get; }
-
-        IAmbientValues AmbientValues { get; }
     }
 }

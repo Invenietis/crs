@@ -305,7 +305,7 @@ namespace CK.Crs.Tests
                     PendingRequest pending = IncomingRequests.Take();
                     if( pending == null ) continue;
 
-                    CommandResponse response = await _commandReceiver.ProcessCommandAsync( pending.CommandRequest, new ActivityMonitor() );
+                    CommandResponse response = await _commandReceiver.ProcessCommandAsync( pending.CommandRequest );
                     pending.CommandResponsePromise.SetResult( response );
                     Thread.Sleep( 100 );
                 }

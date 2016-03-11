@@ -39,7 +39,7 @@ namespace CK.Crs
             return registration;
         }
 
-        private static IReadOnlyCollection<Type> ExtractDecoratorsFromHandlerAttributes( TypeInfo commandType, TypeInfo handlerType )
+        private static IReadOnlyCollection<Type> ExtractDecoratorsFromHandlerAttributes( Type commandType, Type handlerType )
         {
             return handlerType.GetCustomAttributes( true ).OfType<ICommandDecorator>().Select( a => a.GetType() ).ToArray();
         }
