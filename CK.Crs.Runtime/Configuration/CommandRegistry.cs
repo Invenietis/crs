@@ -7,10 +7,10 @@ namespace CK.Crs.Runtime
 {
     public class CommandRegistry : ICommandRegistry
     {
-        IEnumerable<CommandDescriptor> _computedMap;
-        List<CommandDescriptor> Map { get; } = new List<CommandDescriptor>();
+        IEnumerable<CommandDescription> _computedMap;
+        List<CommandDescription> Map { get; } = new List<CommandDescription>();
 
-        public IEnumerable<CommandDescriptor> Registration
+        public IEnumerable<CommandDescription> Registration
         {
             get { BuildMap(); return _computedMap; }
         }
@@ -30,7 +30,7 @@ namespace CK.Crs.Runtime
         /// </summary>
         public bool EnableLongRunningCommands { get; set; }
 
-        public void Register( CommandDescriptor descriptor )
+        public void Register( CommandDescription descriptor )
         {
             Map.Add( descriptor );
         }

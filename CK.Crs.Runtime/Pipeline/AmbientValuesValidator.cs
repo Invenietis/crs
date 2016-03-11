@@ -11,27 +11,31 @@ namespace CK.Crs.Runtime.Pipeline
     {
         readonly IAmbientValues _ambientValues;
 
-        public AmbientValuesValidator( CommandReceivingPipeline pipeline, IAmbientValues ambientValues ) : base( pipeline )
+        public AmbientValuesValidator( IPipeline pipeline, IAmbientValues ambientValues ) : base( pipeline )
         {
             if( ambientValues == null ) throw new ArgumentNullException( nameof( ambientValues ) );
             _ambientValues = ambientValues;
         }
 
+        /// <summary>
+        /// The command should have been binded
+        /// </summary>
         public override bool ShouldInvoke
         {
-            get { return Pipeline.Response == null && Pipeline.Request.Command != null; }
+            get { return Pipeline.Response == null && Pipeline.Action.Command != null; }
         }
 
         public override async Task Invoke( CancellationToken token )
         {
             if( ShouldInvoke )
             {
-                Type modelType = Pipeline.Request.Command.GetType();
+                Type modelType = Pipeline.Action.Command.GetType();
                 using( Monitor.OpenTrace().Send( "Identity checking" ) )
                 {
                     Monitor.Trace().Send( $"[For type {modelType}]" );
 
-                    dynamic dModel = model;
+                    // TODO: AmbientValueCheckerInjection
+                    dynamic dModel = Pipeline.Action.Command;
                     int? actorId = dModel.ActorId;
                     if( actorId.HasValue )
                     {
@@ -57,7 +61,7 @@ namespace CK.Crs.Runtime.Pipeline
 
         private Task SetInvalidAmbientValuesResponse()
         {
-            Pipeline.Response = new CommandErrorResponse( "Invalid ambient values", Pipeline.CommandId );
+            Pipeline.Response = new CommandErrorResponse( "Invalid ambient values", Pipeline.Action.CommandId );
             if( Pipeline.Events.AmbientValuesInvalid != null )
                 return Pipeline.Events.AmbientValuesInvalid( _ambientValues );
 

@@ -26,7 +26,7 @@ namespace CK.Crs.Runtime
             return v;
         }
 
-        public RoutedCommandDescriptor AddCommandRoute( CommandDescriptor descriptor )
+        public RoutedCommandDescriptor AddCommandRoute( CommandDescription descriptor )
         {
             var p = new CommandRoutePath(_path, descriptor.Name);
             // Overrides...

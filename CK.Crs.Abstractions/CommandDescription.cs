@@ -8,9 +8,9 @@ namespace CK.Crs
     /// <summary>
     /// Describes a command and its environment.
     /// </summary>
-    public class CommandDescriptor
+    public class CommandDescription
     {
-        public CommandDescriptor()
+        public CommandDescription()
         {
         }
 

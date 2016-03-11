@@ -19,11 +19,16 @@ namespace CK.Crs.Runtime
 
         public virtual IExecutionStrategy SelectExecutionStrategy( CommandContext context )
         {
-            if( context.ExecutionContext.IsLongRunning && typeof( RequestCommand ).GetTypeInfo().IsAssignableFrom( context.Description.CommandType.GetTypeInfo() ) )
-                context.ExecutionContext.Monitor.Warn().Send( "The command {0} is describes as a long running command, but inherits from RequestCommand.", context.Description.Name );
+            var isLongRunning =  context.ExecutionContext.Action.Description.Descriptor.IsLongRunning;
+            var commandType = context.ExecutionContext.Action.Description.Descriptor.CommandType;
 
-            if( context.ExecutionContext.IsLongRunning && !typeof( RequestCommand ).GetTypeInfo().IsAssignableFrom( context.Description.CommandType.GetTypeInfo() ) )
-                return _async();
+            if( isLongRunning && typeof( RequestCommand ).IsAssignableFrom( commandType ) )
+            {
+                string msg =  $"The command {context.ExecutionContext.Action.Description.Descriptor.Name} is described as a long running command, but inherits from RequestCommand.";
+                context.ExecutionContext.Monitor.Warn().Send( msg );
+            }
+
+            if( isLongRunning && !typeof( RequestCommand ).IsAssignableFrom( commandType ) ) return _async();
 
             return _inprocess();
         }

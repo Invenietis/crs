@@ -7,7 +7,7 @@ namespace CK.Crs.Runtime
 {
     internal class CommandResultResponse : CommandResponse
     {
-        public CommandResultResponse( object result, CommandExecutionContext ctx ) : base( ctx.CommandId )
+        public CommandResultResponse( object result, ICommandExecutionContext ctx ) : base( ctx.Action.CommandId )
         {
             ResponseType = CommandResponseType.Direct;
             Payload = result;

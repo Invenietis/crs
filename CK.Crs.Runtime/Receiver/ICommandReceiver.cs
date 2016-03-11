@@ -19,7 +19,7 @@ namespace CK.Crs.Runtime
         /// <param name="command"><see cref="CommandRequest"/></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Task<CommandResponse> ProcessCommandAsync( CommandRequest command, CancellationToken cancellationToken = default( CancellationToken ) );
+        Task<CommandResponse> ProcessCommandAsync(  CommandRequest command, CancellationToken cancellationToken = default( CancellationToken ) );
     }
 
 }

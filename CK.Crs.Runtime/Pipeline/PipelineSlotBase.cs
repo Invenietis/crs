@@ -9,21 +9,21 @@ namespace CK.Crs.Runtime.Pipeline
 {
     abstract class PipelineSlotBase
     {
-        protected CommandReceivingPipeline Pipeline;
+        protected IPipeline Pipeline;
 
         protected IActivityMonitor Monitor
         {
-            get { return Pipeline.Request.Monitor; }
+            get { return Pipeline.Monitor; }
         }
 
-        public PipelineSlotBase( CommandReceivingPipeline pipeline )
+        public PipelineSlotBase( IPipeline pipeline )
         {
             Pipeline = pipeline;
         }
 
         public virtual bool ShouldInvoke
         {
-            get { return Pipeline.Response == null && Pipeline.Request.Command != null; }
+            get { return Pipeline.Response == null && Pipeline.Action.Command != null; }
         }
 
         public abstract Task Invoke( CancellationToken token = default( CancellationToken ) );

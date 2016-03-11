@@ -22,7 +22,7 @@ namespace CK.Crs
             where TCommand : class
             where THandler : class, ICommandHandler<TCommand>
         {
-            var defaultCommandDescriptor = new CommandDescriptor
+            var defaultCommandDescriptor = new CommandDescription
             {
                 Name = GetDefaultName( typeof(TCommand)),
                 CommandType = typeof( TCommand),
@@ -30,8 +30,8 @@ namespace CK.Crs
                 IsLongRunning = false
             };
             defaultCommandDescriptor.Decorators = ExtractDecoratorsFromHandlerAttributes(
-                defaultCommandDescriptor.CommandType.GetTypeInfo(),
-                defaultCommandDescriptor.HandlerType.GetTypeInfo() )
+                defaultCommandDescriptor.CommandType,
+                defaultCommandDescriptor.HandlerType )
                 .ToArray();
 
             var registration = new CommandRegistration( defaultCommandDescriptor );
@@ -41,7 +41,9 @@ namespace CK.Crs
 
         private static IReadOnlyCollection<Type> ExtractDecoratorsFromHandlerAttributes( Type commandType, Type handlerType )
         {
-            return handlerType.GetCustomAttributes( true ).OfType<ICommandDecorator>().Select( a => a.GetType() ).ToArray();
+            return handlerType.GetTypeInfo().CustomAttributes
+                .Where( c => typeof( ICommandDecorator).IsAssignableFrom( c.AttributeType ) )
+                .Select( a => a.AttributeType ).ToArray();
         }
 
         private static string GetDefaultName( Type type )
@@ -49,7 +51,7 @@ namespace CK.Crs
             var n = type.Name;
             return n.RemoveSuffixes( "Command", "Cmd" );
         }
-
+        
         public static string RemoveSuffixes( this string s, params string[] suffixes )
         {
             foreach( var suf in suffixes )

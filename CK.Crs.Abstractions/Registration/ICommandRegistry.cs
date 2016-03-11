@@ -4,9 +4,9 @@ namespace CK.Crs
 {
     public interface ICommandRegistry
     {
-        void Register( CommandDescriptor descriptor );
+        void Register( CommandDescription descriptor );
 
-        IEnumerable<CommandDescriptor> Registration { get; }
+        IEnumerable<CommandDescription> Registration { get; }
 
         bool EnableLongRunningCommands { get; set; }
     }

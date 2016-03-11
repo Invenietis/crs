@@ -26,10 +26,7 @@ namespace CK.Crs
 
         public async Task Invoke( HttpContext context )
         {
-            // __types -> 
-            var monitor = new Core.ActivityMonitor(context.Request.Path.Value );
-
-            var commandRequest = new CommandRequest( context.Request.Path.Value,context.Request.Body, context.User, monitor);
+            var commandRequest = new CommandRequest( context.Request.Path.Value,context.Request.Body, context.User );
 
             CommandResponse commandResponse = await _receiver.ProcessCommandAsync( commandRequest );
             if( commandResponse != null )

@@ -45,7 +45,7 @@ namespace CK.Crs
         /// <param name="selection">A projection lambda to filter commands</param>
         /// <returns><see cref="CommandReceiverConfiguration"/></returns>
         public CommandReceiverConfiguration AddCommands(
-            Func<ICommandRegistry, IEnumerable<CommandDescriptor>> selection,
+            Func<ICommandRegistry, IEnumerable<CommandDescription>> selection,
             Action<ICommandRegistrationWithFilter> globalConfiguration = null )
         {
             foreach( var c in selection( _registry ) )

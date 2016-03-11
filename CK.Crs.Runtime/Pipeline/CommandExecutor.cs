@@ -12,12 +12,12 @@ namespace CK.Crs.Runtime.Pipeline
         readonly IFactories _factories;
         readonly IExecutionStrategySelector _executorSelector;
 
-        public CommandExecutor( CommandReceivingPipeline pipeline, IFactories factories )
+        public CommandExecutor( IPipeline pipeline, IFactories factories )
             : this( pipeline, factories, new BasicExecutionStrategySelector( factories ) )
         {
-        }
+        } 
 
-        public CommandExecutor( CommandReceivingPipeline pipeline, IFactories factories, IExecutionStrategySelector strategy ) : base( pipeline )
+        public CommandExecutor( IPipeline pipeline, IFactories factories, IExecutionStrategySelector strategy ) : base( pipeline )
         {
             _factories = factories;
             _executorSelector = strategy;
@@ -25,13 +25,18 @@ namespace CK.Crs.Runtime.Pipeline
 
         public override Task Invoke( CancellationToken token )
         {
-            if( Pipeline.Response == null )
+            if( ShouldInvoke )
             {
-                CommandExecutionContext executionContext = CreateExecutionContext( token );
+                CommandExecutionContext executionContext = new CommandExecutionContext(
+                    Pipeline.Action,
+                    Monitor,
+                    token,
+                    _factories.CreateExternalEventPublisher,
+                    _factories.CreateCommandScheduler);
 
-                var context = new CommandContext( Pipeline.Request.CommandDescription.Descriptor, executionContext );
+                var context = new CommandContext( executionContext );
 
-                using( Pipeline.Request.Monitor.OpenTrace().Send( "Running command..." ) )
+                using( Pipeline.Monitor.OpenTrace().Send( "Running command..." ) )
                 {
                     var strategy = _executorSelector.SelectExecutionStrategy( context );
                     if( strategy == null )
@@ -40,26 +45,12 @@ namespace CK.Crs.Runtime.Pipeline
                         throw new ArgumentNullException( msg );
                     }
 
-                    Pipeline.Request.Monitor.Trace().Send( $"[ExecutionStrategy={strategy.GetType().Name}]" );
+                    Pipeline.Monitor.Trace().Send( $"[ExecutionStrategy={strategy.GetType().Name}]" );
                     return strategy.ExecuteAsync( context );
                 }
             }
 
             return Task.FromResult( 0 );
-        }
-
-        private CommandExecutionContext CreateExecutionContext( CancellationToken token )
-        {
-            return new CommandExecutionContext(
-                _factories.CreateExternalEventPublisher,
-                _factories.CreateCommandScheduler,
-                Pipeline.Request.Monitor,
-                Pipeline.Request.Command,
-                Pipeline.CommandId,
-                Pipeline.Request.CommandDescription.Descriptor.IsLongRunning,
-                Pipeline.Request.CallbackId,
-                Pipeline.Request.User,
-                token );
         }
     }
 }

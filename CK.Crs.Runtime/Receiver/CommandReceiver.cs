@@ -36,7 +36,8 @@ namespace CK.Crs.Runtime
 
         public async Task<CommandResponse> ProcessCommandAsync( CommandRequest request, CancellationToken cancellationToken = default( CancellationToken ) )
         {
-            using( var pipeline = new CommandReceivingPipeline( _factory, request, cancellationToken ) )
+            var monitor = new ActivityMonitor( request.Path );
+            using( var pipeline = new CommandReceivingPipeline( _factory, monitor, request, cancellationToken ) )
             {
                 await pipeline.UseCommandRouter( _routes );
                 await pipeline.UseCommandBuilder();

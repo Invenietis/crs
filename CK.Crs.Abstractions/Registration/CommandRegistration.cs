@@ -9,7 +9,7 @@ namespace CK.Crs
     public class CommandRegistration : ICommandRegistrationWithFilter, ICommandRegistration
     {
         RoutedCommandDescriptor _routedCommandDescriptor;
-        CommandDescriptor _commandDescription;
+        CommandDescription _commandDescription;
 
         public CommandRegistration( RoutedCommandDescriptor description )
         {
@@ -17,7 +17,7 @@ namespace CK.Crs
             _commandDescription = description.Descriptor;
         }
 
-        public CommandRegistration( CommandDescriptor description )
+        public CommandRegistration( CommandDescription description )
         {
             _commandDescription = description;
         }

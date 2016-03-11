@@ -87,7 +87,7 @@ namespace CK.Crs.Tests
 
         private RoutedCommandDescriptor CreateCommandDescriptor<T>()
         {
-            return new RoutedCommandDescriptor( new CommandRoutePath( "/prefix", typeof( T ).Name ), new CommandDescriptor
+            return new RoutedCommandDescriptor( new CommandRoutePath( "/prefix", typeof( T ).Name ), new CommandDescription
             {
                 CommandType = typeof( T ),
                 Decorators = Util.Array.Empty<Type>(),

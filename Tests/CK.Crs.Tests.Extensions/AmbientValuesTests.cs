@@ -11,6 +11,7 @@ using Assert = NUnit.Framework.Assert;
 using Is = NUnit.Framework.Is;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Http;
+using CK.Crs.Runtime;
 
 namespace CK.Crs.Tests
 {

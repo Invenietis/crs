@@ -20,11 +20,11 @@ namespace CK.Crs.Runtime
         {
             var mon = context.ExecutionContext.Monitor;
 
-            var decorators = context.Description.Decorators.Select( _factories.CreateDecorator ).ToArray();
-            using( mon.OpenTrace().Send( $"Running Command [{context.Description.CommandType.Name}]..." ) )
+            var decorators = context.ExecutionContext.Action.Description.Descriptor.Decorators.Select( _factories.CreateDecorator ).ToArray();
+            using( mon.OpenTrace().Send( $"Running Command [{context.ExecutionContext.Action.Description.Descriptor.CommandType.Name}]..." ) )
             {
-                ICommandHandler handler = _factories.CreateHandler( context.Description.HandlerType );
-                if( handler == null ) throw new InvalidOperationException( $"Unable to create type {context.Description.HandlerType}" );
+                ICommandHandler handler = _factories.CreateHandler( context.ExecutionContext.Action.Description.Descriptor.HandlerType );
+                if( handler == null ) throw new InvalidOperationException( $"Unable to create type {context.ExecutionContext.Action.Description.Descriptor.HandlerType}" );
                 try
                 {
                     using( mon.OpenTrace().Send( "OnCommandExecuting..." ) )
@@ -39,7 +39,7 @@ namespace CK.Crs.Runtime
                     {
                         try
                         {
-                            var result = await handler.HandleAsync( context.ExecutionContext, context.ExecutionContext.Model );
+                            var result = await handler.HandleAsync( context.ExecutionContext, context.ExecutionContext.Action.Command );
                             context.SetResult( result );
                         }
                         catch( Exception ex )

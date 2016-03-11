@@ -44,10 +44,10 @@ namespace CK.Crs.Runtime
 
         public Guid Schedule<T>( T command, CommandSchedulingOption option )
         {
-            ScheduledCommand operation = new ScheduledCommand
+            ScheduledCommand operation = new ScheduledCommand( CreateCommandIdentifier(), user )
             {
-                CommandId = CreateCommandIdentifier(),
-                Payload = command,
+                Command = command,
+                Description = null, // TODO: obtain description for the command to schedule.
                 Scheduling = option
             };
             if( Transaction.Current == null )

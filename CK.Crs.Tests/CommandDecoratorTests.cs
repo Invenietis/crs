@@ -35,7 +35,7 @@ namespace CK.Crs.Tests
                 Amount = 1000
             };
 
-            var description = new CommandDescriptor
+            var description = new CommandDescription
             {
                 CommandType = model.GetType(),
                 HandlerType = typeof(Handlers.TransferAlwaysSuccessHandler),
@@ -64,7 +64,7 @@ namespace CK.Crs.Tests
             };
 
             var strategy = new InProcessExecutionStrategy( new CommandRunner( factory) );
-            var commandContext = new CommandContext( description, command );
+            var commandContext = new CommandContext( command );
             var response = await strategy.ExecuteAsync( commandContext );
 
             Assert.AreEqual( 1, decoratorInstanciated );

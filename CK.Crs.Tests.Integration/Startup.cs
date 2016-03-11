@@ -33,7 +33,6 @@ namespace CK.Crs.Tests.Integration
             app.UseCommandReceiver( "/c/admin", options =>
             {
                 options
-                    .AddFilter<AmbientValuesFilter>()
                     .AddFilter<HttpsRequiredFilter>()
                     .AddFilter<CK.Crs.Extensions.AuthorizationFilter>()
                     .AddCommands(

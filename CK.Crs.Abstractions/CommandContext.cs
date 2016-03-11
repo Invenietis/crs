@@ -8,19 +8,15 @@ namespace CK.Crs
 {
     public class CommandContext
     {
-        public CommandContext( CommandDescriptor commandDescription, CommandExecutionContext executionContext )
+        public CommandContext( ICommandExecutionContext executionContext )
         {
-            if( commandDescription == null ) throw new ArgumentNullException( "commandDescription" );
             if( executionContext == null ) throw new ArgumentNullException( "executionContext" );
 
-            Description = commandDescription;
             ExecutionContext = executionContext;
             Items = new Dictionary<object, object>();
         }
 
-        public CommandExecutionContext ExecutionContext { get; private set; }
-
-        public CommandDescriptor Description { get; private set; }
+        public ICommandExecutionContext ExecutionContext { get; private set; }
 
         /// <summary>
         /// Gets a bag of data that can hold data during the command execution

@@ -29,7 +29,6 @@ namespace CK.Crs
         public static void AddCommandReceiver( this IServiceCollection services, Action<ICommandRegistry> configuration )
         {
             services.AddSingleton<ICommandReceiver, CommandReceiver>();
-            services.AddSingleton<ICommandFormatter, DefaultCommandFormatter>();
             services.AddSingleton<IExecutionStrategySelector, BasicExecutionStrategySelector>();
             services.AddSingleton<IFactories, DefaultFactories>();
 

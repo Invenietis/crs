@@ -7,7 +7,7 @@ namespace CK.Crs
 {
     public class RoutedCommandDescriptor
     {
-        public RoutedCommandDescriptor( CommandRoutePath route, CommandDescriptor commandDescriptor )
+        public RoutedCommandDescriptor( CommandRoutePath route, CommandDescription commandDescriptor )
         {
             Route = Route;
             Descriptor = commandDescriptor;
@@ -15,9 +15,9 @@ namespace CK.Crs
         }
 
         /// <summary>
-        /// Gets the <see cref="CommandDescriptor"/> for this <see cref="RoutedCommandDescriptor"/>
+        /// Gets the <see cref="CommandDescription"/> for this <see cref="RoutedCommandDescriptor"/>
         /// </summary>
-        public CommandDescriptor Descriptor { get; }
+        public CommandDescription Descriptor { get; }
 
         /// <summary>
         /// Gets the Route of this command

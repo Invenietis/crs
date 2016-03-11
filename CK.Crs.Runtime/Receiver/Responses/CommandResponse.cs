@@ -27,7 +27,7 @@ namespace CK.Crs.Runtime
             if( context.IsDirty )
             {
                 if( context.Exception != null )
-                    return new CommandErrorResponse( context.Exception.Message, context.ExecutionContext.CommandId );
+                    return new CommandErrorResponse( context.Exception.Message, context.ExecutionContext.Action.CommandId );
 
                 if( context.Result != null )
                 {

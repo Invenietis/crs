@@ -11,7 +11,7 @@ namespace CK.Crs.Runtime.Pipeline
     {
         readonly ICommandRouteCollection _routeCollection;
 
-        public CommandRouter( CommandReceivingPipeline pipeline, ICommandRouteCollection routeCollection ) : base( pipeline )
+        public CommandRouter( IPipeline pipeline, ICommandRouteCollection routeCollection ) : base( pipeline )
         {
             _routeCollection = routeCollection;
         }
@@ -25,14 +25,14 @@ namespace CK.Crs.Runtime.Pipeline
         {
             if( ShouldInvoke )
             {
-                Pipeline.Request.CommandDescription = _routeCollection.FindCommandDescriptor( Pipeline.Request.Path );
-                if( Pipeline.Request.CommandDescription != null )
+                Pipeline.Action.Description = _routeCollection.FindCommandDescriptor( Pipeline.Request.Path );
+                if( Pipeline.Action.Description != null )
                 {
-                    if( Pipeline.Request.CommandDescription.Descriptor.HandlerType == null )
+                    if( Pipeline.Action.Description.Descriptor.HandlerType == null )
                     {
-                        string msg = $"No handler found for command [type={Pipeline.Request.CommandDescription.Descriptor.CommandType}].";
-                        Pipeline.Request.Monitor.Error().Send( msg );
-                        Pipeline.Response = new CommandInvalidResponse( Pipeline.CommandId, msg );
+                        string msg = $"No handler found for command [type={Pipeline.Action.Description.Descriptor.CommandType}].";
+                        Pipeline.Monitor.Error().Send( msg );
+                        Pipeline.Response = new CommandInvalidResponse( Pipeline.Action.CommandId, msg );
                     }
                 }
             }

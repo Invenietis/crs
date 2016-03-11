@@ -7,16 +7,15 @@ using System.Text;
 using System.Threading.Tasks;
 using CK.Core;
 
-namespace CK.Crs.Runtime
+namespace CK.Crs
 {
-    public class CommandRequest 
+    public class CommandRequest
     {
-        public CommandRequest( CommandRoutePath path, Stream body, ClaimsPrincipal user, IActivityMonitor monitor )
+        public CommandRequest( CommandRoutePath path, Stream body, ClaimsPrincipal user )
         {
             Path = path;
             Body = body;
             User = user;
-            Monitor = monitor;
         }
 
         /// <summary>
@@ -27,17 +26,30 @@ namespace CK.Crs.Runtime
         /// <summary>
         /// The stream of this request
         /// </summary>
-        public Stream Body { get;  }
-
-        /// <summary>
-        /// Gets the <see cref="IActivityMonitor"/>
-        /// </summary>
-        public IActivityMonitor Monitor { get; }
+        public Stream Body { get; }
 
         /// <summary>
         /// Gets the <see cref="ClaimsPrincipal"/> that issued this command.
         /// </summary>
         public ClaimsPrincipal User { get; }
+    }
+
+    public class CommandAction
+    {
+        public CommandAction( Guid commandId, CommandRequest request ) : this( commandId, request.User )
+        {
+        }
+
+        public CommandAction( Guid commandId, ClaimsPrincipal user )
+        {
+            CommandId = commandId;
+            User = user;
+        }
+
+        /// <summary>
+        /// Gets the unique command identifier.
+        /// </summary>
+        public Guid CommandId { get; }
 
         /// <summary>
         /// The instance of the command to process. This should never be null.
@@ -47,12 +59,16 @@ namespace CK.Crs.Runtime
         /// <summary>
         /// Command description
         /// </summary>
-        public RoutedCommandDescriptor CommandDescription { get; set; }
+        public RoutedCommandDescriptor Description { get; set; }
 
         /// <summary>
         /// Returns an identifier that should help identifying the caller of this request.
         /// </summary>
         public string CallbackId { get; set; }
 
+        /// <summary>
+        /// Gets the <see cref="ClaimsPrincipal"/> that issued this command.
+        /// </summary>
+        public ClaimsPrincipal User { get; }
     }
 }

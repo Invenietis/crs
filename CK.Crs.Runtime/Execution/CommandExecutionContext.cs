@@ -4,20 +4,29 @@ using System.Threading;
 using System.Threading.Tasks;
 using CK.Core;
 
-namespace CK.Crs
+namespace CK.Crs.Runtime
 {
     public class CommandExecutionContext : ICommandExecutionContext
     {
         Lazy<IExternalEventPublisher> _eventPublisherLazy;
         Lazy<ICommandScheduler> _cSchedulerLazy;
 
-        public CommandExecutionContext( 
-            Func<ICommandExecutionContext, IExternalEventPublisher> eventPublisher, 
-            Func<ICommandExecutionContext, ICommandScheduler> commandScheduler, 
-            IActivityMonitor monitor, 
-            object model, 
-            Guid commandId, 
-            bool longRunning, 
+        public CommandExecutionContext( CommandAction action, IActivityMonitor monitor, CancellationToken cancellationToken,
+            Func<ICommandExecutionContext, IExternalEventPublisher> eventPublisher,
+            Func<ICommandExecutionContext, ICommandScheduler> commandScheduler )
+        {
+            Action = action;
+            Monitor = monitor;
+            CommandAborted = cancellationToken;
+        }
+
+        internal CommandExecutionContext(
+            Func<ICommandExecutionContext, IExternalEventPublisher> eventPublisher,
+            Func<ICommandExecutionContext, ICommandScheduler> commandScheduler,
+            IActivityMonitor monitor,
+            object model,
+            Guid commandId,
+            bool longRunning,
             string callbackId,
             ClaimsPrincipal user,
             CancellationToken cancellationToken )
@@ -28,22 +37,12 @@ namespace CK.Crs
             _eventPublisherLazy = new Lazy<IExternalEventPublisher>( () => eventPublisher( this ) );
             _cSchedulerLazy = new Lazy<ICommandScheduler>( () => commandScheduler( this ) );
 
+            Action = new CommandAction( commandId, user );
             Monitor = monitor;
-            CommandId = commandId;
-            IsLongRunning = longRunning;
-            CallbackId = callbackId;
-            Model = model;
-            User = user;
             CommandAborted = cancellationToken;
         }
 
-        public Guid CommandId { get; }
-
-        public object Model { get; }
-
-        public string CallbackId { get; }
-
-        public bool IsLongRunning { get; }
+        public CommandAction Action { get; }
 
         public IActivityMonitor Monitor { get; set; }
 
@@ -58,7 +57,5 @@ namespace CK.Crs
         {
             get { return _cSchedulerLazy.Value; }
         }
-
-        public ClaimsPrincipal User { get; }
     }
 }

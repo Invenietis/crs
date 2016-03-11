@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using CK.Core;
 
 namespace CK.Crs.Runtime.Pipeline
 {
@@ -13,7 +14,7 @@ namespace CK.Crs.Runtime.Pipeline
     {
         readonly JsonSerializer _serializer;
 
-        public CommandBuilder( CommandReceivingPipeline pipeline ) : base( pipeline )
+        public CommandBuilder( IPipeline pipeline ) : base( pipeline )
         {
             _serializer = Newtonsoft.Json.JsonSerializer.Create( new JsonSerializerSettings
             {
@@ -23,27 +24,27 @@ namespace CK.Crs.Runtime.Pipeline
 
         public override bool ShouldInvoke
         {
-            get { return Pipeline.Response == null && Pipeline.Request.CommandDescription != null; }
+            get { return Pipeline.Response == null && Pipeline.Action.Description != null; }
         }
 
         public override Task Invoke( CancellationToken token )
         {
             if( ShouldInvoke )
             {
-                if( Pipeline.Request.CommandDescription == null ) throw new InvalidOperationException( "Cannot build a command without a valid description" );
+                if( Pipeline.Action.Description == null ) throw new InvalidOperationException( "Cannot build a command without a valid description" );
 
-                Pipeline.Request.Command = CreateCommand( Pipeline.Request.CommandDescription.Descriptor.CommandType );
+                Pipeline.Action.Command = CreateCommand( Pipeline.Action.Description.Descriptor.CommandType );
                 using( var reader = new StreamReader( Pipeline.Request.Body ) )
                 {
-                    _serializer.Populate( reader, Pipeline.Request.Command );
+                    _serializer.Populate( reader, Pipeline.Action.Command );
                 }
 
-                if( Pipeline.Request.Command != null )
+                if( Pipeline.Action.Command != null )
                 {
                     string msg = String.Format(
                         "A valid command definition has been infered from routes, but the command type {0} failed to be instanciated.",
-                        Pipeline.Request.CommandDescription.Descriptor.CommandType.Name );
-                    throw new InvalidOperationException( msg );
+                        Pipeline.Action.Description.Descriptor.CommandType.Name );
+                    Pipeline.Monitor.Error().Send( msg );
                 }
             }
 

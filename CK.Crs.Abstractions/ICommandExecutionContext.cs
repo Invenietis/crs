@@ -8,30 +8,17 @@ namespace CK.Crs
 {
     public interface ICommandExecutionContext
     {
-        /// <summary>
-        /// Gets the unique command identifier.
-        /// </summary>
-        Guid CommandId { get; }
-        
-        /// <summary>
-        /// Gets a callback identifier used to identify the originator of the request.
-        /// </summary>
-        string CallbackId { get; }
-
-        /// <summary>
-        /// Gets the <see cref="ClaimsPrincipal"/> that issued this command.
-        /// </summary>
-        ClaimsPrincipal User { get; }
+        CommandAction Action { get; }
 
         /// <summary>
         /// Gets the <see cref="IActivityMonitor"/> that goes with the command throughout its lifetime.
         /// </summary>
-        IActivityMonitor Monitor { get; }
+        IActivityMonitor Monitor { get; set; }
         
         /// <summary>
         /// Notify when an underlying component has cancel the execution of this command...
         /// </summary>
-        CancellationToken CommandAborted { get; }
+        CancellationToken CommandAborted { get; set; }
 
         /// <summary>
         /// Gets the <see cref="IExternalEventPublisher"/> where command events can be published to the world!

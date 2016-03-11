@@ -7,13 +7,29 @@ using CK.Core;
 
 namespace CK.Crs.Runtime.Pipeline
 {
-    class CommandReceivingPipeline : IDisposable
+    public interface IPipeline : IDisposable
+    {
+        CommandRequest Request { get; }
+        CommandAction Action { get; }
+        CommandResponse Response { get; set; }
+        /// <summary>
+        /// Gets the <see cref="IActivityMonitor"/>
+        /// </summary>
+        IActivityMonitor Monitor { get; }
+
+        IPipelineEvents Events { get; }
+    }
+    class CommandReceivingPipeline : IPipeline, IDisposable
     {
         public IPipelineEvents Events { get; }
 
-        public Guid CommandId { get; }
-
         public CommandRequest Request { get; }
+
+        public CommandAction Action { get; }
+        /// <summary>
+        /// Gets the <see cref="IActivityMonitor"/>
+        /// </summary>
+        public IActivityMonitor Monitor { get; }
 
         public CommandResponse Response { get; set; }
 
@@ -22,14 +38,15 @@ namespace CK.Crs.Runtime.Pipeline
         IDisposableGroup _group;
         CancellationToken _cancellationToken;
 
-        public CommandReceivingPipeline( IFactories factories, CommandRequest request, CancellationToken cancellationToken )
+        public CommandReceivingPipeline( IFactories factories, IActivityMonitor monitor, CommandRequest request, CancellationToken cancellationToken )
         {
+            Monitor = monitor;
+            Request = request;
+            Action = new CommandAction( Guid.NewGuid(), Request );
+
             _factories = factories;
             _cancellationToken = cancellationToken;
-
-            CommandId = Guid.NewGuid();
-            Request = request;
-            Request.Monitor.OpenTrace().Send( $"Processing new command [commandId={CommandId}]..." );
+            _group = Monitor.OpenTrace().Send( $"Processing new command [commandId={Action.CommandId}]..." );
         }
 
         public void Dispose()

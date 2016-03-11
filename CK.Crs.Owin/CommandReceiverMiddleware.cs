@@ -14,18 +14,15 @@ namespace CK.Crs
         /// </summary>
         private readonly ICommandRouteCollection _routes;
         private readonly ICommandReceiver _receiver;
-        private readonly ICommandFormatter _formatter;
 
-        public CommandReceiverMiddleware( OwinMiddleware next, ICommandRouteCollection routes, ICommandReceiver receiver, ICommandFormatter formatter )
+        public CommandReceiverMiddleware( OwinMiddleware next, ICommandRouteCollection routes, ICommandReceiver receiver )
             : base( next )
         {
             if( routes == null ) throw new ArgumentNullException( nameof( routes ) );
             if( receiver == null ) throw new ArgumentNullException( nameof( receiver ) );
-            if( formatter == null ) throw new ArgumentNullException( nameof( formatter ) );
 
             _routes = routes;
             _receiver = receiver;
-            _formatter = formatter;
         }
 
         public Task InvokeAsync( IDictionary<string, object> environment )
@@ -35,11 +32,8 @@ namespace CK.Crs
 
         public async override Task Invoke( IOwinContext context )
         {
-            var monitor = new Core.ActivityMonitor(context.Request.Path.Value );
-
-            var commandRequest = new CommandRequest( context.Request.Path.Value,context.Request.Body, context.Authentication.User, monitor);
-
-            CommandResponse commandResponse = await _receiver.ProcessCommandAsync( commandRequest );
+            var commandRequest = new CommandRequest( context.Request.Path.Value, context.Request.Body, context.Authentication.User );
+            var commandResponse = await _receiver.ProcessCommandAsync( commandRequest );
             if( commandResponse != null )
             {
                 commandResponse.Write( context.Response.Body );

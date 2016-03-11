@@ -20,10 +20,10 @@
     },
     "dependencies": {
         "CK.Authentication": "1.0.0-*",
-        "CK.Authorization": "1.0.0-*", 
+        "CK.Authorization": "1.0.0-*",
         "CK.Blueprint": "1.0.0-*",
         "CK.Crs.Abstractions": "1.0.0-*"
-    }, 
+    },
     "scripts": {
         "prebuild": "sgv prebuild"
     }
