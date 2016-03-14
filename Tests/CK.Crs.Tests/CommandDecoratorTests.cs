@@ -10,23 +10,27 @@ using CK.Crs.Runtime;
 using Xunit;
 using Assert = NUnit.Framework.Assert;
 using Is = NUnit.Framework.Is;
+using System.Security.Claims;
+using Xunit.Abstractions;
 
 namespace CK.Crs.Tests
 {
     public class CommandDecoratorTests
     {
         CancellationTokenSource _cancellationToken;
-        public CommandDecoratorTests()
+        ITestOutputHelper _output;
+        public CommandDecoratorTests( ITestOutputHelper output )
         {
             _cancellationToken = new CancellationTokenSource();
+            _output = output;
         }
 
-        [Test][Fact]
+        [Test]
         public async Task Decorators_Should_Be_Invoked_When_A_Command_Is_Handled()
         {
             var decorators = CreateSampleDecorators().ToArray();
 
-            var monitor = CreateMonitor();
+            var monitor = TestHelper.Monitor( _output.WriteLine);
 
             var model = new Handlers.TransferAmountCommand
             {
@@ -35,23 +39,21 @@ namespace CK.Crs.Tests
                 Amount = 1000
             };
 
-            var description = new CommandDescription
+            var action = new CommandAction( Guid.NewGuid(), ClaimsPrincipal.Current)
             {
-                CommandType = model.GetType(),
-                HandlerType = typeof(Handlers.TransferAlwaysSuccessHandler),
-                IsLongRunning = false,
-                Decorators = decorators
+                Command = model,
+                Description = new RoutedCommandDescriptor( "/someroute", new CommandDescription
+                {
+                    CommandType = model.GetType(),
+                    HandlerType = typeof(Handlers.TransferAlwaysSuccessHandler),
+                    IsLongRunning = false,
+                    Decorators = decorators
+                } )
             };
 
-            var command = new CommandExecutionContext(
-                (ctx ) => TestHelper.MockEventPublisher(),
-                ( ctx ) => TestHelper.MockCommandScheduler(),
-                monitor,
-                model,
-                Guid.NewGuid(),
-                description.IsLongRunning,
-                "3712",
-                _cancellationToken.Token);
+            var command = new CommandExecutionContext( action, monitor, _cancellationToken.Token,
+                ( ctx ) => TestHelper.MockEventPublisher(),
+                ( ctx ) => TestHelper.MockCommandScheduler() ); 
 
             var factory = new FakeFactory<Handlers.TransferAlwaysSuccessHandler>();
 
@@ -102,21 +104,6 @@ namespace CK.Crs.Tests
             yield return typeof( SampleDecorator );
         }
 
-        private IActivityMonitor CreateMonitor()
-        {
-            string path = TestHelper.GeneratorResultPath( GetType().Name );
-            var mon = new ActivityMonitor();
-            mon.Output.RegisterClient( new ActivityMonitorConsoleClient() );
-            mon.Output.RegisterClient( new ActivityMonitorTextWriterClient( s =>
-            {
-                using( var sw = File.AppendText( path ) )
-                {
-                    sw.Write( s );
-                    sw.Flush();
-                }
-            } ) );
-            return mon;
-        }
 
         class FakeFactory<THandler> : IFactories where THandler : ICommandHandler, new()
         {

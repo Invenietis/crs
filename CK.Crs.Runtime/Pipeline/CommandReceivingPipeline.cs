@@ -17,11 +17,12 @@ namespace CK.Crs.Runtime.Pipeline
         /// </summary>
         IActivityMonitor Monitor { get; }
 
-        IPipelineEvents Events { get; }
+        PipelineEvents Events { get; }
     }
+
     class CommandReceivingPipeline : IPipeline, IDisposable
     {
-        public IPipelineEvents Events { get; }
+        public PipelineEvents Events { get; }
 
         public CommandRequest Request { get; }
 
@@ -34,12 +35,12 @@ namespace CK.Crs.Runtime.Pipeline
         public CommandResponse Response { get; set; }
 
         IFactories _factories;
-        ICommandRouteCollection _routes;
         IDisposableGroup _group;
         CancellationToken _cancellationToken;
 
-        public CommandReceivingPipeline( IFactories factories, IActivityMonitor monitor, CommandRequest request, CancellationToken cancellationToken )
+        public CommandReceivingPipeline( PipelineEvents events, IFactories factories, IActivityMonitor monitor, CommandRequest request, CancellationToken cancellationToken )
         {
+            Events = events;
             Monitor = monitor;
             Request = request;
             Action = new CommandAction( Guid.NewGuid(), Request );
@@ -54,29 +55,29 @@ namespace CK.Crs.Runtime.Pipeline
             _group.Dispose();
         }
 
-        public Task UseCommandRouter( ICommandRouteCollection routes )
+        public Task<IPipeline> RouteCommand( ICommandRouteCollection routes )
         {
-            return new CommandRouter( this, routes ).Invoke( _cancellationToken );
+            return new CommandRouter( this, routes ).TryInvoke( _cancellationToken );
         }
 
-        public Task UseCommandBuilder()
+        public Task<IPipeline> BuildCommand()
         {
-            return new CommandBuilder( this ).Invoke( _cancellationToken );
+            return new CommandBuilder( this ).TryInvoke( _cancellationToken );
         }
 
-        public Task UseAmbientValuesValidator( IAmbientValues ambientValues )
+        public Task<IPipeline> ValidatedAmbientValues( IAmbientValues ambientValues )
         {
-            return new AmbientValuesValidator( this, ambientValues ).Invoke( _cancellationToken );
+            return new AmbientValuesValidator( this, ambientValues ).TryInvoke( _cancellationToken );
         }
 
-        public Task UseFiltersInvoker()
+        public Task<IPipeline> InvokeFilters()
         {
-            return new CommandFiltersInvoker( this, _factories ).Invoke( _cancellationToken );
+            return new CommandFiltersInvoker( this, _factories ).TryInvoke( _cancellationToken );
         }
 
-        public Task UseCommandExecutor( IExecutionStrategySelector selector )
+        public Task<IPipeline> ExecuteCommand( IExecutionStrategySelector selector )
         {
-            return new CommandExecutor( this, _factories, selector ).Invoke( _cancellationToken );
+            return new CommandExecutor( this, _factories, selector ).TryInvoke( _cancellationToken );
         }
     }
 }

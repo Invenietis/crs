@@ -6,14 +6,15 @@ using System.Threading.Tasks;
 using CK.Authentication;
 using CK.Authorization;
 using Microsoft.AspNetCore.Authorization;
+using CK.Core;
 
-namespace CK.Crs.Extensions
+namespace CK.Crs
 {
-    public class AuthorizationFilter : ICommandFilter
+    public class ProtectedResourceAuthorizationFilter : ICommandFilter
     {
         readonly IAuthorizationService _authorizationService;
 
-        public AuthorizationFilter( IAuthorizationService authorizationService )
+        public ProtectedResourceAuthorizationFilter( IAuthorizationService authorizationService )
         {
             _authorizationService = authorizationService;
         }
@@ -24,25 +25,23 @@ namespace CK.Crs.Extensions
 
             IReadOnlyCollection<ProtectedResource> resources = GetSecuredResourceDescription( context ).ToArray();
             IReadOnlyCollection<IAuthorizationRequirement> requirements = ReadRequirements( context );
-
+            context.Monitor.Trace().Send( "{0} requirements found for this command.", requirements.Count );
+            context.Monitor.Trace().Send( "{0} protected resource(s) found for this command.", resources.Count );
             if( resources.Count > 0 )
             {
                 foreach( var resource in resources )
                 {
-                    var resourceAuthorized = await _authorizationService.AuthorizeAsync( context.User, resource, requirements );
-                    if( !resourceAuthorized )
+                    using( context.Monitor.OpenTrace().Send( "Reading authorization for resource {0}={1}...", resource.ResourceType, resource.ResourceId ) )
                     {
-                        context.Reject( $"User not authorized for resource {resource.ResourceType}." );
-                        return;
+                        var resourceAuthorized = await _authorizationService.AuthorizeAsync( context.User, resource, requirements );
+                        if( !resourceAuthorized )
+                        {
+                            string msg = String.Format("User not authorized for resource {0}={1}...", resource.ResourceType, resource.ResourceId );
+                            context.Reject( msg );
+                            return;
+                        }
                     }
                 }
-            }
-
-            var authorized = await _authorizationService.AuthorizeAsync( context.User, null, requirements );
-            if( !authorized )
-            {
-                context.Reject( "User not authorized." );
-                return;
             }
         }
 
@@ -76,7 +75,7 @@ namespace CK.Crs.Extensions
 
         private IReadOnlyCollection<IAuthorizationRequirement> ReadRequirements( ICommandFilterContext context )
         {
-            return context.Description.Descriptor.ExtraData.OfType<IAuthorizationRequirement>().ToArray();
+            return context.Description.Descriptor.GetAuthorizationRequirement();
         }
 
         public int Order

@@ -7,7 +7,7 @@ using CK.Core;
 
 namespace CK.Crs.Runtime.Pipeline
 {
-    class CommandRouter : PipelineSlotBase
+    class CommandRouter : PipelineComponent
     {
         readonly ICommandRouteCollection _routeCollection;
 
@@ -23,20 +23,16 @@ namespace CK.Crs.Runtime.Pipeline
 
         public override Task Invoke( CancellationToken token )
         {
-            if( ShouldInvoke )
+            Pipeline.Action.Description = _routeCollection.FindCommandDescriptor( Pipeline.Request.Path );
+            if( Pipeline.Action.Description != null )
             {
-                Pipeline.Action.Description = _routeCollection.FindCommandDescriptor( Pipeline.Request.Path );
-                if( Pipeline.Action.Description != null )
+                if( Pipeline.Action.Description.Descriptor.HandlerType == null )
                 {
-                    if( Pipeline.Action.Description.Descriptor.HandlerType == null )
-                    {
-                        string msg = $"No handler found for command [type={Pipeline.Action.Description.Descriptor.CommandType}].";
-                        Pipeline.Monitor.Error().Send( msg );
-                        Pipeline.Response = new CommandInvalidResponse( Pipeline.Action.CommandId, msg );
-                    }
+                    string msg = $"No handler found for command [type={Pipeline.Action.Description.Descriptor.CommandType}].";
+                    Pipeline.Monitor.Error().Send( msg );
+                    Pipeline.Response = new CommandInvalidResponse( Pipeline.Action.CommandId, msg );
                 }
             }
-
             return Task.FromResult( 0 );
         }
     }

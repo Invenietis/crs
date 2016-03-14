@@ -16,10 +16,15 @@ namespace CK.Crs.Tests.Integration
         {
             services.AddCommandReceiver( options =>
             {
-                options.EnableLongRunningCommands = false;
-                options.Register<TransferAmountCommand, TransferAlwaysSuccessHandler>().CommandName( "transfer" ).IsLongRunning();
-                options.Register<WithdrawMoneyCommand, WithDrawyMoneyHandler>().CommandName( "withdraw" ).AddDecorator<TransactionAttribute>();
-                options.Register<UserCommand, UserHandler>().CommandName( "addUser" ).AddDecorator<TransactionAttribute>();
+                options.Registry.EnableLongRunningCommands = false;
+                options.Registry.Register<TransferAmountCommand, TransferAlwaysSuccessHandler>().CommandName( "transfer" ).IsLongRunning();
+                options.Registry.Register<WithdrawMoneyCommand, WithDrawyMoneyHandler>().CommandName( "withdraw" ).AddDecorator<TransactionAttribute>();
+                options.Registry.Register<UserCommand, UserHandler>().CommandName( "addUser" ).AddDecorator<TransactionAttribute>();
+
+                options.Events.CommandRejectedByFilter = context =>
+                {
+                    return Task.FromResult( 0 );
+                };
             } );
 
             services.AddMvc();
@@ -34,7 +39,7 @@ namespace CK.Crs.Tests.Integration
             {
                 options
                     .AddFilter<HttpsRequiredFilter>()
-                    .AddFilter<CK.Crs.Extensions.AuthorizationFilter>()
+                    .AddFilter<CK.Crs.ProtectedResourceAuthorizationFilter>()
                     .AddCommands(
                         registry => registry.Registration.Where( c => c.CommandType.Namespace.StartsWith( "CK.Crs" ) ),
                         config => config.AddExtraData( "Permission", CK.Authorization.MinGrantLevel.Administrator ) )

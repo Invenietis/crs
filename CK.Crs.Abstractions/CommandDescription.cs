@@ -12,6 +12,7 @@ namespace CK.Crs
     {
         public CommandDescription()
         {
+            Decorators = CK.Core.Util.Array.Empty<Type>();
         }
 
         /// <summary>
@@ -42,7 +43,7 @@ namespace CK.Crs
 
         IDictionary<string, object> _extraData;
         /// <summary>
-        /// Gets or sets a read-only dictionary of extra data.
+        /// Gets a dictionary of extra data.
         /// </summary>
         public IDictionary<string, object> ExtraData
         {

@@ -31,6 +31,16 @@ namespace CK.Crs
         void Reject( string reason );
 
         /// <summary>
+        /// Gets wether this filter has reject the command or not.
+        /// </summary>
+        bool IsRejected { get; }
+
+        /// <summary>
+        /// The reason of the rejection.
+        /// </summary>
+        string RejectReason { get; }
+
+        /// <summary>
         /// Gets the principal which wants to execute this command.
         /// </summary>
         ClaimsPrincipal User { get; }

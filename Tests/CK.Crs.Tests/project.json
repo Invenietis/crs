@@ -7,11 +7,9 @@
     "licenseUrl": "",
 
     "dependencies": {
+        "CK.Crs.AspNet": "1.0.0-*",
         "CK.Authentication": "1.0.0-*",
         "CK.Core": "5.0.0",
-        "CK.Crs.Abstractions": "1.0.0-*",
-        "CK.Crs.AspNet": "1.0.0-*",
-        "CK.Crs.Extensions": "1.0.0-*",
         "Microsoft.Extensions.DependencyInjection": "1.0.0-*",
         "xunit": "2.1.0-*",
         "NUnitLite": "3.2.0"
@@ -19,21 +17,32 @@
 
     "testRunner": "xunit",
 
+    "commands": { "test": "xunit.runner.dnx" },
+
     "frameworks": {
+        "netstandardapp1.5": {
+            "imports": [ "dotnet5.4", "portable-net451+win8" ],
+            "dependencies": {
+                "dotnet-test-xunit": "1.0.0-dev-*",
+                "moq.netcore": "4.4.0-beta8"
+            }
+        },
         "net451": {
             "frameworkAssemblies": {
-                "System.Data": "",
-                "System.Runtime": ""
+                "System.Data": "4.0.0.0",
+                "System.Runtime": "4.0.10.0"
             },
             "dependencies": {
                 "Moq": "4.2.1510.2205",
                 "xunit.runner.console": "2.1.0"
             }
         },
-        "netstandardapp1.5": {
+
+        "dnxcore50": {
             "imports": [ "dotnet5.4", "portable-net451+win8" ],
             "dependencies": {
-                "moq.netcore": "4.4.0-beta8"
+                "moq.netcore": "4.4.0-beta8",
+                "xunit.runner.dnx": "2.1.0-*"
             }
         }
     }

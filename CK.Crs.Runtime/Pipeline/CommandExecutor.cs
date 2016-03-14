@@ -7,7 +7,7 @@ using CK.Core;
 
 namespace CK.Crs.Runtime.Pipeline
 {
-    class CommandExecutor : PipelineSlotBase
+    class CommandExecutor : PipelineComponent
     {
         readonly IFactories _factories;
         readonly IExecutionStrategySelector _executorSelector;
@@ -15,7 +15,7 @@ namespace CK.Crs.Runtime.Pipeline
         public CommandExecutor( IPipeline pipeline, IFactories factories )
             : this( pipeline, factories, new BasicExecutionStrategySelector( factories ) )
         {
-        } 
+        }
 
         public CommandExecutor( IPipeline pipeline, IFactories factories, IExecutionStrategySelector strategy ) : base( pipeline )
         {
@@ -23,34 +23,39 @@ namespace CK.Crs.Runtime.Pipeline
             _executorSelector = strategy;
         }
 
-        public override Task Invoke( CancellationToken token )
+        public override bool ShouldInvoke
         {
-            if( ShouldInvoke )
-            {
-                CommandExecutionContext executionContext = new CommandExecutionContext(
+            get { return Pipeline.Response == null && Pipeline.Action.Command != null; }
+        }
+
+        public override async Task Invoke( CancellationToken token )
+        {
+            CommandExecutionContext executionContext = new CommandExecutionContext(
                     Pipeline.Action,
                     Monitor,
                     token,
                     _factories.CreateExternalEventPublisher,
                     _factories.CreateCommandScheduler);
 
-                var context = new CommandContext( executionContext );
+            var context = new CommandContext( executionContext );
 
-                using( Pipeline.Monitor.OpenTrace().Send( "Running command..." ) )
+            using( Pipeline.Monitor.OpenTrace().Send( "Running command..." ) )
+            {
+                var strategy = _executorSelector.SelectExecutionStrategy( context );
+                if( strategy == null )
                 {
-                    var strategy = _executorSelector.SelectExecutionStrategy( context );
-                    if( strategy == null )
-                    {
-                        string msg = "The Selector should returns a valid, non null executor... otherwise, commands will produce nothing!";
-                        throw new ArgumentNullException( msg );
-                    }
-
-                    Pipeline.Monitor.Trace().Send( $"[ExecutionStrategy={strategy.GetType().Name}]" );
-                    return strategy.ExecuteAsync( context );
+                    string msg = "The Selector should returns a valid, non null executor... otherwise, commands will produce nothing!";
+                    throw new ArgumentNullException( msg );
                 }
-            }
 
-            return Task.FromResult( 0 );
+                Pipeline.Monitor.Trace().Send( $"[ExecutionStrategy={strategy.GetType().Name}]" );
+
+                await Pipeline.Events.CommandExecuting?.Invoke( context.ExecutionContext );
+
+                Pipeline.Response = await strategy.ExecuteAsync( context );
+
+                await Pipeline.Events.CommandExecuted?.Invoke( context.ExecutionContext );
+            }
         }
     }
 }

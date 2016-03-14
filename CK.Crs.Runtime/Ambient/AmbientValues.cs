@@ -26,11 +26,12 @@ namespace CK.Crs.Runtime
             if( !IsDefined( name ) ) return default( T );
             var valueProvider = _lazyBag[name]();
             var value = await valueProvider.GetValueAsync( this );
-            
+
             var disposable = valueProvider as IDisposable;
             if( disposable != null ) disposable.Dispose();
 
-            return (T)value;
+            if( value != null ) return (T)value;
+            return default( T );
         }
 
         public void Register( string key, Func<IAmbientValueProvider> provider )

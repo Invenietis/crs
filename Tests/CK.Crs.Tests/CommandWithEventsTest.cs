@@ -21,26 +21,33 @@ namespace CK.Crs.Tests
         class SimpleCommand { }
         class SimpleEvent { }
 
+        CancellationTokenSource _cancellationToken;
         ITestOutputHelper _output;
         public CommandWithEventsTest( ITestOutputHelper output )
         {
+            _cancellationToken = new CancellationTokenSource();
             _output = output;
         }
 
         [Fact]
         public void an_event_emitter_should_be_set_when_events_are_published()
         {
-            SimpleCommand command = new SimpleCommand();
-            CommandExecutionContext ctx = new CommandExecutionContext(
+            var command = new SimpleCommand();
+            var monitor = TestHelper.Monitor( _output.WriteLine);
+            var action = new CommandAction( Guid.NewGuid(), ClaimsPrincipal.Current)
+            {
+                Command = command,
+                Description = new RoutedCommandDescriptor( "/someroute", new CommandDescription
+                {
+                    CommandType = command.GetType(),
+                    HandlerType = typeof(Handlers.TransferAlwaysSuccessHandler),
+                    IsLongRunning = false
+                } )
+            };
+            var ctx = new CommandExecutionContext( action, monitor, _cancellationToken.Token,
                 ( cctx ) => TestHelper.MockEventPublisher(),
-                ( cctx ) => TestHelper.MockCommandScheduler(),
-                TestHelper.Monitor(_output.WriteLine ),
-                command,
-                Guid.NewGuid(),
-                false,
-                String.Empty,
-                ClaimsPrincipal.Current,
-                default( CancellationToken));
+                ( cctx ) => TestHelper.MockCommandScheduler() ); 
+
             try
             {
                 ctx.ExternalEvents.Push( new SimpleEvent() );
@@ -181,16 +188,21 @@ namespace CK.Crs.Tests
 
         private CommandExecutionContext CreateContext( SimpleCommand command )
         {
-            return new CommandExecutionContext(
-                ( cctx ) => new TransactionnalEventPublisher( cctx ),
-                ( cctx ) => TestHelper.MockCommandScheduler(),
-                TestHelper.Monitor( _output.WriteLine ),
-                command,
-                Guid.NewGuid(),
-                false,
-                String.Empty,
-                ClaimsPrincipal.Current,
-                default( CancellationToken ) );
+            var monitor = TestHelper.Monitor( _output.WriteLine);
+            var action = new CommandAction( Guid.NewGuid(), ClaimsPrincipal.Current)
+            {
+                Command = command,
+                Description = new RoutedCommandDescriptor( "/someroute", new CommandDescription
+                {
+                    CommandType = command.GetType(),
+                    HandlerType = typeof(Handlers.TransferAlwaysSuccessHandler),
+                    IsLongRunning = false
+                } )
+            };
+            var ctx = new CommandExecutionContext( action, monitor, _cancellationToken.Token,
+                ( cctx ) => TestHelper.MockEventPublisher(),
+                ( cctx ) => TestHelper.MockCommandScheduler() ); 
+            return ctx;
         }
 
 

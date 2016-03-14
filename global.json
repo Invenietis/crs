@@ -2,7 +2,8 @@
     "projects": [
         "../ck-auth",
         "../ck-core",
-        "../ck-framework"
+        "../ck-framework",
+        "."
     ],
     "sdk": {
         "version": "1.0.0-rc2-16595"

@@ -2,6 +2,7 @@
   "webroot": "wwwroot",
   "version": "1.0.0-*",
     "dependencies": {
+
         "CK.Crs.AspNet": "1.0.0-*",
         "CK.Crs.Extensions": "1.0.0-*",
         "Microsoft.AspNetCore.Mvc": "1.0.0-*",

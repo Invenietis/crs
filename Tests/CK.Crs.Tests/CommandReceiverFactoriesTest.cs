@@ -9,14 +9,14 @@ namespace CK.Crs.Tests
 {
     public class CommandReceiverFactoriesTest
     {
-        [Test][Fact]
+        [Test]
         public void When_Failed_Should_Return_Null()
         {
             // Arrange
             IServiceProvider sp = TestHelper.CreateServiceProvider( c =>
             {
 
-            });
+            }); 
             // Act
             DefaultFactories.DefaultCreateInstanceStrategy s = new DefaultFactories.DefaultCreateInstanceStrategy( sp );
             ISomeType result = s.CreateInstanceOrDefault<ISomeType>( typeof( TypeWithConstructorWithParameters ) );
@@ -25,7 +25,7 @@ namespace CK.Crs.Tests
             Assert.Null( result );
         }
 
-        [Test][Fact]
+        [Test]
         public void When_DefaultLambda_Should_InvokeIt()
         {
             // Arrange

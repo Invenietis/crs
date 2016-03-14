@@ -13,14 +13,14 @@ namespace CK.Crs.Runtime
     {
         readonly IList<Timer> _timers;
 
-        readonly IPipelineEvents _events;
+        readonly PipelineEvents _events;
         readonly ICommandRouteCollection _routes;
         readonly IExecutionStrategySelector _executorSelector;
         readonly IFactories _factory;
 
         CancellationTokenSource _source;
 
-        public InMemoryScheduler( IPipelineEvents events, IExecutionStrategySelector executor, ICommandRouteCollection routes, IFactories factory )
+        public InMemoryScheduler( PipelineEvents events, IExecutionStrategySelector executor, ICommandRouteCollection routes, IFactories factory )
         {
             if( events == null ) throw new ArgumentNullException( nameof( events ) );
             if( executor == null ) throw new ArgumentNullException( nameof( executor ) );

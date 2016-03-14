@@ -54,18 +54,7 @@ namespace CK.Crs.Tests
                 SomeIntegerValue = integerValue
             };
             var descriptor = CreateCommandDescriptor<SomeCommand>();
-            var commandContext = new CommandExecutionContext(
-                (ctx ) => TestHelper.MockEventPublisher(),
-                ( ctx ) => TestHelper.MockCommandScheduler(),
-                monitor,
-                command,
-                Guid.NewGuid(),
-                descriptor.Descriptor.IsLongRunning,
-                "3712",
-                ClaimsPrincipal.Current,
-                _cancellationToken.Token);
 
-            var ambientValues = TestHelper.CreateAmbientValues();
             var filterContext= new FilterContext( monitor, descriptor, ClaimsPrincipal.Current, command);
             // Act
             DefaultCommandValidator v = new DefaultCommandValidator();

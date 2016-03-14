@@ -4,10 +4,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CK.Core;
+using System.Reflection;
 
 namespace CK.Crs.Runtime.Pipeline
 {
-    class AmbientValuesValidator : PipelineSlotBase
+    class AmbientValuesValidator : PipelineComponent
     {
         readonly IAmbientValues _ambientValues;
 
@@ -27,45 +28,61 @@ namespace CK.Crs.Runtime.Pipeline
 
         public override async Task Invoke( CancellationToken token )
         {
-            if( ShouldInvoke )
+            using( Monitor.OpenTrace().Send( "Ambient values validation..." ) )
             {
-                Type modelType = Pipeline.Action.Command.GetType();
-                using( Monitor.OpenTrace().Send( "Identity checking" ) )
+                var context = new ReflectionAmbientValueValidationContext( Pipeline.Monitor, Pipeline.Action, _ambientValues );
+                await Pipeline.Events.ValidatingAmbientValues?.Invoke( context );
+
+                if( context.Rejected ) Monitor.Info().Send( "Validation failed by custom processing in Pipeline.Events.ValidatingAmbientValues." );
+                else
                 {
-                    Monitor.Trace().Send( $"[For type {modelType}]" );
-
-                    // TODO: AmbientValueCheckerInjection
-                    dynamic dModel = Pipeline.Action.Command;
-                    int? actorId = dModel.ActorId;
-                    if( actorId.HasValue )
-                    {
-                        int ambientActorId = await _ambientValues.GetValueAsync<int>( "ActorId" );
-                        if( !ambientActorId.Equals( actorId.Value ) )
-                        {
-                            await SetInvalidAmbientValuesResponse();
-                        }
-                    }
-
-                    int? authenticatedActorId = dModel.AuthenticatedActorId;
-                    if( authenticatedActorId.HasValue )
-                    {
-                        int ambientAuthenticatedActorId = await _ambientValues.GetValueAsync<int>( "AuthenticatedActorId" );
-                        if( !ambientAuthenticatedActorId.Equals( actorId.Value ) )
-                        {
-                            await SetInvalidAmbientValuesResponse();
-                        }
-                    }
+                    await context.ValidateValueAndRejectOnError<int>( "ActorId" );
+                    await context.ValidateValueAndRejectOnError<int>( "AuthenticatedActorId" );
                 }
+                await Pipeline.Events.AmbientValuesValidated?.Invoke( context );
+
+                if( context.Rejected ) SetInvalidAmbientValuesResponse( context );
             }
         }
 
-        private Task SetInvalidAmbientValuesResponse()
-        {
-            Pipeline.Response = new CommandErrorResponse( "Invalid ambient values", Pipeline.Action.CommandId );
-            if( Pipeline.Events.AmbientValuesInvalid != null )
-                return Pipeline.Events.AmbientValuesInvalid( _ambientValues );
 
-            return Task.FromResult( 0 );
+        private void SetInvalidAmbientValuesResponse( AmbientValueValidationContext context )
+        {
+            if( context.Rejected )
+            {
+                string msg =  $"Invalid ambient values detected: {context.RejectReason}";
+                Monitor.Warn().Send( msg );
+                Pipeline.Response = new CommandErrorResponse( msg, Pipeline.Action.CommandId );
+            }
+            else
+            {
+                Monitor.Info().Send( "Ambient values validator invalidate ambient values, but the last hook from Pipeline.Events.AmbientValuesInvalidated cancel the rejection." );
+            }
+        }
+
+        protected class ReflectionAmbientValueValidationContext : AmbientValueValidationContext
+        {
+            public IReadOnlyCollection<PropertyInfo> Properties { get; }
+
+            public ReflectionAmbientValueValidationContext( IActivityMonitor monitor, CommandAction action, IAmbientValues ambientValues ) : base( monitor, action, ambientValues )
+            {
+                Properties = action.Description.Descriptor.CommandType.GetRuntimeProperties().ToArray();
+            }
+
+            public sealed override async Task<bool> ValidateValue<T>( string valueName, AmbientValueComparer<T> comparer )
+            {
+                var property = Properties.FirstOrDefault( x => x.Name == valueName);
+                if( property == null ) Monitor.Info().Send( "Property {0} not found for value {1} on command {2}", valueName, valueName, Action.Description.Descriptor.CommandType.Name );
+                else
+                {
+                    T value = (T) property.GetMethod.Invoke( Action.Command, null );
+                    Monitor.Trace().Send( "Getting {0} by reflection on the command and obtained {1}.", property.Name, value != null ? value.ToString() : "<NULL>" );
+                    T ambientValue = await AmbientValues.GetValueAsync<T>( valueName);
+                    Monitor.Trace().Send( "Getting {0} in the ambient values and obtained {1}.", valueName, ambientValue != null ? ambientValue.ToString() : "<NULL>" );
+                    return comparer( valueName, value, ambientValue );
+                }
+                return true;
+            }
         }
     }
 }

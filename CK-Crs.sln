@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.25029.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CK.Crs.AspNet", "CK.Crs.AspNet\CK.Crs.AspNet.xproj", "{0E843608-7752-44AD-9D82-AEDED5F8A723}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CK.Crs.Tests", "CK.Crs.Tests\CK.Crs.Tests.xproj", "{732172E8-ECE3-48A6-A8D0-4DE7FC0EC419}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CK.Crs.Tests", "Tests\CK.Crs.Tests\CK.Crs.Tests.xproj", "{732172E8-ECE3-48A6-A8D0-4DE7FC0EC419}"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CK.Crs.Abstractions", "CK.Crs.Abstractions\CK.Crs.Abstractions.xproj", "{7605F8FB-B447-4D6B-91F6-D85ACC9DDBB7}"
 EndProject
@@ -20,7 +20,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".SolutionItems", ".Solution
 		RepositoryInfo.xml = RepositoryInfo.xml
 	EndProjectSection
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CK.Crs.Tests.Integration", "CK.Crs.Tests.Integration\CK.Crs.Tests.Integration.xproj", "{0506418E-9F16-4C48-9731-6513904913F2}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CK.Crs.Tests.Integration", "Tests\CK.Crs.Tests.Integration\CK.Crs.Tests.Integration.xproj", "{0506418E-9F16-4C48-9731-6513904913F2}"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CK.Crs.CodeCakeBuilder", "build\CK.Crs.CodeCakeBuilder.xproj", "{99A89DF1-1D07-49E3-ADD5-FED45DE1DFCE}"
 EndProject

@@ -7,7 +7,7 @@ using CK.Core;
 
 namespace CK.Crs.Runtime.Pipeline
 {
-    abstract class PipelineSlotBase
+    abstract class PipelineComponent
     {
         protected IPipeline Pipeline;
 
@@ -16,14 +16,20 @@ namespace CK.Crs.Runtime.Pipeline
             get { return Pipeline.Monitor; }
         }
 
-        public PipelineSlotBase( IPipeline pipeline )
+        public PipelineComponent( IPipeline pipeline )
         {
             Pipeline = pipeline;
         }
 
-        public virtual bool ShouldInvoke
+        public abstract bool ShouldInvoke
         {
-            get { return Pipeline.Response == null && Pipeline.Action.Command != null; }
+            get;
+        }
+
+        public async Task<IPipeline> TryInvoke( CancellationToken token = default( CancellationToken ) )
+        {
+            if( ShouldInvoke ) await Invoke( token );
+            return Pipeline;
         }
 
         public abstract Task Invoke( CancellationToken token = default( CancellationToken ) );

@@ -15,36 +15,6 @@ using CK.Crs.Runtime;
 
 namespace CK.Crs.Tests
 {
-    public class ActorIdProvider : IAmbientValueProvider
-    {
-        readonly IAuthenticationStore _userTable;
-        readonly IHttpContextAccessor _httpContextAccessor;
-
-        public ActorIdProvider( IAuthenticationStore userTable, IHttpContextAccessor httpContextAccessor )
-        {
-            _userTable = userTable;
-            _httpContextAccessor = httpContextAccessor;
-        }
-
-        public string Name
-        {
-            get { return "ActorId"; }
-        }
-
-        public const int Default = 0;
-
-        public async Task<object> GetValueAsync( IAmbientValues values )
-        {
-            var currentIdentity = _httpContextAccessor.HttpContext.User.Identity;
-            if( currentIdentity.IsAuthenticated )
-            {
-                var user = await _userTable.GetUserByName( currentIdentity.Name );
-                return user?.UserId;
-            }
-
-            return Default;
-        }
-    }
 
     public class AmbientValuesTest
     {
@@ -55,8 +25,15 @@ namespace CK.Crs.Tests
             mockDatabase.Setup( x => x.GetUserByName( It.IsAny<string>(), It.IsAny<CancellationToken>() ) ).Returns( Task.FromResult( new User { UserId = 12, IsEnabled = true, UserName = "john" } ) ).Verifiable();
             var sp = TestHelper.CreateServiceProvider( serviceCollection =>
             {
+                var httpContextMock = new Mock<HttpContext>();
+                httpContextMock.Setup( e => e.User ).Returns( () => ClaimsPrincipal.Current );
+
+                var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
+                httpContextAccessorMock.Setup( e => e.HttpContext ).Returns( httpContextMock.Object );
+
                 serviceCollection
                     .AddSingleton<ActorIdProvider>()
+                    .AddSingleton<IHttpContextAccessor>( httpContextAccessorMock.Object )
                     .AddSingleton( mockDatabase.Object );
             } );
             IAmbientValues ambientValues = new AmbientValues( new DefaultAmbientValueFactory( sp) );

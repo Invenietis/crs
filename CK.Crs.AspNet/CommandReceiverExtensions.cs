@@ -26,15 +26,17 @@ namespace CK.Crs
             } );
         }
 
-        public static void AddCommandReceiver( this IServiceCollection services, Action<ICommandRegistry> configuration )
+        public static void AddCommandReceiver( this IServiceCollection services, Action<CommandReceiverOption> configuration )
         {
             services.AddSingleton<ICommandReceiver, CommandReceiver>();
             services.AddSingleton<IExecutionStrategySelector, BasicExecutionStrategySelector>();
             services.AddSingleton<IFactories, DefaultFactories>();
+            services.AddSingleton<IAmbientValues, AmbientValues>();
 
-            ICommandRegistry registry = new CommandRegistry();
-            configuration( registry );
-            services.AddSingleton( registry );
+            CommandReceiverOption options = new CommandReceiverOption( new CommandRegistry() );
+            configuration( options );
+            services.AddSingleton( options.Registry );
+            services.AddSingleton( options.Events );
         }
     }
 }

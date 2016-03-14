@@ -10,7 +10,7 @@ namespace CK.Crs.Runtime.Pipeline
     {
         public CommandAction Action { get; }
 
-        public IPipelineEvents Events { get; }
+        public PipelineEvents Events { get; }
 
         public IActivityMonitor Monitor { get; }
 

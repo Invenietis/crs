@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace CK.Crs
@@ -42,5 +43,6 @@ namespace CK.Crs
 
         public DateTime WhenCommandShouldBeRaised { get; }
         public bool Cancellable { get; }
+        public ClaimsPrincipal ClaimsPrincipal { get; set; }
     }
 }

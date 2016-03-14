@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using CK.Authorization;
 using CK.Core;
-using CK.Crs.Extensions;
 using CK.Crs.Runtime;
 using Microsoft.AspNetCore.Authorization;
 using Xunit.Abstractions;
@@ -13,6 +12,8 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Security.Claims;
 using NUnit.Framework;
 using Moq;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.PlatformAbstractions;
 
 namespace CK.Crs.Tests
 {
@@ -49,6 +50,7 @@ namespace CK.Crs.Tests
         {
             _output = output;
         }
+
         [Xunit.Fact]
         public async Task Permission_Should_be_Challenged_By_AuthorizationFilter()
         {
@@ -58,6 +60,9 @@ namespace CK.Crs.Tests
             var serviceProvider = TestHelper.CreateServiceProvider( sp =>
             {
                 sp.AddAuthorization();
+                sp.AddOptions();
+                sp.AddSingleton<ILoggerFactory>( new LoggerFactory() );
+                sp.AddScoped( typeof( ILogger<>), typeof( Logger<>));
                 sp.AddSingleton<IAuthorizationHandler, MinGrantLevelHandler>();
 
                 secureStore
@@ -82,19 +87,20 @@ namespace CK.Crs.Tests
                 CommandType = command.GetType(),
                 HandlerType = typeof( SimpleHandler )
             });
-            description.Descriptor.ExtraData.Add( "Permission", MinGrantLevel.Administrator );
-            var ambientValues = TestHelper.CreateAmbientValues( serviceProvider );
+            description.Descriptor.AddAuthorizationRequirement( MinGrantLevel.Administrator );
+
             var filerContext = new FilterContext(  monitor, description, ClaimsPrincipal.Current,  command);
 
             var authorizationService = serviceProvider.GetRequiredService<IAuthorizationService>();
 
             ClaimsPrincipal.ClaimsPrincipalSelector = () => new ClaimsPrincipal( new ClaimsIdentity( new[] { new Claim( ClaimTypes.Name, "John" ) }, "Test" ) );
-            var authorizationFilter = new AuthorizationFilter( authorizationService );
+            var authorizationFilter = new ProtectedResourceAuthorizationFilter( authorizationService );
 
             // Act
             await authorizationFilter.OnCommandReceived( filerContext );
 
             // Assert
+            if( filerContext .IsRejected ) _output.WriteLine( filerContext.RejectReason );
             Assert.That( filerContext.IsRejected, Is.False );
 
             secureStore.VerifyAll();

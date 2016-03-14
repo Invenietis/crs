@@ -10,7 +10,7 @@ using CK.Core;
 
 namespace CK.Crs.Runtime.Pipeline
 {
-    class CommandBuilder : PipelineSlotBase
+    class CommandBuilder : PipelineComponent
     {
         readonly JsonSerializer _serializer;
 
@@ -27,28 +27,27 @@ namespace CK.Crs.Runtime.Pipeline
             get { return Pipeline.Response == null && Pipeline.Action.Description != null; }
         }
 
-        public override Task Invoke( CancellationToken token )
+        public override async Task Invoke( CancellationToken token )
         {
-            if( ShouldInvoke )
-            {
-                if( Pipeline.Action.Description == null ) throw new InvalidOperationException( "Cannot build a command without a valid description" );
+            if( Pipeline.Action.Description == null ) throw new InvalidOperationException( "Cannot build a command without a valid description" );
 
-                Pipeline.Action.Command = CreateCommand( Pipeline.Action.Description.Descriptor.CommandType );
+            Pipeline.Action.Command = CreateCommand( Pipeline.Action.Description.Descriptor.CommandType );
+            if( Pipeline.Action.Command == null )
+            {
+                string msg = String.Format(
+                        "A valid command definition has been infered from routes, but the command type {0} failed to be instanciated.",
+                        Pipeline.Action.Description.Descriptor.CommandType.Name );
+                Pipeline.Monitor.Error().Send( msg );
+            }
+            else
+            {
                 using( var reader = new StreamReader( Pipeline.Request.Body ) )
                 {
                     _serializer.Populate( reader, Pipeline.Action.Command );
                 }
 
-                if( Pipeline.Action.Command != null )
-                {
-                    string msg = String.Format(
-                        "A valid command definition has been infered from routes, but the command type {0} failed to be instanciated.",
-                        Pipeline.Action.Description.Descriptor.CommandType.Name );
-                    Pipeline.Monitor.Error().Send( msg );
-                }
+                await Pipeline.Events.CommandBuilt?.Invoke( Pipeline.Action );
             }
-
-            return Task.FromResult( 0 );
         }
 
         protected virtual object CreateCommand( Type commandType )

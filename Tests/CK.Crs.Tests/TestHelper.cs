@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using CK.Core;
 using CK.Crs.Runtime;
@@ -9,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.PlatformAbstractions;
 using Moq;
 using NUnit.Framework;
+using Xunit.Abstractions;
 
 namespace CK.Crs.Tests
 {
@@ -68,6 +71,28 @@ namespace CK.Crs.Tests
             IAmbientValues ambientValues = new AmbientValues( new DefaultAmbientValueFactory( sp) );
 
             return ambientValues;
+        }
+
+        internal CommandExecutionContext CreateContext<T>( T command, ITestOutputHelper output, CancellationToken token = default( CancellationToken ) ) where T : class
+        {
+            var monitor = Monitor( output.WriteLine );
+
+            var action = new CommandAction( Guid.NewGuid(), ClaimsPrincipal.Current)
+            {
+                Command = command,
+                Description = new RoutedCommandDescriptor( "/someroute", new CommandDescription
+                {
+                    CommandType = command.GetType(),
+                    HandlerType = typeof( ICommandHandler<T> ),
+                    IsLongRunning = false
+                } )
+            };
+
+            var ctx = new CommandExecutionContext( action, monitor,token,
+                ( cctx ) => TestHelper.MockEventPublisher(),
+                ( cctx ) => TestHelper.MockCommandScheduler() );
+
+            return ctx;
         }
     }
 }

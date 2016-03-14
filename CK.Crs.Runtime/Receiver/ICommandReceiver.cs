@@ -16,10 +16,11 @@ namespace CK.Crs.Runtime
         /// <summary>
         /// Process a <see cref="CommandRequest"/> and returns a <see cref="CommandResponse"/>
         /// </summary>
+        /// <param name="routes"></param>
         /// <param name="command"><see cref="CommandRequest"/></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Task<CommandResponse> ProcessCommandAsync(  CommandRequest command, CancellationToken cancellationToken = default( CancellationToken ) );
+        Task<CommandResponse> ProcessCommandAsync( ICommandRouteCollection routes, CommandRequest command, CancellationToken cancellationToken = default( CancellationToken ) );
     }
 
 }

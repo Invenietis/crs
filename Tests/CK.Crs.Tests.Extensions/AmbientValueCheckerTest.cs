@@ -1,64 +1,112 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Security.Claims;
-//using System.Threading;
-//using System.Threading.Tasks;
-//using Xunit;
-//using Assert = NUnit.Framework.Assert;
-//using Is = NUnit.Framework.Is;
-//using Microsoft.Extensions.DependencyInjection;
-//using Moq;
-//using CK.Crs.Runtime;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading;
+using System.Threading.Tasks;
+using Xunit;
+using Assert = NUnit.Framework.Assert;
+using Is = NUnit.Framework.Is;
+using Microsoft.Extensions.DependencyInjection;
+using Moq;
+using CK.Crs.Runtime;
+using CK.Authentication;
+using Xunit.Abstractions;
+using CK.Crs.Runtime.Pipeline;
+using Microsoft.AspNetCore.Http;
+using CK.Core;
 
-//namespace CK.Crs.Tests
-//{
-//    public abstract class Command
-//    {
-//        public int ActorId { get; set; }
+namespace CK.Crs.Tests
+{
+    public abstract class Command
+    {
+        public int ActorId { get; set; }
+    }
 
-//        public int AuthenticatedActorId { get; set; }
-//    }
+    public class AmbientValueCheckerTest
+    {
+        class SimpleCommand : Command
+        {
+            public string Data { get; set; }
+        }
 
-//    public class AmbientValueCheckerTest
-//    {
-//        class SimpleCommand : Command
-//        {
-//            public string Data { get; set; }
-//        }
+        ITestOutputHelper _output;
+        public AmbientValueCheckerTest( ITestOutputHelper output )
+        {
+            _output = output;
+        }
 
-//        [Fact]
-//        public async Task When_ActorId_And_AuthenticatedActorId_Are_Different_From_Ambient_Values_It_Should_Throw_SecurityException()
-//        {
-//            var sp = TestHelper.CreateServiceProvider( serviceCollection =>
-//            {
-//                serviceCollection
-//                    .AddSingleton<ActorIdProvider>()
-//                    .AddSingleton<IAuthenticationStore>( Mock.Of<IAuthenticationStore>());
-//            } );
+        [Theory]
+        [InlineData( "john", 12, false )]
+        [InlineData( "john", 11, true )]
+        [InlineData( "john", 0, true )]
+        public async Task AmbientValueActorId_Validation_Cases( string userName, int ambientValueActorId, bool shouldBeRejected )
+        {
+            var sp = TestHelper.CreateServiceProvider( serviceCollection =>
+            {
+                var httpContextMock = new Mock<HttpContext>();
+                httpContextMock.Setup( e => e.User ).Returns( () => ClaimsPrincipal.Current);
 
-//            AmbientValuesFilter filter = new AmbientValuesFilter();
-//            var description = new RoutedCommandDescriptor( new CommandRoutePath("/a", "simpleCommand"), new CommandDescription());
-//            var commandModel = new SimpleCommand
-//            {
-//                ActorId = 12,
-//                AuthenticatedActorId = 1
-//            };
-//            var command = new CommandExecutionContext(
-//                ( ctx ) => TestHelper.MockEventPublisher(),
-//                ( ctx ) => TestHelper.MockCommandScheduler(),
-//                TestHelper.Monitor( Console.Out.WriteLine),
-//                commandModel,
-//                Guid.NewGuid(),
-//                false,
-//                String.Empty,
-//                ClaimsPrincipal.Current,
-//                default( CancellationToken));
+                var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
+                httpContextAccessorMock.Setup( e => e.HttpContext ).Returns( httpContextMock.Object );
 
-//            var ambientValues = TestHelper.CreateAmbientValues( sp );
+                var authenticationStore = new Mock<IAuthenticationStore>();
+                authenticationStore
+                    .Setup( e => e.GetUserByName( It.IsAny<string>(), It.IsAny<CancellationToken>()) )
+                    .Returns( () => Task.FromResult( new User
+                    {
+                        UserId = ambientValueActorId,
+                        UserName = userName,
+                        IsEnabled = true
+                    }))
+                    .Verifiable();
 
-//            await filter.OnCommandReceived( new FilterContext( command.Monitor, description, ClaimsPrincipal.Current, command ) );
+                serviceCollection
+                    .AddSingleton<ActorIdProvider>()
+                    .AddSingleton<IHttpContextAccessor>( httpContextAccessorMock.Object )
+                    .AddSingleton<IAuthenticationStore>( Mock.Of<IAuthenticationStore>());
+            } );
 
-//        }
-//    }
-//}
+
+            ClaimsPrincipal.ClaimsPrincipalSelector = () =>
+                new ClaimsPrincipal( new ClaimsIdentity( new Claim[] { new Claim( ClaimTypes.Name, userName ) }, "Local" ) );
+
+            var command = new SimpleCommand
+            {
+                ActorId = 12
+            };
+
+            var pipelineEvents = new PipelineEvents();
+
+            pipelineEvents.ValidatingAmbientValues = ( validationContext ) =>
+            {
+                validationContext.Monitor.Trace().Send( " ------ FROM PIPELINE - ValidatingAmbientValues ------" );
+                validationContext.Monitor.Trace().Send( validationContext.RejectReason ?? "No Reason" );
+                Assert.That( validationContext.Rejected, Is.False );
+                return Task.FromResult( 0 );
+            };
+            pipelineEvents.AmbientValuesValidated = ( validationContext ) =>
+            {
+                validationContext.Monitor.Trace().Send( " ------ FROM PIPELINE - AmbientValuesValidated ------" );
+                validationContext.Monitor.Trace().Send( validationContext.RejectReason ?? "No Reason" );
+                Assert.That( validationContext.Rejected, Is.EqualTo( shouldBeRejected ) );
+                return Task.FromResult( 0 );
+            };
+
+            var context = TestHelper.CreateContext( command, _output);
+            var fakePipeline = new Mock<IPipeline>();
+            fakePipeline.SetupGet( e => e.Action ).Returns( context.Action );
+            fakePipeline.SetupGet( e => e.Monitor ).Returns( context.Monitor );
+            fakePipeline.SetupGet( e => e.Events ).Returns( pipelineEvents );
+
+            // Act
+            var ambientValues = TestHelper.CreateAmbientValues( sp );
+            ambientValues.Register<ActorIdProvider>( "ActorId" );
+
+            var validator = new AmbientValuesValidator( fakePipeline.Object, ambientValues );
+            await validator.Invoke( default( CancellationToken ) );
+
+            // Assert
+        }
+    }
+}

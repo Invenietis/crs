@@ -13,37 +13,43 @@ namespace CK.Crs.Runtime
 {
     public class CommandReceiver : ICommandReceiver
     {
-        readonly IPipelineEvents _events;
-        readonly ICommandRouteCollection _routes;
+        readonly PipelineEvents _events;
         readonly IExecutionStrategySelector _executorSelector;
         readonly IFactories _factory;
         readonly IAmbientValues _ambientValues;
 
-        public CommandReceiver( IPipelineEvents events, IAmbientValues ambientValues, IExecutionStrategySelector executor, ICommandRouteCollection routes, IFactories factory )
+        public CommandReceiver( PipelineEvents events, IAmbientValues ambientValues, IExecutionStrategySelector executor, IFactories factory )
         {
             if( events == null ) throw new ArgumentNullException( nameof( events ) );
             if( ambientValues == null ) throw new ArgumentNullException( nameof( ambientValues ) );
             if( executor == null ) throw new ArgumentNullException( nameof( executor ) );
             if( factory == null ) throw new ArgumentNullException( nameof( factory ) );
-            if( routes == null ) throw new ArgumentNullException( nameof( routes ) );
 
             _events = events;
             _ambientValues = ambientValues;
             _executorSelector = executor;
             _factory = factory;
-            _routes = routes;
         }
 
-        public async Task<CommandResponse> ProcessCommandAsync( CommandRequest request, CancellationToken cancellationToken = default( CancellationToken ) )
+        public async Task<CommandResponse> ProcessCommandAsync( ICommandRouteCollection routes, CommandRequest request, CancellationToken cancellationToken = default( CancellationToken ) )
         {
             var monitor = new ActivityMonitor( request.Path );
-            using( var pipeline = new CommandReceivingPipeline( _factory, monitor, request, cancellationToken ) )
+
+            // Creates the pipeline of the command processing.
+            // Each component of the pipeline can set a CommandResponse which will shortcut the command handling. 
+            using( var pipeline = new CommandReceivingPipeline( _events, _factory, monitor, request, cancellationToken ) )
             {
-                await pipeline.UseCommandRouter( _routes );
-                await pipeline.UseCommandBuilder();
-                await pipeline.UseAmbientValuesValidator( _ambientValues );
-                await pipeline.UseFiltersInvoker();
-                await pipeline.UseCommandExecutor( _executorSelector );
+                // 1. Looks up the route collection for a registered command.
+                await pipeline.RouteCommand( routes );
+                // 2. Build the command from the CommandRequest data.
+                await pipeline.BuildCommand();
+                // 3. Check the ambient values of the command parameters.
+                await pipeline.ValidatedAmbientValues( _ambientValues );
+                // 4. Invoke command filters. 
+                await pipeline.InvokeFilters();
+                // 5. Executes the command.
+                await pipeline.ExecuteCommand( _executorSelector );
+
                 return pipeline.Response;
             }
         }

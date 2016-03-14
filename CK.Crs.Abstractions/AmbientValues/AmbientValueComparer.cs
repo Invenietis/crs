@@ -5,9 +5,5 @@ using System.Threading.Tasks;
 
 namespace CK.Crs
 {
-    public interface IPipelineEvents
-    {
-        Func<IAmbientValues, Task> AmbientValuesInvalid { get; set; }
-    }
-
+    public delegate bool AmbientValueComparer<T>( string valueName, T value, T ambientValue );
 }

@@ -28,7 +28,8 @@
             ],
             "dependencies": {
                 "System.ComponentModel.Annotations": "4.1.0-*",
-                "System.Threading.Timer": "4.0.1-*"
+                "System.Threading.Timer": "4.0.1-*",
+                "Microsoft.CSharp": "4.0.1-*"
             }
         }
     },

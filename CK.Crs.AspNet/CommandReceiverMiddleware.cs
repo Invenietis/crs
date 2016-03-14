@@ -14,24 +14,26 @@ namespace CK.Crs
         /// Shared options
         /// </summary>
         private readonly ICommandReceiver _receiver;
+        private readonly ICommandRouteCollection _routes;
 
         RequestDelegate _next;
-        public CommandReceiverMiddleware( RequestDelegate next, ICommandReceiver receiver )
+        public CommandReceiverMiddleware( RequestDelegate next, ICommandRouteCollection routes, ICommandReceiver receiver )
         {
+            if( routes == null ) throw new ArgumentNullException( nameof( routes ) );
             if( receiver == null ) throw new ArgumentNullException( nameof( receiver ) );
 
             _next = next;
+            _routes = routes;
             _receiver = receiver;
         }
 
         public async Task Invoke( HttpContext context )
         {
-            var commandRequest = new CommandRequest( context.Request.Path.Value,context.Request.Body, context.User );
-
-            CommandResponse commandResponse = await _receiver.ProcessCommandAsync( commandRequest );
-            if( commandResponse != null )
+            var request = new CommandRequest( context.Request.Path.Value,context.Request.Body, context.User );
+            var response = await _receiver.ProcessCommandAsync( _routes, request );
+            if( response != null )
             {
-                commandResponse.Write( context.Response.Body );
+                response.Write( context.Response.Body );
             }
             else
             {
