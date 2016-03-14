@@ -23,13 +23,9 @@ namespace CK.Crs
         public async Task<object> GetValueAsync( IAmbientValues values )
         {
             var currentIdentity = _httpContextAccessor.HttpContext.User.Identity;
-            if( currentIdentity.IsAuthenticated )
-            {
-                var user = await _authenticationStore.GetUserByName( currentIdentity.Name );
-                return user?.UserId;
-            }
 
-            return Default;
+            var user = await _authenticationStore.GetUserByName( currentIdentity.Name );
+            return user?.UserId;
         }
     }
 }

@@ -64,13 +64,30 @@ namespace CK.Crs.Tests
             return e.Object;
         }
 
-        internal static IAmbientValues CreateAmbientValues( IServiceProvider sp = null )
+        internal static IAmbientValues CreateAmbientValues( IServiceProvider sp = null, IActivityMonitor m = null )
         {
-            sp = sp ?? TestHelper.CreateServiceProvider( Util.ActionVoid );
+            if( sp == null ) sp = TestHelper.CreateServiceProvider( Util.ActionVoid );
 
-            IAmbientValues ambientValues = new AmbientValues( new DefaultAmbientValueFactory( sp) );
+            IAmbientValues ambientValues = new AmbientValues( new TestAmbientValueFactory(m, sp) );
 
             return ambientValues;
+        }
+
+        class TestAmbientValueFactory : DefaultAmbientValueFactory
+        {
+            IActivityMonitor _m;
+            public TestAmbientValueFactory( IActivityMonitor m, IServiceProvider p ) : base( p )
+            {
+                _m = m;
+            }
+
+            public override IAmbientValueProvider Create( Type providerType )
+            {
+                var t = base.Create( providerType );
+                _m.Trace().Send( $"{providerType} resolved." );
+                Assert.That( t, Is.Not.Null );
+                return t;
+            }
         }
         static internal CommandExecutionContext CreateContext<T>( T command, ITestOutputHelper output, CancellationToken token = default( CancellationToken ) ) where T : class
         {

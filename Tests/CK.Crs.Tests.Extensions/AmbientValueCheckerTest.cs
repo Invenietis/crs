@@ -40,8 +40,14 @@ namespace CK.Crs.Tests
         [InlineData( "john", 12, false )]
         [InlineData( "john", 11, true )]
         [InlineData( "john", 0, true )]
+        [InlineData( "john", 1, true )]
         public async Task AmbientValueActorId_Validation_Cases( string userName, int ambientValueActorId, bool shouldBeRejected )
         {
+            ClaimsPrincipal.ClaimsPrincipalSelector = () =>
+                new ClaimsPrincipal( new ClaimsIdentity( new Claim[] { new Claim( ClaimTypes.Name, userName ) }, "Local" ) );
+
+            var authenticationStore = new Mock<IAuthenticationStore>();
+
             var sp = TestHelper.CreateServiceProvider( serviceCollection =>
             {
                 var httpContextMock = new Mock<HttpContext>();
@@ -50,7 +56,6 @@ namespace CK.Crs.Tests
                 var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
                 httpContextAccessorMock.Setup( e => e.HttpContext ).Returns( httpContextMock.Object );
 
-                var authenticationStore = new Mock<IAuthenticationStore>();
                 authenticationStore
                     .Setup( e => e.GetUserByName( It.IsAny<string>(), It.IsAny<CancellationToken>()) )
                     .Returns( () => Task.FromResult( new User
@@ -64,12 +69,8 @@ namespace CK.Crs.Tests
                 serviceCollection
                     .AddSingleton<ActorIdProvider>()
                     .AddSingleton<IHttpContextAccessor>( httpContextAccessorMock.Object )
-                    .AddSingleton<IAuthenticationStore>( Mock.Of<IAuthenticationStore>());
+                    .AddSingleton<IAuthenticationStore>( authenticationStore.Object);
             } );
-
-
-            ClaimsPrincipal.ClaimsPrincipalSelector = () =>
-                new ClaimsPrincipal( new ClaimsIdentity( new Claim[] { new Claim( ClaimTypes.Name, userName ) }, "Local" ) );
 
             var command = new SimpleCommand
             {
@@ -100,13 +101,14 @@ namespace CK.Crs.Tests
             fakePipeline.SetupGet( e => e.Events ).Returns( pipelineEvents );
 
             // Act
-            var ambientValues = TestHelper.CreateAmbientValues( sp );
+            var ambientValues = TestHelper.CreateAmbientValues( sp, context.Monitor );
             ambientValues.Register<ActorIdProvider>( "ActorId" );
 
             var validator = new AmbientValuesValidator( fakePipeline.Object, ambientValues );
             await validator.Invoke( default( CancellationToken ) );
 
             // Assert
+            authenticationStore.VerifyAll();
         }
     }
 }
