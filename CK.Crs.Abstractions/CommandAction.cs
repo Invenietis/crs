@@ -8,14 +8,9 @@ namespace CK.Crs
 {
     public class CommandAction
     {
-        public CommandAction( Guid commandId, CommandRequest request ) : this( commandId, request.User )
-        {
-        }
-
-        public CommandAction( Guid commandId, ClaimsPrincipal user )
+        public CommandAction( Guid commandId )
         {
             CommandId = commandId;
-            User = user;
         }
 
         /// <summary>
@@ -37,10 +32,5 @@ namespace CK.Crs
         /// Returns an identifier that should help identifying the caller of this request.
         /// </summary>
         public string CallbackId { get; set; }
-
-        /// <summary>
-        /// Gets the <see cref="ClaimsPrincipal"/> that issued this command.
-        /// </summary>
-        public ClaimsPrincipal User { get; }
     }
 }

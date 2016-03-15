@@ -34,7 +34,7 @@ namespace CK.Crs.Tests
         {
             var command = new SimpleCommand();
             var monitor = TestHelper.Monitor( _output.WriteLine);
-            var action = new CommandAction( Guid.NewGuid(), ClaimsPrincipal.Current)
+            var action = new CommandAction( Guid.NewGuid())
             {
                 Command = command,
                 Description = new RoutedCommandDescriptor( "/someroute", new CommandDescription
@@ -189,7 +189,7 @@ namespace CK.Crs.Tests
         private CommandExecutionContext CreateContext( SimpleCommand command )
         {
             var monitor = TestHelper.Monitor( _output.WriteLine);
-            var action = new CommandAction( Guid.NewGuid(), ClaimsPrincipal.Current)
+            var action = new CommandAction( Guid.NewGuid() )
             {
                 Command = command,
                 Description = new RoutedCommandDescriptor( "/someroute", new CommandDescription

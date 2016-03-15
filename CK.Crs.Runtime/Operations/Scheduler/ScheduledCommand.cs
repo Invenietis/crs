@@ -9,7 +9,7 @@ namespace CK.Crs.Runtime
 {
     public class ScheduledCommand : CommandAction
     {
-        public ScheduledCommand( Guid commandId, ClaimsPrincipal user ) : base( commandId, user )
+        public ScheduledCommand( Guid commandId ) : base( commandId )
         {
         }
 

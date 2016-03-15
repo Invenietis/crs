@@ -43,7 +43,7 @@ namespace CK.Crs.Runtime.Pipeline
             Events = events;
             Monitor = monitor;
             Request = request;
-            Action = new CommandAction( Guid.NewGuid(), Request );
+            Action = new CommandAction( Guid.NewGuid() );
 
             _factories = factories;
             _cancellationToken = cancellationToken;

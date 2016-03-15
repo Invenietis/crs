@@ -43,6 +43,5 @@ namespace CK.Crs
 
         public DateTime WhenCommandShouldBeRaised { get; }
         public bool Cancellable { get; }
-        public ClaimsPrincipal ClaimsPrincipal { get; set; }
     }
 }

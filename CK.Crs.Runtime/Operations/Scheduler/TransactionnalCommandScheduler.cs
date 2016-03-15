@@ -44,7 +44,7 @@ namespace CK.Crs.Runtime
 
         public Guid Schedule<T>( T command, CommandSchedulingOption option )
         {
-            ScheduledCommand operation = new ScheduledCommand( CreateCommandIdentifier(), option.ClaimsPrincipal )
+            ScheduledCommand operation = new ScheduledCommand( CreateCommandIdentifier() )
             {
                 Command = command,
                 Description = null, // TODO: obtain description for the command to schedule.

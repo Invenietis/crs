@@ -39,7 +39,7 @@ namespace CK.Crs.Tests
                 Amount = 1000
             };
 
-            var action = new CommandAction( Guid.NewGuid(), ClaimsPrincipal.Current)
+            var action = new CommandAction( Guid.NewGuid() )
             {
                 Command = model,
                 Description = new RoutedCommandDescriptor( "/someroute", new CommandDescription

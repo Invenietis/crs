@@ -8,11 +8,12 @@ namespace CK.Crs
 {
     public class CommandRequest
     {
-        public CommandRequest( CommandRoutePath path, Stream body, ClaimsPrincipal user )
+        public CommandRequest( CommandRoutePath path, Stream body, ClaimsPrincipal user, string callbackIdentifier = null )
         {
             Path = path;
             Body = body;
             User = user;
+            CallbackIdentifier = callbackIdentifier;
         }
 
         /// <summary>
@@ -24,6 +25,11 @@ namespace CK.Crs
         /// The stream of this request
         /// </summary>
         public Stream Body { get; }
+
+        /// <summary>
+        /// The header of this command request
+        /// </summary>
+        public string CallbackIdentifier { get; }
 
         /// <summary>
         /// Gets the <see cref="ClaimsPrincipal"/> that issued this command.

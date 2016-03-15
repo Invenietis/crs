@@ -77,7 +77,7 @@ namespace CK.Crs.Tests
         {
             var monitor = Monitor( output.WriteLine );
 
-            var action = new CommandAction( Guid.NewGuid(), ClaimsPrincipal.Current)
+            var action = new CommandAction( Guid.NewGuid() )
             {
                 Command = command,
                 Description = new RoutedCommandDescriptor( "/someroute", new CommandDescription

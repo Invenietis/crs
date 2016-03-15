@@ -29,7 +29,8 @@ namespace CK.Crs
 
         public async Task Invoke( HttpContext context )
         {
-            var request = new CommandRequest( context.Request.Path.Value,context.Request.Body, context.User );
+            var connectionId = context.Request.Query["c"];
+            var request = new CommandRequest( context.Request.Path.Value,context.Request.Body, context.User, connectionId );
             var response = await _receiver.ProcessCommandAsync( _routes, request );
             if( response != null )
             {
