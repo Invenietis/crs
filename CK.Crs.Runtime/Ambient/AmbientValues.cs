@@ -46,17 +46,4 @@ namespace CK.Crs.Runtime
             _lazyBag.Add( key, () => _factory.Create( typeof( T ) ) );
         }
     }
-
-    public class DefaultAmbientValueFactory : IAmbientValueProviderFactory
-    {
-        IServiceProvider _serviceProvider;
-        public DefaultAmbientValueFactory( IServiceProvider serviceProvider )
-        {
-            _serviceProvider = serviceProvider;
-        }
-        public virtual IAmbientValueProvider Create( Type providerType )
-        {
-            return _serviceProvider.GetService( providerType ) as IAmbientValueProvider;
-        }
-    }
 }
