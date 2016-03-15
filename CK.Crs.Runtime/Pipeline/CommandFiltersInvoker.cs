@@ -38,7 +38,7 @@ namespace CK.Crs.Runtime.Pipeline
             var filterContext = new FilterContext(Pipeline.Monitor, Pipeline.Action.Description, Pipeline.Request.User, Pipeline.Action.Command);
 
             using( Pipeline.Monitor.OpenTrace().Send( "Applying filters..." )
-                .ConcludeWith( () => filterContext.IsRejected ? "INVALID" : "OK" ) )
+                .ConcludeWith( () => filterContext.Rejected ? "INVALID" : "OK" ) )
             {
                 foreach( var filter in Pipeline.Action.Description.Filters.Select( f => new FilterInfo( _factories.CreateFilter( f ) ) ) )
                 {
@@ -52,12 +52,16 @@ namespace CK.Crs.Runtime.Pipeline
                         await filter.Instance.OnCommandReceived( filterContext );
 
                         // Immediatly test if there is a response available.
-                        if( filterContext.IsRejected )
+                        if( filterContext.Rejected )
                         {
-                            await Pipeline.Events.CommandRejectedByFilter?.Invoke( filterContext );
+                            var rejectedContext = new CancellableCommandRejectedContext( Pipeline.Action, filterContext);
+                            await Pipeline.Events.CommandRejected?.Invoke( rejectedContext );
 
-                            Pipeline.Response = new CommandInvalidResponse( Pipeline.Action.CommandId, filterContext.RejectReason );
-                            break;
+                            if( rejectedContext.Canceled == false )
+                            {
+                                Pipeline.Response = new CommandInvalidResponse( Pipeline.Action.CommandId, filterContext.RejectReason );
+                                break;
+                            }
                         }
                     }
                 }

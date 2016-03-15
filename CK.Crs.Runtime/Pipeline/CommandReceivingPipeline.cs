@@ -7,19 +7,6 @@ using CK.Core;
 
 namespace CK.Crs.Runtime.Pipeline
 {
-    public interface IPipeline : IDisposable
-    {
-        CommandRequest Request { get; }
-        CommandAction Action { get; }
-        CommandResponse Response { get; set; }
-        /// <summary>
-        /// Gets the <see cref="IActivityMonitor"/>
-        /// </summary>
-        IActivityMonitor Monitor { get; }
-
-        PipelineEvents Events { get; }
-    }
-
     class CommandReceivingPipeline : IPipeline, IDisposable
     {
         public PipelineEvents Events { get; }

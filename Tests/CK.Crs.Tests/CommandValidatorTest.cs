@@ -63,11 +63,11 @@ namespace CK.Crs.Tests
             // Assert
             if( assert == 0 )
             {
-                Assert.That( filterContext.IsRejected, Is.False );
+                Assert.That( filterContext.Rejected, Is.False );
             }
             else
             {
-                Assert.That( filterContext.IsRejected, Is.True );
+                Assert.That( filterContext.Rejected, Is.True );
                 Assert.That( filterContext.RejectReason, Is.Not.Null.And.Not.Empty );
 
                 Assert.That( assert, Is.EqualTo( filterContext.RejectReason.Split( new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries ).Length ) );

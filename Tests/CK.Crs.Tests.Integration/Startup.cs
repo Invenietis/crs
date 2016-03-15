@@ -21,8 +21,19 @@ namespace CK.Crs.Tests.Integration
                 options.Registry.Register<WithdrawMoneyCommand, WithDrawyMoneyHandler>().CommandName( "withdraw" ).AddDecorator<TransactionAttribute>();
                 options.Registry.Register<UserCommand, UserHandler>().CommandName( "addUser" ).AddDecorator<TransactionAttribute>();
 
-                options.Events.CommandRejectedByFilter = context =>
+                options.Events.CommandRejected = context =>
                 {
+                    if( context.Action.Description.Descriptor.Name == "Logout" )
+                    {
+                        // Never reject logout command for any reason :p
+                        context.CancelRejection();
+                    }
+                    return Task.FromResult( 0 );
+                };
+
+                options.Events.CommandExecuting = context =>
+                {
+                    context.SetResult( null );
                     return Task.FromResult( 0 );
                 };
             } );

@@ -100,8 +100,8 @@ namespace CK.Crs.Tests
             await authorizationFilter.OnCommandReceived( filerContext );
 
             // Assert
-            if( filerContext .IsRejected ) _output.WriteLine( filerContext.RejectReason );
-            Assert.That( filerContext.IsRejected, Is.False );
+            if( filerContext.Rejected ) _output.WriteLine( filerContext.RejectReason );
+            Assert.That( filerContext.Rejected, Is.False );
 
             secureStore.VerifyAll();
         }

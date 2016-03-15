@@ -7,7 +7,7 @@ using CK.Core;
 
 namespace CK.Crs
 {
-    public interface ICommandFilterContext
+    public interface ICommandFilterContext : IRejectable
     {
         /// <summary>
         /// Gets the <see cref="IActivityMonitor"/> for the current command processing
@@ -23,22 +23,6 @@ namespace CK.Crs
         /// Gets the command instance
         /// </summary>
         object Command { get; }
-
-        /// <summary>
-        /// Rejects the command before execution.
-        /// </summary>
-        /// <param name="reason"></param>
-        void Reject( string reason );
-
-        /// <summary>
-        /// Gets wether this filter has reject the command or not.
-        /// </summary>
-        bool IsRejected { get; }
-
-        /// <summary>
-        /// The reason of the rejection.
-        /// </summary>
-        string RejectReason { get; }
 
         /// <summary>
         /// Gets the principal which wants to execute this command.

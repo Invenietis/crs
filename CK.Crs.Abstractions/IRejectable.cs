@@ -10,19 +10,17 @@ namespace CK.Crs
         /// <summary>
         /// Canceled
         /// </summary>
-        bool Rejected
-        {
-            get;
-        }
+        bool Rejected { get; }
 
         /// <summary>
         /// 
         /// </summary>
-        string RejectReason
-        {
-            get;
-        }
+        string RejectReason { get; }
 
+        /// <summary>
+        /// Rejects with the given reason.
+        /// </summary>
+        /// <param name="reason"></param>
         void Reject( string reason );
     }
 }

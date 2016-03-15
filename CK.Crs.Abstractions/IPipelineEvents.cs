@@ -8,16 +8,20 @@ namespace CK.Crs
 {
     public class PipelineEvents
     {
-        public Func<ICommandFilterContext, Task> CommandRejectedByFilter { get; set; }
-
-        public Func<ICommandExecutionContext, Task> CommandExecuting { get; set; }
-
-        public Func<ICommandExecutionContext, Task> CommandExecuted { get; set; }
-
         public Func<CommandAction, Task> CommandBuilt { get; set; }
 
-        public Func<AmbientValueValidationContext, Task> ValidatingAmbientValues { get; set; }
+        public Func<AmbientValueValidationContext, Task> AmbientValuesValidating { get; set; }
 
         public Func<AmbientValueValidationContext, Task> AmbientValuesValidated { get; set; }
+
+        /// <summary>
+        /// Called when the command has been rejected
+        /// </summary>
+        public Func<CommandRejectedContext, Task> CommandRejected { get; set; }
+
+        /// <summary>
+        /// Called when the command is being executing during execution phasis.
+        /// </summary>
+        public Func<CommandContext, Task> CommandExecuting { get; set; }
     }
 }

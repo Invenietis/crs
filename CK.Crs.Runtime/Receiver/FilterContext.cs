@@ -29,11 +29,11 @@ namespace CK.Crs.Runtime
         /// <param name="reason"></param>
         public void Reject( string reason )
         {
-            IsRejected = true;
+            Rejected = true;
             RejectReason = reason;
         }
 
-        public bool IsRejected { get; private set; }
+        public bool Rejected { get; private set; }
 
         public string RejectReason { get; private set; }
 

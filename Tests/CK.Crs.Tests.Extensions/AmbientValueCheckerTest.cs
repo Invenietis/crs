@@ -79,7 +79,7 @@ namespace CK.Crs.Tests
 
             var pipelineEvents = new PipelineEvents();
 
-            pipelineEvents.ValidatingAmbientValues = ( validationContext ) =>
+            pipelineEvents.AmbientValuesValidating = ( validationContext ) =>
             {
                 validationContext.Monitor.Trace().Send( " ------ FROM PIPELINE - ValidatingAmbientValues ------" );
                 validationContext.Monitor.Trace().Send( validationContext.RejectReason ?? "No Reason" );
