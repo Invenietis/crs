@@ -32,7 +32,8 @@ namespace CK.Crs
 
         public async override Task Invoke( IOwinContext context )
         {
-            var commandRequest = new CommandRequest( context.Request.Path.Value, context.Request.Body, context.Authentication.User );
+            var connectionId = context.Request.Query["c"];
+            var commandRequest = new CommandRequest( context.Request.Path.Value, context.Request.Body, context.Authentication.User, connectionId );
             var commandResponse = await _receiver.ProcessCommandAsync(_routes, commandRequest );
             if( commandResponse != null )
             {
