@@ -4,6 +4,9 @@ using System.Linq;
 using CK.Crs.Handlers;
 using System.Threading.Tasks;
 using System;
+using CK.Crs;
+using CK.Core;
+using CK.Crs.Runtime;
 
 namespace CK.Crs.Tests.Integration
 {
@@ -56,8 +59,45 @@ namespace CK.Crs.Tests.Integration
                         config => config.AddExtraData( "Permission", CK.Authorization.MinGrantLevel.Administrator ) )
                     .AddCommand<TransferAmountCommand>().CommandName( "transfer" ).AddDecorator<TransactionAttribute>();
             } );
+
+
             app.UseCommandReceiver( "/c/public", options =>
             {
+                options
+                    .Pipeline
+                        .UseDefault();
+                //.UseSignalRDispatcher();
+            } );
+
+            app.UseCommandReceiver( "/c/public", options =>
+            {
+                options
+                    .Pipeline
+                        // These handlers are defaults handlers
+                        .UseCommandRouter()
+                        .UseJsonCommandBuilder()
+                        .UseAmbientValuesValidator()
+                        .UseFilters()
+                        .UseCommandExecutor();
+                // Not default handler.
+                //.UseSignalRDispatcher();
+            } );
+
+            SimpleServiceContainer simpleServiceContainer = new SimpleServiceContainer( app.ApplicationServices );
+
+            //app.UseOwin( pipeline =>
+            //{
+            //    pipeline.UseBuilder( simpleServiceContainer );
+            //} );
+
+            app.UseOwin( pipeline =>
+            {
+                var receiver = simpleServiceContainer.GetRequiredService<ICommandReceiver>();
+                var middleWare = new CommandReceiverOwinMiddleware( receiver );
+                pipeline( _ =>
+                {
+                    return middleWare.InvokeAsync;
+                } );
             } );
 
             //options.OnCommandEvent( x => Azure.Publish );

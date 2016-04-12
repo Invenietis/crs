@@ -54,7 +54,7 @@ namespace CK.Crs.Tests
                 var receiver = ApplicationServices.GetRequiredService<ICommandReceiver>();
                 {
                     var request = new CommandRequest( "/api", SerializeRequestBody( cmd ), ClaimsPrincipal.Current);
-                    var response = await receiver.ProcessCommandAsync( routes, request );
+                    var response = await receiver.ProcessCommandAsync( request );
                     Assert.That( response, Is.Null );
                 }
                 routes.AddCommandRoute( new CommandDescription
@@ -66,12 +66,12 @@ namespace CK.Crs.Tests
                 } );
                 {
                     var request = new CommandRequest( "/api", SerializeRequestBody( cmd ), ClaimsPrincipal.Current);
-                    var response = await receiver.ProcessCommandAsync(routes,  request );
+                    var response = await receiver.ProcessCommandAsync( request );
                     Assert.That( response, Is.Null );
                 }
                 {
                     var request = new CommandRequest( "/api/TransferAmountCommand", SerializeRequestBody( cmd ), ClaimsPrincipal.Current);
-                    var response = await receiver.ProcessCommandAsync(routes,  request );
+                    var response = await receiver.ProcessCommandAsync( request );
                     Assert.That( response, Is.Not.Null );
                     Assert.That( response.CommandId, Is.Not.EqualTo( Guid.Empty ) );
                 }

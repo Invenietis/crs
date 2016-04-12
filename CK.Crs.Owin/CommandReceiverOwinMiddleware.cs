@@ -7,21 +7,22 @@ using CK.Crs.Runtime;
 namespace CK.Crs
 {
     // You may need to install the Microsoft.AspNet.Http.Abstractions package into your project
-    public class CommandReceiverMiddleware : OwinMiddleware
+    public class CommandReceiverOwinMiddleware : OwinMiddleware
     {
         /// <summary>
         /// Shared options
         /// </summary>
-        private readonly ICommandRouteCollection _routes;
         private readonly ICommandReceiver _receiver;
 
-        public CommandReceiverMiddleware( OwinMiddleware next, ICommandRouteCollection routes, ICommandReceiver receiver )
+        public CommandReceiverOwinMiddleware( ICommandReceiver receiver ) : this( null, receiver )
+        {
+        }
+
+        public CommandReceiverOwinMiddleware( OwinMiddleware next, ICommandReceiver receiver )
             : base( next )
         {
-            if( routes == null ) throw new ArgumentNullException( nameof( routes ) );
             if( receiver == null ) throw new ArgumentNullException( nameof( receiver ) );
 
-            _routes = routes;
             _receiver = receiver;
         }
 
@@ -34,7 +35,7 @@ namespace CK.Crs
         {
             var connectionId = context.Request.Query["c"];
             var commandRequest = new CommandRequest( context.Request.Path.Value, context.Request.Body, context.Authentication.User, connectionId );
-            var commandResponse = await _receiver.ProcessCommandAsync(_routes, commandRequest );
+            var commandResponse = await _receiver.ProcessCommandAsync( commandRequest );
             if( commandResponse != null )
             {
                 commandResponse.Write( context.Response.Body );

@@ -28,9 +28,26 @@ namespace CK.Crs.Runtime
                 context.SetException( ex );
             }
 
-            var response = CommandResponse.CreateFromContext( context );
+            var response = CreateFromContext( context );
             Debug.Assert( response.ResponseType != CommandResponseType.Deferred );
             return response;
         }
+
+        internal static CommandResponse CreateFromContext( CommandContext context )
+        {
+            if( context.IsDirty )
+            {
+                if( context.Exception != null )
+                    return new CommandErrorResponse( context.Exception.Message, context.ExecutionContext.Action.CommandId );
+
+                if( context.Result != null )
+                {
+                    return new CommandResultResponse( context.Result, context.ExecutionContext );
+                }
+            }
+
+            return new CommandDeferredResponse( context.ExecutionContext );
+        }
+
     }
 }

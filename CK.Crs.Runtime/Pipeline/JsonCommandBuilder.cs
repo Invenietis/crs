@@ -10,11 +10,11 @@ using CK.Core;
 
 namespace CK.Crs.Runtime.Pipeline
 {
-    class CommandBuilder : PipelineComponent
+    class JsonCommandBuilder : PipelineComponent
     {
         readonly JsonSerializer _serializer;
 
-        public CommandBuilder( IPipeline pipeline ) : base( pipeline )
+        public JsonCommandBuilder( IPipeline pipeline ) : base( pipeline )
         {
             _serializer = Newtonsoft.Json.JsonSerializer.Create( new JsonSerializerSettings
             {

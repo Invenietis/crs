@@ -1,5 +1,6 @@
 ﻿using System;
 using CK.Crs.Runtime;
+using CK.Crs.Runtime.Pipeline;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,16 +20,18 @@ namespace CK.Crs
             return builder.Map( routePrefix, ( app ) =>
             {
                 var registry = builder.ApplicationServices.GetRequiredService<ICommandRegistry>();
+                var events = builder.ApplicationServices.GetRequiredService<PipelineEvents>();
                 var routeCollection = new CommandRouteCollection( routePrefix );
-                var middlewareConfiguration = new CommandReceiverConfiguration( registry, routeCollection);
+                var middlewareConfiguration = new CommandReceiverConfiguration( registry, routeCollection, app.ApplicationServices );
                 config( middlewareConfiguration );
-                app.UseMiddleware<CommandReceiverMiddleware>( routeCollection );
+
+                var commandReceiver = new CommandReceiver( app.ApplicationServices, middlewareConfiguration.Pipeline, events, routeCollection);
+                app.UseMiddleware<CommandReceiverMiddleware>( commandReceiver );
             } );
         }
 
         public static void AddCommandReceiver( this IServiceCollection services, Action<CommandReceiverOption> configuration )
         {
-            services.AddSingleton<ICommandReceiver, CommandReceiver>();
             services.AddSingleton<IExecutionStrategySelector, BasicExecutionStrategySelector>();
             services.AddSingleton<IFactories, DefaultFactories>();
             services.AddSingleton<IAmbientValues, AmbientValues>();

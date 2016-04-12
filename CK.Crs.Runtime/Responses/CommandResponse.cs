@@ -16,27 +16,11 @@ namespace CK.Crs.Runtime
             CommandId = commandId;
         }
 
+        public Guid CommandId { get; private set; }
+
         public CommandResponseType ResponseType { get; protected set; }
 
         public object Payload { get; protected set; }
-
-        public Guid CommandId { get; private set; }
-
-        internal static CommandResponse CreateFromContext( CommandContext context )
-        {
-            if( context.IsDirty )
-            {
-                if( context.Exception != null )
-                    return new CommandErrorResponse( context.Exception.Message, context.ExecutionContext.Action.CommandId );
-
-                if( context.Result != null )
-                {
-                    return new CommandResultResponse( context.Result, context.ExecutionContext );
-                }
-            }
-
-            return new CommandDeferredResponse( context.ExecutionContext );
-        }
 
         public virtual void Write( Stream responseBody )
         {
@@ -47,5 +31,4 @@ namespace CK.Crs.Runtime
             }
         }
     }
-
 }

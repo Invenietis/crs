@@ -13,7 +13,7 @@ namespace CK.Crs.Runtime.Pipeline
 
         public ReflectionAmbientValueValidationContext( IActivityMonitor monitor, CommandAction action, IAmbientValues ambientValues ) : base( monitor, action, ambientValues )
         {
-            Properties = action.Description.Descriptor.CommandType.GetRuntimeProperties().ToArray();
+            Properties = action.Description.Descriptor.CommandType.GetProperties().ToArray();
         }
 
         public sealed override async Task<bool> ValidateValue<T>( string valueName, AmbientValueComparer<T> comparer )

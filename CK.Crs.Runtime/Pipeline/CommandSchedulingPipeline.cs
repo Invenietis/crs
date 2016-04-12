@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using CK.Core;
 
@@ -18,8 +19,15 @@ namespace CK.Crs.Runtime.Pipeline
 
         public CommandResponse Response { get; set; }
 
-        public CommandSchedulingPipeline( ScheduledCommand command )
+        public virtual CancellationToken CancellationToken
         {
+            get { return default( CancellationToken ); }
+        }
+        public IServiceProvider CommandServices { get; }
+
+        public CommandSchedulingPipeline( IServiceProvider serviceProvider, ScheduledCommand command )
+        {
+            CommandServices = serviceProvider;
             Monitor = command.Token.CreateDependentMonitor();
             Action = command;
             Request = null;

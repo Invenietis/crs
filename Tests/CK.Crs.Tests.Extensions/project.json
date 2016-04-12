@@ -1,5 +1,5 @@
-﻿{
-    "version": "1.0.0-*",
+{
+    "version": "0.0.0-Absolutely-Invalid",
     "description": "CK.Crs.Tests.Extensions Class Library",
     "authors": [ "cedri_000" ],
     "tags": [ "" ],
@@ -9,19 +9,31 @@
     "testRunner": "xunit",
 
     "dependencies": {
-        "CK.Crs.Extensions": "1.0.0-*",
-        "CK.Crs.AspNet": "1.0.0-*"
+        "CK.Crs.Extensions": "0.0.0-Absolutely-Invalid",
+        "CK.Crs.AspNet": "0.0.0-Absolutely-Invalid",
+        "xunit": "2.1.0-*",
+        "NUnitLite": "3.2.0",
+        "Microsoft.Extensions.Logging": "1.0.0-*",
+        "Microsoft.Extensions.Logging.Console": "1.0.0-*"
     },
 
     "frameworks": {
-        "dnxcore50": {
+        "netstandardapp1.5": {
+            "imports": [ "dnxcore50", "portable-net451+win8" ],
             "dependencies": {
-                "xunit": "2.1.0-*",
-                "NUnitLite": "3.2.0",
                 "moq.netcore": "4.4.0-beta8",
-                "dotnet-test-xunit": "1.0.0-dev-*",
-                "Microsoft.Extensions.Logging": "1.0.0-*",
-                "Microsoft.Extensions.Logging.Console": "1.0.0-*"
+                "dotnet-test-xunit": "1.0.0-dev-*"
+            }
+        },
+        "net451": {
+            "frameworkAssemblies": {
+                "System.Data": "",
+                "System.Runtime": "",
+                "System.ComponentModel": ""
+            },
+            "dependencies": {
+                "Moq": "4.2.1510.2205",
+                "xunit.runner.console": "2.1.0-*"
             }
         }
     }

@@ -1,5 +1,5 @@
 {
-    "version": "1.0.0-alpha-01",
+    "version": "0.0.0-Absolutely-Invalid",
     "description": "CK.Crs.AspNet Class Library",
     "authors": [ "cedri_000" ],
     "tags": [ "" ],
@@ -11,14 +11,21 @@
         "Microsoft.AspNetCore.Owin": "1.0.0-*",
         "Microsoft.Extensions.DependencyInjection": "1.0.0-*",
         "Microsoft.Extensions.PlatformAbstractions": "1.0.0-*",
-        "CK.Crs.Runtime": "1.0.0-*"
+        "CK.Crs.Runtime": "0.0.0-Absolutely-Invalid"
     },
 
     "frameworks": {
         "net451": {
+            "frameworkAssemblies": {
+                "System.Runtime": "",
+                "System.ComponentModel": ""
+            }
         },
         "netstandard1.3": {
             "imports": [ "dotnet5.4", "portable-net451+win8" ]
         }
+    },
+    "scripts": {
+        "precompile": [ "sgv prebuild", "sgv update" ]
     }
 }

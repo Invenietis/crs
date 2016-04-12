@@ -1,5 +1,5 @@
 {
-    "version": "1.0.0-alpha-01",
+    "version": "0.0.0-Absolutely-Invalid",
     "description": "CK.Crs.Runtime.Runtime Class Library",
     "authors": [ "cedri_000" ],
     "tags": [ "" ],
@@ -7,18 +7,15 @@
     "licenseUrl": "",
 
     "dependencies": {
-        "CK.Crs.Abstractions": "1.0.0-*",
+        "CK.Crs.Abstractions": "0.0.0-Absolutely-Invalid",
         "Newtonsoft.Json": "8.0.2"
     },
 
     "frameworks": {
         "net451": {
-            "frameworkAssemblies": {
+            "frameworkAssemblies": { 
                 "System.ComponentModel.DataAnnotations": "4.0.0.0",
                 "System.Transactions": "4.0.0.0"
-            },
-            "dependencies": {
-                "SimpleGitVersion.DNXCommands": "0.14.2"
             }
         },
         "netstandard1.3": {
@@ -28,12 +25,12 @@
             ],
             "dependencies": {
                 "System.ComponentModel.Annotations": "4.1.0-*",
-                "System.Threading.Timer": "4.0.1-*",
-                "Microsoft.CSharp": "4.0.1-*"
+                "System.Diagnostics.Debug": "4.0.11-*",
+                "System.Threading.Timer": "4.0.1-*"
             }
         }
     },
     "scripts": {
-        "prebuild": "sgv prebuild"
+        "precompile": [ "sgv prebuild", "sgv update" ]
     }
 }

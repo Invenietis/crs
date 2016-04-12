@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using CK.Core;
+using CK.Crs.Runtime;
+using CK.Crs.Runtime.Pipeline;
 
 namespace CK.Crs
 {
@@ -10,12 +12,23 @@ namespace CK.Crs
         internal ICommandRegistry _registry;
         internal ICommandRouteCollection _routes;
         readonly HashSet<Type> _filters;
+        readonly PipelineBuilder _pipeline;
 
-        public CommandReceiverConfiguration( ICommandRegistry registry, ICommandRouteCollection routes )
+        public CommandReceiverConfiguration( ICommandRegistry registry, ICommandRouteCollection routes, IServiceProvider serviceProvider )
         {
             _registry = registry;
             _routes = routes;
             _filters = new HashSet<Type>();
+            _pipeline = new PipelineBuilder( serviceProvider );
+            _pipeline.UseDefault();
+        }
+
+        /// <summary>
+        /// Gets access to the pipeline
+        /// </summary>
+        public IPipelineBuilder Pipeline
+        {
+            get { return _pipeline; }
         }
 
         /// <summary>

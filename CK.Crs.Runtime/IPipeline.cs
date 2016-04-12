@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using CK.Core;
 
-namespace CK.Crs.Runtime.Pipeline
+namespace CK.Crs.Runtime
 {
     public interface IPipeline : IDisposable
     {
@@ -28,6 +29,13 @@ namespace CK.Crs.Runtime.Pipeline
         /// Raises events during the command processing at any stage of the pipeline.
         /// </summary>
         PipelineEvents Events { get; }
+        /// <summary>
+        /// Cancellation token
+        /// </summary>
+        CancellationToken CancellationToken { get; }
+        /// <summary>
+        /// Gets a <see cref="IServiceProvider"/> for the current pipeline.
+        /// </summary>
+        IServiceProvider CommandServices { get; }
     }
-
 }

@@ -19,14 +19,15 @@ namespace CK.Crs.Runtime
         readonly IFactories _factory;
 
         CancellationTokenSource _source;
-
-        public InMemoryScheduler( PipelineEvents events, IExecutionStrategySelector executor, ICommandRouteCollection routes, IFactories factory )
+        IServiceProvider _serviceProvider;
+        public InMemoryScheduler( IServiceProvider serviceProvider, PipelineEvents events, IExecutionStrategySelector executor, ICommandRouteCollection routes, IFactories factory )
         {
             if( events == null ) throw new ArgumentNullException( nameof( events ) );
             if( executor == null ) throw new ArgumentNullException( nameof( executor ) );
             if( factory == null ) throw new ArgumentNullException( nameof( factory ) );
             if( routes == null ) throw new ArgumentNullException( nameof( routes ) );
 
+            _serviceProvider = serviceProvider;
             _events = events;
             _executorSelector = executor;
             _factory = factory;
@@ -45,7 +46,8 @@ namespace CK.Crs.Runtime
         {
             var scheduledOperation = state as ScheduledCommand;
 
-            using( CommandSchedulingPipeline pipeline = new CommandSchedulingPipeline( scheduledOperation ) )
+            // TODO: provides access to the scheduling pipeline configuration
+            using( CommandSchedulingPipeline pipeline = new CommandSchedulingPipeline( _serviceProvider, scheduledOperation ) )
             {
                 await new CommandFiltersInvoker( pipeline, _factory ).Invoke( _source.Token );
                 await new CommandExecutor( pipeline, _factory, _executorSelector ).Invoke( _source.Token );

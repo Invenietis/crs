@@ -7,9 +7,9 @@ using CK.Core;
 
 namespace CK.Crs.Runtime.Pipeline
 {
-    abstract class PipelineComponent
+    public abstract class PipelineComponent 
     {
-        protected IPipeline Pipeline;
+        public IPipeline Pipeline { get; }
 
         protected IActivityMonitor Monitor
         {
