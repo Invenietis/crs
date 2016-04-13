@@ -45,8 +45,8 @@ namespace CK.Crs.Runtime.Pipeline
                 {
                     _serializer.Populate( reader, Pipeline.Action.Command );
                 }
-
-                await Pipeline.Events.CommandBuilt?.Invoke( Pipeline.Action );
+                if( Pipeline.Events.CommandBuilt != null )
+                    await Pipeline.Events.CommandBuilt?.Invoke( Pipeline.Action );
             }
         }
 

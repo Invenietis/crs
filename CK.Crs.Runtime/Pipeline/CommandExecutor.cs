@@ -50,7 +50,8 @@ namespace CK.Crs.Runtime.Pipeline
 
                 Pipeline.Monitor.Trace().Send( $"[ExecutionStrategy={strategy.GetType().Name}]" );
 
-                await Pipeline.Events.CommandExecuting?.Invoke( context );
+                if( Pipeline.Events.CommandExecuting != null )
+                    await Pipeline.Events.CommandExecuting?.Invoke( context );
 
                 Pipeline.Response = await strategy.ExecuteAsync( context );
 

@@ -14,12 +14,12 @@ namespace CK.Crs
         readonly HashSet<Type> _filters;
         readonly PipelineBuilder _pipeline;
 
-        public CommandReceiverConfiguration( ICommandRegistry registry, ICommandRouteCollection routes, IServiceProvider serviceProvider )
+        public CommandReceiverConfiguration( ICommandRegistry registry, ICommandRouteCollection routes, IPipelineComponentFactory factory )
         {
             _registry = registry;
             _routes = routes;
             _filters = new HashSet<Type>();
-            _pipeline = new PipelineBuilder( serviceProvider );
+            _pipeline = new PipelineBuilder( factory );
             _pipeline.UseDefault();
         }
 

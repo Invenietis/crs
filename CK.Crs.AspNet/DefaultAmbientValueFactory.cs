@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CK.Crs.Runtime
 {
@@ -13,6 +14,6 @@ namespace CK.Crs.Runtime
             _serviceProvider = serviceProvider;
         }
 
-        public virtual IAmbientValueProvider Create( Type providerType ) => _serviceProvider.GetService( providerType ) as IAmbientValueProvider;
+        public virtual IAmbientValueProvider Create( Type providerType ) => ActivatorUtilities.CreateInstance( _serviceProvider, providerType ) as IAmbientValueProvider;
     }
 }

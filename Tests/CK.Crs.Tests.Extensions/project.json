@@ -1,5 +1,5 @@
 {
-    "version": "0.0.0-Absolutely-Invalid",
+    "version": "1.0.0-rc",
     "description": "CK.Crs.Tests.Extensions Class Library",
     "authors": [ "cedri_000" ],
     "tags": [ "" ],
@@ -9,8 +9,8 @@
     "testRunner": "xunit",
 
     "dependencies": {
-        "CK.Crs.Extensions": "0.0.0-Absolutely-Invalid",
-        "CK.Crs.AspNet": "0.0.0-Absolutely-Invalid",
+        "CK.Crs.Extensions": "1.0.0-rc",
+        "CK.Crs.AspNet": "1.0.0-rc",
         "xunit": "2.1.0-*",
         "NUnitLite": "3.2.0",
         "Microsoft.Extensions.Logging": "1.0.0-*",

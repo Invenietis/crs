@@ -8,11 +8,11 @@ namespace CK.Crs.Runtime.Pipeline
     public class PipelineBuilder : IPipelineBuilder
     {
         private readonly LinkedList<Func<IPipeline, Task<IPipeline>>> _list;
-        private readonly IServiceProvider _serviceProvider;
+        private readonly IPipelineComponentFactory _factory;
 
-        public PipelineBuilder( IServiceProvider serviceProvider )
+        public PipelineBuilder( IPipelineComponentFactory factory )
         {
-            _serviceProvider = serviceProvider;
+            _factory = factory;
             _list = new LinkedList<Func<IPipeline, Task<IPipeline>>>();
         }
 
@@ -29,8 +29,7 @@ namespace CK.Crs.Runtime.Pipeline
 
         public T CreateComponent<T>( IPipeline pipeline ) where T : PipelineComponent
         {
-            var component = (T)_serviceProvider.GetService( typeof( T ) );
-            return component;
+            return _factory.CreateComponent( pipeline, typeof( T ) ) as T;
         }
 
         public IPipelineBuilder Clear()

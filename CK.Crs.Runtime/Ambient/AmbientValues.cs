@@ -25,6 +25,8 @@ namespace CK.Crs.Runtime
         {
             if( !IsDefined( name ) ) return default( T );
             var valueProvider = _lazyBag[name]();
+            if( valueProvider == null )
+                throw new ArgumentException( $"Invalid valueProvider for {name}." );
             var value = await valueProvider.GetValueAsync( this );
 
             var disposable = valueProvider as IDisposable;

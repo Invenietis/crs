@@ -30,7 +30,8 @@ namespace CK.Crs.Runtime.Pipeline
             using( Monitor.OpenTrace().Send( "Ambient values validation..." ) )
             {
                 var context = new ReflectionAmbientValueValidationContext( Pipeline.Monitor, Pipeline.Action, _ambientValues );
-                await Pipeline.Events.AmbientValuesValidating?.Invoke( context );
+                if( Pipeline.Events.AmbientValuesValidating != null )
+                    await Pipeline.Events.AmbientValuesValidating?.Invoke( context );
 
                 if( context.Rejected ) Monitor.Info().Send( "Validation failed by custom processing in Pipeline.Events.ValidatingAmbientValues." );
                 else
@@ -38,12 +39,14 @@ namespace CK.Crs.Runtime.Pipeline
                     await context.ValidateValueAndRejectOnError<int>( "ActorId" );
                     await context.ValidateValueAndRejectOnError<int>( "AuthenticatedActorId" );
                 }
-                await Pipeline.Events.AmbientValuesValidated?.Invoke( context );
+                if( Pipeline.Events.AmbientValuesValidated != null )
+                    await Pipeline.Events.AmbientValuesValidated?.Invoke( context );
 
                 if( context.Rejected )
                 {
                     var rejectedContext = new CancellableCommandRejectedContext( Pipeline.Action, context);
-                    await Pipeline.Events.CommandRejected?.Invoke( rejectedContext );
+                    if( Pipeline.Events.CommandRejected != null )
+                        await Pipeline.Events.CommandRejected?.Invoke( rejectedContext );
 
                     if( rejectedContext.Canceled == false )
                         SetInvalidAmbientValuesResponse( context );

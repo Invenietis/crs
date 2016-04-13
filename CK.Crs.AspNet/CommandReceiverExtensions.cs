@@ -21,8 +21,10 @@ namespace CK.Crs
             {
                 var registry = builder.ApplicationServices.GetRequiredService<ICommandRegistry>();
                 var events = builder.ApplicationServices.GetRequiredService<PipelineEvents>();
+
                 var routeCollection = new CommandRouteCollection( routePrefix );
-                var middlewareConfiguration = new CommandReceiverConfiguration( registry, routeCollection, app.ApplicationServices );
+                var factory = new DefaultPipelineComponentFactory();
+                var middlewareConfiguration = new CommandReceiverConfiguration( registry, routeCollection, factory );
                 config( middlewareConfiguration );
 
                 var commandReceiver = new CommandReceiver( app.ApplicationServices, middlewareConfiguration.Pipeline, events, routeCollection);
@@ -34,6 +36,7 @@ namespace CK.Crs
         {
             services.AddSingleton<IExecutionStrategySelector, BasicExecutionStrategySelector>();
             services.AddSingleton<IFactories, DefaultFactories>();
+            services.AddSingleton<IAmbientValueProviderFactory, DefaultAmbientValueFactory>();
             services.AddSingleton<IAmbientValues, AmbientValues>();
 
             CommandReceiverOption options = new CommandReceiverOption( new CommandRegistry() );

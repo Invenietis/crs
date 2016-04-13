@@ -1,5 +1,5 @@
 {
-    "version": "0.0.0-Absolutely-Invalid",
+    "version": "1.0.0-rc",
     "description": "CK.Crs.Tests Class Library",
     "authors": [ "cedri_000" ],
     "tags": [ "" ],
@@ -9,7 +9,7 @@
     "dependencies": {
         "CK.Authentication": "1.0.0-*",
         "CK.Core": "5.0.0-*",
-        "CK.Crs.AspNet": "0.0.0-Absolutely-Invalid",
+        "CK.Crs.AspNet": "1.0.0-rc",
         "Microsoft.Extensions.DependencyInjection": "1.0.0-*",
         "NUnitLite": "3.2.0",
         "xunit": "2.1.0-*"
