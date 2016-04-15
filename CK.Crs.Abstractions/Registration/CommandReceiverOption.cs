@@ -10,11 +10,8 @@ namespace CK.Crs
         public CommandReceiverOption( ICommandRegistry r )
         {
             Registry = r;
-            Events = new PipelineEvents();
         }
 
         public ICommandRegistry Registry { get; }
-
-        public PipelineEvents Events { get; set; }
     }
 }

@@ -17,13 +17,13 @@
 //{
 //    public class WithClientApiTest
 //    {
-//        [Test][Fact]
+//        [Test][Test]
 //        public async Task SendCommandAndWaitForEvents()
 //        {
 //            string serverAddress = "http://MyDumbServer/c/";
 //            var serviceProvider = TestHelper.CreateServiceProvider( Util.ActionVoid );
-//            var factories = new DefaultFactories( serviceProvider );
-//            using( var server = new CommandReceiverHost( serverAddress, new CommandReceiver( new BasicExecutionStrategySelector( factories ), factories ) ) )
+//            var Testories = new DefaultTestories( serviceProvider );
+//            using( var server = new CommandReceiverHost( serverAddress, new CommandReceiver( new BasicExecutionStrategySelector( Testories ), Testories ) ) )
 //            {
 //                // Server initialization
 //                server.Run();
@@ -233,7 +233,7 @@
 
 //        internal Task ListenAsync<TEvent>( Guid commandId, string callbackId, Func<TEvent, Task> callback ) where TEvent : class
 //        {
-//            return Task.Factory.StartNew( async () =>
+//            return Task.Testory.StartNew( async () =>
 //            {
 //                bool shouldContinue = true;
 //                DateTime stopReceiving = DateTime.UtcNow.Add(DefaultTimeout);
@@ -294,7 +294,7 @@
 
 //        internal void Run()
 //        {
-//            Task.Factory.StartNew( async () =>
+//            Task.Testory.StartNew( async () =>
 //            {
 //                while( !_disposed )
 //                {

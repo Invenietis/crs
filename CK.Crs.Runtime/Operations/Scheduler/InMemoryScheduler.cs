@@ -13,22 +13,22 @@ namespace CK.Crs.Runtime
     {
         readonly IList<Timer> _timers;
 
-        readonly PipelineEvents _events;
+        readonly IPipelineConfiguration _config;
         readonly ICommandRouteCollection _routes;
         readonly IExecutionStrategySelector _executorSelector;
         readonly IFactories _factory;
 
         CancellationTokenSource _source;
         IServiceProvider _serviceProvider;
-        public InMemoryScheduler( IServiceProvider serviceProvider, PipelineEvents events, IExecutionStrategySelector executor, ICommandRouteCollection routes, IFactories factory )
+        public InMemoryScheduler( IServiceProvider serviceProvider, IPipelineConfiguration config, IExecutionStrategySelector executor, ICommandRouteCollection routes, IFactories factory )
         {
-            if( events == null ) throw new ArgumentNullException( nameof( events ) );
+            if( config == null ) throw new ArgumentNullException( nameof( config ) );
             if( executor == null ) throw new ArgumentNullException( nameof( executor ) );
             if( factory == null ) throw new ArgumentNullException( nameof( factory ) );
             if( routes == null ) throw new ArgumentNullException( nameof( routes ) );
 
             _serviceProvider = serviceProvider;
-            _events = events;
+            _config = config;
             _executorSelector = executor;
             _factory = factory;
             _routes = routes;
@@ -47,10 +47,10 @@ namespace CK.Crs.Runtime
             var scheduledOperation = state as ScheduledCommand;
 
             // TODO: provides access to the scheduling pipeline configuration
-            using( CommandSchedulingPipeline pipeline = new CommandSchedulingPipeline( _serviceProvider, scheduledOperation ) )
+            using( var pipeline = new CommandSchedulingPipeline( _serviceProvider, _config, scheduledOperation ) )
             {
-                await new CommandFiltersInvoker( pipeline, _factory ).Invoke( _source.Token );
-                await new CommandExecutor( pipeline, _factory, _executorSelector ).Invoke( _source.Token );
+                await new CommandFiltersInvoker( _factory ).Invoke( pipeline, _source.Token );
+                await new CommandExecutor( _factory, _executorSelector ).Invoke( pipeline, _source.Token );
             }
         }
 

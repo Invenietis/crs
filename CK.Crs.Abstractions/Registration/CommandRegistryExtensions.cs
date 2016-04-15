@@ -41,9 +41,7 @@ namespace CK.Crs
 
         private static IReadOnlyCollection<Type> ExtractDecoratorsFromHandlerAttributes( Type commandType, Type handlerType )
         {
-            return handlerType.GetTypeInfo().CustomAttributes
-                .Where( c => typeof( ICommandDecorator).IsAssignableFrom( c.AttributeType ) )
-                .Select( a => a.AttributeType ).ToArray();
+            return handlerType.GetTypeInfo().GetCustomAttributes().OfType<ICommandDecorator>().Select( t => t.GetType() ).ToArray();
         }
 
         private static string GetDefaultName( Type type )
@@ -51,7 +49,7 @@ namespace CK.Crs
             var n = type.Name;
             return n.RemoveSuffixes( "Command", "Cmd" );
         }
-        
+
         public static string RemoveSuffixes( this string s, params string[] suffixes )
         {
             foreach( var suf in suffixes )

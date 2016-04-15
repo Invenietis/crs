@@ -1,20 +1,17 @@
 {
     "webroot": "wwwroot",
-    "version": "1.0.0-rc",
+    "version": "1.0.0-*",
     "dependencies": {
-        "CK.Crs.AspNet": "1.0.0-rc",
-        "CK.Crs.Owin": "1.0.0-rc",
-        "CK.Crs.Extensions": "1.0.0-rc",
+        "CK.Crs.AspNet": "1.0.0-*",
+        "CK.Crs.Owin": "1.0.0-*",
+        "CK.Crs.Extensions": "1.0.0-*",
         "Microsoft.AspNetCore.Mvc": "1.0.0-*",
         "Microsoft.AspNetCore.Authentication.Cookies": "1.0.0-*",
         "Microsoft.AspNetCore.Server.Kestrel": "1.0.0-*",
         "Microsoft.AspNetCore.StaticFiles": "1.0.0-*",
-        "Microsoft.Extensions.PlatformAbstractions": "1.0.0-*",
-        "Microsoft.AspNet.Owin": "1.0.0-*"
+        "Microsoft.AspNetCore.Owin": "1.0.0-*"
     },
-    "commands": {
-        "web": "Microsoft.AspNet.Server.Kestrel"
-    },
+
     "frameworks": {
         "net451": {
             "dependencies": { }

@@ -14,39 +14,39 @@ namespace CK.Crs.Runtime.Pipeline
     {
         readonly JsonSerializer _serializer;
 
-        public JsonCommandBuilder( IPipeline pipeline ) : base( pipeline )
+        public JsonCommandBuilder()
         {
-            _serializer = Newtonsoft.Json.JsonSerializer.Create( new JsonSerializerSettings
+            _serializer = JsonSerializer.Create( new JsonSerializerSettings
             {
                 ContractResolver = new CamelCasePropertyNamesContractResolver()
             } );
         }
 
-        public override bool ShouldInvoke
+        public override bool ShouldInvoke( IPipeline pipeline )
         {
-            get { return Pipeline.Response == null && Pipeline.Action.Description != null; }
+            return pipeline.Response == null && pipeline.Action.Description != null;
         }
 
-        public override async Task Invoke( CancellationToken token )
+        public override async Task Invoke( IPipeline pipeline, CancellationToken token )
         {
-            if( Pipeline.Action.Description == null ) throw new InvalidOperationException( "Cannot build a command without a valid description" );
+            if( pipeline.Action.Description == null ) throw new InvalidOperationException( "Cannot build a command without a valid description" );
 
-            Pipeline.Action.Command = CreateCommand( Pipeline.Action.Description.Descriptor.CommandType );
-            if( Pipeline.Action.Command == null )
+            pipeline.Action.Command = CreateCommand( pipeline.Action.Description.Descriptor.CommandType );
+            if( pipeline.Action.Command == null )
             {
                 string msg = String.Format(
                         "A valid command definition has been infered from routes, but the command type {0} failed to be instanciated.",
-                        Pipeline.Action.Description.Descriptor.CommandType.Name );
-                Pipeline.Monitor.Error().Send( msg );
+                        pipeline.Action.Description.Descriptor.CommandType.Name );
+                pipeline.Monitor.Error().Send( msg );
             }
             else
             {
-                using( var reader = new StreamReader( Pipeline.Request.Body ) )
+                using( var reader = new StreamReader( pipeline.Request.Body ) )
                 {
-                    _serializer.Populate( reader, Pipeline.Action.Command );
+                    _serializer.Populate( reader, pipeline.Action.Command );
                 }
-                if( Pipeline.Events.CommandBuilt != null )
-                    await Pipeline.Events.CommandBuilt?.Invoke( Pipeline.Action );
+                if( pipeline.Configuration.Events.CommandBuilt != null )
+                    await pipeline.Configuration.Events.CommandBuilt.Invoke( pipeline.Action );
             }
         }
 

@@ -1,32 +1,13 @@
 {
-    "version": "1.0.0-rc",
+    "version": "1.0.0-*",
     "description": "CK.Crs.Tests Class Library",
     "authors": [ "cedri_000" ],
     "tags": [ "" ],
     "projectUrl": "",
     "licenseUrl": "",
-
-    "dependencies": {
-        "CK.Authentication": "1.0.0-*",
-        "CK.Core": "5.0.0-*",
-        "CK.Crs.AspNet": "1.0.0-rc",
-        "Microsoft.Extensions.DependencyInjection": "1.0.0-*",
-        "NUnitLite": "3.2.0",
-        "xunit": "2.1.0-*"
-    },
-
-    "testRunner": "xunit",
-
-    "commands": { "test": "xunit.runner.dnx" },
+    "compilationOptions": { "emitEntryPoint": true },
 
     "frameworks": {
-        "dnxcore50": {
-            "imports": "portable-net451+win8",
-            "dependencies": {
-                "dotnet-test-xunit": "1.0.0-*",
-                "moq.netcore": "4.4.0-beta8"
-            }
-        },
         "net451": {
             "frameworkAssemblies": {
                 "System.Data": "",
@@ -35,7 +16,13 @@
             },
             "dependencies": {
                 "Moq": "4.2.1510.2205",
-                "xunit.runner.console": "2.1.0-*"
+                "CK.Authentication": "1.0.0-*",
+                "CK.Core": "5.0.0-*",
+                "CK.Crs.AspNet": "1.0.0-*",
+                "NUnitLite": "3.2.0",
+                "Castle.Windsor": "3.3.0",
+                "Autofac": "4.0.0-*",
+                "Microsoft.Extensions.DependencyInjection": "1.0.0-*"
             }
         }
     }

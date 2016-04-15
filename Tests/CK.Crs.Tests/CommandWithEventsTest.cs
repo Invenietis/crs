@@ -9,8 +9,7 @@ using System.Transactions;
 using CK.Core;
 using CK.Crs.Runtime;
 using Moq;
-using Xunit;
-using Xunit.Abstractions;
+using TestAttribute = NUnit.Framework.TestAttribute;
 using Assert = NUnit.Framework.Assert;
 using Is = NUnit.Framework.Is;
 
@@ -22,18 +21,17 @@ namespace CK.Crs.Tests
         class SimpleEvent { }
 
         CancellationTokenSource _cancellationToken;
-        ITestOutputHelper _output;
-        public CommandWithEventsTest( ITestOutputHelper output )
+
+        public CommandWithEventsTest()
         {
             _cancellationToken = new CancellationTokenSource();
-            _output = output;
         }
 
-        [Fact]
+        [Test]
         public void an_event_emitter_should_be_set_when_events_are_published()
         {
             var command = new SimpleCommand();
-            var monitor = TestHelper.Monitor( _output.WriteLine);
+            var monitor = TestHelper.Monitor( Console.Out.WriteLine );
             var action = new CommandAction( Guid.NewGuid())
             {
                 Command = command,
@@ -46,7 +44,7 @@ namespace CK.Crs.Tests
             };
             var ctx = new CommandExecutionContext( action, monitor, _cancellationToken.Token,
                 ( cctx ) => TestHelper.MockEventPublisher(),
-                ( cctx ) => TestHelper.MockCommandScheduler() ); 
+                ( cctx ) => TestHelper.MockCommandScheduler() );
 
             try
             {
@@ -58,7 +56,7 @@ namespace CK.Crs.Tests
             }
         }
 
-        [Fact]
+        [Test]
         public void when_an_event_emitter_is_configured_it_is_used_for_every_published_events()
         {
             SimpleCommand command = new SimpleCommand();
@@ -69,7 +67,7 @@ namespace CK.Crs.Tests
             TransactionnalEventPublisher.SetEventEmitter( TestOperationExecutor.FromLambda( e =>
             {
                 string json = Newtonsoft.Json.JsonConvert.SerializeObject( e );
-                _output.WriteLine( json );
+                Console.Out.WriteLine( json );
                 eventEmitted = true;
                 evt.Set();
                 return Task.FromResult<object>( null );
@@ -82,7 +80,7 @@ namespace CK.Crs.Tests
         }
 
 
-        [Fact]
+        [Test]
         public void during_an_ambient_transaction_events_are_commited_when_the_transaction_is_commited()
         {
             SimpleCommand command = new SimpleCommand();
@@ -93,7 +91,7 @@ namespace CK.Crs.Tests
             TransactionnalEventPublisher.SetEventEmitter( TestOperationExecutor.FromLambda( e =>
             {
                 string json = Newtonsoft.Json.JsonConvert.SerializeObject( e );
-                _output.WriteLine( json );
+                Console.Out.WriteLine( json );
                 eventEmitted++;
                 if( eventEmitted == 3 )
                 {
@@ -115,7 +113,7 @@ namespace CK.Crs.Tests
             Assert.That( eventEmitted, Is.EqualTo( 3 ) );
         }
 
-        [Fact]
+        [Test]
         public void during_an_ambient_transaction_events_are_NOT_commited_when_the_transaction_failed()
         {
             SimpleCommand command = new SimpleCommand();
@@ -142,7 +140,7 @@ namespace CK.Crs.Tests
             catch( Exception ex ) when( ex.Message == "OUPS" )
             {
             }
-            
+
             evt.WaitOne( 500 );
             Assert.That( eventEmitted, Is.EqualTo( 0 ) );
 
@@ -152,7 +150,7 @@ namespace CK.Crs.Tests
             Assert.That( eventEmitted, Is.EqualTo( 1 ), "Only one event Should be pushed, uncomitted failed events should have been cleared" );
         }
 
-        [Fact]
+        [Test]
         public void during_an_ambient_transaction_when_event_publishing_failed_the_whole_transaction_is_rollbacked()
         {
             SimpleCommand command = new SimpleCommand();
@@ -188,7 +186,7 @@ namespace CK.Crs.Tests
 
         private CommandExecutionContext CreateContext( SimpleCommand command )
         {
-            var monitor = TestHelper.Monitor( _output.WriteLine);
+            var monitor = TestHelper.Monitor( Console.Out.WriteLine);
             var action = new CommandAction( Guid.NewGuid() )
             {
                 Command = command,
@@ -201,7 +199,7 @@ namespace CK.Crs.Tests
             };
             var ctx = new CommandExecutionContext( action, monitor, _cancellationToken.Token,
                 ( cctx ) => TestHelper.MockEventPublisher(),
-                ( cctx ) => TestHelper.MockCommandScheduler() ); 
+                ( cctx ) => TestHelper.MockCommandScheduler() );
             return ctx;
         }
 

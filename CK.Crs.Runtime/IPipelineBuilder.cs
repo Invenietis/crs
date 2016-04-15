@@ -12,15 +12,7 @@ namespace CK.Crs.Runtime
         /// Gets all registered components in the pipeline
         /// </summary>
         IEnumerable<Func<IPipeline, Task<IPipeline>>> Components { get; }
-
-        /// <summary>
-        /// Factory method used to creates a component
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="pipeline"></param>
-        /// <returns></returns>
-        T CreateComponent<T>( IPipeline pipeline ) where T : PipelineComponent;
-
+        
         /// <summary>
         /// Registers a component into the pipeline.
         /// </summary>

@@ -24,21 +24,6 @@ namespace CK.Crs.Tests.Integration
                 options.Registry.Register<WithdrawMoneyCommand, WithDrawyMoneyHandler>().CommandName( "withdraw" ).AddDecorator<TransactionAttribute>();
                 options.Registry.Register<UserCommand, UserHandler>().CommandName( "addUser" ).AddDecorator<TransactionAttribute>();
 
-                options.Events.CommandRejected = context =>
-                {
-                    if( context.Action.Description.Descriptor.Name == "Logout" )
-                    {
-                        // Never reject logout command for any reason :p
-                        context.CancelRejection();
-                    }
-                    return Task.FromResult( 0 );
-                };
-
-                options.Events.CommandExecuting = context =>
-                {
-                    context.SetResult( null );
-                    return Task.FromResult( 0 );
-                };
             } );
 
             services.AddMvc();
@@ -79,26 +64,48 @@ namespace CK.Crs.Tests.Integration
                         .UseAmbientValuesValidator()
                         .UseFilters()
                         .UseCommandExecutor();
+
+                options.Events.CommandRejected = context =>
+                {
+                    if( context.Action.Description.Descriptor.Name == "Logout" )
+                    {
+                        // Never reject logout command for any reason :p
+                        context.CancelRejection();
+                    }
+                    return Task.FromResult( 0 );
+                };
+
+                options.Events.CommandExecuting = context =>
+                {
+                    context.SetResult( null );
+                    return Task.FromResult( 0 );
+                };
                 // Not default handler.
                 //.UseSignalRDispatcher();
             } );
 
-            SimpleServiceContainer simpleServiceContainer = new SimpleServiceContainer( app.ApplicationServices );
 
             //app.UseOwin( pipeline =>
             //{
             //    pipeline.UseBuilder( simpleServiceContainer );
             //} );
 
-            app.UseOwin( pipeline =>
-            {
-                var receiver = simpleServiceContainer.GetRequiredService<ICommandReceiver>();
-                var middleWare = new CommandReceiverOwinMiddleware( receiver );
-                pipeline( _ =>
-                {
-                    return middleWare.InvokeAsync;
-                } );
-            } );
+            //SimpleServiceContainer services = new SimpleServiceContainer( app.ApplicationServices );
+            //app.UseOwin( pipeline =>
+            //{
+            //    var registry = services.GetService( typeof( ICommandRegistry ) ) as ICommandRegistry;
+            //    var events = services.GetService( typeof( PipelineEvents ) ) as PipelineEvents;
+            //    var routeCollection = new CommandRouteCollection( routePrefix.Value );
+            //    var middlewareConfiguration = new CommandReceiverConfiguration( registry, routeCollection, services );
+            //    config( middlewareConfiguration );
+
+            //    var commandReceiver = new CommandReceiver( services, middlewareConfiguration.Pipeline, events, routeCollection);
+            //    var middleWare = new CommandReceiverOwinMiddleware( receiver );
+            //    pipeline( _ =>
+            //    {
+            //        return middleWare.InvokeAsync;
+            //    } );
+            //} );
 
             //options.OnCommandEvent( x => Azure.Publish );
             app.UseMvc();

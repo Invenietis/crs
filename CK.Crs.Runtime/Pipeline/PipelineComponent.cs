@@ -7,31 +7,20 @@ using CK.Core;
 
 namespace CK.Crs.Runtime.Pipeline
 {
-    public abstract class PipelineComponent 
+    public abstract class PipelineComponent
     {
-        public IPipeline Pipeline { get; }
+        public abstract bool ShouldInvoke( IPipeline pipeline );
 
-        protected IActivityMonitor Monitor
+        public async Task<IPipeline> TryInvoke( IPipeline pipeline, CancellationToken token = default( CancellationToken ) )
         {
-            get { return Pipeline.Monitor; }
+            if( ShouldInvoke( pipeline ) ) await Invoke( pipeline );
+            else
+            {
+                pipeline.Monitor.Warn().Send( "Component {0} should not been invoked. Condition failed.", GetType().Name );
+            }
+            return pipeline;
         }
 
-        public PipelineComponent( IPipeline pipeline )
-        {
-            Pipeline = pipeline;
-        }
-
-        public abstract bool ShouldInvoke
-        {
-            get;
-        }
-
-        public async Task<IPipeline> TryInvoke( CancellationToken token = default( CancellationToken ) )
-        {
-            if( ShouldInvoke ) await Invoke( token );
-            return Pipeline;
-        }
-
-        public abstract Task Invoke( CancellationToken token = default( CancellationToken ) );
+        public abstract Task Invoke( IPipeline pipeline, CancellationToken token = default( CancellationToken ) );
     }
 }

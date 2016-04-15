@@ -9,28 +9,25 @@ namespace CK.Crs.Runtime.Pipeline
 {
     class CommandRouter : PipelineComponent
     {
-        readonly ICommandRouteCollection _routeCollection;
-
-        public CommandRouter( IPipeline pipeline, ICommandRouteCollection routeCollection ) : base( pipeline )
+        public CommandRouter()
         {
-            _routeCollection = routeCollection;
         }
 
-        public override bool ShouldInvoke
+        public override bool ShouldInvoke( IPipeline pipeline )
         {
-            get { return Pipeline.Response == null; }
+            return pipeline.Response == null;
         }
 
-        public override Task Invoke( CancellationToken token )
+        public override Task Invoke( IPipeline pipeline, CancellationToken token )
         {
-            Pipeline.Action.Description = _routeCollection.FindCommandDescriptor( Pipeline.Request.Path );
-            if( Pipeline.Action.Description != null )
+            pipeline.Action.Description = pipeline.Configuration.Routes.FindCommandDescriptor( pipeline.Request.Path );
+            if( pipeline.Action.Description != null )
             {
-                if( Pipeline.Action.Description.Descriptor.HandlerType == null )
+                if( pipeline.Action.Description.Descriptor.HandlerType == null )
                 {
-                    string msg = $"No handler found for command [type={Pipeline.Action.Description.Descriptor.CommandType}].";
-                    Pipeline.Monitor.Error().Send( msg );
-                    Pipeline.Response = new CommandInvalidResponse( Pipeline.Action.CommandId, msg );
+                    string msg = $"No handler found for command [type={pipeline.Action.Description.Descriptor.CommandType}].";
+                    pipeline.Monitor.Error().Send( msg );
+                    pipeline.Response = new CommandInvalidResponse( pipeline.Action.CommandId, msg );
                 }
             }
             return Task.FromResult( 0 );

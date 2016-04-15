@@ -7,29 +7,44 @@ using CK.Crs.Runtime.Pipeline;
 
 namespace CK.Crs
 {
-    public class CommandReceiverConfiguration
+    public interface IPipelineConfiguration
+    {
+        /// <summary>
+        /// Gets the <see cref="ICommandRouteCollection"/> 
+        /// </summary>
+        ICommandRouteCollection Routes { get; }
+
+        /// <summary>
+        /// Gets the <see cref="PipelineEvents"/> 
+        /// </summary>
+        PipelineEvents Events { get; }
+    }
+
+    public class CommandReceiverConfiguration : IPipelineConfiguration
     {
         internal ICommandRegistry _registry;
-        internal ICommandRouteCollection _routes;
         readonly HashSet<Type> _filters;
-        readonly PipelineBuilder _pipeline;
 
-        public CommandReceiverConfiguration( ICommandRegistry registry, ICommandRouteCollection routes, IPipelineComponentFactory factory )
+        public CommandReceiverConfiguration( string prefix, ICommandRegistry registry )
         {
             _registry = registry;
-            _routes = routes;
             _filters = new HashSet<Type>();
-            _pipeline = new PipelineBuilder( factory );
-            _pipeline.UseDefault();
+
+            Pipeline = new PipelineBuilder();
+            Pipeline.Clear().UseDefault();
+
+            Events = new PipelineEvents();
+            Routes = new CommandRouteCollection( prefix );
         }
+
+        public ICommandRouteCollection Routes { get; }
+
+        public PipelineEvents Events { get; }
 
         /// <summary>
         /// Gets access to the pipeline
         /// </summary>
-        public IPipelineBuilder Pipeline
-        {
-            get { return _pipeline; }
-        }
+        public IPipelineBuilder Pipeline { get; }
 
         /// <summary>
         /// 
@@ -63,8 +78,8 @@ namespace CK.Crs
         {
             foreach( var c in selection( _registry ) )
             {
-                var registration = new CommandRegistration( _routes.AddCommandRoute( c ) );
-                if( globalConfiguration != null ) globalConfiguration( registration );
+                var registration = new CommandRegistration( Routes.AddCommandRoute( c ) );
+                globalConfiguration?.Invoke( registration );
             }
             return this;
         }
@@ -76,7 +91,7 @@ namespace CK.Crs
             {
                 throw new InvalidOperationException( $"Command {commandType.FullName} not found in global CommandRegistry. Make sure to register it in AddCommandReceiver options from ConfigureServices." );
             }
-            return new CommandRegistration( _routes.AddCommandRoute( commandDescription ) );
+            return new CommandRegistration( Routes.AddCommandRoute( commandDescription ) );
         }
 
 

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25029.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CK.Crs.AspNet", "CK.Crs.AspNet\CK.Crs.AspNet.xproj", "{0E843608-7752-44AD-9D82-AEDED5F8A723}"
 EndProject
@@ -15,8 +15,8 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CK.Crs.Extensions", "CK.Crs
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".SolutionItems", ".SolutionItems", "{22EC622B-B1FE-4EA5-B828-83D2FF952DA4}"
 	ProjectSection(SolutionItems) = preProject
+		BuildPackPackarium.bat = BuildPackPackarium.bat
 		global.json = global.json
-		publish.cmd = publish.cmd
 		RepositoryInfo.xml = RepositoryInfo.xml
 	EndProjectSection
 EndProject

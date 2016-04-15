@@ -11,7 +11,7 @@ namespace CK.Crs.Runtime.Pipeline
     {
         readonly IFactories _factories;
 
-        public CommandFiltersInvoker( IPipeline pipeline, IFactories factories ) : base( pipeline )
+        public CommandFiltersInvoker( IFactories factories )
         {
             _factories = factories;
         }
@@ -28,38 +28,38 @@ namespace CK.Crs.Runtime.Pipeline
             public ICommandFilter Instance { get; set; }
         }
 
-        public override bool ShouldInvoke
+        public override bool ShouldInvoke( IPipeline pipeline )
         {
-            get { return Pipeline.Response == null && Pipeline.Action.Command != null; }
+            return pipeline.Response == null && pipeline.Action.Command != null;
         }
 
-        public override async Task Invoke( CancellationToken token )
+        public override async Task Invoke( IPipeline pipeline, CancellationToken token )
         {
-            var filterContext = new FilterContext(Pipeline.Monitor, Pipeline.Action.Description, Pipeline.Request.User, Pipeline.Action.Command);
+            var filterContext = new FilterContext(pipeline.Monitor, pipeline.Action.Description, pipeline.Request.User, pipeline.Action.Command);
 
-            using( Pipeline.Monitor.OpenTrace().Send( "Applying filters..." )
+            using( pipeline.Monitor.OpenTrace().Send( "Applying filters..." )
                 .ConcludeWith( () => filterContext.Rejected ? "INVALID" : "OK" ) )
             {
-                foreach( var filter in Pipeline.Action.Description.Filters.Select( f => new FilterInfo( _factories.CreateFilter( f ) ) ) )
+                foreach( var filter in pipeline.Action.Description.Filters.Select( f => new FilterInfo( _factories.CreateFilter( f ) ) ) )
                 {
                     if( filter.Instance == null )
                     {
                         string msg = $"Unable to create the filter {filter.Type.FullName}.";
                         throw new InvalidOperationException( msg );
                     }
-                    using( Pipeline.Monitor.OpenTrace().Send( $"Executing filter {filter.Type.Name}" ) )
+                    using( pipeline.Monitor.OpenTrace().Send( $"Executing filter {filter.Type.Name}" ) )
                     {
                         await filter.Instance.OnCommandReceived( filterContext );
 
                         // Immediatly test if there is a response available.
                         if( filterContext.Rejected )
                         {
-                            var rejectedContext = new CancellableCommandRejectedContext( Pipeline.Action, filterContext);
-                            await Pipeline.Events.CommandRejected?.Invoke( rejectedContext );
+                            var rejectedContext = new CancellableCommandRejectedContext( pipeline.Action, filterContext);
+                            await pipeline.Configuration.Events.CommandRejected?.Invoke( rejectedContext );
 
                             if( rejectedContext.Canceled == false )
                             {
-                                Pipeline.Response = new CommandInvalidResponse( Pipeline.Action.CommandId, filterContext.RejectReason );
+                                pipeline.Response = new CommandInvalidResponse( pipeline.Action.CommandId, filterContext.RejectReason );
                                 break;
                             }
                         }

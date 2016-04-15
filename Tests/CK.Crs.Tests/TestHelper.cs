@@ -12,14 +12,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.PlatformAbstractions;
 using Moq;
 using NUnit.Framework;
-using Xunit.Abstractions;
 
 namespace CK.Crs.Tests
 {
-    class TestAttribute : Xunit.FactAttribute
-    {
-    }
-
     public class TestHelper
     {
         public static IServiceProvider CreateServiceProvider( Action<IServiceCollection> setup )
@@ -74,7 +69,7 @@ namespace CK.Crs.Tests
             return ambientValues;
         }
 
-        internal CommandExecutionContext CreateContext<T>( T command, ITestOutputHelper output, CancellationToken token = default( CancellationToken ) ) where T : class
+        internal CommandExecutionContext CreateContext<T>( T command, TextWriter output, CancellationToken token = default( CancellationToken ) ) where T : class
         {
             var monitor = Monitor( output.WriteLine );
 
@@ -89,7 +84,10 @@ namespace CK.Crs.Tests
                 } )
             };
 
-            var ctx = new CommandExecutionContext( action, monitor,token,
+            var ctx = new CommandExecutionContext(
+                action,
+                monitor,
+                token,
                 ( cctx ) => TestHelper.MockEventPublisher(),
                 ( cctx ) => TestHelper.MockCommandScheduler() );
 

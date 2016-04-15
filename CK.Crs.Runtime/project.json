@@ -1,36 +1,23 @@
 {
-    "version": "1.0.0-rc",
+    "version": "1.0.0-*",
     "description": "CK.Crs.Runtime.Runtime Class Library",
     "authors": [ "cedri_000" ],
     "tags": [ "" ],
     "projectUrl": "",
     "licenseUrl": "",
 
-    "dependencies": {
-        "CK.Crs.Abstractions": "1.0.0-rc",
-        "Newtonsoft.Json": "8.0.2"
-    },
 
     "frameworks": {
         "net451": {
-            "frameworkAssemblies": { 
+            "dependencies": {
+                "CK.Crs.Abstractions": "1.0.0-*",
+                "Newtonsoft.Json": "8.0.2",
+                "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-final"
+            },
+            "frameworkAssemblies": {
                 "System.ComponentModel.DataAnnotations": "4.0.0.0",
                 "System.Transactions": "4.0.0.0"
             }
-        },
-        "netstandard1.3": {
-            "imports": [
-                "dotnet5.4",
-                "portable-net451+win8"
-            ],
-            "dependencies": {
-                "System.ComponentModel.Annotations": "4.1.0-*",
-                "System.Diagnostics.Debug": "4.0.11-*",
-                "System.Threading.Timer": "4.0.1-*"
-            }
         }
-    },
-    "scripts": {
-        "precompile": [ "sgv prebuild", "sgv update" ]
     }
 }

@@ -1,1 +1,4 @@
-dnu build CK.Crs.Abstractions CK.Crs.Runtime CK.Crs.AspNet & dnu pack CK.Crs.Abstractions --out ../../Packarium --framework dnx451 & dnu pack CK.Crs.Runtime --out ../../Packarium --framework dnx451 & dnu pack CK.Crs.AspNet --out ../../Packarium
+dotnet pack CK.Crs.Abstractions --output ../Packarium --version-suffix rc1.1
+dotnet pack CK.Crs.Runtime --output ../Packarium --version-suffix rc1.1
+dotnet pack CK.Crs.Owin --output ../Packarium --version-suffix rc1.1
+dotnet pack CK.Crs.AspNet --output ../Packarium --version-suffix rc1.1

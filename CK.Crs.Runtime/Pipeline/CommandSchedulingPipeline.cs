@@ -7,11 +7,11 @@ using CK.Core;
 
 namespace CK.Crs.Runtime.Pipeline
 {
-    public class CommandSchedulingPipeline : IPipeline
+    public class CommandSchedulingPipeline : IPipeline, IDisposable
     {
         public CommandAction Action { get; }
 
-        public PipelineEvents Events { get; }
+        public IPipelineConfiguration Configuration { get; }
 
         public IActivityMonitor Monitor { get; }
 
@@ -25,9 +25,10 @@ namespace CK.Crs.Runtime.Pipeline
         }
         public IServiceProvider CommandServices { get; }
 
-        public CommandSchedulingPipeline( IServiceProvider serviceProvider, ScheduledCommand command )
+        public CommandSchedulingPipeline( IServiceProvider serviceProvider, IPipelineConfiguration configuration, ScheduledCommand command )
         {
             CommandServices = serviceProvider;
+            Configuration = configuration;
             Monitor = command.Token.CreateDependentMonitor();
             Action = command;
             Request = null;

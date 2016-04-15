@@ -11,7 +11,7 @@ namespace CK.Crs.Runtime.Pipeline
     {
         readonly IAmbientValues _ambientValues;
 
-        public AmbientValuesValidator( IPipeline pipeline, IAmbientValues ambientValues ) : base( pipeline )
+        public AmbientValuesValidator( IAmbientValues ambientValues )
         {
             if( ambientValues == null ) throw new ArgumentNullException( nameof( ambientValues ) );
             _ambientValues = ambientValues;
@@ -20,52 +20,52 @@ namespace CK.Crs.Runtime.Pipeline
         /// <summary>
         /// The command should have been binded
         /// </summary>
-        public override bool ShouldInvoke
+        public override bool ShouldInvoke( IPipeline pipeline )
         {
-            get { return Pipeline.Response == null && Pipeline.Action.Command != null; }
+            return pipeline.Response == null && pipeline.Action.Command != null;
         }
 
-        public override async Task Invoke( CancellationToken token )
+        public override async Task Invoke( IPipeline pipeline, CancellationToken token )
         {
-            using( Monitor.OpenTrace().Send( "Ambient values validation..." ) )
+            using( pipeline.Monitor.OpenTrace().Send( "Ambient values validation..." ) )
             {
-                var context = new ReflectionAmbientValueValidationContext( Pipeline.Monitor, Pipeline.Action, _ambientValues );
-                if( Pipeline.Events.AmbientValuesValidating != null )
-                    await Pipeline.Events.AmbientValuesValidating?.Invoke( context );
+                var context = new ReflectionAmbientValueValidationContext( pipeline.Monitor, pipeline.Action, _ambientValues );
+                if( pipeline.Configuration.Events.AmbientValuesValidating != null )
+                    await pipeline.Configuration.Events.AmbientValuesValidating?.Invoke( context );
 
-                if( context.Rejected ) Monitor.Info().Send( "Validation failed by custom processing in Pipeline.Events.ValidatingAmbientValues." );
+                if( context.Rejected ) pipeline.Monitor.Info().Send( "Validation failed by custom processing in Pipeline.Events.ValidatingAmbientValues." );
                 else
                 {
                     await context.ValidateValueAndRejectOnError<int>( "ActorId" );
                     await context.ValidateValueAndRejectOnError<int>( "AuthenticatedActorId" );
                 }
-                if( Pipeline.Events.AmbientValuesValidated != null )
-                    await Pipeline.Events.AmbientValuesValidated?.Invoke( context );
+                if( pipeline.Configuration.Events.AmbientValuesValidated != null )
+                    await pipeline.Configuration.Events.AmbientValuesValidated?.Invoke( context );
 
                 if( context.Rejected )
                 {
-                    var rejectedContext = new CancellableCommandRejectedContext( Pipeline.Action, context);
-                    if( Pipeline.Events.CommandRejected != null )
-                        await Pipeline.Events.CommandRejected?.Invoke( rejectedContext );
+                    var rejectedContext = new CancellableCommandRejectedContext( pipeline.Action, context);
+                    if( pipeline.Configuration.Events.CommandRejected != null )
+                        await pipeline.Configuration.Events.CommandRejected?.Invoke( rejectedContext );
 
                     if( rejectedContext.Canceled == false )
-                        SetInvalidAmbientValuesResponse( context );
+                        SetInvalidAmbientValuesResponse( pipeline, context );
                 }
             }
         }
 
 
-        private void SetInvalidAmbientValuesResponse( AmbientValueValidationContext context )
+        private void SetInvalidAmbientValuesResponse( IPipeline pipeline, AmbientValueValidationContext context )
         {
             if( context.Rejected )
             {
                 string msg =  $"Invalid ambient values detected: {context.RejectReason}";
-                Monitor.Warn().Send( msg );
-                Pipeline.Response = new CommandErrorResponse( msg, Pipeline.Action.CommandId );
+                pipeline.Monitor.Warn().Send( msg );
+                pipeline.Response = new CommandErrorResponse( msg, pipeline.Action.CommandId );
             }
             else
             {
-                Monitor.Info().Send( "Ambient values validator invalidate ambient values, but the last hook from Pipeline.Events.AmbientValuesInvalidated cancel the rejection." );
+                pipeline.Monitor.Info().Send( "Ambient values validator invalidate ambient values, but the last hook from Pipeline.Events.AmbientValuesInvalidated cancel the rejection." );
             }
         }
     }

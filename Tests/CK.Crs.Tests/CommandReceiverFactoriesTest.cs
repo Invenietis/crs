@@ -1,13 +1,12 @@
 ﻿using System;
 using NUnit.Framework;
 using CK.Crs.Runtime;
-using Xunit;
 using Assert = NUnit.Framework.Assert;
 using Is = NUnit.Framework.Is;
 
 namespace CK.Crs.Tests
 {
-    public class CommandReceiverFactoriesTest
+    public class CommandReceiverTestoriesTest
     {
         [Test]
         public void When_Failed_Should_Return_Null()
@@ -16,7 +15,7 @@ namespace CK.Crs.Tests
             IServiceProvider sp = TestHelper.CreateServiceProvider( c =>
             {
 
-            }); 
+            });
             // Act
             DefaultFactories.DefaultCreateInstanceStrategy s = new DefaultFactories.DefaultCreateInstanceStrategy( sp );
             ISomeType result = s.CreateInstanceOrDefault<ISomeType>( typeof( TypeWithConstructorWithParameters ) );

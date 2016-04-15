@@ -77,6 +77,8 @@ namespace CK.Crs.Tests
                 ActorId = 12
             };
 
+            var pipelineConfig = new Mock<IPipelineConfiguration>();
+
             var pipelineEvents = new PipelineEvents();
 
             pipelineEvents.AmbientValuesValidating = ( validationContext ) =>
@@ -93,19 +95,21 @@ namespace CK.Crs.Tests
                 Assert.That( validationContext.Rejected, Is.EqualTo( shouldBeRejected ) );
                 return Task.FromResult( 0 );
             };
+            pipelineConfig.SetupGet( e => e.Events ).Returns( pipelineEvents );
 
             var context = TestHelper.CreateContext( command, _output);
+
             var fakePipeline = new Mock<IPipeline>();
             fakePipeline.SetupGet( e => e.Action ).Returns( context.Action );
             fakePipeline.SetupGet( e => e.Monitor ).Returns( context.Monitor );
-            fakePipeline.SetupGet( e => e.Events ).Returns( pipelineEvents );
+            fakePipeline.SetupGet( e => e.Configuration ).Returns( pipelineConfig.Object );
 
             // Act
             var ambientValues = TestHelper.CreateAmbientValues( sp, context.Monitor );
             ambientValues.Register<ActorIdProvider>( "ActorId" );
 
-            var validator = new AmbientValuesValidator( fakePipeline.Object, ambientValues );
-            await validator.Invoke( default( CancellationToken ) );
+            var validator = new AmbientValuesValidator(  ambientValues );
+            await validator.Invoke( fakePipeline.Object, default( CancellationToken ) );
 
             // Assert
             authenticationStore.VerifyAll();

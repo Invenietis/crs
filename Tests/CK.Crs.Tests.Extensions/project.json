@@ -1,30 +1,12 @@
 {
-    "version": "1.0.0-rc",
+    "version": "1.0.0-*",
     "description": "CK.Crs.Tests.Extensions Class Library",
     "authors": [ "cedri_000" ],
     "tags": [ "" ],
     "projectUrl": "",
     "licenseUrl": "",
 
-    "testRunner": "xunit",
-
-    "dependencies": {
-        "CK.Crs.Extensions": "1.0.0-rc",
-        "CK.Crs.AspNet": "1.0.0-rc",
-        "xunit": "2.1.0-*",
-        "NUnitLite": "3.2.0",
-        "Microsoft.Extensions.Logging": "1.0.0-*",
-        "Microsoft.Extensions.Logging.Console": "1.0.0-*"
-    },
-
     "frameworks": {
-        "netstandardapp1.5": {
-            "imports": [ "dnxcore50", "portable-net451+win8" ],
-            "dependencies": {
-                "moq.netcore": "4.4.0-beta8",
-                "dotnet-test-xunit": "1.0.0-dev-*"
-            }
-        },
         "net451": {
             "frameworkAssemblies": {
                 "System.Data": "",
@@ -32,7 +14,13 @@
                 "System.ComponentModel": ""
             },
             "dependencies": {
+                "CK.Crs.AspNet": "1.0.0-*",
+                "CK.Crs.Extensions": "1.0.0-*",
+                "Microsoft.Extensions.Logging": "1.0.0-*",
+                "Microsoft.Extensions.Logging.Console": "1.0.0-*",
                 "Moq": "4.2.1510.2205",
+                "NUnitLite": "3.2.0",
+                "xunit": "2.1.0-*",
                 "xunit.runner.console": "2.1.0-*"
             }
         }

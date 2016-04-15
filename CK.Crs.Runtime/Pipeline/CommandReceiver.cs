@@ -7,22 +7,21 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CK.Core;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CK.Crs.Runtime.Pipeline
 {
     public class CommandReceiver : ICommandReceiver
     {
         readonly IServiceProvider _serviceProvider;
-        readonly IPipelineBuilder _pipelineConfiguration;
-        readonly PipelineEvents _events;
-        readonly ICommandRouteCollection _routes;
+        readonly IServiceScopeFactory _scopeFactory;
+        readonly CommandReceiverConfiguration _config;
 
-        public CommandReceiver( IServiceProvider serviceProvider, IPipelineBuilder pipelineConfiguration, PipelineEvents events, ICommandRouteCollection routes )
+        public CommandReceiver( IServiceProvider commandReceiverServices, IServiceScopeFactory scopeFactory, CommandReceiverConfiguration config )
         {
-            _serviceProvider = serviceProvider;
-            _pipelineConfiguration = pipelineConfiguration;
-            _events = events;
-            _routes = routes;
+            _serviceProvider = commandReceiverServices;
+            _scopeFactory = scopeFactory;
+            _config = config;
         }
 
         public async Task<CommandResponse> ProcessCommandAsync( CommandRequest request, CancellationToken cancellationToken = default( CancellationToken ) )
@@ -30,9 +29,18 @@ namespace CK.Crs.Runtime.Pipeline
             var monitor = new ActivityMonitor( request.Path );
             // Creates the pipeline of the command processing.
             // Each component of the pipeline can set a CommandResponse which will shortcut the command handling. 
-            using( var pipeline = new CommandReceivingPipeline( _serviceProvider, _events, _routes, monitor, request, cancellationToken ) )
+            using( var pipeline = new CommandReceivingPipeline( 
+                _serviceProvider, 
+                _scopeFactory, 
+                _config, 
+                monitor, 
+                request, 
+                cancellationToken ) )
             {
-                foreach( var c in _pipelineConfiguration.Components ) await c.Invoke( pipeline );
+                foreach( var c in _config.Pipeline.Components )
+                {
+                    await c.Invoke( pipeline );
+                }
 
                 return pipeline.Response;
             }
@@ -40,7 +48,7 @@ namespace CK.Crs.Runtime.Pipeline
 
         class CommandReceivingPipeline : IPipeline, IDisposable
         {
-            public PipelineEvents Events { get; }
+            public IPipelineConfiguration Configuration { get; }
 
             public CommandRequest Request { get; }
 
@@ -56,31 +64,33 @@ namespace CK.Crs.Runtime.Pipeline
 
             public IServiceProvider CommandServices
             {
-                get { return _container; }
+                get { return _serviceScope.ServiceProvider; }
             }
 
             IDisposableGroup _group;
-            SimpleServiceContainer _container;
+            IServiceScope _serviceScope;
 
-            public CommandReceivingPipeline( IServiceProvider serviceProvider, PipelineEvents events, ICommandRouteCollection routes, IActivityMonitor monitor, CommandRequest request, CancellationToken cancellationToken )
+            public CommandReceivingPipeline(
+                IServiceProvider commandReceiverServices,
+                IServiceScopeFactory scopeFactory,
+                CommandReceiverConfiguration configuration,
+                IActivityMonitor monitor,
+                CommandRequest request,
+                CancellationToken cancellationToken )
             {
-                _container = new SimpleServiceContainer( serviceProvider );
-                _container.Add( typeof( ICommandRouteCollection ), routes, null );
-                _container.Add( typeof( PipelineEvents ), events, null );
-                _container.Add( typeof( IActivityMonitor ), monitor, null );
-
-                Events = events;
+                _serviceScope = scopeFactory.CreateScope();
+                Configuration = configuration;
                 Monitor = monitor;
                 Request = request;
                 Action = new CommandAction( Guid.NewGuid() );
                 CancellationToken = cancellationToken;
-                _group = Monitor.OpenTrace().Send( $"Processing new command [commandId={Action.CommandId}]..." );
+                _group = Monitor.OpenTrace().Send( "Invoking command receiver Pipeline..." );
             }
 
             public void Dispose()
             {
                 _group.Dispose();
-                _container.Dispose();
+                _serviceScope.Dispose();
             }
         }
     }

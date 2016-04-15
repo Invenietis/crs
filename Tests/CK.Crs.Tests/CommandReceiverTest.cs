@@ -11,11 +11,11 @@ using Microsoft.Extensions.DependencyInjection;
 using CK.Core;
 using CK.Crs.Tests.Handlers;
 using CK.Crs.Runtime;
-using Xunit;
 using Assert = NUnit.Framework.Assert;
 using Is = NUnit.Framework.Is;
 using Microsoft.AspNetCore.Http;
 using Moq;
+using NUnit.Framework;
 
 namespace CK.Crs.Tests
 {
@@ -37,7 +37,7 @@ namespace CK.Crs.Tests
 
         public IServiceProvider ApplicationServices { get; private set; }
 
-        [Fact]
+        [Test]
         public async Task CommandReceiver_Should_Be_Scoped_To_A_Route_Prefix()
         {
             var cmd =new Handlers.TransferAmountCommand

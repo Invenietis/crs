@@ -7,8 +7,12 @@ using CK.Core;
 
 namespace CK.Crs.Runtime
 {
-    public interface IPipeline : IDisposable
+    public interface IPipeline
     {
+        /// <summary>
+        /// Gets the <see cref="IPipelineConfiguration"/> bound to the current execution pipeline.
+        /// </summary>
+        IPipelineConfiguration Configuration { get; }
         /// <summary>
         /// The request this pipeline is originated from.
         /// </summary>
@@ -25,10 +29,6 @@ namespace CK.Crs.Runtime
         /// An <see cref="IActivityMonitor"/> that monitors operations of the pipeline.
         /// </summary>
         IActivityMonitor Monitor { get; }
-        /// <summary>
-        /// Raises events during the command processing at any stage of the pipeline.
-        /// </summary>
-        PipelineEvents Events { get; }
         /// <summary>
         /// Cancellation token
         /// </summary>

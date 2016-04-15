@@ -1,5 +1,8 @@
 ﻿using CK.Crs.Runtime;
 using CK.Crs.Runtime.Pipeline;
+using CK.Core;
+using System;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CK.Crs
 {
@@ -18,7 +21,17 @@ namespace CK.Crs
 
         public static IPipelineBuilder Use<T>( this IPipelineBuilder builder ) where T : PipelineComponent
         {
-            return builder.Use( pipeline => builder.CreateComponent<T>( pipeline ).TryInvoke( pipeline.CancellationToken ) );
+            return builder.Use( pipeline =>
+            {
+                using( pipeline.Monitor.OpenTrace().Send( "Invoking component {0}", typeof( T ).Name ) )
+                {
+                    var component = pipeline.CommandServices.GetService<T>();
+                    if( component == null )
+                        throw new InvalidOperationException( String.Format( "The component {0} has not been created.", typeof( T ).Name ) );
+
+                    return component.TryInvoke( pipeline, pipeline.CancellationToken );
+                }
+            } );
         }
 
         /// <summary>

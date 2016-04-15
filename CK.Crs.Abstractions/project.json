@@ -1,5 +1,5 @@
 {
-    "version": "1.0.0-rc",
+    "version": "1.0.0-*",
     "description": "CK.Crs.Abstractions Class Library",
     "authors": [ "cedri_000" ],
     "tags": [ "" ],
@@ -8,19 +8,18 @@
 
     "frameworks": {
         "net451": {
+            "dependencies": {
+                "CK.Core": "5.0.0-*",
+                "CK.ActivityMonitor": "5.0.0-*"
+            }
         },
         "netstandard1.3": {
-            "imports": [ "dotnet5.4", "portable-net451+win8" ],
+            "imports": [ "dotnet5.4" ],
             "dependencies": {
+                "CK.Core": "5.0.0-*",
+                "CK.ActivityMonitor": "5.0.0-*",
                 "System.Security.Claims": "4.0.1-*"
             }
         }
-    },
-    "dependencies": {
-        "CK.Core": "5.0.0-*",
-        "CK.ActivityMonitor": "5.0.0-*"
-    },
-    "scripts": {
-        "precompile": [ "sgv prebuild", "sgv update" ]
     }
 }

@@ -12,34 +12,34 @@ namespace CK.Crs.Runtime.Pipeline
         readonly IFactories _factories;
         readonly IExecutionStrategySelector _executorSelector;
 
-        public CommandExecutor( IPipeline pipeline, IFactories factories )
-            : this( pipeline, factories, new BasicExecutionStrategySelector( factories ) )
+        public CommandExecutor( IFactories factories )
+            : this( factories, new BasicExecutionStrategySelector( factories ) )
         {
         }
 
-        public CommandExecutor( IPipeline pipeline, IFactories factories, IExecutionStrategySelector strategy ) : base( pipeline )
+        public CommandExecutor( IFactories factories, IExecutionStrategySelector strategy )
         {
             _factories = factories;
             _executorSelector = strategy;
         }
 
-        public override bool ShouldInvoke
+        public override bool ShouldInvoke( IPipeline pipeline )
         {
-            get { return Pipeline.Response == null && Pipeline.Action.Command != null; }
+            return pipeline.Response == null && pipeline.Action.Command != null;
         }
 
-        public override async Task Invoke( CancellationToken token )
+        public override async Task Invoke( IPipeline pipeline, CancellationToken token )
         {
             CommandExecutionContext executionContext = new CommandExecutionContext(
-                    Pipeline.Action,
-                    Monitor,
+                    pipeline.Action,
+                    pipeline.Monitor,
                     token,
                     _factories.CreateExternalEventPublisher,
                     _factories.CreateCommandScheduler);
 
             var context = new CommandContext( executionContext );
 
-            using( Pipeline.Monitor.OpenTrace().Send( "Running command..." ) )
+            using( pipeline.Monitor.OpenTrace().Send( "Running command..." ) )
             {
                 var strategy = _executorSelector.SelectExecutionStrategy( context );
                 if( strategy == null )
@@ -48,12 +48,12 @@ namespace CK.Crs.Runtime.Pipeline
                     throw new ArgumentNullException( msg );
                 }
 
-                Pipeline.Monitor.Trace().Send( $"[ExecutionStrategy={strategy.GetType().Name}]" );
+                pipeline.Monitor.Trace().Send( $"[ExecutionStrategy={strategy.GetType().Name}]" );
 
-                if( Pipeline.Events.CommandExecuting != null )
-                    await Pipeline.Events.CommandExecuting?.Invoke( context );
+                if( pipeline.Configuration.Events.CommandExecuting != null )
+                    await pipeline.Configuration.Events.CommandExecuting?.Invoke( context );
 
-                Pipeline.Response = await strategy.ExecuteAsync( context );
+                pipeline.Response = await strategy.ExecuteAsync( context );
 
                 // REVIEW: the context should be different 
                 // because at this stage we do not want to offe the possibility to sets the result

@@ -6,6 +6,10 @@ using CK.Core;
 
 namespace CK.Crs
 {
+
+    /// <summary>
+    /// Raises events during the command processing at any stage of the pipeline.
+    /// </summary>
     public class PipelineEvents
     {
         public Func<CommandAction, Task> CommandBuilt { get; set; }

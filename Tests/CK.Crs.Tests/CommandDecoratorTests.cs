@@ -7,22 +7,18 @@ using System.Threading.Tasks;
 using CK.Core;
 using NUnit.Framework;
 using CK.Crs.Runtime;
-using Xunit;
 using Assert = NUnit.Framework.Assert;
 using Is = NUnit.Framework.Is;
 using System.Security.Claims;
-using Xunit.Abstractions;
 
 namespace CK.Crs.Tests
 {
     public class CommandDecoratorTests
     {
         CancellationTokenSource _cancellationToken;
-        ITestOutputHelper _output;
-        public CommandDecoratorTests( ITestOutputHelper output )
+        public CommandDecoratorTests()
         {
             _cancellationToken = new CancellationTokenSource();
-            _output = output;
         }
 
         [Test]
@@ -30,7 +26,7 @@ namespace CK.Crs.Tests
         {
             var decorators = CreateSampleDecorators().ToArray();
 
-            var monitor = TestHelper.Monitor( _output.WriteLine);
+            var monitor = TestHelper.Monitor( Console.Out.WriteLine);
 
             var model = new Handlers.TransferAmountCommand
             {
@@ -55,17 +51,17 @@ namespace CK.Crs.Tests
                 ( ctx ) => TestHelper.MockEventPublisher(),
                 ( ctx ) => TestHelper.MockCommandScheduler() ); 
 
-            var factory = new FakeFactory<Handlers.TransferAlwaysSuccessHandler>();
+            var Testory = new FakeTestory<Handlers.TransferAlwaysSuccessHandler>();
 
             int decoratorInstanciated = 0;
             SampleDecorator sampleDecorator = null;
-            factory.OnDecoratorCreated = ( aDecorator ) =>
+            Testory.OnDecoratorCreated = ( aDecorator ) =>
             {
                 sampleDecorator = aDecorator as SampleDecorator;
                 decoratorInstanciated++;
             };
 
-            var strategy = new InProcessExecutionStrategy( new CommandRunner( factory) );
+            var strategy = new InProcessExecutionStrategy( new CommandRunner( Testory) );
             var commandContext = new CommandContext( command );
             var response = await strategy.ExecuteAsync( commandContext );
 
@@ -105,7 +101,7 @@ namespace CK.Crs.Tests
         }
 
 
-        class FakeFactory<THandler> : IFactories where THandler : ICommandHandler, new()
+        class FakeTestory<THandler> : IFactories where THandler : ICommandHandler, new()
         {
             public ICommandDecorator CreateDecorator( Type type )
             {
