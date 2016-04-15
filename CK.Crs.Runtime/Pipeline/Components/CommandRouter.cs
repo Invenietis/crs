@@ -30,6 +30,23 @@ namespace CK.Crs.Runtime.Pipeline
                     pipeline.Response = new CommandInvalidResponse( pipeline.Action.CommandId, msg );
                 }
             }
+            else
+            {
+                string msg = $"No routes found for {pipeline.Request.Path} in Receiver={pipeline.Configuration.Routes.PathBase}";
+                pipeline.Monitor.Info().Send( msg );
+#if DEBUG
+                using( pipeline.Monitor.OpenInfo().Send( "Registered routes are:" ) )
+                {
+                    var implicitRouteCollection = pipeline.Configuration.Routes as CommandRouteCollection;
+                    if( implicitRouteCollection != null )
+                        foreach( var r in implicitRouteCollection.RouteStorage )
+                        {
+                            pipeline.Monitor.Trace().Send( r.Key.ToString() );
+                        }
+
+                }
+#endif                    
+            }
             return Task.FromResult( 0 );
         }
     }

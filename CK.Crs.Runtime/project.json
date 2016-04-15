@@ -6,12 +6,15 @@
     "projectUrl": "",
     "licenseUrl": "",
 
+    "compilationOptions": {
+        "xmlDoc": true
+    },
 
     "frameworks": {
         "net451": {
             "dependencies": {
                 "CK.Crs.Abstractions": "1.0.0-*",
-                "Newtonsoft.Json": "8.0.2",
+                "Newtonsoft.Json": "8.0.3",
                 "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-final"
             },
             "frameworkAssemblies": {

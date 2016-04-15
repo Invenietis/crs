@@ -9,11 +9,11 @@ namespace CK.Crs.Runtime.Pipeline
 {
     class CommandFiltersInvoker : PipelineComponent
     {
-        readonly IFactories _factories;
+        readonly ICommandFilterFactory _commandFilterFactory;
 
-        public CommandFiltersInvoker( IFactories factories )
+        public CommandFiltersInvoker( ICommandFilterFactory commandFilterFactory )
         {
-            _factories = factories;
+            _commandFilterFactory = commandFilterFactory;
         }
 
         class FilterInfo
@@ -40,7 +40,7 @@ namespace CK.Crs.Runtime.Pipeline
             using( pipeline.Monitor.OpenTrace().Send( "Applying filters..." )
                 .ConcludeWith( () => filterContext.Rejected ? "INVALID" : "OK" ) )
             {
-                foreach( var filter in pipeline.Action.Description.Filters.Select( f => new FilterInfo( _factories.CreateFilter( f ) ) ) )
+                foreach( var filter in pipeline.Action.Description.Filters.Select( f => new FilterInfo( _commandFilterFactory.CreateFilter( f ) ) ) )
                 {
                     if( filter.Instance == null )
                     {

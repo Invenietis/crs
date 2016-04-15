@@ -2,12 +2,32 @@
 
 namespace CK.Crs.Runtime
 {
-    public interface IFactories
+    public interface ICommandFilterFactory
     {
         /// <summary>
         /// Creates an instance of the given type or return null if the type cannot be instanciated.
         /// </summary>
-        /// <param name="handlerType"></param>
+        /// <param name="filterType"></param>
+        /// <returns></returns>
+        ICommandFilter CreateFilter( Type filterType );
+    }
+
+    public interface ICommandDecoratorFactory
+    {
+        /// <summary>
+        /// Creates an instance of the given type or return null if the type cannot be instanciated.
+        /// </summary>
+        /// <param name="decoratorType">The type of the decorator to create</param>
+        /// <returns>An instance of <see cref="ICommandDecorator"/> or null.</returns>
+        ICommandDecorator CreateDecorator( Type decoratorType );
+    }
+
+    public interface ICommandHandlerFactory
+    {
+        /// <summary>
+        /// Creates an instance of the given type or return null if the type cannot be instanciated.
+        /// </summary>
+        /// <param name="handlerType">The type of the handler to create.</param>
         /// <returns></returns>
         ICommandHandler CreateHandler( Type handlerType );
 
@@ -16,21 +36,14 @@ namespace CK.Crs.Runtime
         /// </summary>
         /// <param name="handler">The command handler to release.</param>
         void ReleaseHandler( ICommandHandler handler );
+    }
 
+    public interface ICommandExternalFactory
+    {
         /// <summary>
-        /// Creates an instance of the given type or return null if the type cannot be instanciated.
+        /// Creates a <see cref="ICommandResponseDispatcher"/> for the current execution context.
         /// </summary>
-        /// <param name="handlerType"></param>
         /// <returns></returns>
-        ICommandDecorator CreateDecorator( Type decoratorType );
-
-        /// <summary>
-        /// Creates an instance of the given type or return null if the type cannot be instanciated.
-        /// </summary>
-        /// <param name="handlerType"></param>
-        /// <returns></returns>
-        ICommandFilter CreateFilter( Type filterType );
-
         ICommandResponseDispatcher CreateResponseDispatcher();
 
         /// <summary>
@@ -45,5 +58,9 @@ namespace CK.Crs.Runtime
         /// <param name="context"></param>
         /// <returns></returns>
         ICommandScheduler CreateCommandScheduler( ICommandExecutionContext context );
+    }
+
+    public interface IFactories : ICommandDecoratorFactory, ICommandFilterFactory, ICommandHandlerFactory, ICommandExternalFactory
+    {
     }
 }

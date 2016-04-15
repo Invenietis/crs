@@ -19,7 +19,7 @@ namespace CK.Crs
 
         public CommandRoutePath( string requestPath )
         {
-            FullPath = requestPath.ToLowerInvariant();
+            FullPath = requestPath;
 
             int separatorIdx = requestPath.IndexOf( PATH_SEPARATOR );
             if( separatorIdx == -1 )
@@ -29,14 +29,14 @@ namespace CK.Crs
             }
             else
             {
-                Prefix = requestPath.Substring( 0, separatorIdx ).ToLowerInvariant();
-                CommandName = requestPath.Substring( separatorIdx ).ToLowerInvariant();
+                Prefix = requestPath.Substring( 0, separatorIdx );
+                CommandName = requestPath.Substring( separatorIdx );
             }
         }
 
         internal bool IsValidFor( string commandReceiverPath )
         {
-            return commandReceiverPath.ToLowerInvariant().Equals( Prefix );
+            return commandReceiverPath.Equals( Prefix, StringComparison.OrdinalIgnoreCase );
         }
 
         public CommandRoutePath( string routePrefix, string commandName )
@@ -46,13 +46,13 @@ namespace CK.Crs
 
             if( !routePrefix.StartsWith( PATH_SEPARATOR, StringComparison.OrdinalIgnoreCase ) ) throw new ArgumentException( $"The route prefix should start with a {PATH_SEPARATOR}" );
 
-            Prefix = routePrefix.ToLowerInvariant();
+            Prefix = routePrefix;
             if( Prefix.EndsWith( PATH_SEPARATOR, StringComparison.OrdinalIgnoreCase ) ) Prefix = Prefix.Remove( Prefix.Length - 1 );
 
-            CommandName = commandName.ToLowerInvariant();
+            CommandName = commandName;
             if( CommandName.StartsWith( PATH_SEPARATOR, StringComparison.OrdinalIgnoreCase ) ) CommandName = CommandName.Remove( 0, 1 );
 
-            FullPath = $"{Prefix}{PATH_SEPARATOR}{CommandName}".ToLowerInvariant();
+            FullPath = $"{Prefix}{PATH_SEPARATOR}{CommandName}";
         }
 
         public override string ToString()
@@ -75,7 +75,7 @@ namespace CK.Crs
 
         public bool Equals( CommandRoutePath other )
         {
-            return other.FullPath == this.FullPath;
+            return other.FullPath.Equals( this.FullPath, StringComparison.OrdinalIgnoreCase );
         }
 
         public static implicit operator string( CommandRoutePath routePath )
@@ -86,6 +86,19 @@ namespace CK.Crs
         public static implicit operator CommandRoutePath( string routePath )
         {
             return new CommandRoutePath( routePath );
+        }
+
+        public class Comparer : IEqualityComparer<CommandRoutePath>
+        {
+            public bool Equals( CommandRoutePath x, CommandRoutePath y )
+            {
+                return x.Equals( y );
+            }
+
+            public int GetHashCode( CommandRoutePath obj )
+            {
+                return obj.GetHashCode();
+            }
         }
     }
 }

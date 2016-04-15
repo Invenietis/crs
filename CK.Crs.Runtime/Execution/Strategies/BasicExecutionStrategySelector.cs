@@ -7,14 +7,13 @@ namespace CK.Crs.Runtime
 {
     public class BasicExecutionStrategySelector : IExecutionStrategySelector
     {
-        readonly Func<InProcessExecutionStrategy> _inprocess;
-        readonly Func<AsyncExecutionStrategy> _async;
+        readonly InProcessExecutionStrategy _inprocess;
+        readonly AsyncExecutionStrategy _async;
 
-        public BasicExecutionStrategySelector( IFactories factory )
+        public BasicExecutionStrategySelector( ICommandHandlerFactory commandHandlerFactory, ICommandDecoratorFactory c )
         {
-            var runner = new CommandRunner( factory);
-            _inprocess = () => new InProcessExecutionStrategy( runner );
-            _async = () => new AsyncExecutionStrategy( runner, factory.CreateResponseDispatcher );
+            _inprocess = new InProcessExecutionStrategy(  );
+            _async = new AsyncExecutionStrategy( , commandHandlerFactory.CreateResponseDispatcher );
         }
 
         public virtual IExecutionStrategy SelectExecutionStrategy( CommandContext context )
@@ -28,9 +27,9 @@ namespace CK.Crs.Runtime
                 context.ExecutionContext.Monitor.Warn().Send( msg );
             }
 
-            if( isLongRunning && !typeof( RequestCommand ).IsAssignableFrom( commandType ) ) return _async();
+            if( isLongRunning && !typeof( RequestCommand ).IsAssignableFrom( commandType ) ) return _async;
 
-            return _inprocess();
+            return _inprocess;
         }
     }
 }

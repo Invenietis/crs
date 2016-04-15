@@ -16,6 +16,7 @@ using Is = NUnit.Framework.Is;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using NUnit.Framework;
+using CK.Crs.Runtime.Pipeline;
 
 namespace CK.Crs.Tests
 {
@@ -31,7 +32,7 @@ namespace CK.Crs.Tests
                 {
                     c.Registry.Register<TransferAmountCommand, TransferAlwaysSuccessHandler>();
                 } );
-                services.AddSingleton<ICommandResponseDispatcher>( Mock.Of<ICommandResponseDispatcher>() );
+                services.AddSingleton<ICommandResponseDispatcher>( sp => Mock.Of<ICommandResponseDispatcher>() );
             } );
         }
 
@@ -40,6 +41,11 @@ namespace CK.Crs.Tests
         [Test]
         public async Task CommandReceiver_Should_Be_Scoped_To_A_Route_Prefix()
         {
+            ActivityMonitor.AutoConfiguration = ( monitor ) =>
+            {
+                monitor.Output.RegisterClient( new ActivityMonitorConsoleClient() );
+            };
+
             var cmd =new Handlers.TransferAmountCommand
             {
                 SourceAccountId = Guid.NewGuid(),
@@ -48,33 +54,27 @@ namespace CK.Crs.Tests
             };
 
             var prefix = "/api";
+            var registry = new CommandRegistry();
+            registry.Register<TransferAmountCommand, TransferAlwaysSuccessHandler>();
 
-            var routes = new CommandRouteCollection( prefix);
+            var config = new CommandReceiverConfiguration( prefix, registry);
+            var receiver = ActivatorUtilities.CreateInstance<CommandReceiver>( ApplicationServices, config );
             {
-                var receiver = ApplicationServices.GetRequiredService<ICommandReceiver>();
-                {
-                    var request = new CommandRequest( "/api", SerializeRequestBody( cmd ), ClaimsPrincipal.Current);
-                    var response = await receiver.ProcessCommandAsync( request );
-                    Assert.That( response, Is.Null );
-                }
-                routes.AddCommandRoute( new CommandDescription
-                {
-                    CommandType = typeof( TransferAmountCommand ),
-                    HandlerType = typeof( TransferAlwaysSuccessHandler ),
-                    IsLongRunning = false,
-                    Name = typeof( TransferAmountCommand ).Name
-                } );
-                {
-                    var request = new CommandRequest( "/api", SerializeRequestBody( cmd ), ClaimsPrincipal.Current);
-                    var response = await receiver.ProcessCommandAsync( request );
-                    Assert.That( response, Is.Null );
-                }
-                {
-                    var request = new CommandRequest( "/api/TransferAmountCommand", SerializeRequestBody( cmd ), ClaimsPrincipal.Current);
-                    var response = await receiver.ProcessCommandAsync( request );
-                    Assert.That( response, Is.Not.Null );
-                    Assert.That( response.CommandId, Is.Not.EqualTo( Guid.Empty ) );
-                }
+                var request = new CommandRequest( "/api", SerializeRequestBody( cmd ), ClaimsPrincipal.Current);
+                var response = await receiver.ProcessCommandAsync( request );
+                Assert.That( response, Is.Null );
+            }
+            config.AddCommand<TransferAmountCommand>().CommandName( typeof( TransferAmountCommand ).Name );
+            {
+                var request = new CommandRequest( "/api", SerializeRequestBody( cmd ), ClaimsPrincipal.Current);
+                var response = await receiver.ProcessCommandAsync( request );
+                Assert.That( response, Is.Null );
+            }
+            {
+                var request = new CommandRequest( "/api/TransferAmount", SerializeRequestBody( cmd ), ClaimsPrincipal.Current);
+                var response = await receiver.ProcessCommandAsync( request );
+                Assert.That( response, Is.Not.Null );
+                Assert.That( response.CommandId, Is.Not.EqualTo( Guid.Empty ) );
             }
         }
 
@@ -84,6 +84,7 @@ namespace CK.Crs.Tests
             Stream s = new MemoryStream();
             StreamWriter sw = new StreamWriter(s);
             Newtonsoft.Json.JsonSerializer.Create().Serialize( sw, command );
+            sw.Flush();
             s.Seek( 0, SeekOrigin.Begin );
             return s;
         }

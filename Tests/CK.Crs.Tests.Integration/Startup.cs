@@ -43,6 +43,33 @@ namespace CK.Crs.Tests.Integration
                         registry => registry.Registration.Where( c => c.CommandType.Namespace.StartsWith( "CK.Crs" ) ),
                         config => config.AddExtraData( "Permission", CK.Authorization.MinGrantLevel.Administrator ) )
                     .AddCommand<TransferAmountCommand>().CommandName( "transfer" ).AddDecorator<TransactionAttribute>();
+
+                options.Events.AmbientValuesValidating = async validationContext =>
+                {
+                    int actorId = await validationContext.AmbientValues.GetValueAsync<int>("ActorId");
+
+                    await validationContext.ValidateValueAndRejectOnError( "TenantId", new AmbientValueComparer<int>( ( valueName, commandValue, ambientValue ) =>
+                    {
+                        bool tenantIsTheSame = commandValue == ambientValue;
+
+                        if( !tenantIsTheSame )
+                        {
+                            if( actorId == 1 ) return true;
+                        }
+
+                        return tenantIsTheSame;
+                    } ) );
+                };
+
+                options.Factories.ExternalEvents = context =>
+                {
+                    return new TransactionnalEventPublisher( context );
+                };
+
+                options.Factories.CommandScheduler = context =>
+                {
+                    return new TransactionnalCommandScheduler( context );
+                };
             } );
 
 

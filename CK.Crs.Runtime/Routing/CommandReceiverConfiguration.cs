@@ -18,6 +18,14 @@ namespace CK.Crs
         /// Gets the <see cref="PipelineEvents"/> 
         /// </summary>
         PipelineEvents Events { get; }
+
+        FactoryConfiguration Factories { get; }
+    }
+
+    public class FactoryConfiguration
+    {
+        public Func<ICommandExecutionContext, IExternalEventPublisher> ExternalEvents { get; set; }
+        public Func<ICommandExecutionContext, ICommandScheduler> CommandScheduler { get; set; }
     }
 
     public class CommandReceiverConfiguration : IPipelineConfiguration
@@ -35,7 +43,11 @@ namespace CK.Crs
 
             Events = new PipelineEvents();
             Routes = new CommandRouteCollection( prefix );
+
+            Factories = new FactoryConfiguration();
         }
+
+        public FactoryConfiguration Factories { get; }
 
         public ICommandRouteCollection Routes { get; }
 

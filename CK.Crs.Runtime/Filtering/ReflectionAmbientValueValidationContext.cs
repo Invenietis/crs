@@ -13,6 +13,7 @@ namespace CK.Crs.Runtime.Pipeline
 
         public ReflectionAmbientValueValidationContext( IActivityMonitor monitor, CommandAction action, IAmbientValues ambientValues ) : base( monitor, action, ambientValues )
         {
+            // TODO: cache properties for the command type.
             Properties = action.Description.Descriptor.CommandType.GetProperties().ToArray();
         }
 

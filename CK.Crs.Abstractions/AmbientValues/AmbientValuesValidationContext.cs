@@ -23,6 +23,10 @@ namespace CK.Crs
 
         public string RejectReason { get; private set; }
 
+        /// <summary>
+        /// Reject ambient values.
+        /// </summary>
+        /// <param name="reason"></param>
         public void Reject( string reason )
         {
             Rejected = true;
@@ -46,9 +50,15 @@ namespace CK.Crs
         /// <typeparam name="T"></typeparam>
         /// <param name="valueName"></param>
         /// <param name="comparer"></param>
-        /// <returns></returns>
+        /// <returns>Returns true if validation success, false if failed.</returns>
         public abstract Task<bool> ValidateValue<T>( string valueName, AmbientValueComparer<T> comparer );
 
+        /// <summary>
+        /// Compares the value of the given value name from the <see cref="IAmbientValues"/> and the command using the given comparer and immediatly set the validation on error.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="valueName"></param>
+        /// <returns></returns>
         public virtual Task ValidateValueAndRejectOnError<T>( string valueName )
         {
             return ValidateValueAndRejectOnError<T>( valueName, DefaultAmbientValueComparer );

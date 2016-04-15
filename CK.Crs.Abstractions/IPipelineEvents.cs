@@ -12,6 +12,11 @@ namespace CK.Crs
     /// </summary>
     public class PipelineEvents
     {
+        /// <summary>
+        /// Gets or sets the factory of <see cref="IExternalEventPublisher"/>
+        /// </summary>
+        public Func<ICommandExecutionContext, IExternalEventPublisher> EventEmitterFactory { get; set; }
+
         public Func<CommandAction, Task> CommandBuilt { get; set; }
 
         public Func<AmbientValueValidationContext, Task> AmbientValuesValidating { get; set; }

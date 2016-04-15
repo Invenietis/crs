@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using CK.Core;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CK.Crs.Runtime
 {
@@ -73,7 +74,7 @@ namespace CK.Crs.Runtime
                 try
                 {
                     T inst = _serviceProvider.GetService( instanceType ) as T;
-                    return inst ?? (defaultActivator != null ? defaultActivator() : Activator.CreateInstance( instanceType ) as T);
+                    return inst ?? (defaultActivator != null ? defaultActivator() : ActivatorUtilities.CreateInstance( _serviceProvider, instanceType ) as T);
                 }
                 catch( Exception ex )
                 {

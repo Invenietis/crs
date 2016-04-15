@@ -20,9 +20,9 @@
                 "CK.Core": "5.0.0-*",
                 "CK.Crs.AspNet": "1.0.0-*",
                 "NUnitLite": "3.2.0",
-                "Castle.Windsor": "3.3.0",
                 "Autofac": "4.0.0-*",
-                "Microsoft.Extensions.DependencyInjection": "1.0.0-*"
+                "Microsoft.Extensions.DependencyInjection": "1.0.0-rc1-final",
+                "Microsoft.Extensions.PlatformAbstractions": "1.0.0-rc1-final"
             }
         }
     }

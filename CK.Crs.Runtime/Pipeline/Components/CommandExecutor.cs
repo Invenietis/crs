@@ -34,8 +34,8 @@ namespace CK.Crs.Runtime.Pipeline
                     pipeline.Action,
                     pipeline.Monitor,
                     token,
-                    _factories.CreateExternalEventPublisher,
-                    _factories.CreateCommandScheduler);
+                    pipeline.Configuration.Factories.ExternalEvents ?? _factories.CreateExternalEventPublisher,
+                    pipeline.Configuration.Factories.CommandScheduler ??_factories.CreateCommandScheduler);
 
             var context = new CommandContext( executionContext );
 

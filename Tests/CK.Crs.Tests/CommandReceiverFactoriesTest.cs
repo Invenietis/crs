@@ -21,7 +21,7 @@ namespace CK.Crs.Tests
             ISomeType result = s.CreateInstanceOrDefault<ISomeType>( typeof( TypeWithConstructorWithParameters ) );
 
             // Assert
-            Assert.Null( result );
+            Assert.That( result, Is.Not.Null );
         }
 
         [Test]
@@ -34,13 +34,16 @@ namespace CK.Crs.Tests
             });
             // Act
             DefaultFactories.DefaultCreateInstanceStrategy s = new DefaultFactories.DefaultCreateInstanceStrategy( sp );
-            ISomeType result = s.CreateInstanceOrDefault<ISomeType>( 
-                typeof( TypeWithConstructorWithParameters ), 
-                () => new TypeWithConstructorWithParameters( "WTF!!") );
+            ISomeType result = s.CreateInstanceOrDefault<ISomeType>(
+                typeof( TypeWithConstructorWithParameters ),
+                () => new TypeWithConstructorWithParameters
+                {
+                    Message = "Hey"
+                });
 
             // Assert
-            Assert.NotNull( result );
-            Assert.AreEqual( "WTF!!", result.ShowMe() );
+            Assert.That( result, Is.Not.Null );
+            Assert.That( result.ShowMe(), Is.EqualTo( "Hey" ) );
         }
 
         interface ISomeType
@@ -50,15 +53,14 @@ namespace CK.Crs.Tests
 
         class TypeWithConstructorWithParameters : ISomeType
         {
-            string _wtf;
-            public TypeWithConstructorWithParameters( string wtf )
+            public TypeWithConstructorWithParameters()
             {
-                _wtf = wtf;
             }
 
+            public string Message { get; set; }
             public string ShowMe()
             {
-                return _wtf;
+                return Message;
             }
         }
     }

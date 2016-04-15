@@ -8,21 +8,21 @@ namespace CK.Crs.Runtime
     public class CommandRouteCollection : ICommandRouteCollection
     {
         readonly string _path;
-        readonly Dictionary<CommandRoutePath, RoutedCommandDescriptor> _routeStorage;
+        internal readonly Dictionary<CommandRoutePath, RoutedCommandDescriptor> RouteStorage;
 
         public string PathBase { get { return _path; } }
 
         public CommandRouteCollection( string path )
         {
             _path = path;
-            _routeStorage = new Dictionary<CommandRoutePath, RoutedCommandDescriptor>();
+            RouteStorage = new Dictionary<CommandRoutePath, RoutedCommandDescriptor>( new CommandRoutePath.Comparer() );
         }
 
         public RoutedCommandDescriptor FindCommandDescriptor( string path )
         {
             RoutedCommandDescriptor v;
-            var key = new CommandRoutePath( PathBase + path );
-            _routeStorage.TryGetValue( key, out v );
+            var key = new CommandRoutePath( path );
+            RouteStorage.TryGetValue( key, out v );
             return v;
         }
 
@@ -30,7 +30,7 @@ namespace CK.Crs.Runtime
         {
             var p = new CommandRoutePath(_path, descriptor.Name);
             // Overrides...
-            return _routeStorage[p] = new RoutedCommandDescriptor( p, descriptor );
+            return RouteStorage[p] = new RoutedCommandDescriptor( p, descriptor );
         }
     }
 }

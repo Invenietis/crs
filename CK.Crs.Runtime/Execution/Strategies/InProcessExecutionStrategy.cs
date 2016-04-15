@@ -8,18 +8,12 @@ namespace CK.Crs.Runtime
 {
     class InProcessExecutionStrategy : IExecutionStrategy
     {
-        readonly CommandRunner _runner;
-        public InProcessExecutionStrategy( CommandRunner runner )
-        {
-            _runner = runner;
-        }
-
         public async Task<CommandResponse> ExecuteAsync( CommandContext context )
         {
             var mon = context.ExecutionContext.Monitor;
             try
             {
-                await _runner.ExecuteAsync( context );
+                await CommandRunner.ExecuteAsync( context );
                 mon.Trace().Send( "Done." );
             }
             catch( Exception ex )

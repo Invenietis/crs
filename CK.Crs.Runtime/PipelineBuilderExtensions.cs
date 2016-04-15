@@ -25,7 +25,7 @@ namespace CK.Crs
             {
                 using( pipeline.Monitor.OpenTrace().Send( "Invoking component {0}", typeof( T ).Name ) )
                 {
-                    var component = pipeline.CommandServices.GetService<T>();
+                    var component = ActivatorUtilities.GetServiceOrCreateInstance<T>(  pipeline.CommandServices );
                     if( component == null )
                         throw new InvalidOperationException( String.Format( "The component {0} has not been created.", typeof( T ).Name ) );
 

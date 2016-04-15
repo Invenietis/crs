@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Castle.Windsor;
 using CK.Core;
 using CK.Crs.Runtime.Pipeline;
 using Moq;
