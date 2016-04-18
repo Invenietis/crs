@@ -1,0 +1,19 @@
+﻿{
+  "version": "1.0.0-*",
+  "description": "CK.Crs.Execution Class Library",
+  "authors": [ "cedri_000" ],
+  "tags": [ "" ],
+  "projectUrl": "",
+  "licenseUrl": "",
+
+  "frameworks": {
+    "net451": {
+        "dependencies": {
+            "CK.Crs.Runtime": "1.0.0-*"
+        },
+        "frameworkAssemblies": {
+            "System.Transactions": "4.0.0.0"
+        }
+    }
+  }
+}

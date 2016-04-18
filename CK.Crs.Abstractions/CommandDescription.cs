@@ -5,6 +5,13 @@ using System.Threading.Tasks;
 
 namespace CK.Crs
 {
+    public class CommandExecutorDescription
+    {
+        public string Name { get; set; }
+
+        public Type Type { get; set; }
+    }
+
     /// <summary>
     /// Describes a command and its environment.
     /// </summary>
@@ -40,6 +47,11 @@ namespace CK.Crs
         /// Gets or sets a read-only collection of decorators that should be applied when this command is handled.
         /// </summary>
         public IReadOnlyCollection<Type> Decorators { get; set; }
+
+        /// <summary>
+        /// Gets or sets a read-only collection of <see cref="ICommandExecutor"/> this command can be executed.
+        /// </summary>
+        public IReadOnlyCollection<CommandExecutorDescription> Executors { get; set; }
 
         IDictionary<string, object> _extraData;
         /// <summary>

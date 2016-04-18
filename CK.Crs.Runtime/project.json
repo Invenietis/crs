@@ -14,12 +14,10 @@
         "net451": {
             "dependencies": {
                 "CK.Crs.Abstractions": "1.0.0-*",
-                "Newtonsoft.Json": "8.0.3",
                 "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-final"
             },
             "frameworkAssemblies": {
-                "System.ComponentModel.DataAnnotations": "4.0.0.0",
-                "System.Transactions": "4.0.0.0"
+                "System.ComponentModel.DataAnnotations": "4.0.0.0"
             }
         }
     }

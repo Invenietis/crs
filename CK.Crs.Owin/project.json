@@ -13,6 +13,8 @@
     "frameworks": {
         "net451": {
             "dependencies": {
+                "CK.Crs.Execution": "1.0.0-*",
+                "CK.Crs.Receiver": "1.0.0-*",
                 "Microsoft.Owin": "3.0.1",
                 "Owin": "1.0.0",
                 "CK.Crs.Runtime": "1.0.0-*"

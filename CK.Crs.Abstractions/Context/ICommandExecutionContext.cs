@@ -8,6 +8,9 @@ namespace CK.Crs
 {
     public interface ICommandExecutionContext
     {
+        /// <summary>
+        /// 
+        /// </summary>
         CommandAction Action { get; }
 
         /// <summary>

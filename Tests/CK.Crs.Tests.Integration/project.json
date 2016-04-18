@@ -5,6 +5,8 @@
         "CK.Crs.AspNet": "1.0.0-*",
         "CK.Crs.Owin": "1.0.0-*",
         "CK.Crs.Extensions": "1.0.0-*",
+        "CK.Crs.Receiver": "1.0.0-*",
+        "CK.Crs.Execution": "1.0.0-*",
         "Microsoft.AspNetCore.Mvc": "1.0.0-*",
         "Microsoft.AspNetCore.Authentication.Cookies": "1.0.0-*",
         "Microsoft.AspNetCore.Server.Kestrel": "1.0.0-*",

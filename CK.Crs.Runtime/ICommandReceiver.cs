@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using CK.Core;
+using CK.Crs.Pipeline;
 
-namespace CK.Crs.Runtime
+namespace CK.Crs
 {
     /// <summary>
     /// Defines the contract a command receiver should implement
@@ -19,7 +20,7 @@ namespace CK.Crs.Runtime
         /// <param name="command"><see cref="CommandRequest"/></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Task<CommandResponse> ProcessCommandAsync( CommandRequest command, CancellationToken cancellationToken = default( CancellationToken ) );
+        Task ProcessCommandAsync( CommandRequest command, Stream output, CancellationToken cancellationToken = default( CancellationToken ) );
     }
 
 }

@@ -12,19 +12,19 @@ namespace CK.Crs.Tests.Integration
 {
     public class Startup
     {
-        public int IDatabase { get; private set; }
-
         // For more information on how to configure your application, visit http://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices( IServiceCollection services )
         {
             services.AddCommandReceiver( options =>
             {
                 options.Registry.EnableLongRunningCommands = false;
-                options.Registry.Register<TransferAmountCommand, TransferAlwaysSuccessHandler>().CommandName( "transfer" ).IsLongRunning();
+                options.Registry.Register<TransferAmountCommand, TransferAlwaysSuccessHandler>().CommandName( "transfer" );
                 options.Registry.Register<WithdrawMoneyCommand, WithDrawyMoneyHandler>().CommandName( "withdraw" ).AddDecorator<TransactionAttribute>();
                 options.Registry.Register<UserCommand, UserHandler>().CommandName( "addUser" ).AddDecorator<TransactionAttribute>();
 
             } );
+
+            services.AddCommandExecutor();
 
             services.AddMvc();
             services.AddSingleton<IRepository<UserModel>, UserRepository>();
@@ -61,15 +61,15 @@ namespace CK.Crs.Tests.Integration
                     } ) );
                 };
 
-                options.Factories.ExternalEvents = context =>
-                {
-                    return new TransactionnalEventPublisher( context );
-                };
+                //options.Factories.ExternalEventsPublisher = context =>
+                //{
+                //    return new TransactionnalEventPublisher( context );
+                //};
 
-                options.Factories.CommandScheduler = context =>
-                {
-                    return new TransactionnalCommandScheduler( context );
-                };
+                //options.Factories.CommandScheduler = context =>
+                //{
+                //    return new TransactionnalCommandScheduler( context );
+                //};
             } );
 
 
@@ -80,7 +80,7 @@ namespace CK.Crs.Tests.Integration
                         .UseDefault();
                 //.UseSignalRDispatcher();
             } );
-
+            
             app.UseCommandReceiver( "/c/public", options =>
             {
                 options
@@ -90,7 +90,8 @@ namespace CK.Crs.Tests.Integration
                         .UseJsonCommandBuilder()
                         .UseAmbientValuesValidator()
                         .UseFilters()
-                        .UseCommandExecutor();
+                        .UseSyncCommandExecutor()
+                        .UseJsonResponseWriter();
 
                 options.Events.CommandRejected = context =>
                 {

@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CK.Core;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace CK.Crs.Runtime.Pipeline
+namespace CK.Crs.Pipeline
 {
     public class PipelineBuilder : IPipelineBuilder
     {
@@ -23,6 +25,21 @@ namespace CK.Crs.Runtime.Pipeline
         {
             _list.AddLast( inlineComponent );
             return this;
+        }
+
+        public IPipelineBuilder Use<T>() where T : PipelineComponent
+        {
+            return Use( pipeline =>
+            {
+                using( pipeline.Monitor.OpenTrace().Send( "Invoking component {0}", typeof( T ).Name ) )
+                {
+                    var component = ActivatorUtilities.GetServiceOrCreateInstance<T>( pipeline.CommandServices );
+                    if( component == null )
+                        throw new InvalidOperationException( String.Format( "The component {0} has not been created.", typeof( T ).Name ) );
+
+                    return component.TryInvoke( pipeline, pipeline.CancellationToken );
+                }
+            } );
         }
 
         public IPipelineBuilder Clear()

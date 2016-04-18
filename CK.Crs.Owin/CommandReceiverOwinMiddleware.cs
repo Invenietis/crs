@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Owin;
-using CK.Crs.Runtime;
+using CK.Crs.Pipeline;
 
 namespace CK.Crs
 {
@@ -35,15 +35,9 @@ namespace CK.Crs
         {
             var connectionId = context.Request.Query["c"];
             var commandRequest = new CommandRequest( context.Request.Path.Value, context.Request.Body, context.Authentication.User, connectionId );
-            var commandResponse = await _receiver.ProcessCommandAsync( commandRequest );
-            if( commandResponse != null )
-            {
-                commandResponse.Write( context.Response.Body );
-            }
-            else
-            {
-                await Next?.Invoke( context );
-            }
+            await _receiver.ProcessCommandAsync( commandRequest, context.Response.Body );
+            if ( Next != null )
+                await Next.Invoke( context );
         }
 
     }

@@ -1,0 +1,20 @@
+﻿{
+    "version": "1.0.0-*",
+    "description": "CK.Crs.Receiver Class Library",
+    "authors": [ "cedri_000" ],
+    "tags": [ "" ],
+    "projectUrl": "",
+    "licenseUrl": "",
+
+    "frameworks": {
+        "net451": {
+            "dependencies": {
+                "CK.Crs.Runtime": "1.0.0-*",
+                "Newtonsoft.Json": "8.0.3"
+            },
+            "frameworkAssemblies": {
+                "System.ComponentModel.DataAnnotations": "4.0.0.0"
+            }
+        }
+    }
+}

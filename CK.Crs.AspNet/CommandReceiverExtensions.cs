@@ -1,6 +1,6 @@
 ﻿using System;
 using CK.Crs.Runtime;
-using CK.Crs.Runtime.Pipeline;
+using CK.Crs.Runtime.Routing;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,7 +9,7 @@ namespace CK.Crs
 {
 
     // Extension method used to add the middleware to the HTTP request pipeline.
-    public static class CommandReceiverExtensions
+    public static class CommandReceiverAspNetExtensions
     {
         public static IApplicationBuilder UseCommandReceiver( this IApplicationBuilder builder,
             PathString routePrefix,
@@ -22,11 +22,13 @@ namespace CK.Crs
                 var scopeFactory = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>();
                 if( scopeFactory == null ) throw new InvalidOperationException( "An implementation of IServiceScopeFactory must exists in the DI Container" );
 
-                var commandReceiver = CrsConfig.InitializeCommandReceiver( 
-                    routePrefix.Value, 
-                    app.ApplicationServices, 
-                    scopeFactory, 
-                    configure);
+                var config = new CommandReceiverFinalBuilder();
+                var commandReceiver = config.InitializeCommandReceiver(
+                    new CommandRouteCollection( routePrefix.Value ),
+                    app.ApplicationServices,
+                    scopeFactory,
+                    configure );
+
                 app.UseMiddleware<CommandReceiverMiddleware>( commandReceiver );
             } );
         }

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using CK.Core;
-using CK.Crs.Runtime;
+using CK.Crs.Pipeline;
 using Microsoft.AspNetCore.Http;
 
 namespace CK.Crs
@@ -25,15 +24,9 @@ namespace CK.Crs
         {
             var connectionId = context.Request.Query["c"];
             var request = new CommandRequest( context.Request.Path.Value,context.Request.Body, context.User, connectionId );
-            var response = await _receiver.ProcessCommandAsync( request );
-            if( response != null )
-            {
-                response.Write( context.Response.Body );
-            }
-            else
-            {
-                await _next?.Invoke( context );
-            }
+            await _receiver.ProcessCommandAsync( request, context.Response.Body, context.RequestAborted );
+            if( _next != null )
+                await _next.Invoke( context );
         }
     }
 }

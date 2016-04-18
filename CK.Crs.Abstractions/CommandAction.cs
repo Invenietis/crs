@@ -11,6 +11,7 @@ namespace CK.Crs
         public CommandAction( Guid commandId )
         {
             CommandId = commandId;
+            Timestamp = DateTime.UtcNow;
         }
 
         /// <summary>
@@ -32,5 +33,10 @@ namespace CK.Crs
         /// Returns an identifier that should help identifying the caller of this request.
         /// </summary>
         public string CallbackId { get; set; }
+
+        /// <summary>
+        /// Gets the <see cref="DateTime"/> this command action has been submitted to the receiver.
+        /// </summary>
+        public DateTime Timestamp { get; }
     }
 }
