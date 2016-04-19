@@ -1,45 +1,40 @@
 ﻿using System;
 using CK.Crs.Runtime;
-using Microsoft.AspNet.Builder;
+using CK.Crs.Runtime.Routing;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CK.Crs
 {
 
     // Extension method used to add the middleware to the HTTP request pipeline.
-    public static class CommandReceiverExtensions
+    public static class CommandReceiverAspNetExtensions
     {
-        public static IApplicationBuilder UseCommandReceiver(
-            this IApplicationBuilder builder,
-            Microsoft.AspNet.Http.PathString routePrefix,
-            Action<CommandReceiverConfiguration> config )
+        public static IApplicationBuilder UseCommandReceiver( this IApplicationBuilder builder, PathString routePrefix, Action<CrsConfiguration> configure = null )
         {
             if( string.IsNullOrWhiteSpace( routePrefix ) ) throw new ArgumentNullException( nameof( routePrefix ) );
 
             return builder.Map( routePrefix, ( app ) =>
             {
-                var registry = builder.ApplicationServices.GetRequiredService<ICommandRegistry>();
-                var routeCollection = new CommandRouteCollection( routePrefix );
-                var middlewareConfiguration = new CommandReceiverConfiguration( registry, routeCollection);
-                config( middlewareConfiguration );
-                app.UseOwin( pipeline =>
-                {
-                    var receiverMiddleware = new CommandReceiverMiddleware( null, routeCollection, builder.ApplicationServices );
-                    pipeline( next => receiverMiddleware.InvokeAsync );
-                } );
+                var crsBuilder = new CrsHandlerBuilder();
+
+                var config = new CrsConfiguration( routePrefix.Value, new CommandRegistry(), new CommandRouteCollection() );
+                if( configure != null ) configure( config );
+                else ApplyDefaultConfiguration( config );
+
+                crsBuilder.AddConfiguration( config );
+                
+                var scopeFactory = builder.ApplicationServices.GetRequiredService<IServiceScopeFactory>();
+                var commandReceiver = crsBuilder.Build( builder.ApplicationServices, scopeFactory );
+
+                app.UseMiddleware<CommandReceiverMiddleware>( commandReceiver );
             } );
         }
 
-        public static void AddCommandReceiver( this IServiceCollection services, Action<ICommandRegistry> configuration )
+        private static void ApplyDefaultConfiguration( CrsConfiguration config )
         {
-            services.AddSingleton<ICommandReceiver, CommandReceiver>();
-            services.AddSingleton<ICommandFormatter, DefaultCommandFormatter>();
-            services.AddSingleton<IExecutionStrategySelector, BasicExecutionStrategySelector>();
-            services.AddSingleton<IFactories, DefaultFactories>();
-
-            ICommandRegistry registry = new CommandRegistry();
-            configuration( registry );
-            services.AddSingleton( registry );
+            config.Pipeline.UseDefault().UseSyncCommandExecutor().UseJsonResponseWriter();
         }
     }
 }

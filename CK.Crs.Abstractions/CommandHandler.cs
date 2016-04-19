@@ -8,11 +8,11 @@ namespace CK.Crs
     {
         public async Task<object> HandleAsync( ICommandExecutionContext context, T command )
         {
-#if DEBUG
-            const string msg = "The result of the command must be a nested class of the Command itself named Result.";
-            Type resultType = typeof( TResult );
-            if( !resultType.IsNested || resultType.Name != "Result" ) throw new InvalidOperationException( msg );
-#endif
+//#if DEBUG
+//            const string msg = "The result of the command must be a nested class of the Command itself named Result.";
+//            Type resultType = typeof( TResult );
+//            if( !resultType.IsNested || resultType.Name != "Result" ) throw new InvalidOperationException( msg );
+//#endif
             var result = await DoHandleAsync( context, command  );
             return result as TResult;
         }

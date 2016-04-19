@@ -1,0 +1,34 @@
+{
+    "webroot": "wwwroot",
+    "version": "1.0.0-*",
+    "dependencies": {
+        "CK.Crs.AspNet": "1.0.0-*",
+        "CK.Crs.Owin": "1.0.0-*",
+        "CK.Crs.Extensions": "1.0.0-*",
+        "CK.Crs.Receiver": "1.0.0-*",
+        "CK.Crs.Execution": "1.0.0-*",
+        "Microsoft.AspNetCore.Mvc": "1.0.0-*",
+        "Microsoft.AspNetCore.Authentication.Cookies": "1.0.0-*",
+        "Microsoft.AspNetCore.Server.Kestrel": "1.0.0-*",
+        "Microsoft.AspNetCore.StaticFiles": "1.0.0-*",
+        "Microsoft.AspNetCore.Owin": "1.0.0-*"
+    },
+
+    "frameworks": {
+        "net451": {
+            "dependencies": { }
+        }
+    },
+    "publishExclude": [
+        "node_modules",
+        "bower_components",
+        "**.xproj",
+        "**.user",
+        "**.vspscc"
+    ],
+    "exclude": [
+        "wwwroot",
+        "node_modules",
+        "bower_components"
+    ]
+}

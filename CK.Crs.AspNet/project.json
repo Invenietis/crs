@@ -1,24 +1,26 @@
 {
-    "version": "1.0.0-alpha-01",
+    "version": "1.0.0-*",
     "description": "CK.Crs.AspNet Class Library",
     "authors": [ "cedri_000" ],
     "tags": [ "" ],
     "projectUrl": "",
     "licenseUrl": "",
 
-    "dependencies": {
-        "Microsoft.AspNetCore.Http.Abstractions": "1.0.0-*",
-        "Microsoft.Extensions.DependencyInjection": "1.0.0-*",
-        "Microsoft.Extensions.PlatformAbstractions": "1.0.0-*",
-        "Microsoft.AspNet.Owin": "1.0.0-rc1-final",
-        "CK.Crs.Owin": "",
-        "Newtonsoft.Json": "8.0.1",
-        "SimpleGitVersionTask": "0.14.2"
+    "compilationOptions": {
+        "xmlDoc": true
     },
 
     "frameworks": {
         "net451": {
             "dependencies": {
+                "CK.Crs.Execution": "1.0.0-*",
+                "CK.Crs.Receiver": "1.0.0-*",
+                "Microsoft.AspNetCore.Http.Abstractions": "1.0.0-*",
+                "Microsoft.AspNetCore.Owin": "1.0.0-*"
+            },
+            "frameworkAssemblies": {
+                "System.Runtime": "",
+                "System.ComponentModel": ""
             }
         }
     }

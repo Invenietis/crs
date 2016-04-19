@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if NET451
+using System;
 using System.Transactions;
 
 namespace CK.Crs
@@ -69,3 +70,4 @@ namespace CK.Crs
         }
     }
 }
+#endif

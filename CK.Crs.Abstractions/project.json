@@ -1,25 +1,21 @@
 {
-    "version": "1.0.0-alpha-01",
+    "version": "1.0.0-*",
     "description": "CK.Crs.Abstractions Class Library",
     "authors": [ "cedri_000" ],
     "tags": [ "" ],
     "projectUrl": "",
     "licenseUrl": "",
+    "compilationOptions": {
+        "xmlDoc": true
+    },
 
     "frameworks": {
         "net451": {
-            "frameworkAssemblies": {
-                "System.ComponentModel.DataAnnotations": "4.0.0.0"
+            "dependencies": {
+                "CK.Core": "5.0.0-d01",
+                "CK.ActivityMonitor.StandardSender": "5.0.0-d01",
+                "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-final"
             }
         }
-    },
-    "dependencies": {
-        "CK.Core": "4.3.0",
-        "SimpleGitVersion.DNXCommands": "0.14.2",
-        "SimpleGitVersionTask": "0.14.2",
-        "System.Linq.Expressions": "4.0.11-beta-23516"
-    },
-    "scripts": {
-        "prebuild": "sgv prebuild"
     }
 }
