@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using CK.Crs.Pipeline;
+using CK.Crs.Runtime;
 using Microsoft.AspNetCore.Http;
 
 namespace CK.Crs
@@ -9,10 +9,10 @@ namespace CK.Crs
     // You may need to install the Microsoft.AspNet.Http.Abstractions package into your project
     public class CommandReceiverMiddleware
     {
-        private readonly ICommandReceiver _receiver;
+        private readonly ICrsHandler _receiver;
 
         RequestDelegate _next;
-        public CommandReceiverMiddleware( RequestDelegate next, ICommandReceiver receiver )
+        public CommandReceiverMiddleware( RequestDelegate next, ICrsHandler receiver )
         {
             if( receiver == null ) throw new ArgumentNullException( nameof( receiver ) );
 

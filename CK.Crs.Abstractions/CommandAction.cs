@@ -27,7 +27,7 @@ namespace CK.Crs
         /// <summary>
         /// Command description
         /// </summary>
-        public RoutedCommandDescriptor Description { get; set; }
+        public CommandRoute Description { get; set; }
 
         /// <summary>
         /// Returns an identifier that should help identifying the caller of this request.

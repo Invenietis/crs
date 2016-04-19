@@ -11,7 +11,7 @@
                 "System.Transactions": "4.0.0.0"
             },
             "dependencies": {
-                "CK.Authentication": "1.0.0-*",
+                "CK.Authentication": "1.0.0-*", 
                 "CK.Authorization": "1.0.0-*",
                 "CK.Crs.Abstractions": "1.0.0-*",
                 "Microsoft.AspNetCore.Http.Abstractions": "1.0.0-*"

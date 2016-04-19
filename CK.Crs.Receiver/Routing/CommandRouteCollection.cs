@@ -7,30 +7,29 @@ namespace CK.Crs.Runtime.Routing
 {
     public class CommandRouteCollection : ICommandRouteCollection
     {
-        readonly string _path;
-        internal readonly Dictionary<CommandRoutePath, RoutedCommandDescriptor> RouteStorage;
+        internal readonly Dictionary<CommandRoutePath, CommandRoute> RouteStorage;
 
-        public string PathBase { get { return _path; } }
-
-        public CommandRouteCollection( string path )
+        public CommandRouteCollection()
         {
-            _path = path;
-            RouteStorage = new Dictionary<CommandRoutePath, RoutedCommandDescriptor>( new CommandRoutePath.Comparer() );
+            RouteStorage = new Dictionary<CommandRoutePath, CommandRoute>( new CommandRoutePath.Comparer() );
         }
 
-        public RoutedCommandDescriptor FindCommandDescriptor( string path )
+        public CommandRoute FindRoute( string receiverPath, string path )
         {
-            RoutedCommandDescriptor v;
-            var key = new CommandRoutePath( path );
-            RouteStorage.TryGetValue( key, out v );
+            CommandRoute v = null;
+            var key = new CommandRoutePath( receiverPath, path );
+            if( key.IsPrefixedBy( receiverPath ) )
+            {
+                RouteStorage.TryGetValue( key, out v );
+            }
             return v;
         }
 
-        public RoutedCommandDescriptor AddCommandRoute( CommandDescription descriptor )
+        public CommandRoute AddRoute( string receiverPath, CommandDescription descriptor )
         {
-            var p = new CommandRoutePath(_path, descriptor.Name);
+            var p = new CommandRoutePath(receiverPath, descriptor.Name);
             // Overrides...
-            return RouteStorage[p] = new RoutedCommandDescriptor( p, descriptor );
+            return RouteStorage[p] = new CommandRoute( p, descriptor );
         }
     }
 }

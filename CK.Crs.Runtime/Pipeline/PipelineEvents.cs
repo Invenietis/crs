@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CK.Core;
 
-namespace CK.Crs.Pipeline
+namespace CK.Crs.Runtime
 {
 
     /// <summary>

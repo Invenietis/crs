@@ -15,12 +15,12 @@ namespace CK.Crs.Tests.Integration
         // For more information on how to configure your application, visit http://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices( IServiceCollection services )
         {
-            services.AddCommandReceiver( options =>
+            services.AddCommandReceiver( config =>
             {
-                options.Registry.EnableLongRunningCommands = false;
-                options.Registry.Register<TransferAmountCommand, TransferAlwaysSuccessHandler>().CommandName( "transfer" );
-                options.Registry.Register<WithdrawMoneyCommand, WithDrawyMoneyHandler>().CommandName( "withdraw" ).AddDecorator<TransactionAttribute>();
-                options.Registry.Register<UserCommand, UserHandler>().CommandName( "addUser" ).AddDecorator<TransactionAttribute>();
+                config.EnableLongRunningCommands = false;
+                config.Register<TransferAmountCommand, TransferAlwaysSuccessHandler>().CommandName( "transfer" );
+                config.Register<WithdrawMoneyCommand, WithDrawyMoneyHandler>().CommandName( "withdraw" ).AddDecorator<TransactionAttribute>();
+                config.Register<UserCommand, UserHandler>().CommandName( "addUser" ).AddDecorator<TransactionAttribute>();
 
             } );
 
@@ -61,15 +61,7 @@ namespace CK.Crs.Tests.Integration
                     } ) );
                 };
 
-                //options.Factories.ExternalEventsPublisher = context =>
-                //{
-                //    return new TransactionnalEventPublisher( context );
-                //};
-
-                //options.Factories.CommandScheduler = context =>
-                //{
-                //    return new TransactionnalCommandScheduler( context );
-                //};
+                options.Pipeline.Clear().UseDefault().UseSyncCommandExecutor().UseJsonResponseWriter();
             } );
 
 

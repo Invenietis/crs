@@ -34,9 +34,13 @@ namespace CK.Crs
             }
         }
 
-        internal bool IsValidFor( string commandReceiverPath )
+        public bool IsPrefixedBy( string receiverPath )
         {
-            return commandReceiverPath.Equals( Prefix, StringComparison.OrdinalIgnoreCase );
+            if( !receiverPath.StartsWith( PATH_SEPARATOR, StringComparison.OrdinalIgnoreCase ) )
+                throw new ArgumentException( $"The receiverPath should start with a {PATH_SEPARATOR}" );
+
+            receiverPath = EnsureNormalized( receiverPath );
+            return receiverPath.Equals( Prefix, StringComparison.OrdinalIgnoreCase );
         }
 
         public CommandRoutePath( string routePrefix, string commandName )
@@ -46,13 +50,18 @@ namespace CK.Crs
 
             if( !routePrefix.StartsWith( PATH_SEPARATOR, StringComparison.OrdinalIgnoreCase ) ) throw new ArgumentException( $"The route prefix should start with a {PATH_SEPARATOR}" );
 
-            Prefix = routePrefix;
-            if( Prefix.EndsWith( PATH_SEPARATOR, StringComparison.OrdinalIgnoreCase ) ) Prefix = Prefix.Remove( Prefix.Length - 1 );
+            Prefix = EnsureNormalized( routePrefix );
 
             CommandName = commandName;
             if( CommandName.StartsWith( PATH_SEPARATOR, StringComparison.OrdinalIgnoreCase ) ) CommandName = CommandName.Remove( 0, 1 );
 
             FullPath = $"{Prefix}{PATH_SEPARATOR}{CommandName}";
+        }
+
+        private string EnsureNormalized( string s )
+        {
+            if( s.EndsWith( PATH_SEPARATOR, StringComparison.OrdinalIgnoreCase ) ) return s.Remove( Prefix.Length - 1 );
+            return s;
         }
 
         public override string ToString()

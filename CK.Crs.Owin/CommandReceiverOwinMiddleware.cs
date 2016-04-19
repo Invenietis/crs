@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Owin;
-using CK.Crs.Pipeline;
+using CK.Crs.Runtime;
 
 namespace CK.Crs
 {
@@ -12,13 +12,13 @@ namespace CK.Crs
         /// <summary>
         /// Shared options
         /// </summary>
-        private readonly ICommandReceiver _receiver;
+        private readonly ICrsHandler _receiver;
 
-        public CommandReceiverOwinMiddleware( ICommandReceiver receiver ) : this( null, receiver )
+        public CommandReceiverOwinMiddleware( ICrsHandler receiver ) : this( null, receiver )
         {
         }
 
-        public CommandReceiverOwinMiddleware( OwinMiddleware next, ICommandReceiver receiver )
+        public CommandReceiverOwinMiddleware( OwinMiddleware next, ICrsHandler receiver )
             : base( next )
         {
             if( receiver == null ) throw new ArgumentNullException( nameof( receiver ) );

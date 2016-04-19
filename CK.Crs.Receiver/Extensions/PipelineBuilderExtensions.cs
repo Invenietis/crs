@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using CK.Crs.Runtime.Filtering;
 using CK.Crs.Runtime.Routing;
 using CK.Crs.Runtime.Formatting;
-using CK.Crs.Pipeline;
+using CK.Crs.Runtime;
 
 namespace CK.Crs
 {

@@ -82,7 +82,7 @@ namespace CK.Crs.Tests
                 ActorId = 12,
                 DocumentId = 40
             };
-            var description = new RoutedCommandDescriptor( new CommandRoutePath("/c/a"), new CommandDescription
+            var description = new CommandRoute( new CommandRoutePath("/c/a"), new CommandDescription
             {
                 CommandType = command.GetType(),
                 HandlerType = typeof( SimpleHandler )

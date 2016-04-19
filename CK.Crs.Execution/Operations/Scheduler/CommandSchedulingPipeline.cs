@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CK.Core;
-using CK.Crs.Pipeline;
+using CK.Crs.Runtime;
 
 namespace CK.Crs.Runtime.Execution
 {
@@ -13,7 +13,7 @@ namespace CK.Crs.Runtime.Execution
     {
         public CommandAction Action { get; }
 
-        public IPipelineConfiguration Configuration { get; }
+        public ICrsConfiguration Configuration { get; }
 
         public IActivityMonitor Monitor { get; }
 
@@ -29,7 +29,7 @@ namespace CK.Crs.Runtime.Execution
         }
         public IServiceProvider CommandServices { get; }
 
-        public CommandSchedulingPipeline( IServiceProvider serviceProvider, IPipelineConfiguration configuration, ScheduledCommand command )
+        public CommandSchedulingPipeline( IServiceProvider serviceProvider, ICrsConfiguration configuration, ScheduledCommand command )
         {
             CommandServices = serviceProvider;
             Configuration = configuration;

@@ -1,8 +1,6 @@
 {
     "projects": [
         "../ck-auth",
-        "../ck-core",
-        "../ck-framework",
         "."
     ],
     "sdk": {

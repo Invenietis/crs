@@ -4,14 +4,16 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CK.Core;
-using CK.Crs.Pipeline;
+using CK.Crs.Runtime;
 
 namespace CK.Crs.Runtime.Routing
 {
     class CommandRouter : PipelineComponent
     {
-        public CommandRouter()
+        readonly ICommandRouteCollection _routes;
+        public CommandRouter( ICommandRouteCollection routes )
         {
+            _routes = routes;
         }
 
         public override bool ShouldInvoke( IPipeline pipeline )
@@ -21,7 +23,7 @@ namespace CK.Crs.Runtime.Routing
 
         public override Task Invoke( IPipeline pipeline, CancellationToken token )
         {
-            pipeline.Action.Description = pipeline.Configuration.Routes.FindCommandDescriptor( pipeline.Request.Path );
+            pipeline.Action.Description = _routes.FindRoute( pipeline.Configuration.ReceiverPath, pipeline.Request.Path );
             if( pipeline.Action.Description != null )
             {
                 if( pipeline.Action.Description.Descriptor.HandlerType == null )
@@ -33,18 +35,15 @@ namespace CK.Crs.Runtime.Routing
             }
             else
             {
-                string msg = $"No routes found for {pipeline.Request.Path} in Receiver={pipeline.Configuration.Routes.PathBase}";
+                string msg = $"No routes found for {pipeline.Request.Path} in Receiver={pipeline.Configuration.ReceiverPath}";
                 pipeline.Monitor.Info().Send( msg );
 #if DEBUG
                 using( pipeline.Monitor.OpenInfo().Send( "Registered routes are:" ) )
                 {
-                    var implicitRouteCollection = pipeline.Configuration.Routes as CommandRouteCollection;
-                    if( implicitRouteCollection != null )
-                        foreach( var r in implicitRouteCollection.RouteStorage )
-                        {
-                            pipeline.Monitor.Trace().Send( r.Key.ToString() );
-                        }
-
+                    foreach( var r in pipeline.Configuration.Routes )
+                    {
+                        pipeline.Monitor.Trace().Send( r.Key.ToString() );
+                    }
                 }
 #endif                    
             }

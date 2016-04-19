@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using CK.Core;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CK.Crs.Pipeline
+namespace CK.Crs.Runtime
 {
     public class PipelineBuilder : IPipelineBuilder
     {

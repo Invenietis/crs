@@ -8,12 +8,12 @@ namespace CK.Crs
 {
     public class CommandRegistration : ICommandRegistrationWithFilter, ICommandRegistration
     {
-        RoutedCommandDescriptor _routedCommandDescriptor;
+        CommandRoute _CommandRoute;
         CommandDescription _commandDescription;
 
-        public CommandRegistration( RoutedCommandDescriptor description )
+        public CommandRegistration( CommandRoute description )
         {
-            _routedCommandDescriptor = description;
+            _CommandRoute = description;
             _commandDescription = description.Descriptor;
         }
 
@@ -48,7 +48,7 @@ namespace CK.Crs
 
         CommandRegistration AddFilter<TFilter>() where TFilter : ICommandFilter
         {
-            _routedCommandDescriptor.Filters = _routedCommandDescriptor.Filters.Union( new[] { typeof( TFilter ) } ).ToArray();
+            _CommandRoute.Filters = _CommandRoute.Filters.Union( new[] { typeof( TFilter ) } ).ToArray();
             return this;
         }
 

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CK.Core;
-using CK.Crs.Pipeline;
+using CK.Crs.Runtime;
 using CK.Crs.Runtime.Filtering;
 
 namespace CK.Crs.Runtime.Filtering
@@ -29,13 +29,13 @@ namespace CK.Crs.Runtime.Filtering
 
         public override async Task Invoke( IPipeline pipeline, CancellationToken token )
         {
-            using( pipeline.Monitor.OpenTrace().Send( "Ambient values validation..." ) )
+            using( pipeline.Monitor.OpenTrace().Send("Ambient values validation..." ) )
             {
                 var context = new ReflectionAmbientValueValidationContext( pipeline.Monitor, pipeline.Action, _ambientValues );
                 if( pipeline.Configuration.Events.AmbientValuesValidating != null )
                     await pipeline.Configuration.Events.AmbientValuesValidating?.Invoke( context );
 
-                if( context.Rejected ) pipeline.Monitor.Info().Send( "Validation failed by custom processing in Pipeline.Events.ValidatingAmbientValues." );
+                if( context.Rejected ) pipeline.Monitor.Info().Send("Validation failed by custom processing in Pipeline.Events.ValidatingAmbientValues." );
                 else
                 {
                     await context.ValidateValueAndRejectOnError<int>( "ActorId" );
@@ -67,7 +67,7 @@ namespace CK.Crs.Runtime.Filtering
             }
             else
             {
-                pipeline.Monitor.Info().Send( "Ambient values validator invalidate ambient values, but the last hook from Pipeline.Events.AmbientValuesInvalidated cancel the rejection." );
+                pipeline.Monitor.Info().Send("Ambient values validator invalidate ambient values, but the last hook from Pipeline.Events.AmbientValuesInvalidated cancel the rejection." );
             }
         }
     }

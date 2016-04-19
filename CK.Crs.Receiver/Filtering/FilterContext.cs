@@ -9,7 +9,7 @@ namespace CK.Crs.Runtime.Filtering
 {
     public class FilterContext : ICommandFilterContext
     {
-        public FilterContext( IActivityMonitor monitor, RoutedCommandDescriptor description, ClaimsPrincipal principal, object command )
+        public FilterContext( IActivityMonitor monitor, CommandRoute description, ClaimsPrincipal principal, object command )
         {
             Monitor = monitor;
             Description = description;
@@ -19,7 +19,7 @@ namespace CK.Crs.Runtime.Filtering
 
         public IActivityMonitor Monitor { get; }
 
-        public RoutedCommandDescriptor Description { get; }
+        public CommandRoute Description { get; }
 
         public object Command { get; }
 

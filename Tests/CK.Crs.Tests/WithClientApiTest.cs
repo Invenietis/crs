@@ -38,7 +38,7 @@
 //                    Amount = 400
 //                };
 
-//                var route = new RoutedCommandDescriptor(
+//                var route = new CommandRoute(
 //                    new CommandRoutePath( "/c", "TransferAmountCommand" ),
 //                    new CommandDescription
 //                    {
@@ -68,7 +68,7 @@
 
 //                AutoResetEvent e = new AutoResetEvent(false);
 
-//                var route2 = new RoutedCommandDescriptor(
+//                var route2 = new CommandRoute(
 //                    new CommandRoutePath( "/c", "WithdrawMoneyCommand" ),
 //                    new CommandDescription
 //                    {
@@ -99,7 +99,7 @@
 
 //    class ClientCommandSender
 //    {
-//        public async Task<ClientCommandResult> SendAsync<T>( string address, T command, RoutedCommandDescriptor commandDescriptor )
+//        public async Task<ClientCommandResult> SendAsync<T>( string address, T command, CommandRoute commandDescriptor )
 //        {
 //            CommandRequest request = new CommandRequest( address, JsonConvert.SerializeObject( command ), user );
 //            ClientCommandResult result = null;

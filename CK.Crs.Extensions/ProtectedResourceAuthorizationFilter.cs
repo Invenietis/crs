@@ -25,8 +25,8 @@ namespace CK.Crs
 
             IReadOnlyCollection<ProtectedResource> resources = GetSecuredResourceDescription( context ).ToArray();
             IReadOnlyCollection<IAuthorizationRequirement> requirements = ReadRequirements( context );
-            context.Monitor.Trace().Send( "{0} requirements found for this command.", requirements.Count );
-            context.Monitor.Trace().Send( "{0} protected resource(s) found for this command.", resources.Count );
+            context.Monitor.Trace().Send("{0} requirements found for this command.", requirements.Count );
+            context.Monitor.Trace().Send("{0} protected resource(s) found for this command.", resources.Count );
             if( resources.Count > 0 )
             {
                 foreach( var resource in resources )

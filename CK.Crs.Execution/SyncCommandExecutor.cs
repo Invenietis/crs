@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CK.Core;
-using CK.Crs.Pipeline;
+using CK.Crs.Runtime;
 
 namespace CK.Crs.Runtime.Execution
 {

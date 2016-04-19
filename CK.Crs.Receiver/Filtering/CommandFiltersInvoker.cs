@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CK.Core;
-using CK.Crs.Pipeline;
+using CK.Crs.Runtime;
 
 namespace CK.Crs.Runtime.Filtering
 {
@@ -48,7 +48,7 @@ namespace CK.Crs.Runtime.Filtering
                         string msg = $"Unable to create the filter {filter.Type.FullName}.";
                         throw new InvalidOperationException( msg );
                     }
-                    using( pipeline.Monitor.OpenTrace().Send( $"Executing filter {filter.Type.Name}" ) )
+                    using( pipeline.Monitor.OpenTrace().Send( "Executing filter {0}", filter.Type.Name ) )
                     {
                         await filter.Instance.OnCommandReceived( filterContext );
 

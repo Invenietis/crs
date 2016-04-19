@@ -10,14 +10,18 @@ namespace CK.Crs
 {
     public static class CommandReceiverExtensions
     {
-        public static void AddCommandReceiver( this IServiceCollection services, Action<CommandReceiverOption> configuration )
+        public static void AddCommandReceiver( this IServiceCollection services, Action<ICommandRegistry> registration )
         {
             services.AddSingleton<IAmbientValueProviderFactory, DefaultAmbientValueFactory>();
             services.AddSingleton<IAmbientValues, AmbientValues>();
 
-            CommandReceiverOption options = new CommandReceiverOption( new CommandRegistry() );
-            configuration( options );
-            services.AddInstance( options.Registry );
+            var routes = new CommandRouteCollection();
+            services.AddInstance<ICommandRouteCollection>( routes );
+            services.AddInstance( routes );
+
+            var r =  new CommandRegistry();
+            registration( r );
+            services.AddInstance<ICommandRegistry>( r );
         }
     }
 }

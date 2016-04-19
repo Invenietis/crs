@@ -12,18 +12,9 @@
     "frameworks": {
         "net451": {
             "dependencies": {
-                "CK.Core": "5.0.0-*",
-                "CK.ActivityMonitor": "5.0.0-*",
+                "CK.Core": "5.0.0-d01",
+                "CK.ActivityMonitor.StandardSender": "5.0.0-d01",
                 "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-final"
-            }
-        },
-        "netstandard1.3": {
-            "imports": [ "dotnet5.4" ],
-            "dependencies": {
-                "CK.Core": "5.0.0-*",
-                "CK.ActivityMonitor": "5.0.0-*",
-                "System.Security.Claims": "4.0.1-*",
-                "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-*"
             }
         }
     }

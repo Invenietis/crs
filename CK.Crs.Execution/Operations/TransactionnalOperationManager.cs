@@ -31,7 +31,7 @@ namespace CK.Crs.Runtime.Execution
 
         void IEnlistmentNotification.Commit( Enlistment enlistment )
         {
-            _monitor.Trace().Send( "Transaction is commit, we clear sent events...." );
+            _monitor.Trace().Send("Transaction is commit, we clear sent events...." );
 
             _queuedOperations.Clear();
 
@@ -40,14 +40,14 @@ namespace CK.Crs.Runtime.Execution
 
         void IEnlistmentNotification.InDoubt( Enlistment enlistment )
         {
-            _monitor.Trace().Send( "InDoubt transaction..." );
+            _monitor.Trace().Send("InDoubt transaction..." );
             enlistment.Done();
         }
 
         //Don't throw an exception here. Instead call ForceRollback()
         void IEnlistmentNotification.Prepare( PreparingEnlistment preparingEnlistment )
         {
-            using( _monitor.OpenTrace().Send( "Preparing operations execution..." ) )
+            using( _monitor.OpenTrace().Send("Preparing operations execution..." ) )
             {
                 try
                 {
@@ -55,7 +55,7 @@ namespace CK.Crs.Runtime.Execution
                     {
                         var operation = _queuedOperations.Dequeue();
                         _operationExecutor.Execute( _monitor, operation );
-                        _monitor.Trace().Send( "Operation executed." );
+                        _monitor.Trace().Send("Operation executed." );
                     }
                     preparingEnlistment.Prepared();
                 }
@@ -68,7 +68,7 @@ namespace CK.Crs.Runtime.Execution
         }
         void IEnlistmentNotification.Rollback( Enlistment enlistment )
         {
-            _monitor.Trace().Send( "Rollbacking transaction and clearing all uncommited events..." );
+            _monitor.Trace().Send("Rollbacking transaction and clearing all uncommited events..." );
 
             _queuedOperations.Clear();
 

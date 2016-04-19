@@ -9,47 +9,37 @@ using System.Threading;
 using System.Threading.Tasks;
 using CK.Core;
 using Microsoft.Extensions.DependencyInjection;
-using CK.Crs.Pipeline;
+using CK.Crs.Runtime;
 
 namespace CK.Crs.Runtime
 {
-    public class CommandReceiver : ICommandReceiver
+    class CrsPipelineHandler : ICrsHandler
     {
         readonly IServiceProvider _serviceProvider;
         readonly IServiceScopeFactory _scopeFactory;
-        readonly CommandReceiverConfiguration _config;
+        readonly ICrsConfiguration _config;
 
-        public CommandReceiver( IServiceProvider commandReceiverServices, IServiceScopeFactory scopeFactory, CommandReceiverConfiguration config )
+        public CrsPipelineHandler( IServiceProvider commandReceiverServices, IServiceScopeFactory scopeFactory, ICrsConfiguration config )
         {
             _serviceProvider = commandReceiverServices;
             _scopeFactory = scopeFactory;
             _config = config;
         }
 
-        public async Task ProcessCommandAsync( CommandRequest request, Stream response, CancellationToken cancellationToken = default( CancellationToken ) )
+        public async Task<bool> ProcessCommandAsync( CommandRequest request, Stream response, CancellationToken cancellationToken = default( CancellationToken ) )
         {
             var monitor = new ActivityMonitor( request.Path );
-            // Creates the pipeline of the command processing.
-            // Each component of the pipeline can set a CommandResponse which will shortcut the command handling. 
-            using( var pipeline = new CommandReceivingPipeline( 
-                _serviceProvider, 
-                _scopeFactory, 
-                _config, 
-                monitor, 
-                request, 
-                response,
-                cancellationToken ) )
+
+            using( var pipeline = new CommandReceivingPipeline( _serviceProvider, _scopeFactory, _config, monitor, request, response, cancellationToken ) )
             {
-                foreach( var c in _config.Pipeline.Components )
-                {
-                    await c.Invoke( pipeline );
-                }
+                foreach( var c in _config.Pipeline.Components ) await c.Invoke( pipeline );
+                return pipeline.Response != null;
             }
         }
 
         class CommandReceivingPipeline : IPipeline, IDisposable
         {
-            public IPipelineConfiguration Configuration { get; }
+            public ICrsConfiguration Configuration { get; }
 
             public CommandRequest Request { get; }
 
@@ -76,17 +66,17 @@ namespace CK.Crs.Runtime
             public CommandReceivingPipeline(
                 IServiceProvider commandReceiverServices,
                 IServiceScopeFactory scopeFactory,
-                CommandReceiverConfiguration configuration,
+                ICrsConfiguration configuration,
                 IActivityMonitor monitor,
                 CommandRequest request,
-                Stream stream,
+                Stream outputStream,
                 CancellationToken cancellationToken )
             {
                 _serviceScope = scopeFactory.CreateScope();
                 Configuration = configuration;
                 Monitor = monitor;
                 Request = request;
-                Output = stream;
+                Output = outputStream;
                 Action = new CommandAction( Guid.NewGuid() );
                 CancellationToken = cancellationToken;
                 _group = Monitor.OpenTrace().Send( "Invoking command receiver Pipeline..." );

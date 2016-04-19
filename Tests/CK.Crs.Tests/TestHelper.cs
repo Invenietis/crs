@@ -76,7 +76,7 @@ namespace CK.Crs.Tests
             var action = new CommandAction( Guid.NewGuid() )
             {
                 Command = command,
-                Description = new RoutedCommandDescriptor( "/someroute", new CommandDescription
+                Description = new CommandRoute( "/someroute", new CommandDescription
                 {
                     CommandType = command.GetType(),
                     HandlerType = typeof( ICommandHandler<T> ),

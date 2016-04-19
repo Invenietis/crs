@@ -74,9 +74,9 @@ namespace CK.Crs.Tests
             }
         }
 
-        private RoutedCommandDescriptor CreateCommandDescriptor<T>()
+        private CommandRoute CreateCommandDescriptor<T>()
         {
-            return new RoutedCommandDescriptor( new CommandRoutePath( "/prefix", typeof( T ).Name ), new CommandDescription
+            return new CommandRoute( new CommandRoutePath( "/prefix", typeof( T ).Name ), new CommandDescription
             {
                 CommandType = typeof( T ),
                 Decorators = Util.Array.Empty<Type>(),

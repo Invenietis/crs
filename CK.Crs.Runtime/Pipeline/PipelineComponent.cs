@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CK.Core;
 
-namespace CK.Crs.Pipeline
+namespace CK.Crs.Runtime
 {
     public abstract class PipelineComponent
     {

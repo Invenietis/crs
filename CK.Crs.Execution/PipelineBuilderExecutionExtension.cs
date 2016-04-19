@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CK.Crs.Pipeline;
+using CK.Crs.Runtime;
 using CK.Crs.Runtime.Execution;
 
 namespace CK.Crs

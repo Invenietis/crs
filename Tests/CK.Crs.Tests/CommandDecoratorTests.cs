@@ -10,6 +10,7 @@ using CK.Crs.Runtime;
 using Assert = NUnit.Framework.Assert;
 using Is = NUnit.Framework.Is;
 using System.Security.Claims;
+using CK.Crs.Runtime.Execution;
 
 namespace CK.Crs.Tests
 {
@@ -38,7 +39,7 @@ namespace CK.Crs.Tests
             var action = new CommandAction( Guid.NewGuid() )
             {
                 Command = model,
-                Description = new RoutedCommandDescriptor( "/someroute", new CommandDescription
+                Description = new CommandRoute( "/someroute", new CommandDescription
                 {
                     CommandType = model.GetType(),
                     HandlerType = typeof(Handlers.TransferAlwaysSuccessHandler),
@@ -47,9 +48,7 @@ namespace CK.Crs.Tests
                 } )
             };
 
-            var command = new CommandExecutionContext( action, monitor, _cancellationToken.Token,
-                ( ctx ) => TestHelper.MockEventPublisher(),
-                ( ctx ) => TestHelper.MockCommandScheduler() ); 
+            var command = new CommandExecutionContext( action, monitor, _cancellationToken.Token, () => TestHelper.MockEventPublisher(), () => TestHelper.MockCommandScheduler() );
 
             var Testory = new FakeTestory<Handlers.TransferAlwaysSuccessHandler>();
 

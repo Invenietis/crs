@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CK.Crs.Pipeline
+namespace CK.Crs.Runtime
 {
     public class CommandInvalidResponse : CommandResponse
     {

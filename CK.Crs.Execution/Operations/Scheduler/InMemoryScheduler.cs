@@ -5,20 +5,20 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CK.Core;
-using CK.Crs.Pipeline;
+using CK.Crs.Runtime;
 
 namespace CK.Crs.Runtime.Execution
 {
     public class InMemoryScheduler : IOperationExecutor<ScheduledCommand>, IDisposable
     {
         readonly IList<Timer> _timers;
-        readonly IPipelineConfiguration _config;
+        readonly ICrsConfiguration _config;
         readonly SyncCommandExecutor _executor;
         readonly IServiceProvider _serviceProvider;
 
         CancellationTokenSource _source;
 
-        public InMemoryScheduler( IServiceProvider serviceProvider, IPipelineConfiguration config, ICommandExecutionFactories factories )
+        public InMemoryScheduler( IServiceProvider serviceProvider, ICrsConfiguration config, ICommandExecutionFactories factories )
         {
             if( serviceProvider == null ) throw new ArgumentNullException( nameof( serviceProvider ) );
             if( config == null ) throw new ArgumentNullException( nameof( config ) );

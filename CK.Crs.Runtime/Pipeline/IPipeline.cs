@@ -6,14 +6,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using CK.Core;
 
-namespace CK.Crs.Pipeline
+namespace CK.Crs.Runtime
 {
     public interface IPipeline
     {
         /// <summary>
-        /// Gets the <see cref="IPipelineConfiguration"/> bound to the current execution pipeline.
+        /// Gets the <see cref="ICrsConfiguration"/> bound to the current execution pipeline.
         /// </summary>
-        IPipelineConfiguration Configuration { get; }
+        ICrsConfiguration Configuration { get; }
         /// <summary>
         /// The request this pipeline is originated from.
         /// </summary>

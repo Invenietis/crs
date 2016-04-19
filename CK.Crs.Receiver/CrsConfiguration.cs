@@ -1,28 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using CK.Crs.Pipeline;
+using CK.Crs.Runtime;
+using CK.Crs.Runtime.Routing;
 
-namespace CK.Crs
+namespace CK.Crs.Runtime
 {
-    public class CommandReceiverConfiguration : IPipelineConfiguration
+    public class CrsConfiguration : ICrsConfiguration
     {
+        internal CommandRouteCollection _routes;
         internal ICommandRegistry _registry;
         readonly HashSet<Type> _filters;
-
-        public CommandReceiverConfiguration( ICommandRegistry registry, ICommandRouteCollection routes )
+        string _path;
+        public CrsConfiguration( string path, ICommandRegistry registry, CommandRouteCollection routes )
         {
+            _path = path;
             _registry = registry;
+            _routes = routes;
+
             _filters = new HashSet<Type>();
 
             Pipeline = new PipelineBuilder();
-
             Events = new PipelineEvents();
-            Routes = routes; // new CommandRouteCollection( prefix );
         }
 
-        public ICommandRouteCollection Routes { get; }
+        public string ReceiverPath => _path;
 
+        /// <summary>
+        /// Gets the routes registration
+        /// </summary>
+        public IReadOnlyDictionary<CommandRoutePath, CommandRoute> Routes => _routes.RouteStorage;
+
+        /// <summary>
+        /// Gets the pipeline events configuration object.
+        /// </summary>
         public PipelineEvents Events { get; }
 
         /// <summary>
@@ -35,18 +46,18 @@ namespace CK.Crs
         /// </summary>
         /// <param name="filterType"></param>
         /// <returns></returns>
-        public CommandReceiverConfiguration AddFilter( Type filterType )
+        public CrsConfiguration AddFilter( Type filterType )
         {
             _filters.Add( filterType );
             return this;
         }
 
         /// <summary>
-        /// Add a global filter to this <see cref="CommandReceiverConfiguration"/> that will be applied to any of command received.
+        /// Add a global filter to this <see cref="CrsConfiguration"/> that will be applied to any of command received.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public CommandReceiverConfiguration AddFilter<T>() where T : ICommandFilter
+        public CrsConfiguration AddFilter<T>() where T : ICommandFilter
         {
             return AddFilter( typeof( T ) );
         }
@@ -55,14 +66,14 @@ namespace CK.Crs
         /// Selects the commands from the <see cref="ICommandRegistry"/> this CommandReceiver is able to handle. 
         /// </summary>
         /// <param name="selection">A projection lambda to filter commands</param>
-        /// <returns><see cref="CommandReceiverConfiguration"/></returns>
-        public CommandReceiverConfiguration AddCommands(
+        /// <returns><see cref="CrsConfiguration"/></returns>
+        public CrsConfiguration AddCommands(
             Func<ICommandRegistry, IEnumerable<CommandDescription>> selection,
             Action<ICommandRegistrationWithFilter> globalConfiguration = null )
         {
             foreach( var c in selection( _registry ) )
             {
-                var registration = new CommandRegistration( Routes.AddCommandRoute( c ) );
+                var registration = new CommandRegistration( _routes.AddRoute( ReceiverPath, c ) );
                 globalConfiguration?.Invoke( registration );
             }
             return this;
@@ -75,7 +86,7 @@ namespace CK.Crs
             {
                 throw new InvalidOperationException( $"Command {commandType.FullName} not found in global CommandRegistry. Make sure to register it in AddCommandReceiver options from ConfigureServices." );
             }
-            return new CommandRegistration( Routes.AddCommandRoute( commandDescription ) );
+            return new CommandRegistration( _routes.AddRoute( ReceiverPath, commandDescription ) );
         }
 
 

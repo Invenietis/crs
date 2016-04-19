@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace CK.Crs
 {
-    public class RoutedCommandDescriptor
+    public class CommandRoute
     {
-        public RoutedCommandDescriptor( CommandRoutePath route, CommandDescription commandDescriptor )
+        public CommandRoute( CommandRoutePath route, CommandDescription commandDescriptor )
         {
             Route = Route;
             Descriptor = commandDescriptor;
@@ -15,7 +15,7 @@ namespace CK.Crs
         }
 
         /// <summary>
-        /// Gets the <see cref="CommandDescription"/> for this <see cref="RoutedCommandDescriptor"/>
+        /// Gets the <see cref="CommandDescription"/> for this <see cref="CommandRoute"/>
         /// </summary>
         public CommandDescription Descriptor { get; }
 
