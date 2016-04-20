@@ -12,7 +12,11 @@ namespace CK.Crs.Runtime.Formatting
     {
         async public override Task Invoke( IPipeline pipeline, CancellationToken token = default( CancellationToken ) )
         {
-            string jsonResponse = Newtonsoft.Json.JsonConvert.SerializeObject( pipeline.Response );
+            string jsonResponse = Newtonsoft.Json.JsonConvert.SerializeObject( pipeline.Response, new Newtonsoft.Json.JsonSerializerSettings
+            {
+                ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver()
+            } );
+
             using( StreamWriter sw = new StreamWriter( pipeline.Output ) ) await sw.WriteAsync( jsonResponse );
         }
 
