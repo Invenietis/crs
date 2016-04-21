@@ -11,8 +11,8 @@ namespace CK.Crs
         /// <summary>
         /// Creates an instance of <see cref="IAmbientValueProvider"/> from a Type.
         /// </summary>
-        /// <param name="providerType"></param>
+        /// <param name="descriptor"></param>
         /// <returns>An instance or null if type cannot be created.</returns>
-        IAmbientValueProvider Create( Type providerType );
+        IAmbientValueProvider Create( IAmbientValueProviderDescriptor descriptor );
     }
 }

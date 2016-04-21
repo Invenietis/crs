@@ -36,7 +36,7 @@ namespace CK.Crs
 
         private static void ApplyDefaultConfiguration( CrsConfiguration config )
         {
-            config.Pipeline.UseDefault().UseSyncCommandExecutor().UseJsonResponseWriter();
+            config.Pipeline.UseDefault().UseSyncCommandExecutor().UseJsonCommandWriter();
         }
     }
 }

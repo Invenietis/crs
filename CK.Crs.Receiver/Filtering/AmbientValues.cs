@@ -7,45 +7,38 @@ namespace CK.Crs.Runtime.Filtering
 {
     public class AmbientValues : IAmbientValues
     {
-        IDictionary<string, Func<IAmbientValueProvider>> _lazyBag;
-
+        readonly IAmbientValuesRegistration _registration;
         readonly IAmbientValueProviderFactory _factory;
-        public AmbientValues( IAmbientValueProviderFactory factory )
+        public AmbientValues( IAmbientValuesRegistration registration, IAmbientValueProviderFactory factory )
         {
+            _registration = registration;
             _factory = factory;
         }
 
         public bool IsDefined( string name )
         {
-            if( _lazyBag == null ) return false;
-            return _lazyBag.Keys.Contains( name );
+            return _registration.GetByName( name ) != null;
         }
 
         public async Task<T> GetValueAsync<T>( string name )
         {
-            if( !IsDefined( name ) ) return default( T );
-            var valueProvider = _lazyBag[name]();
-            if( valueProvider == null )
-                throw new ArgumentException( $"Invalid valueProvider for {name}." );
-            var value = await valueProvider.GetValueAsync( this );
+            var ambientValueDescriptor = _registration.GetByName( name );
+            if( ambientValueDescriptor == null )
+                throw new ArgumentException( $"No AmbientValueProvider registered for {name}." );
 
-            var disposable = valueProvider as IDisposable;
+            var provider = _factory.Create( ambientValueDescriptor );
+            if( provider == null )
+                throw new InvalidOperationException( $"Unable to create an instace of {ambientValueDescriptor.Name}." );
+
+            var value = await provider.GetValueAsync( this );
+            var disposable = ambientValueDescriptor as IDisposable;
             if( disposable != null ) disposable.Dispose();
 
             if( value != null ) return (T)value;
             return default( T );
         }
 
-        public void Register( string key, Func<IAmbientValueProvider> provider )
-        {
-            if( _lazyBag == null ) _lazyBag = new Dictionary<string, Func<IAmbientValueProvider>>();
-            _lazyBag.Add( key, provider );
-        }
 
-        public void Register<T>( string key ) where T : IAmbientValueProvider
-        {
-            if( _lazyBag == null ) _lazyBag = new Dictionary<string, Func<IAmbientValueProvider>>();
-            _lazyBag.Add( key, () => _factory.Create( typeof( T ) ) );
-        }
+
     }
 }

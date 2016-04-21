@@ -31,9 +31,9 @@ namespace CK.Crs
         /// <summary>
         /// Build the command from the CommandRequest data.
         /// </summary>
-        static public IPipelineBuilder UseJsonResponseWriter( this IPipelineBuilder builder )
+        static public IPipelineBuilder UseJsonCommandWriter( this IPipelineBuilder builder )
         {
-            return builder.Use<JsonCommandResponseWriter>();
+            return builder.Use<JsonCommandWriter>();
         }
 
         /// <summary>

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace CK.Crs
 {
-    public interface IAmbientValues : IAmbientValuesRegistration
+    public interface IAmbientValues
     {
         /// <summary>
         /// Gets wether an ambient parameter has been defined or not.

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CK.Crs.Runtime;
 using CK.Crs.Runtime.Filtering;
 using CK.Crs.Runtime.Routing;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,8 +11,9 @@ namespace CK.Crs
 {
     public static class CommandReceiverExtensions
     {
-        public static void AddCommandReceiver( this IServiceCollection services, Action<ICommandRegistry> registration )
+        public static void AddCommandReceiver( this IServiceCollection services, Action<CommandReceiverOption> registration )
         {
+            services.AddSingleton<ICommandFilterFactory, DefaultCommandFilterFactory>();
             services.AddSingleton<IAmbientValueProviderFactory, DefaultAmbientValueFactory>();
             services.AddSingleton<IAmbientValues, AmbientValues>();
 
@@ -19,9 +21,14 @@ namespace CK.Crs
             services.AddInstance<ICommandRouteCollection>( routes );
             services.AddInstance( routes );
 
-            var r =  new CommandRegistry();
-            registration( r );
+            var r =  new CommandRegistry( services );
+            var a = new AmbientValuesRegistration( services );
+            var o = new CommandReceiverOption(r, a);
+
+            registration( o );
+
             services.AddInstance<ICommandRegistry>( r );
+            services.AddInstance<IAmbientValuesRegistration>( a );
         }
     }
 }

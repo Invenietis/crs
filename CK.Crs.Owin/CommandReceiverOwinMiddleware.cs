@@ -12,18 +12,18 @@ namespace CK.Crs
         /// <summary>
         /// Shared options
         /// </summary>
-        private readonly ICrsHandler _receiver;
+        private readonly ICrsHandler _handler;
 
-        public CommandReceiverOwinMiddleware( ICrsHandler receiver ) : this( null, receiver )
+        public CommandReceiverOwinMiddleware( ICrsHandler handler ) : this( null, handler )
         {
         }
 
-        public CommandReceiverOwinMiddleware( OwinMiddleware next, ICrsHandler receiver )
+        public CommandReceiverOwinMiddleware( OwinMiddleware next, ICrsHandler handler )
             : base( next )
         {
-            if( receiver == null ) throw new ArgumentNullException( nameof( receiver ) );
+            if( handler == null ) throw new ArgumentNullException( nameof( handler ) );
 
-            _receiver = receiver;
+            _handler = handler;
         }
 
         public Task InvokeAsync( IDictionary<string, object> environment )
@@ -35,8 +35,8 @@ namespace CK.Crs
         {
             var connectionId = context.Request.Query["c"];
             var commandRequest = new CommandRequest( context.Request.Path.Value, context.Request.Body, context.Authentication.User, connectionId );
-            await _receiver.ProcessCommandAsync( commandRequest, context.Response.Body );
-            if ( Next != null )
+            var hasResponse = await _handler.ProcessCommandAsync( commandRequest, context.Response.Body );
+            if( hasResponse == false && Next != null )
                 await Next.Invoke( context );
         }
 

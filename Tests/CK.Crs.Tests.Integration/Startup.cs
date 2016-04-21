@@ -12,16 +12,25 @@ namespace CK.Crs.Tests.Integration
 {
     public class Startup
     {
+        class SimpleActorIdProvider : IAmbientValueProvider
+        {
+            public Task<object> GetValueAsync( IAmbientValues values )
+            {
+                return Task.FromResult<object>( null );
+            }
+        }
         // For more information on how to configure your application, visit http://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices( IServiceCollection services )
         {
             services.AddCommandReceiver( config =>
             {
-                config.EnableLongRunningCommands = false;
-                config.Register<TransferAmountCommand, TransferAlwaysSuccessHandler>().CommandName( "transfer" );
-                config.Register<WithdrawMoneyCommand, WithDrawyMoneyHandler>().CommandName( "withdraw" ).AddDecorator<TransactionAttribute>();
-                config.Register<UserCommand, UserHandler>().CommandName( "addUser" ).AddDecorator<TransactionAttribute>();
+                config.Registry.EnableLongRunningCommands = false;
+                config.Registry.Register<TransferAmountCommand, TransferAlwaysSuccessHandler>().CommandName( "transfer" );
+                config.Registry.Register<WithdrawMoneyCommand, WithDrawyMoneyHandler>().CommandName( "withdraw" ); //.AddDecorator<TransactionAttribute>();
+                config.Registry.Register<UserCommand, UserHandler>().CommandName( "addUser" ); //.AddDecorator<TransactionAttribute>();
 
+                config.AmbientValues.Register<SimpleActorIdProvider>( "ActorId" );
+                config.AmbientValues.RegisterValue( "AuthenticatedActorId", 0 );
             } );
 
             services.AddCommandExecutor();
@@ -38,11 +47,11 @@ namespace CK.Crs.Tests.Integration
             {
                 options
                     .AddFilter<HttpsRequiredFilter>()
-                    .AddFilter<CK.Crs.ProtectedResourceAuthorizationFilter>()
-                    .AddCommands(
-                        registry => registry.Registration.Where( c => c.CommandType.Namespace.StartsWith( "CK.Crs" ) ),
-                        config => config.AddExtraData( "Permission", CK.Authorization.MinGrantLevel.Administrator ) )
-                    .AddCommand<TransferAmountCommand>().CommandName( "transfer" ).AddDecorator<TransactionAttribute>();
+                    //.AddFilter<CK.Crs.ProtectedResourceAuthorizationFilter>()
+                    //.AddCommands(
+                    //    registry => registry.Registration.Where( c => c.CommandType.Namespace.StartsWith( "CK.Crs" ) ),
+                    //    config => config.AddExtraData( "Permission", Authorization.MinGrantLevel.Administrator ) )
+                    .AddCommand<TransferAmountCommand>().CommandName( "transfer" ); //.AddDecorator<TransactionAttribute>();
 
                 options.Events.AmbientValuesValidating = async validationContext =>
                 {
@@ -61,7 +70,7 @@ namespace CK.Crs.Tests.Integration
                     } ) );
                 };
 
-                options.Pipeline.Clear().UseDefault().UseSyncCommandExecutor().UseJsonResponseWriter();
+                options.Pipeline.Clear().UseDefault().UseSyncCommandExecutor().UseJsonCommandWriter();
             } );
 
 
@@ -72,7 +81,7 @@ namespace CK.Crs.Tests.Integration
                         .UseDefault();
                 //.UseSignalRDispatcher();
             } );
-            
+
             app.UseCommandReceiver( "/c/public", options =>
             {
                 options
@@ -83,7 +92,7 @@ namespace CK.Crs.Tests.Integration
                         .UseAmbientValuesValidator()
                         .UseFilters()
                         .UseSyncCommandExecutor()
-                        .UseJsonResponseWriter();
+                        .UseJsonCommandWriter();
 
                 options.Events.CommandRejected = context =>
                 {

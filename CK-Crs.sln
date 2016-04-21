@@ -38,8 +38,6 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CK.Crs.Execution", "CK.Crs.
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CK.Crs.Receiver", "CK.Crs.Receiver\CK.Crs.Receiver.xproj", "{56BAEDA5-6EA6-4E23-8FDD-D1DC428EA6BE}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CK.Core", "..\ck-core\CK.Core\CK.Core.xproj", "{4E8D26FD-E836-4AC6-A49C-5ED73A5ABBC9}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -94,10 +92,6 @@ Global
 		{56BAEDA5-6EA6-4E23-8FDD-D1DC428EA6BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56BAEDA5-6EA6-4E23-8FDD-D1DC428EA6BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56BAEDA5-6EA6-4E23-8FDD-D1DC428EA6BE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4E8D26FD-E836-4AC6-A49C-5ED73A5ABBC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4E8D26FD-E836-4AC6-A49C-5ED73A5ABBC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4E8D26FD-E836-4AC6-A49C-5ED73A5ABBC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4E8D26FD-E836-4AC6-A49C-5ED73A5ABBC9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -19,7 +19,9 @@ namespace CK.Crs
             {
                 var crsBuilder = new CrsHandlerBuilder();
 
-                var config = new CrsConfiguration( routePrefix.Value, new CommandRegistry(), new CommandRouteCollection() );
+                var registry = app.ApplicationServices.GetRequiredService<ICommandRegistry>();
+                var routeCollection = app.ApplicationServices.GetRequiredService<CommandRouteCollection>();
+                var config = new CrsConfiguration( routePrefix.Value, registry, routeCollection );
                 if( configure != null ) configure( config );
                 else ApplyDefaultConfiguration( config );
 
@@ -34,7 +36,7 @@ namespace CK.Crs
 
         private static void ApplyDefaultConfiguration( CrsConfiguration config )
         {
-            config.Pipeline.UseDefault().UseSyncCommandExecutor().UseJsonResponseWriter();
+            config.Pipeline.UseDefault().UseSyncCommandExecutor().UseJsonCommandWriter();
         }
     }
 }

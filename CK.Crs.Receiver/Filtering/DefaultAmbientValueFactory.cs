@@ -13,6 +13,6 @@ namespace CK.Crs.Runtime.Filtering
             _serviceProvider = serviceProvider;
         }
 
-        public virtual IAmbientValueProvider Create( Type providerType ) => _serviceProvider.GetService( providerType ) as IAmbientValueProvider;
+        public IAmbientValueProvider Create( IAmbientValueProviderDescriptor descriptor ) =>  descriptor.Resolve( _serviceProvider );
     }
 }

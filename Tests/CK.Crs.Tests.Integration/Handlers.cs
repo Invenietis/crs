@@ -8,7 +8,6 @@ using CK.Crs.Tests.Integration;
 namespace CK.Crs.Handlers
 {
 
-    [Transaction]
     public class TransferAlwaysSuccessHandler : CommandHandler<TransferAmountCommand, TransferAmountCommand.Result>
     {
         protected override Task<TransferAmountCommand.Result> DoHandleAsync( ICommandExecutionContext commandContext, TransferAmountCommand command )
@@ -34,7 +33,6 @@ namespace CK.Crs.Handlers
         }
     }
 
-    [Transaction]
     public class UserHandler : CommandHandler<UserCommand, UserCommand.Result>
     {
         IRepository<UserModel> _repository;

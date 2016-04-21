@@ -7,11 +7,14 @@ namespace CK.Crs
 {
     public class CommandReceiverOption
     {
-        public CommandReceiverOption( ICommandRegistry r )
+        public CommandReceiverOption( ICommandRegistry r, IAmbientValuesRegistration a )
         {
             Registry = r;
+            AmbientValues = a;
         }
 
         public ICommandRegistry Registry { get; }
+
+        public IAmbientValuesRegistration AmbientValues { get; }
     }
 }
