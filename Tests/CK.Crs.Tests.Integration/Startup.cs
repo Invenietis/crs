@@ -51,7 +51,7 @@ namespace CK.Crs.Tests.Integration
                     //.AddCommands(
                     //    registry => registry.Registration.Where( c => c.CommandType.Namespace.StartsWith( "CK.Crs" ) ),
                     //    config => config.AddExtraData( "Permission", Authorization.MinGrantLevel.Administrator ) )
-                    .AddCommand<TransferAmountCommand>().CommandName( "transfer" ); //.AddDecorator<TransactionAttribute>();
+                    .AddCommand<TransferAmountCommand>().CommandName( "transfer" ).IsAsync(); //.AddDecorator<TransactionAttribute>();
 
                 options.Events.AmbientValuesValidating = async validationContext =>
                 {

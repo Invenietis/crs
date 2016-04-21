@@ -24,11 +24,14 @@ namespace CK.Crs.Runtime
 
         private void BuildMap()
         {
-            foreach( var descriptor in Map )
+            if( _computedMap != null )
             {
-                descriptor.IsLongRunning = descriptor.IsLongRunning && EnableLongRunningCommands;
+                //foreach( var descriptor in Map )
+                //{
+                //    descriptor.IsLongRunning = descriptor.IsLongRunning && EnableLongRunningCommands;
+                //}
+                _computedMap = Map.ToArray();
             }
-            _computedMap = Map.ToArray();
         }
 
         /// <summary>

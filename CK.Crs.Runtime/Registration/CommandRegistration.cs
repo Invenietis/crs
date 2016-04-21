@@ -45,6 +45,11 @@ namespace CK.Crs
             _commandDescription.Name = commandName;
             return this;
         }
+        CommandRegistration IsAsync()
+        {
+            _commandDescription.Traits = "Async";
+            return this;
+        }
 
         CommandRegistration AddFilter<TFilter>() where TFilter : ICommandFilter
         {
@@ -60,6 +65,11 @@ namespace CK.Crs
         ICommandConfiguration<ICommandRegistrationWithFilter> ICommandConfiguration<ICommandRegistrationWithFilter>.CommandName( string commandName )
         {
             return CommandName( commandName );
+        }
+
+        ICommandConfiguration<ICommandRegistrationWithFilter> ICommandConfiguration<ICommandRegistrationWithFilter>.IsAsync()
+        {
+            return IsAsync();
         }
 
         ICommandConfiguration<ICommandRegistrationWithFilter> ICommandConfiguration<ICommandRegistrationWithFilter>.AddExtraData( string key, object value )
@@ -86,6 +96,12 @@ namespace CK.Crs
         {
             return CommandName( commandName );
         }
+
+        ICommandConfiguration<ICommandRegistration> ICommandConfiguration<ICommandRegistration>.IsAsync()
+        {
+            return IsAsync();
+        }
+
 
         ICommandConfigurationWithHandling<ICommandRegistration> ICommandConfigurationWithHandling<ICommandRegistration>.HandledBy<THandler>()
         {

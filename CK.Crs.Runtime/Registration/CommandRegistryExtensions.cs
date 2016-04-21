@@ -26,8 +26,7 @@ namespace CK.Crs
             {
                 Name = GetDefaultName( typeof(TCommand)),
                 CommandType = typeof( TCommand),
-                HandlerType = typeof(THandler),
-                IsLongRunning = false
+                HandlerType = typeof(THandler)
             };
             defaultCommandDescriptor.Decorators = ExtractDecoratorsFromHandlerAttributes(
                 defaultCommandDescriptor.CommandType,

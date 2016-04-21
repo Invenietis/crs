@@ -38,10 +38,10 @@ namespace CK.Crs
         public Type HandlerType { get; set; }
 
         /// <summary>
-        /// Gets wether the command has been defined as a long running or not.
-        /// This gives a hint to the <see cref="ICommandReceiver"/>.
+        /// Gets commands traits
+        /// This gives a hint to CRS to pick the best command executor.
         /// </summary>
-        public bool IsLongRunning { get; set; }
+        public string Traits { get; set; }
 
         /// <summary>
         /// Gets or sets a read-only collection of decorators that should be applied when this command is handled.

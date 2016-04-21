@@ -20,11 +20,11 @@ namespace CK.Crs.Runtime.Execution
 
         protected abstract Task<CommandResponse> ExecuteAsync( CommandContext context );
 
-        protected abstract bool CanExecute( CommandDescription commandDescription );
+        protected abstract bool CanExecute( IPipeline pipeline, CommandDescription commandDescription );
 
         public override bool ShouldInvoke( IPipeline pipeline )
         {
-            return pipeline.Response == null && pipeline.Action.Command != null && CanExecute( pipeline.Action.Description.Descriptor );
+            return pipeline.Response == null && pipeline.Action.Command != null && CanExecute( pipeline, pipeline.Action.Description.Descriptor );
         }
 
         public override async Task Invoke( IPipeline pipeline, CancellationToken token = default( CancellationToken ) )

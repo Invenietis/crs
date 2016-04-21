@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CK.Core;
 using CK.Crs.Runtime;
 using CK.Crs.Runtime.Execution;
 
@@ -23,8 +24,9 @@ namespace CK.Crs
         /// </summary>
         /// <param name="builder"></param>
         /// <returns></returns>
-        static public IPipelineBuilder UseTaskBasedCommandExecutor( this IPipelineBuilder builder )
+        static public IPipelineBuilder UseTaskBasedCommandExecutor( this IPipelineBuilder builder, CKTraitContext traitContext )
         {
+            traitContext.FindOrCreate( "Async" );
             return builder.Use<TaskBasedCommandExecutor>();
         }
 

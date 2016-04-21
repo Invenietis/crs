@@ -18,9 +18,9 @@ namespace CK.Crs.Runtime.Execution
         {
         }
 
-        protected override bool CanExecute( CommandDescription commandDescription )
+        protected override bool CanExecute( IPipeline pipeline, CommandDescription commandDescription )
         {
-            return commandDescription.IsLongRunning == false;
+            return true;
         }
    
         protected override async Task<CommandResponse> ExecuteAsync( CommandContext context )

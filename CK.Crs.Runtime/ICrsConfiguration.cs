@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CK.Core;
 
 namespace CK.Crs.Runtime
 {
@@ -22,7 +23,15 @@ namespace CK.Crs.Runtime
         /// </summary>
         PipelineEvents Events { get; }
 
+        /// <summary>
+        /// Gets the <see cref="IPipelineBuilder"/>
+        /// </summary>
         IPipelineBuilder Pipeline { get; }
+
+        /// <summary>
+        /// Gets or sets the <see cref="CKTraitContext"/>.
+        /// </summary>
+        CKTraitContext TraitContext { get; set; }
     }
 
 }

@@ -18,6 +18,8 @@
         ICommandConfiguration<TConfig> CommandName( string commandName );
 
         ICommandConfiguration<TConfig> AddExtraData( string key, object data );
+
+        ICommandConfiguration<TConfig> IsAsync();
     }
 
     public interface ICommandConfigurationWithHandling<TConfig>

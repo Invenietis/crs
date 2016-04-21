@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CK.Core;
 using CK.Crs.Runtime;
 using CK.Crs.Runtime.Routing;
 
@@ -22,7 +23,13 @@ namespace CK.Crs.Runtime
 
             Pipeline = new PipelineBuilder();
             Events = new PipelineEvents();
+            TraitContext = new CKTraitContext( "CrsDefault" );
         }
+
+        /// <summary>
+        /// Gets or sets the <see cref="CKTraitContext"/>
+        /// </summary>
+        public CKTraitContext TraitContext { get; set; }
 
         public string ReceiverPath => _path;
 

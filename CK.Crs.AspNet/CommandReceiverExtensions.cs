@@ -1,4 +1,5 @@
 ﻿using System;
+using CK.Core;
 using CK.Crs.Runtime;
 using CK.Crs.Runtime.Routing;
 using Microsoft.AspNetCore.Builder;
@@ -26,7 +27,7 @@ namespace CK.Crs
                 else ApplyDefaultConfiguration( config );
 
                 crsBuilder.AddConfiguration( config );
-                
+
                 var scopeFactory = builder.ApplicationServices.GetRequiredService<IServiceScopeFactory>();
                 var commandReceiver = crsBuilder.Build( builder.ApplicationServices, scopeFactory );
 
@@ -36,7 +37,7 @@ namespace CK.Crs
 
         private static void ApplyDefaultConfiguration( CrsConfiguration config )
         {
-            config.Pipeline.UseDefault().UseSyncCommandExecutor().UseJsonCommandWriter();
+            config.Pipeline.UseDefault().UseTaskBasedCommandExecutor( config.TraitContext ).UseSyncCommandExecutor().UseJsonCommandWriter();
         }
     }
 }
