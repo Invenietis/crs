@@ -12,7 +12,7 @@ namespace CK.Crs
     // Extension method used to add the middleware to the HTTP request pipeline.
     public static class CommandReceiverAspNetExtensions
     {
-        public static IApplicationBuilder UseCommandReceiver( this IApplicationBuilder builder, PathString routePrefix, Action<CrsConfiguration> configure = null )
+        public static IApplicationBuilder UseCrs( this IApplicationBuilder builder, PathString routePrefix, Action<CrsConfiguration> configure = null )
         {
             if( string.IsNullOrWhiteSpace( routePrefix ) ) throw new ArgumentNullException( nameof( routePrefix ) );
 

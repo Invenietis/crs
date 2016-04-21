@@ -6,6 +6,7 @@ using CK.Crs.Runtime.Filtering;
 using CK.Crs.Runtime.Routing;
 using CK.Crs.Runtime.Formatting;
 using CK.Crs.Runtime;
+using CK.Crs.Runtime.Meta;
 
 namespace CK.Crs
 {
@@ -56,6 +57,7 @@ namespace CK.Crs
         {
             return builder
                 .Clear()
+                .Use<MetaComponent>()
                 .UseCommandRouter()
                 .UseJsonCommandBuilder()
                 .UseAmbientValuesValidator()

@@ -5,9 +5,8 @@ namespace CK.Crs.Runtime.Execution
 {
     public class CommandDeferredResponse : CommandResponse
     {
-        public CommandDeferredResponse( CommandAction ctx ) : base( ctx.CommandId )
+        public CommandDeferredResponse( CommandAction ctx ) : base( CommandResponseType.Asynchronous, ctx.CommandId )
         {
-            ResponseType = CommandResponseType.Deferred;
             Payload = ctx.CallbackId;
         }
     }

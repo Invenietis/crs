@@ -7,9 +7,10 @@ namespace CK.Crs.Runtime
 {
     public enum CommandResponseType
     {
-        PreConditionFailed = -2,
-        Error = -1,
-        Direct = 0,
-        Deferred = 1
+        ValidationError =   'V',
+        InternalError =     'I',
+        Synchronous =       'S',
+        Asynchronous =      'A',
+        Meta =              'M'
     }
 }

@@ -4,9 +4,8 @@ namespace CK.Crs.Runtime
 {
     public class CommandErrorResponse : CommandResponse
     {
-        public CommandErrorResponse( string msg, Guid commandId ) : base( commandId )
+        public CommandErrorResponse( string msg, Guid commandId ) : base( CommandResponseType.InternalError, commandId )
         {
-            ResponseType = CommandResponseType.Error;
             Payload = msg;
         }
     }

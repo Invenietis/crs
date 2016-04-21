@@ -22,7 +22,7 @@ namespace CK.Crs.Runtime.Execution
         {
             return true;
         }
-   
+
         protected override async Task<CommandResponse> ExecuteAsync( CommandContext context )
         {
             var mon = context.ExecutionContext.Monitor;
@@ -38,7 +38,7 @@ namespace CK.Crs.Runtime.Execution
             }
 
             var response = CreateFromContext( context );
-            Debug.Assert( response.ResponseType != CommandResponseType.Deferred );
+            Debug.Assert( response.ResponseType != (char)CommandResponseType.Asynchronous );
             return response;
         }
     }

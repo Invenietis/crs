@@ -24,7 +24,6 @@ namespace CK.Crs.Tests.Integration
         {
             services.AddCommandReceiver( config =>
             {
-                config.Registry.EnableLongRunningCommands = false;
                 config.Registry.Register<TransferAmountCommand, TransferAlwaysSuccessHandler>().CommandName( "transfer" );
                 config.Registry.Register<WithdrawMoneyCommand, WithDrawyMoneyHandler>().CommandName( "withdraw" ); //.AddDecorator<TransactionAttribute>();
                 config.Registry.Register<UserCommand, UserHandler>().CommandName( "addUser" ); //.AddDecorator<TransactionAttribute>();
@@ -43,7 +42,8 @@ namespace CK.Crs.Tests.Integration
         public void Configure( IApplicationBuilder app )
         {
             app.UseStaticFiles();
-            app.UseCommandReceiver( "/c/admin", options =>
+
+            app.UseCrs( "/c/admin", options =>
             {
                 options
                     .AddFilter<HttpsRequiredFilter>()
@@ -74,7 +74,7 @@ namespace CK.Crs.Tests.Integration
             } );
 
 
-            app.UseCommandReceiver( "/c/public", options =>
+            app.UseCrs( "/c/public", options =>
             {
                 options
                     .Pipeline
@@ -82,7 +82,7 @@ namespace CK.Crs.Tests.Integration
                 //.UseSignalRDispatcher();
             } );
 
-            app.UseCommandReceiver( "/c/public", options =>
+            app.UseCrs( "/c/public", options =>
             {
                 options
                     .Pipeline

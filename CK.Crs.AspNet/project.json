@@ -1,7 +1,7 @@
 {
     "version": "1.0.0-*",
     "description": "CK.Crs.AspNet Class Library",
-    "authors": [ "cedri_000" ],
+    "authors": [ "Cédric Legendre" ],
     "tags": [ "" ],
     "projectUrl": "",
     "licenseUrl": "",

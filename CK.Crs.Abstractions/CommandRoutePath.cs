@@ -30,7 +30,7 @@ namespace CK.Crs
             else
             {
                 Prefix = requestPath.Substring( 0, separatorIdx );
-                CommandName = requestPath.Substring( separatorIdx );
+                CommandName = requestPath.Substring( separatorIdx + 1 );
             }
         }
 

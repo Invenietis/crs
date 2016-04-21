@@ -4,14 +4,15 @@ namespace CK.Crs.Runtime
 {
     public abstract class CommandResponse
     {
-        protected CommandResponse( Guid commandId )
+        protected CommandResponse( CommandResponseType responseType, Guid commandId )
         {
+            ResponseType = (char)responseType;
             CommandId = commandId;
         }
 
         public Guid CommandId { get; private set; }
 
-        public CommandResponseType ResponseType { get; protected set; }
+        public char ResponseType { get; protected set; }
 
         public object Payload { get; protected set; }
     }

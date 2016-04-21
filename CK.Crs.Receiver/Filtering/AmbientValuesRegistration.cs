@@ -23,6 +23,11 @@ namespace CK.Crs.Runtime.Filtering
             _services = services;
         }
 
+        public IEnumerable<IAmbientValueProviderDescriptor> AmbientValues
+        {
+            get { return _lazyBag != null ? _lazyBag.Values : CK.Core.Util.Array.Empty<IAmbientValueProviderDescriptor>(); }
+        }
+
         public void Register( string key, Func<IServiceProvider, IAmbientValueProvider> provider )
         {
             if( _lazyBag == null ) _lazyBag = new Dictionary<string, IAmbientValueProviderDescriptor>();
@@ -46,6 +51,7 @@ namespace CK.Crs.Runtime.Filtering
 
         public IAmbientValueProviderDescriptor GetByName( string name )
         {
+            if( _lazyBag == null ) return null;
             IAmbientValueProviderDescriptor f = null;
             _lazyBag.TryGetValue( name, out f );
             return f;

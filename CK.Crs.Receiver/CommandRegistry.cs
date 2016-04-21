@@ -14,31 +14,12 @@ namespace CK.Crs.Runtime
             _services = services;
         }
 
-        IEnumerable<CommandDescription> _computedMap;
         List<CommandDescription> Map { get; } = new List<CommandDescription>();
 
         public IEnumerable<CommandDescription> Registration
         {
-            get { BuildMap(); return _computedMap; }
+            get { return Map; }
         }
-
-        private void BuildMap()
-        {
-            if( _computedMap != null )
-            {
-                //foreach( var descriptor in Map )
-                //{
-                //    descriptor.IsLongRunning = descriptor.IsLongRunning && EnableLongRunningCommands;
-                //}
-                _computedMap = Map.ToArray();
-            }
-        }
-
-        /// <summary>
-        /// A long running command will take some times to execute (in seconds)
-        /// This is different from a Saga or a CK-Task. Very.
-        /// </summary>
-        public bool EnableLongRunningCommands { get; set; }
 
         public void Register( CommandDescription descriptor )
         {

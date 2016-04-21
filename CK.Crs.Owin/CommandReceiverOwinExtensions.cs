@@ -11,7 +11,7 @@ namespace CK.Crs
     // Extension method used to add the middleware to the HTTP request pipeline.
     public static class CommandReceiverOwinExtensions
     {
-        public static IAppBuilder UseCommandReceiver( this IAppBuilder builder, PathString routePrefix, IServiceProvider applicationServices, IServiceScopeFactory scopeFactory,
+        public static IAppBuilder UseCrs( this IAppBuilder builder, string routePrefix, IServiceProvider applicationServices, IServiceScopeFactory scopeFactory,
             Action<CrsConfiguration> configure = null )
         {
             if( routePrefix == null ) throw new ArgumentNullException( nameof( routePrefix ) );
@@ -22,7 +22,7 @@ namespace CK.Crs
 
                 var registry = applicationServices.GetRequiredService<ICommandRegistry>();
                 var routeCollection = applicationServices.GetRequiredService<CommandRouteCollection>();
-                var config = new CrsConfiguration( routePrefix.Value, registry, routeCollection );
+                var config = new CrsConfiguration( routePrefix, registry, routeCollection );
                 if( configure != null ) configure( config );
                 else ApplyDefaultConfiguration( config );
 
@@ -37,6 +37,7 @@ namespace CK.Crs
         private static void ApplyDefaultConfiguration( CrsConfiguration config )
         {
             config.Pipeline.UseDefault().UseSyncCommandExecutor().UseJsonCommandWriter();
+            config.AddCommands( e => e.Registration );
         }
     }
 }

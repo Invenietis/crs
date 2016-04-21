@@ -7,7 +7,5 @@ namespace CK.Crs
         void Register( CommandDescription descriptor );
 
         IEnumerable<CommandDescription> Registration { get; }
-
-        bool EnableLongRunningCommands { get; set; }
     }
 }

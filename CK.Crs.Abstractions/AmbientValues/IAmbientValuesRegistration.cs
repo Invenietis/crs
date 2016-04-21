@@ -15,6 +15,11 @@ namespace CK.Crs
     public interface IAmbientValuesRegistration
     {
         /// <summary>
+        /// Gets all <see cref="IAmbientValueProviderDescriptor"/> registered so far.
+        /// </summary>
+        IEnumerable<IAmbientValueProviderDescriptor> AmbientValues { get; }
+
+        /// <summary>
         /// Registers an ambient <see cref="IAmbientValueProvider"/> capable to resolve the value of an ambient parameter.
         /// </summary>
         /// <typeparam name="T"></typeparam>
