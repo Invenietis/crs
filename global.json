@@ -1,9 +1,10 @@
 {
-    "projects": [
-        "../ck-auth",
-        "."
-    ],
-    "sdk": {
-        "version": "1.0.0-rc2-16595"
-    }
+  "projects": [
+    "../ck-auth",
+    ".",
+    "wrap"
+  ],
+  "sdk": {
+    "version": "1.0.0-rc2-16595"
+  }
 }

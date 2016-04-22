@@ -5,16 +5,12 @@
     "tags": [ "" ],
     "projectUrl": "",
     "licenseUrl": "",
-
     "compilationOptions": {
         "xmlDoc": true
     },
-
     "frameworks": {
         "net451": {
             "dependencies": {
-                "CK.Crs.Execution": "1.0.0-*",
-                "CK.Crs.Receiver": "1.0.0-*",
                 "Microsoft.AspNetCore.Http.Abstractions": "1.0.0-*",
                 "Microsoft.AspNetCore.Owin": "1.0.0-*"
             },
@@ -23,5 +19,8 @@
                 "System.ComponentModel": ""
             }
         }
+    },
+    "dependencies": {
+        "CK.ActivityMonitor.StandardSender": "5.0.0-d02"
     }
 }

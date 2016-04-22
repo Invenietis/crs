@@ -1,21 +1,33 @@
-{
-    "version": "1.0.0-*",
-    "description": "CK.Crs.Abstractions Class Library",
-    "authors": [ "Cédric Legendre" ],
-    "tags": [ "" ],
-    "projectUrl": "",
-    "licenseUrl": "",
-    "compilationOptions": {
-        "xmlDoc": true
-    },
-
-    "frameworks": {
-        "net451": {
-            "dependencies": {
-                "CK.Core": "5.0.0-d01",
-                "CK.ActivityMonitor.StandardSender": "5.0.0-d01",
-                "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-final"
-            }
-        }
+﻿{
+  "version": "1.0.0-*",
+  "description": "CK.Crs.Abstractions Class Library",
+  "authors": [
+    "Cédric Legendre"
+  ],
+  "tags": [
+    ""
+  ],
+  "projectUrl": "",
+  "licenseUrl": "",
+  "compilationOptions": {
+    "xmlDoc": true
+  },
+  "frameworks": {
+    "net451": {
+      "dependencies": {
+        "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-final"
+      },
+      "wrappedProject": "CK.Crs.Abstractions.csproj",
+      "bin": {
+        "assembly": "obj/{configuration}/CK.Crs.Abstractions.dll",
+        "pdb": "obj/{configuration}/CK.Crs.Abstractions.pdb"
+      }
     }
+  },
+  "runtimes": {
+    "win": {}
+  },
+  "dependencies": {
+    "CK.ActivityMonitor.StandardSender": "5.0.0-d02"
+  }
 }

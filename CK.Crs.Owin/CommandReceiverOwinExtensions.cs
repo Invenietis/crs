@@ -2,7 +2,6 @@
 using CK.Core;
 using CK.Crs.Runtime;
 using CK.Crs.Runtime.Routing;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Owin;
 using Owin;
 

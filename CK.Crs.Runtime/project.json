@@ -1,24 +1,38 @@
-{
-    "version": "1.0.0-*",
-    "description": "CK.Crs.Runtime.Runtime Class Library",
-    "authors": [ "Cédric Legendre" ],
-    "tags": [ "" ],
-    "projectUrl": "",
-    "licenseUrl": "",
-
-    "compilationOptions": {
-        "xmlDoc": true
-    },
-
-    "frameworks": {
-        "net451": {
-            "dependencies": {
-                "CK.Crs.Abstractions": "1.0.0-*",
-                "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-final"
-            },
-            "frameworkAssemblies": {
-                "System.ComponentModel.DataAnnotations": "4.0.0.0"
-            }
-        }
+﻿{
+  "version": "1.0.0-*",
+  "description": "CK.Crs.Runtime.Runtime Class Library",
+  "authors": [
+    "Cédric Legendre"
+  ],
+  "tags": [
+    ""
+  ],
+  "projectUrl": "",
+  "licenseUrl": "",
+  "compilationOptions": {
+    "xmlDoc": true
+  },
+  "frameworks": {
+    "net451": {
+      "frameworkAssemblies": {
+        "System.ComponentModel.DataAnnotations": "4.0.0.0"
+      },
+      "wrappedProject": "CK.Crs.Runtime.csproj",
+      "bin": {
+        "assembly": "obj/{configuration}/CK.Crs.Runtime.dll",
+        "pdb": "obj/{configuration}/CK.Crs.Runtime.pdb"
+      },
+      "dependencies": {
+        "CK.Crs.Abstractions": "1.0.0-*"
+      }
     }
+  },
+  "runtimes": {
+    "win": {}
+  },
+  "dependencies": {
+    "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-final",
+    "CK.ActivityMonitor.StandardSender": "5.0.0-d02",
+    "CK.Core": "5.0.0-d02"
+  }
 }

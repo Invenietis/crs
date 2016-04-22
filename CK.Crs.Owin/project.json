@@ -1,24 +1,30 @@
-{
-    "version": "1.0.0-*",
-    "description": "CK.Crs.Owin Class Library",
-    "authors": [ "Cédric Legendre" ],
-    "tags": [ "" ],
-    "projectUrl": "",
-    "licenseUrl": "",
-    
-    "compilationOptions": {
-        "xmlDoc": true
-    },
-
-    "frameworks": {
-        "net451": {
-            "dependencies": {
-                "CK.Crs.Execution": "1.0.0-*",
-                "CK.Crs.Receiver": "1.0.0-*",
-                "Microsoft.Owin": "3.0.1",
-                "Owin": "1.0.0",
-                "CK.Crs.Runtime": "1.0.0-*"
-            }
-        }
+﻿{
+  "version": "1.0.0-*",
+  "description": "CK.Crs.Owin Class Library",
+  "authors": [
+    "Cédric Legendre"
+  ],
+  "tags": [
+    ""
+  ],
+  "projectUrl": "",
+  "licenseUrl": "",
+  "compilationOptions": {
+    "xmlDoc": true
+  },
+  "frameworks": {
+    "net451": {
+      "dependencies": {
+        "Microsoft.Owin": "3.0.1",
+        "Owin": "1.0.0"
+      }
     }
+  },
+  "runtimes": {
+    "win": {}
+  },
+  "dependencies": {
+    "CK.ActivityMonitor.StandardSender": "5.0.0-d02",
+    "CK.Core": "5.0.0-d02"
+  }
 }

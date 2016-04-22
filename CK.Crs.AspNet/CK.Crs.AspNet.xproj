@@ -16,5 +16,11 @@
     <TypeScriptCompileBlocked>True</TypeScriptCompileBlocked>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'" />
+  <ItemGroup>
+    <ProjectReference Include="..\CK.Crs.Abstractions\CK.Crs.Abstractions.csproj" />
+    <ProjectReference Include="..\CK.Crs.Execution\CK.Crs.Execution.csproj" />
+    <ProjectReference Include="..\CK.Crs.Receiver\CK.Crs.Receiver.csproj" />
+    <ProjectReference Include="..\CK.Crs.Runtime\CK.Crs.Runtime.csproj" />
+  </ItemGroup>
   <Import Project="$(VSToolsPath)\DNX\Microsoft.DNX.targets" Condition="'$(VSToolsPath)' != ''" />
 </Project>
