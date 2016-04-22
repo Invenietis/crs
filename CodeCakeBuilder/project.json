@@ -1,0 +1,31 @@
+﻿{
+    "version": "0.0.0-Absolutely-Invalid",
+    "description": "CodeCakeBuilder Class Library",
+    "authors": [
+        "Olivier Spinelli"
+    ],
+    "owners": [
+        "Invenietis"
+    ],
+    "tags": [
+        ""
+    ],
+    "projectUrl": "",
+
+    "licenseUrl": "",
+    "frameworks": {
+        "net451": {
+            "dependencies": { }
+        }
+    },
+    "dependencies": {
+        "SimpleGitVersion.Cake": "0.16.0-a02",
+        "SimpleGitVersion.Core": "0.16.0-a02",
+        "Code.Cake": "0.8.1",
+        "Cake.Core": "0.10.0",
+        "Cake.Common": "0.10.0"
+    },
+    "runtimes": {
+        "win": { }
+    }
+}
