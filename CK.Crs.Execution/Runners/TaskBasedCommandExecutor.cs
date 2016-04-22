@@ -11,7 +11,6 @@ namespace CK.Crs.Runtime.Execution
     public class TaskBasedCommandExecutor : AbstractCommandExecutor
     {
         public static readonly string Trait = "Async";
-        readonly CKTraitContext _traitContext;
 
         public TaskBasedCommandExecutor( ICommandExecutionFactories factories  ) : base( factories )
         {
@@ -19,7 +18,7 @@ namespace CK.Crs.Runtime.Execution
 
         protected override bool CanExecute( IPipeline pipeline, CommandDescription commandDescription )
         {
-            var executorTrait = _traitContext.FindOnlyExisting( TaskBasedCommandExecutor.Trait );
+            var executorTrait = pipeline.Configuration.TraitContext.FindOnlyExisting( TaskBasedCommandExecutor.Trait );
 
             // Traits can be: Asynchronous|Anonymous|Premium
             CKTrait trait = pipeline.Configuration.TraitContext.FindOrCreate( commandDescription.Traits );
