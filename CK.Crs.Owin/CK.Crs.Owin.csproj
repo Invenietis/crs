@@ -33,7 +33,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>SharedKey.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>../SharedKey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -49,11 +49,9 @@
     <Compile Include="CommandReceiverOwinExtensions.cs" />
     <Compile Include="CommandReceiverOwinMiddleware.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\SGVVersionInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
-    <None Include="SharedKey.snk" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CK.Crs.Abstractions\CK.Crs.Abstractions.csproj">

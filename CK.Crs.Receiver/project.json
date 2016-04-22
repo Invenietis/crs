@@ -24,21 +24,18 @@
       },
       "frameworkAssemblies": {
         "System.ComponentModel.DataAnnotations": "4.0.0.0"
-      },
-      "wrappedProject": "CK.Crs.Receiver.csproj",
-      "bin": {
-        "assembly": "obj/{configuration}/CK.Crs.Receiver.dll",
-        "pdb": "obj/{configuration}/CK.Crs.Receiver.pdb"
       }
     }
   },
   "runtimes": {
     "win": {}
   },
-    "dependencies": {
-        "CK.ActivityMonitor.StandardSender": "5.0.0-d02",
-        "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-final",
-        "Microsoft.Extensions.Caching.Memory": "1.0.0-rc1-final",
-        "Newtonsoft.Json": "8.0.3"
-    }
+  "dependencies": {
+    "CK.ActivityMonitor.StandardSender": "5.0.0-d02",
+    "CK.Core": "5.0.0-d02",
+    "Microsoft.Extensions.Caching.Memory": "1.0.0-rc1-final",
+    "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-final",
+    "Newtonsoft.Json": "8.0.3",
+    "SimpleGitVersionTask": "0.16.0-a02"
+  }
 }

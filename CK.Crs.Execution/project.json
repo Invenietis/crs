@@ -1,4 +1,4 @@
-{
+﻿{
   "version": "1.0.0-*",
   "description": "CK.Crs.Execution Class Library",
   "authors": [
@@ -15,21 +15,10 @@
   "frameworks": {
     "net451": {
       "dependencies": {
-        "CK.Crs.Abstractions": "1.0.0-*",
-        "CK.Crs.Runtime": "1.0.0-*",
-        "CK.Core": "5.0.0-d01",
-        "CK.ActivityMonitor.StandardSender": "5.0.0-d01",
-        "CK.ActivityMonitor": "5.0.0-d01",
-        "CK.Text": "5.0.0-d01*",
         "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-*"
       },
       "frameworkAssemblies": {
         "System.Transactions": "4.0.0.0"
-      },
-      "wrappedProject": "CK.Crs.Execution.csproj",
-      "bin": {
-        "assembly": "obj/{configuration}/CK.Crs.Execution.dll",
-        "pdb": "obj/{configuration}/CK.Crs.Execution.pdb"
       }
     }
   },
@@ -38,6 +27,7 @@
   },
   "dependencies": {
     "CK.ActivityMonitor.StandardSender": "5.0.0-d02",
-    "CK.Core": "5.0.0-d02"
+    "CK.Core": "5.0.0-d02",
+    "SimpleGitVersionTask": "0.16.0-a02"
   }
 }

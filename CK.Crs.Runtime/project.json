@@ -16,14 +16,6 @@
     "net451": {
       "frameworkAssemblies": {
         "System.ComponentModel.DataAnnotations": "4.0.0.0"
-      },
-      "wrappedProject": "CK.Crs.Runtime.csproj",
-      "bin": {
-        "assembly": "obj/{configuration}/CK.Crs.Runtime.dll",
-        "pdb": "obj/{configuration}/CK.Crs.Runtime.pdb"
-      },
-      "dependencies": {
-        "CK.Crs.Abstractions": "1.0.0-*"
       }
     }
   },
@@ -31,8 +23,9 @@
     "win": {}
   },
   "dependencies": {
-    "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-final",
     "CK.ActivityMonitor.StandardSender": "5.0.0-d02",
-    "CK.Core": "5.0.0-d02"
+    "CK.Core": "5.0.0-d02",
+    "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-final",
+    "SimpleGitVersionTask": "0.16.0-a02"
   }
 }
