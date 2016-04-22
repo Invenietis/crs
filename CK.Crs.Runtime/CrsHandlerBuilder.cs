@@ -8,26 +8,45 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CK.Crs.Runtime
 {
-    public class CrsHandlerBuilder
+    /// <summary>
+    /// Builds a <see cref="ICrsHandler"/>
+    /// </summary>
+    public class CrsHandlerBuilder<T> where T : ICrsConfiguration
     {
-        ICrsConfiguration _config;
-        public void AddConfiguration( ICrsConfiguration config )
+        T _config;
+
+        protected T Config => _config;
+
+        /// <summary>
+        /// Adds the configuration object <see cref="ICrsConfiguration"/> to the builder.
+        /// </summary>
+        /// <param name="config">The <see cref="ICrsConfiguration"/> object</param>
+        public void AddConfiguration( T config )
         {
             _config = config;
         }
 
-        public ICrsHandler Build( IServiceProvider applicationServices, IServiceScopeFactory scopeFactory )
+        public void ApplyDefaultConfigurationOrConfigure( Action<T> configure )
         {
-            // Prepare routes configuration from command global registration
-            //var registry = applicationServices.GetRequiredService<ICommandRegistry>();
-            //var config = new CrsConfiguration( registry, routes );
+            if( configure != null ) configure( _config );
+            else
+            {
+                ConfigureDefaultPipeline( _config.Pipeline );
+                _config.AddCommands( e => e.Registration );
+            }
+        }
 
-            //ConfigureDefaultPipeline( config.Pipeline );
-            //// Configures the command receiver
-            //if( configure != null ) configure( config );
-            //else ConfigureDefaultRegistration( config );
-
+        /// <summary>
+        /// Builds the <see cref="ICrsHandler"/> from the given <see cref="IServiceProvider"/>.
+        /// </summary>
+        /// <param name="applicationServices">The application services</param>
+        /// <param name="scopeFactory"></param>
+        /// <returns></returns>
+        public ICrsHandler Build( IServiceProvider applicationServices  )
+        {
             // Creates the CommandReceiver
+            var scopeFactory = applicationServices.GetRequiredService<IServiceScopeFactory>();
+
             return new CrsPipelineHandler( applicationServices, scopeFactory, _config );
         }
 

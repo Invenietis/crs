@@ -6,6 +6,7 @@ using CK.Crs.Runtime;
 using CK.Crs.Runtime.Filtering;
 using CK.Crs.Runtime.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace CK.Crs
 {
@@ -13,6 +14,7 @@ namespace CK.Crs
     {
         public static void AddCommandReceiver( this IServiceCollection services, Action<CommandReceiverOption> registration )
         {
+            services.AddCaching();
             services.AddSingleton<ICommandFilterFactory, DefaultCommandFilterFactory>();
             services.AddSingleton<IAmbientValueProviderFactory, DefaultAmbientValueFactory>();
             services.AddSingleton<IAmbientValues, AmbientValues>();

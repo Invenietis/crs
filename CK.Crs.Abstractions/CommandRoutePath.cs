@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CK.Crs
 {
-    public class CommandRoutePath : IEquatable<CommandRoutePath>
+    public struct CommandRoutePath : IEquatable<CommandRoutePath>
     {
         const string PATH_SEPARATOR = "/";
 
@@ -58,9 +58,9 @@ namespace CK.Crs
             FullPath = $"{Prefix}{PATH_SEPARATOR}{CommandName}";
         }
 
-        private string EnsureNormalized( string s )
+        static string EnsureNormalized( string s )
         {
-            if( s.EndsWith( PATH_SEPARATOR, StringComparison.OrdinalIgnoreCase ) ) return s.Remove( Prefix.Length - 1 );
+            if( s.EndsWith( PATH_SEPARATOR, StringComparison.OrdinalIgnoreCase ) ) return s.Remove( s.Length - 1 );
             return s;
         }
 
@@ -76,7 +76,7 @@ namespace CK.Crs
 
         public override bool Equals( object obj )
         {
-            var o = obj as CommandRoutePath;
+            var o = (CommandRoutePath)obj;
             if( o != null ) return Equals( obj );
 
             return false;

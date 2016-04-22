@@ -1,19 +1,23 @@
 ﻿{
-  "version": "1.0.0-*",
-  "description": "CK.Crs.Execution Class Library",
-  "authors": [ "Cédric Legendre" ],
-  "tags": [ "" ],
-  "projectUrl": "",
-  "licenseUrl": "",
+    "version": "1.0.0-*",
+    "description": "CK.Crs.Execution Class Library",
+    "authors": [ "Cédric Legendre" ],
+    "tags": [ "" ],
+    "projectUrl": "",
+    "licenseUrl": "",
 
-  "frameworks": {
-    "net451": {
-        "dependencies": {
-            "CK.Crs.Runtime": "1.0.0-*"
-        },
-        "frameworkAssemblies": {
-            "System.Transactions": "4.0.0.0"
+    "compilationOptions": {
+        "xmlDoc": true
+    },
+
+    "frameworks": {
+        "net451": {
+            "dependencies": {
+                "CK.Crs.Runtime": "1.0.0-*"
+            },
+            "frameworkAssemblies": {
+                "System.Transactions": "4.0.0.0"
+            }
         }
     }
-  }
 }

@@ -74,7 +74,7 @@ namespace CK.Crs.Runtime
         /// </summary>
         /// <param name="selection">A projection lambda to filter commands</param>
         /// <returns><see cref="CrsConfiguration"/></returns>
-        public CrsConfiguration AddCommands(
+        public ICrsConfiguration AddCommands(
             Func<ICommandRegistry, IEnumerable<CommandDescription>> selection,
             Action<ICommandRegistrationWithFilter> globalConfiguration = null )
         {

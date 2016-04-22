@@ -6,7 +6,7 @@ using CK.Core;
 
 namespace CK.Crs.Runtime.Execution
 {
-    public class CommandExecutionContext : ICommandExecutionContext
+    class CommandExecutionContext : ICommandExecutionContext
     {
         readonly Lazy<IExternalEventPublisher> _eventPublisherLazy;
         readonly Lazy<ICommandScheduler> _cSchedulerLazy;

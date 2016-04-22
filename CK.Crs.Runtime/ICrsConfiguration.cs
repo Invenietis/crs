@@ -6,6 +6,9 @@ using CK.Core;
 
 namespace CK.Crs.Runtime
 {
+    /// <summary>
+    /// Holds configuration specific to a CRS Handler.
+    /// </summary>
     public interface ICrsConfiguration
     {
         /// <summary>
@@ -31,7 +34,15 @@ namespace CK.Crs.Runtime
         /// <summary>
         /// Gets or sets the <see cref="CKTraitContext"/>.
         /// </summary>
-        CKTraitContext TraitContext { get; set; }
+        CKTraitContext TraitContext { get; }
+
+        /// <summary>
+        /// Selects the commands from the <see cref="ICommandRegistry"/> this CommandReceiver is able to handle. 
+        /// </summary>
+        /// <param name="selection">A projection lambda to filter commands</param>
+        /// <param name="globalConfiguration">Global configuration delegate</param>
+        /// <returns><see cref="ICrsConfiguration"/></returns>
+        ICrsConfiguration AddCommands( Func<ICommandRegistry, IEnumerable<CommandDescription>> selection, Action<ICommandRegistrationWithFilter> globalConfiguration = null );
     }
 
 }

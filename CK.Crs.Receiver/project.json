@@ -6,11 +6,15 @@
     "projectUrl": "",
     "licenseUrl": "",
 
+    "compilationOptions": {
+        "xmlDoc": true
+    },
     "frameworks": {
         "net451": {
             "dependencies": {
                 "CK.Crs.Runtime": "1.0.0-*",
-                "Newtonsoft.Json": "8.0.3"
+                "Newtonsoft.Json": "8.0.3",
+                "Microsoft.Extensions.Caching.Memory": "1.0.0-rc1-final"
             },
             "frameworkAssemblies": {
                 "System.ComponentModel.DataAnnotations": "4.0.0.0"

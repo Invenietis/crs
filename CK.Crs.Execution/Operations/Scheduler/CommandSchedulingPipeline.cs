@@ -9,7 +9,7 @@ using CK.Crs.Runtime;
 
 namespace CK.Crs.Runtime.Execution
 {
-    public class CommandSchedulingPipeline : IPipeline, IDisposable
+    class CommandSchedulingPipeline : IPipeline, IDisposable
     {
         public CommandAction Action { get; }
 

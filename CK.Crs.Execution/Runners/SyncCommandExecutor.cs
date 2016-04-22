@@ -18,6 +18,7 @@ namespace CK.Crs.Runtime.Execution
         {
         }
 
+
         protected override bool CanExecute( IPipeline pipeline, CommandDescription commandDescription )
         {
             return true;

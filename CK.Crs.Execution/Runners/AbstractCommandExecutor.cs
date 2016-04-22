@@ -20,6 +20,12 @@ namespace CK.Crs.Runtime.Execution
 
         protected abstract Task<CommandResponse> ExecuteAsync( CommandContext context );
 
+        /// <summary>
+        /// Implementations should tell if the are capable to execute a command described by its <see cref="CommandDescription"/>.
+        /// </summary>
+        /// <param name="pipeline">The current execution <see cref="IPipeline"/></param>
+        /// <param name="commandDescription">The description of the command to execute.</param>
+        /// <returns>True if the command executor can execute the command, false otherwise.</returns>
         protected abstract bool CanExecute( IPipeline pipeline, CommandDescription commandDescription );
 
         public override bool ShouldInvoke( IPipeline pipeline )

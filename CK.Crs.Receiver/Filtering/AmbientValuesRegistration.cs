@@ -15,7 +15,8 @@ namespace CK.Crs.Runtime.Filtering
 
     public class AmbientValuesRegistration : IAmbientValuesRegistration
     {
-        IServiceCollection _services;
+        readonly IServiceCollection _services;
+
         IDictionary<string, IAmbientValueProviderDescriptor> _lazyBag;
 
         public AmbientValuesRegistration( IServiceCollection services )

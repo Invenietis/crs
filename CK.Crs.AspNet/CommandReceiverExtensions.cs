@@ -12,32 +12,32 @@ namespace CK.Crs
     // Extension method used to add the middleware to the HTTP request pipeline.
     public static class CommandReceiverAspNetExtensions
     {
-        public static IApplicationBuilder UseCrs( this IApplicationBuilder builder, PathString routePrefix, Action<CrsConfiguration> configure = null )
+        public static IApplicationBuilder UseCrs( this IApplicationBuilder builder, string routePrefix, Action<CrsConfiguration> configure = null )
         {
             if( string.IsNullOrWhiteSpace( routePrefix ) ) throw new ArgumentNullException( nameof( routePrefix ) );
 
             return builder.Map( routePrefix, ( app ) =>
             {
-                var crsBuilder = new CrsHandlerBuilder();
+                var crsBuilder = new CrsBuilder( routePrefix, app.ApplicationServices);
+                crsBuilder.ApplyDefaultConfigurationOrConfigure( configure );
 
-                var registry = app.ApplicationServices.GetRequiredService<ICommandRegistry>();
-                var routeCollection = app.ApplicationServices.GetRequiredService<CommandRouteCollection>();
-                var config = new CrsConfiguration( routePrefix.Value, registry, routeCollection );
-                if( configure != null ) configure( config );
-                else ApplyDefaultConfiguration( config );
-
-                crsBuilder.AddConfiguration( config );
-
-                var scopeFactory = builder.ApplicationServices.GetRequiredService<IServiceScopeFactory>();
-                var commandReceiver = crsBuilder.Build( builder.ApplicationServices, scopeFactory );
-
+                var commandReceiver = crsBuilder.Build( builder.ApplicationServices  );
                 app.UseMiddleware<CommandReceiverMiddleware>( commandReceiver );
             } );
         }
 
-        private static void ApplyDefaultConfiguration( CrsConfiguration config )
+        class CrsBuilder : CrsReceiverBuilder
         {
-            config.Pipeline.UseDefault().UseTaskBasedCommandExecutor( config.TraitContext ).UseSyncCommandExecutor().UseJsonCommandWriter();
+            public CrsBuilder( string routePrefix, IServiceProvider services ) : base( routePrefix, services ) { }
+
+            protected override void ConfigureDefaultPipeline( IPipelineBuilder pipeline )
+            {
+                pipeline
+                    .UseDefault()
+                    .UseTaskBasedCommandExecutor( Config.TraitContext )
+                    .UseSyncCommandExecutor()
+                    .UseJsonCommandWriter();
+            }
         }
     }
 }

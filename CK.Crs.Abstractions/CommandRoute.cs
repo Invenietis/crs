@@ -9,7 +9,10 @@ namespace CK.Crs
     {
         public CommandRoute( CommandRoutePath route, CommandDescription commandDescriptor )
         {
-            Route = Route;
+            if( route == null ) throw new ArgumentNullException( "route" );
+            if( commandDescriptor == null ) throw new ArgumentNullException( "commandDescriptor" );
+
+            Route = route;
             Descriptor = commandDescriptor;
             Filters = Core.Util.Array.Empty<Type>();
         }
