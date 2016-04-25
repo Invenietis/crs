@@ -11,7 +11,7 @@ namespace CK.Crs
     public static class CommandRegistryExtensions
     {
         /// <summary>
-        /// 
+        /// Registers a command and its handler.
         /// </summary>
         /// <typeparam name="TCommand"></typeparam>
         /// <typeparam name="THandler"></typeparam>

@@ -7,6 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CK.Crs.Runtime
 {
+    /// <summary>
+    /// Basic implementation of the <see cref="IPipelineBuilder"/>.
+    /// </summary>
     public class PipelineBuilder : IPipelineBuilder
     {
         private readonly LinkedList<Func<IPipeline, Task<IPipeline>>> _list;

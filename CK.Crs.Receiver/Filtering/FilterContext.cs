@@ -7,7 +7,7 @@ using CK.Core;
 
 namespace CK.Crs.Runtime.Filtering
 {
-    public class FilterContext : ICommandFilterContext
+    class FilterContext : ICommandFilterContext
     {
         public FilterContext( IActivityMonitor monitor, CommandRoute description, ClaimsPrincipal principal, object command )
         {

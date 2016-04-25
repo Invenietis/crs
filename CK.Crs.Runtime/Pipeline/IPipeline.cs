@@ -8,6 +8,9 @@ using CK.Core;
 
 namespace CK.Crs.Runtime
 {
+    /// <summary>
+    /// Defines the CRS pipeline of command processing.
+    /// </summary>
     public interface IPipeline
     {
         /// <summary>

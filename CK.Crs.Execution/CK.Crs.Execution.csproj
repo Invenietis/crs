@@ -63,7 +63,7 @@
     <Compile Include="Operations\Scheduler\ScheduledCommand.cs" />
     <Compile Include="Operations\Scheduler\TransactionnalCommandScheduler.cs" />
     <Compile Include="Operations\TransactionnalOperationManager.cs" />
-    <Compile Include="PipelineBuilderExecutionExtension.cs" />
+    <Compile Include="Extensions\PipelineBuilderExecutionExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Responses\CommandDeferredResponse.cs" />
     <Compile Include="Responses\CommandResultResponse.cs" />

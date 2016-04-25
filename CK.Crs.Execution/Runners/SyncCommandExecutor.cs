@@ -12,7 +12,7 @@ namespace CK.Crs.Runtime.Execution
     /// <summary>
     /// 
     /// </summary>
-    public class SyncCommandExecutor : AbstractCommandExecutor
+    class SyncCommandExecutor : AbstractCommandExecutor
     {
         public SyncCommandExecutor( ICommandExecutionFactories factories ) : base( factories )
         {

@@ -6,6 +6,9 @@ using CK.Core;
 
 namespace CK.Crs
 {
+    /// <summary>
+    /// Implementation of the fluent registration API.
+    /// </summary>
     public class CommandRegistration : ICommandRegistrationWithFilter, ICommandRegistration
     {
         CommandRoute _CommandRoute;

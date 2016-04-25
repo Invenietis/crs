@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace CK.Crs.Runtime.Filtering
 {
-    public class DefaultCommandFilterFactory : ICommandFilterFactory
+    class DefaultCommandFilterFactory : ICommandFilterFactory
     {
         IServiceProvider _serviceProvider;
         public DefaultCommandFilterFactory( IServiceProvider serviceProvider )

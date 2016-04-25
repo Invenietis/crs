@@ -8,7 +8,7 @@ using CK.Crs.Runtime;
 
 namespace CK.Crs.Runtime.Execution
 {
-    public class TaskBasedCommandExecutor : AbstractCommandExecutor
+    class TaskBasedCommandExecutor : AbstractCommandExecutor
     {
         public static readonly string Trait = "Async";
 

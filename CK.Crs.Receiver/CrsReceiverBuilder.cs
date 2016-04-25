@@ -19,9 +19,7 @@ namespace CK.Crs.Runtime
 
         protected override void ConfigureDefaultPipeline( IPipelineBuilder pipeline )
         {
-            pipeline
-                .UseDefault()
-                .UseJsonCommandWriter();
+            pipeline.UseDefault();
         }
     }
 }

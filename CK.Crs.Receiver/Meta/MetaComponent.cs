@@ -9,7 +9,7 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace CK.Crs.Runtime.Meta
 {
-    public class MetaComponent : PipelineComponent
+    class MetaComponent : PipelineComponent
     {
         readonly IAmbientValues _ambientValues;
         readonly IAmbientValuesRegistration _registration;

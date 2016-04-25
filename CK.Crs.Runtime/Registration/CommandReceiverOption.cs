@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace CK.Crs
 {
+    /// <summary>
+    /// Main option root for global CRS configuration
+    /// </summary>
     public class CommandReceiverOption
     {
         public CommandReceiverOption( ICommandRegistry r, IAmbientValuesRegistration a )

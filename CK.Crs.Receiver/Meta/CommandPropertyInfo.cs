@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace CK.Crs.Runtime.Meta
 {
-    internal class CommandPropertyInfo
+    class CommandPropertyInfo
     {
         readonly PropertyInfo _propertyInfo;
         readonly IAmbientValuesRegistration _ambientValue;

@@ -9,7 +9,7 @@ using CK.Crs.Runtime;
 
 namespace CK.Crs.Runtime.Execution
 {
-    public class InMemoryScheduler : IOperationExecutor<ScheduledCommand>, IDisposable
+    class InMemoryScheduler : IOperationExecutor<ScheduledCommand>, IDisposable
     {
         readonly IList<Timer> _timers;
         readonly ICrsConfiguration _config;

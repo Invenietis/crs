@@ -8,7 +8,7 @@ using CK.Crs.Runtime;
 
 namespace CK.Crs.Runtime.Formatting
 {
-    public class JsonCommandWriter : PipelineComponent
+    class JsonCommandWriter : PipelineComponent
     {
         async public override Task Invoke( IPipeline pipeline, CancellationToken token = default( CancellationToken ) )
         {

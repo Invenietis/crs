@@ -4,8 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CK.Core;
-using CK.Crs.Runtime;
-using CK.Crs.Runtime.Filtering;
 
 namespace CK.Crs.Runtime.Filtering
 {

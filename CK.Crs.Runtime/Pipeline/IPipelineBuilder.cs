@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace CK.Crs.Runtime
 {
+    /// <summary>
+    /// Defines a builder of a <see cref="IPipeline"/>.
+    /// </summary>
     public interface IPipelineBuilder
     {
         /// <summary>

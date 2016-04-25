@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace CK.Crs.Runtime.Routing
 {
-    public class CommandRouteCollection : ICommandRouteCollection
+    class CommandRouteCollection : ICommandRouteCollection
     {
         internal readonly Dictionary<CommandRoutePath, CommandRoute> RouteStorage;
 

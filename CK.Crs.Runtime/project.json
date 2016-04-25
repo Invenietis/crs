@@ -1,31 +1,32 @@
 ﻿{
-  "version": "1.0.0-*",
-  "description": "CK.Crs.Runtime.Runtime Class Library",
-  "authors": [
-    "Cédric Legendre"
-  ],
-  "tags": [
-    ""
-  ],
-  "projectUrl": "",
-  "licenseUrl": "",
-  "compilationOptions": {
-    "xmlDoc": true
-  },
-  "frameworks": {
-    "net451": {
-      "frameworkAssemblies": {
-        "System.ComponentModel.DataAnnotations": "4.0.0.0"
-      }
+    "version": "1.0.0-*",
+    "description": "CK.Crs.Runtime.Runtime Class Library",
+    "authors": [
+        "Cédric Legendre"
+    ],
+    "tags": [
+        ""
+    ],
+    "projectUrl": "",
+    "licenseUrl": "",
+    "compilationOptions": {
+        "xmlDoc": true
+    },
+    "frameworks": {
+        "net451": {
+            "frameworkAssemblies": {
+                "System.ComponentModel.DataAnnotations": "4.0.0.0"
+            }
+        }
+    },
+    "runtimes": {
+        "win": { }
+    },
+
+    "dependencies": {
+        "CK.ActivityMonitor.StandardSender": "5.0.0-d02",
+        "CK.Core": "5.0.0-d02",
+        "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-final",
+        "SimpleGitVersionTask": "0.16.0-a02"
     }
-  },
-  "runtimes": {
-    "win": {}
-  },
-  "dependencies": {
-    "CK.ActivityMonitor.StandardSender": "5.0.0-d02",
-    "CK.Core": "5.0.0-d02",
-    "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-final",
-    "SimpleGitVersionTask": "0.16.0-a02"
-  }
 }

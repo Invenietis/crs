@@ -8,7 +8,7 @@ using CK.Core;
 
 namespace CK.Crs.Runtime.Execution
 {
-    public class TransactionnalCommandScheduler : ICommandScheduler
+    class TransactionnalCommandScheduler : ICommandScheduler
     {
         readonly IOperationExecutor<ScheduledCommand> _operationExecutor;
 

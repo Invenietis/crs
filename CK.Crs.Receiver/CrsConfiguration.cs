@@ -13,7 +13,7 @@ namespace CK.Crs.Runtime
         internal ICommandRegistry _registry;
         readonly HashSet<Type> _filters;
         string _path;
-        public CrsConfiguration( string path, ICommandRegistry registry, CommandRouteCollection routes )
+        internal CrsConfiguration( string path, ICommandRegistry registry, CommandRouteCollection routes )
         {
             _path = path;
             _registry = registry;

@@ -1,5 +1,9 @@
 ﻿namespace CK.Crs
 {
+    /// <summary>
+    /// Fluent command registration and configuration
+    /// </summary>
+    /// <typeparam name="TConfig"></typeparam>
     public interface ICommandConfiguration<TConfig>
         where TConfig : ICommandConfiguration<TConfig>
     {

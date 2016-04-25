@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace CK.Crs.Runtime.Routing
 {
-    public interface ICommandRouteCollection
+    interface ICommandRouteCollection
     {
         CommandRoute FindRoute( string receiverPath, string requestPath );
 

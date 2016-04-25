@@ -1,11 +1,9 @@
 ﻿using CK.Crs.Runtime;
 using CK.Core;
 using System;
-using Microsoft.Extensions.DependencyInjection;
 using CK.Crs.Runtime.Filtering;
 using CK.Crs.Runtime.Routing;
 using CK.Crs.Runtime.Formatting;
-using CK.Crs.Runtime;
 using CK.Crs.Runtime.Meta;
 
 namespace CK.Crs
@@ -46,6 +44,15 @@ namespace CK.Crs
         }
 
         /// <summary>
+        /// Build the command from the CommandRequest data.
+        /// </summary>
+        static public IPipelineBuilder UseMetaComponent( this IPipelineBuilder builder )
+        {
+            return builder.Use<MetaComponent>();
+        }
+
+
+        /// <summary>
         /// Invoke command filters. 
         /// </summary>
         static public IPipelineBuilder UseFilters( this IPipelineBuilder builder )
@@ -57,11 +64,12 @@ namespace CK.Crs
         {
             return builder
                 .Clear()
-                .Use<MetaComponent>()
+                .UseMetaComponent()
                 .UseCommandRouter()
                 .UseJsonCommandBuilder()
                 .UseAmbientValuesValidator()
-                .UseFilters();
+                .UseFilters()
+                .UseJsonCommandWriter();
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace CK.Crs.Runtime.Filtering
 {
-    public class AmbientValues : IAmbientValues
+    class AmbientValues : IAmbientValues
     {
         readonly IAmbientValuesRegistration _registration;
         readonly IAmbientValueProviderFactory _factory;

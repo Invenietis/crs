@@ -6,14 +6,13 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CK.Crs.Runtime.Filtering
 {
-
     enum AmbientValueProviderType
     {
         Direct,
         Lazy
     }
 
-    public class AmbientValuesRegistration : IAmbientValuesRegistration
+    class AmbientValuesRegistration : IAmbientValuesRegistration
     {
         readonly IServiceCollection _services;
 

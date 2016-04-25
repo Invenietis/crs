@@ -7,7 +7,7 @@ using CK.Core;
 
 namespace CK.Crs.Runtime.Execution
 {
-    public class TransactionnalEventPublisher : IExternalEventPublisher
+    class TransactionnalEventPublisher : IExternalEventPublisher
     {
         readonly IOperationExecutor<Event> _operationExecutor;
         public TransactionnalEventPublisher( IOperationExecutor<Event> operationExecutor )
