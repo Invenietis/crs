@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>CK.Crs.Abstractions</id>
+    <version>$version$</version>
+    <authors>Cédric Legendre</authors>
+    <owners>Cédric Legendre</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>CK.Crs.Abstractions Class Library</description>
+    <tags></tags>
+    <dependencies>
+      <group targetFramework=".NETFramework4.5.1">
+        <dependency id="CK.Core" version="5.0.0-d03" />
+        <dependency id="CK.ActivityMonitor.StandardSender" version="5.0.0-d03" />
+        <dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="1.0.0-rc1-final" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="CK.Crs.Abstractions\bin\{{configuration}}\CK.Crs.Abstractions.dll" target="lib\net451" />
+  </files>
+</package>

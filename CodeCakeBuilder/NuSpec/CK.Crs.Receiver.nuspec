@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>CK.Crs.Receiver</id>
+    <version>$version$</version>
+    <authors>Cédric Legendre</authors>
+    <owners>Cédric Legendre</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>CK.Crs.Receiver Class Library</description>
+    <tags></tags>
+    <dependencies>
+      <group targetFramework=".NETFramework4.5.1">
+        <dependency id="CK.Crs.Runtime" version="[$version$, )" />
+        <dependency id="Newtonsoft.Json" version="[8.0.3, )" />
+        <dependency id="Microsoft.Extensions.Caching.Memory" version="[1.0.0-rc1-final, )" />
+      </group>
+    </dependencies>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System.ComponentModel.DataAnnotations" targetFramework=".NETFramework4.5.1" />
+    </frameworkAssemblies>
+  </metadata>
+  <files>
+    <file src="CK.Crs.Receiver\bin\{{configuration}}\CK.Crs.Receiver.dll" target="lib\net451" />
+  </files>
+</package>

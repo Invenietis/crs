@@ -51,6 +51,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="NuSpec\CK.Crs.Abstractions.nuspec" />
+    <None Include="NuSpec\CK.Crs.Execution.nuspec" />
+    <None Include="NuSpec\CK.Crs.Owin.nuspec" />
+    <None Include="NuSpec\CK.Crs.Receiver.nuspec" />
+    <None Include="NuSpec\CK.Crs.Runtime.nuspec" />
     <None Include="project.json" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
