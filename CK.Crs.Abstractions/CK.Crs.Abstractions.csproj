@@ -66,6 +66,7 @@
     <Compile Include="ICommandDecorator.cs" />
     <Compile Include="ICommandFilter.cs" />
     <Compile Include="ICommandHandler.cs" />
+    <Compile Include="ICommandRegistry.cs" />
     <Compile Include="ICommandScheduler.cs" />
     <Compile Include="IExternalEventPublisher.cs" />
     <Compile Include="IRejectable.cs" />

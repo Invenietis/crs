@@ -6,7 +6,6 @@ using CK.Crs.Runtime;
 using CK.Crs.Runtime.Filtering;
 using CK.Crs.Runtime.Routing;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace CK.Crs
 {

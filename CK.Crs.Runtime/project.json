@@ -22,11 +22,12 @@
     "runtimes": {
         "win": { }
     },
-
     "dependencies": {
-        "CK.ActivityMonitor.StandardSender": "5.0.0-d02",
-        "CK.Core": "5.0.0-d02",
-        "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-final",
-        "SimpleGitVersionTask": "0.16.0-a02"
+        "CK.ActivityMonitor.StandardSender": "5.0.0-d03",
+        "CK.Core": "5.0.0-d03",
+        "SimpleGitVersionTask": {
+            "version": "0.16.0-a02",
+            "type": "build"
+        }
     }
 }

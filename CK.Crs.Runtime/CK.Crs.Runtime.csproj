@@ -63,9 +63,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Registration\CommandReceiverOption.cs" />
     <Compile Include="Registration\CommandRegistration.cs" />
+    <Compile Include="Registration\AutoRegisterOption.cs" />
     <Compile Include="Registration\CommandRegistryExtensions.cs" />
     <Compile Include="Registration\ICommandRegistration.cs" />
-    <Compile Include="Registration\ICommandRegistry.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
