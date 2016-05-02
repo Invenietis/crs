@@ -18,5 +18,6 @@
   </metadata>
   <files>
     <file src="CK.Crs.Abstractions\bin\{{configuration}}\CK.Crs.Abstractions.dll" target="lib\net451" />
+    <file src="CK.Crs.Abstractions\bin\{{configuration}}\CK.Crs.Abstractions.xml" target="lib\net451" />
   </files>
 </package>

@@ -38,7 +38,7 @@ namespace CK.Crs
 
             foreach( var a in option.Assemblies )
             {
-                var assembly = Assembly.LoadFrom( a );
+                var assembly = Assembly.Load( a );
                 var handlers = assembly.GetTypes().Where( t => typeof( ICommandHandler<>  ).IsAssignableFrom( t) ).Where( option.CommandHandlerFilter );
 
                 foreach( var h in handlers )
