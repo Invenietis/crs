@@ -20,6 +20,7 @@
   </metadata>
   <files>
     <file src="CK.Crs.Extensions\bin\{{configuration}}\CK.Crs.Extensions.dll" target="lib\net451" />
+    <file src="CK.Crs.Extensions\bin\{{configuration}}\CK.Crs.Extensions.pdb" target="lib\net451" />
     <file src="CK.Crs.Extensions\bin\{{configuration}}\CK.Crs.Extensions.xml" target="lib\net451" />
   </files>
 </package>

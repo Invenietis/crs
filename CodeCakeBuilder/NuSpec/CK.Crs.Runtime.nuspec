@@ -20,6 +20,7 @@
   </metadata>
   <files>
     <file src="CK.Crs.Runtime\bin\{{configuration}}\CK.Crs.Runtime.dll" target="lib\net451" />
+    <file src="CK.Crs.Runtime\bin\{{configuration}}\CK.Crs.Runtime.pdb" target="lib\net451" />
     <file src="CK.Crs.Runtime\bin\{{configuration}}\CK.Crs.Runtime.xml" target="lib\net451" />
   </files>
 </package>

@@ -19,6 +19,7 @@
   </metadata>
   <files>
     <file src="CK.Crs.Runtime.Extensions\bin\{{configuration}}\CK.Crs.Runtime.Extensions.dll" target="lib\net451" />
+    <file src="CK.Crs.Runtime.Extensions\bin\{{configuration}}\CK.Crs.Runtime.Extensions.pdb" target="lib\net451" />
     <file src="CK.Crs.Runtime.Extensions\bin\{{configuration}}\CK.Crs.Runtime.Extensions.xml" target="lib\net451" />
   </files>
 </package>

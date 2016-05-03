@@ -19,6 +19,7 @@
   </metadata>
   <files>
     <file src="CK.Crs.Execution\bin\{{configuration}}\CK.Crs.Execution.dll" target="lib\net451" />
+    <file src="CK.Crs.Execution\bin\{{configuration}}\CK.Crs.Execution.pdb" target="lib\net451" />
     <file src="CK.Crs.Execution\bin\{{configuration}}\CK.Crs.Execution.xml" target="lib\net451" />
   </files>
 </package>
