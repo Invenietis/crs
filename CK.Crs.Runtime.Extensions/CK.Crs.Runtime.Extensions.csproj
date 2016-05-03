@@ -4,13 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{EECFD6A9-EC95-4835-B5A0-C026F0AE7DDE}</ProjectGuid>
+    <ProjectGuid>{B41506A4-037D-4B1E-A298-AE7B14F9E07B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CK.Crs.Owin</RootNamespace>
-    <AssemblyName>CK.Crs.Owin</AssemblyName>
+    <RootNamespace>CK.Crs.Runtime.Extensions</RootNamespace>
+    <AssemblyName>CK.Crs.Runtime.Extensions</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -39,7 +41,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -48,13 +49,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClaimsBasedActorIdProvider.cs" />
-    <Compile Include="CommandReceiverOwinExtensions.cs" />
-    <Compile Include="CommandReceiverOwinMiddleware.cs" />
-    <Compile Include="OwinRequestUserNameProvider.cs" />
+    <Compile Include="ActorIdProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
@@ -70,14 +69,24 @@
       <Project>{56baeda5-6ea6-4e23-8fdd-d1dc428ea6be}</Project>
       <Name>CK.Crs.Receiver</Name>
     </ProjectReference>
-    <ProjectReference Include="..\CK.Crs.Runtime.Extensions\CK.Crs.Runtime.Extensions.csproj">
-      <Project>{b41506a4-037d-4b1e-a298-ae7b14f9e07b}</Project>
-      <Name>CK.Crs.Runtime.Extensions</Name>
-    </ProjectReference>
     <ProjectReference Include="..\CK.Crs.Runtime\CK.Crs.Runtime.csproj">
       <Project>{52c1088b-f87d-489d-b592-38f3881b2271}</Project>
       <Name>CK.Crs.Runtime</Name>
     </ProjectReference>
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\SimpleGitVersionTask.0.16.0-b\build\SimpleGitVersionTask.targets" Condition="Exists('..\packages\SimpleGitVersionTask.0.16.0-b\build\SimpleGitVersionTask.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\SimpleGitVersionTask.0.16.0-b\build\SimpleGitVersionTask.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SimpleGitVersionTask.0.16.0-b\build\SimpleGitVersionTask.targets'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
 </Project>
