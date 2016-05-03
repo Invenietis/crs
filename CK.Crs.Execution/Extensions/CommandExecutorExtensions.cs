@@ -12,10 +12,10 @@ namespace CK.Crs
     {
         public static void AddCommandExecutor( this IServiceCollection services )
         {
-            services.AddSingleton<ICommandExecutionFactories, DefaultFactories>();
-            services.AddSingleton<ICommandHandlerFactory, DefaultFactories>();
-            services.AddSingleton<ICommandDecoratorFactory, DefaultFactories>();
-            services.AddSingleton<IExternalComponentFactory, DefaultFactories>();
+            services.AddScoped<ICommandExecutionFactories, DefaultFactories>();
+            services.AddScoped<ICommandHandlerFactory, DefaultFactories>();
+            services.AddScoped<ICommandDecoratorFactory, DefaultFactories>();
+            services.AddScoped<IExternalComponentFactory, DefaultFactories>();
         }
     }
 }

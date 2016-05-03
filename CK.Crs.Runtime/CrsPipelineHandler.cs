@@ -14,13 +14,11 @@ namespace CK.Crs.Runtime
 {
     class CrsPipelineHandler : ICrsHandler
     {
-        readonly IServiceProvider _serviceProvider;
         readonly IServiceScopeFactory _scopeFactory;
         readonly ICrsConfiguration _config;
 
-        public CrsPipelineHandler( IServiceProvider commandReceiverServices, IServiceScopeFactory scopeFactory, ICrsConfiguration config )
+        public CrsPipelineHandler( IServiceScopeFactory scopeFactory, ICrsConfiguration config )
         {
-            _serviceProvider = commandReceiverServices;
             _scopeFactory = scopeFactory;
             _config = config;
         }
@@ -29,7 +27,7 @@ namespace CK.Crs.Runtime
         {
             var monitor = new ActivityMonitor( request.Path );
 
-            using( var pipeline = new CommandReceivingPipeline( _serviceProvider, _scopeFactory, _config, monitor, request, response, cancellationToken ) )
+            using( var pipeline = new CommandReceivingPipeline( _scopeFactory, _config, monitor, request, response, cancellationToken ) )
             {
                 foreach( var c in _config.Pipeline.Components ) await c.Invoke( pipeline );
                 return pipeline.Response != null;
@@ -63,7 +61,6 @@ namespace CK.Crs.Runtime
             IServiceScope _serviceScope;
 
             public CommandReceivingPipeline(
-                IServiceProvider commandReceiverServices,
                 IServiceScopeFactory scopeFactory,
                 ICrsConfiguration configuration,
                 IActivityMonitor monitor,

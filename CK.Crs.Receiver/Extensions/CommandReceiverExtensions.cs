@@ -14,9 +14,9 @@ namespace CK.Crs
         public static void AddCommandReceiver( this IServiceCollection services, Action<CommandReceiverOption> registration )
         {
             services.AddCaching();
-            services.AddSingleton<ICommandFilterFactory, DefaultCommandFilterFactory>();
-            services.AddSingleton<IAmbientValueProviderFactory, DefaultAmbientValueFactory>();
-            services.AddSingleton<IAmbientValues, AmbientValues>();
+            services.AddScoped<ICommandFilterFactory, DefaultCommandFilterFactory>();
+            services.AddScoped<IAmbientValueProviderFactory, DefaultAmbientValueFactory>();
+            services.AddScoped<IAmbientValues, AmbientValues>();
 
             var routes = new CommandRouteCollection();
             services.AddInstance<ICommandRouteCollection>( routes );

@@ -42,12 +42,12 @@ namespace CK.Crs.Runtime
         /// <param name="applicationServices">The application services</param>
         /// <param name="scopeFactory"></param>
         /// <returns></returns>
-        public ICrsHandler Build( IServiceProvider applicationServices  )
+        public ICrsHandler Build( IServiceProvider applicationServices )
         {
             // Creates the CommandReceiver
             var scopeFactory = applicationServices.GetRequiredService<IServiceScopeFactory>();
 
-            return new CrsPipelineHandler( applicationServices, scopeFactory, _config );
+            return new CrsPipelineHandler( scopeFactory, _config );
         }
 
         protected virtual void ConfigureDefaultPipeline( IPipelineBuilder pipeline )

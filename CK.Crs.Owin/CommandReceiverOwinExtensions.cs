@@ -31,7 +31,12 @@ namespace CK.Crs
             protected override void ConfigureDefaultPipeline( IPipelineBuilder pipeline )
             {
                 pipeline
-                    .UseDefault()
+                    .Clear()
+                    .UseMetaComponent()
+                    .UseCommandRouter()
+                    .UseJsonCommandBuilder()
+                    .UseAmbientValuesValidator()
+                    .UseFilters()
                     .UseTaskBasedCommandExecutor( Config.TraitContext )
                     .UseSyncCommandExecutor()
                     .UseJsonCommandWriter();
