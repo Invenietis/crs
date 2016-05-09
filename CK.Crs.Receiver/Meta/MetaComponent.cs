@@ -48,22 +48,22 @@ namespace CK.Crs.Runtime.Meta
                 if( command.ShowCommands )
                 {
                     result.Commands = new Dictionary<string, MetaCommand.MetaResult.MetaCommandDescription>();
-                    foreach( var c in pipeline.Configuration.Routes )
+                    foreach( var c in pipeline.Configuration.Routes.All )
                     {
                         MetaCommand.MetaResult.MetaCommandDescription desc;
-                        if( !_cache.TryGetValue( c.Key.CommandName, out desc ) )
+                        if( !_cache.TryGetValue( c.Route.FullPath, out desc ) )
                         {
                             desc = new MetaCommand.MetaResult.MetaCommandDescription
                             {
-                                Route = c.Value.Route,
-                                CommandType = c.Value.Descriptor.CommandType.AssemblyQualifiedName,
-                                Parameters = c.Value.Descriptor.CommandType.GetTypeInfo().DeclaredProperties.Select( e => new CommandPropertyInfo( e, _registration ) ).ToArray(),
-                                Traits = c.Value.Descriptor.Traits,
-                                Description = c.Value.Descriptor.Description
+                                Route = c.Route,
+                                CommandType = c.Descriptor.CommandType.AssemblyQualifiedName,
+                                Parameters = c.Descriptor.CommandType.GetTypeInfo().DeclaredProperties.Select( e => new CommandPropertyInfo( e, _registration ) ).ToArray(),
+                                Traits = c.Descriptor.Traits,
+                                Description = c.Descriptor.Description
                             };
-                            _cache.Set( c.Key.CommandName, desc );
+                            _cache.Set( c.Route.FullPath, desc );
                         }
-                        result.Commands.Add( c.Key.CommandName, desc );
+                        result.Commands.Add( c.Route.CommandName, desc );
                     }
                 }
 

@@ -10,12 +10,6 @@ namespace CK.Crs.Runtime.Routing
 {
     class CommandRouter : PipelineComponent
     {
-        readonly ICommandRouteCollection _routes;
-        public CommandRouter( ICommandRouteCollection routes )
-        {
-            _routes = routes;
-        }
-
         public override bool ShouldInvoke( IPipeline pipeline )
         {
             return pipeline.Response == null;
@@ -23,7 +17,7 @@ namespace CK.Crs.Runtime.Routing
 
         public override Task Invoke( IPipeline pipeline, CancellationToken token )
         {
-            pipeline.Action.Description = _routes.FindRoute( pipeline.Configuration.ReceiverPath, pipeline.Request.Path );
+            pipeline.Action.Description = pipeline.Configuration.Routes.FindRoute( pipeline.Configuration.ReceiverPath, pipeline.Request.Path );
             if( pipeline.Action.Description != null )
             {
                 if( pipeline.Action.Description.Descriptor.HandlerType == null )
@@ -40,9 +34,9 @@ namespace CK.Crs.Runtime.Routing
 #if DEBUG
                 using( pipeline.Monitor.OpenInfo().Send( "Registered routes are:" ) )
                 {
-                    foreach( var r in pipeline.Configuration.Routes )
+                    foreach( var r in pipeline.Configuration.Routes.All )
                     {
-                        pipeline.Monitor.Trace().Send( r.Key.ToString() );
+                        pipeline.Monitor.Trace().Send( r.Route.ToString() );
                     }
                 }
 #endif                    

@@ -15,11 +15,11 @@ namespace CK.Crs.Runtime
         /// Gets the receiver path.
         /// </summary>
         string ReceiverPath { get; }
-        
+
         /// <summary>
         /// Gets the <see cref="ICommandRouteCollection"/> 
         /// </summary>
-        IReadOnlyDictionary<CommandRoutePath, CommandRoute> Routes { get; }
+        ICommandRouteCollection Routes { get; }
 
         /// <summary>
         /// Gets the <see cref="PipelineEvents"/> 

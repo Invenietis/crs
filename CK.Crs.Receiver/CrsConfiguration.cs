@@ -36,7 +36,7 @@ namespace CK.Crs.Runtime
         /// <summary>
         /// Gets the routes registration
         /// </summary>
-        public IReadOnlyDictionary<CommandRoutePath, CommandRoute> Routes => _routes.RouteStorage;
+        public ICommandRouteCollection Routes => _routes;
 
         /// <summary>
         /// Gets the pipeline events configuration object.
