@@ -14,6 +14,8 @@ namespace CK.Crs.Runtime.Routing
             RouteStorage = new Dictionary<CommandRoutePath, CommandRoute>( new CommandRoutePath.Comparer() );
         }
 
+        public IEnumerable<CommandRoute> All => RouteStorage.Values;
+
         public CommandRoute FindRoute( string receiverPath, string path )
         {
             CommandRoute v = null;

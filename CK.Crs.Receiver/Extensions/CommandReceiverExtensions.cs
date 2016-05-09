@@ -18,10 +18,6 @@ namespace CK.Crs
             services.AddScoped<IAmbientValueProviderFactory, DefaultAmbientValueFactory>();
             services.AddScoped<IAmbientValues, AmbientValues>();
 
-            var routes = new CommandRouteCollection();
-            services.AddInstance<ICommandRouteCollection>( routes );
-            services.AddInstance( routes );
-
             var r =  new CommandRegistry( services );
             var a = new AmbientValuesRegistration( services );
             var o = new CommandReceiverOption(r, a);

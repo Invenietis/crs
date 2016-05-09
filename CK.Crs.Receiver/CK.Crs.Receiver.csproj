@@ -70,7 +70,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Routing\CommandRouteCollection.cs" />
     <Compile Include="Routing\CommandRouter.cs" />
-    <Compile Include="Routing\ICommandRouteCollection.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />

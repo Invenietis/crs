@@ -12,8 +12,8 @@ namespace CK.Crs.Runtime
         public CrsReceiverBuilder( string routePrefix, IServiceProvider services )
         {
             var registry = services.GetRequiredService<ICommandRegistry>();
-            var routeCollection = services.GetRequiredService<CommandRouteCollection>();
-            var config = new CrsConfiguration( routePrefix, registry, routeCollection );
+            var routes = new CommandRouteCollection();
+            var config = new CrsConfiguration( routePrefix, registry, routes );
             AddConfiguration( config );
         }
 
