@@ -31,7 +31,7 @@ namespace CK.Crs.Runtime
             if( configure != null ) configure( _config );
             else
             {
-                ConfigureDefaultPipeline( _config.Pipeline );
+                ConfigureDefaultPipeline( _config );
                 _config.AddCommands( e => e.Registration );
             }
         }
@@ -50,7 +50,7 @@ namespace CK.Crs.Runtime
             return new CrsPipelineHandler( scopeFactory, _config );
         }
 
-        protected virtual void ConfigureDefaultPipeline( IPipelineBuilder pipeline )
+        protected virtual void ConfigureDefaultPipeline( ICrsConfiguration configuration )
         {
         }
     }

@@ -11,10 +11,14 @@ namespace CK.Crs.Runtime.Execution
         readonly Lazy<IExternalEventPublisher> _eventPublisherLazy;
         readonly Lazy<ICommandScheduler> _cSchedulerLazy;
 
-        public CommandExecutionContext( CommandAction action, IActivityMonitor monitor, CancellationToken cancellationToken, ICommandExecutionFactories factories )
-            : this( action, monitor, cancellationToken,
-                    () => new TransactionnalEventPublisher( factories.CreateExternalEventPublisher() ),
-                    () => new TransactionnalCommandScheduler( factories.CreateCommandScheduler() ) )
+        public CommandExecutionContext( IPipeline pipeline ) : this
+            (
+                 pipeline.Action,
+                 pipeline.Monitor,
+                 pipeline.CancellationToken,
+                  () => new TransactionnalEventPublisher( pipeline.Configuration.ExternalComponents.EventPublisher ),
+                  () => new TransactionnalCommandScheduler( pipeline.Configuration.ExternalComponents.CommandScheduler, pipeline )
+            )
         {
         }
 

@@ -13,16 +13,16 @@ namespace CK.Crs.Runtime.Execution
         /// Invoke the execution pipeline.
         /// </summary>
         /// <param name="context"></param>
-        /// <param name="executionFactories"></param>
+        /// <param name="factory"></param>
         /// <returns></returns>
-        public static async Task ExecuteAsync( CommandContext context, ICommandExecutionFactories executionFactories )
+        public static async Task ExecuteAsync( CommandContext context, ICommandHandlerFactory factory )
         {
             var mon = context.ExecutionContext.Monitor;
 
-            var decorators = context.ExecutionContext.Action.Description.Descriptor.Decorators.Select( executionFactories.CreateDecorator ).ToArray();
+            var decorators = context.ExecutionContext.Action.Description.Descriptor.Decorators.Select( factory.CreateDecorator ).ToArray();
             using( mon.OpenTrace().Send( $"Running Command [{context.ExecutionContext.Action.Description.Descriptor.CommandType.Name}]..." ) )
             {
-                ICommandHandler handler = executionFactories.CreateHandler( context.ExecutionContext.Action.Description.Descriptor.HandlerType );
+                ICommandHandler handler = factory.CreateHandler( context.ExecutionContext.Action.Description.Descriptor.HandlerType );
                 if( handler == null ) throw new InvalidOperationException( $"Unable to create type {context.ExecutionContext.Action.Description.Descriptor.HandlerType}" );
                 try
                 {
@@ -70,7 +70,7 @@ namespace CK.Crs.Runtime.Execution
                 }
                 finally
                 {
-                    executionFactories.ReleaseHandler( handler );
+                    factory.ReleaseHandler( handler );
                 }
             }
         }

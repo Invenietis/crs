@@ -24,6 +24,7 @@ namespace CK.Crs.Runtime
             Pipeline = new PipelineBuilder();
             Events = new PipelineEvents();
             TraitContext = new CKTraitContext( "CrsDefault" );
+            ExternalComponents = new ExternalComponents();
         }
 
         /// <summary>
@@ -47,6 +48,11 @@ namespace CK.Crs.Runtime
         /// Gets access to the pipeline
         /// </summary>
         public IPipelineBuilder Pipeline { get; }
+
+        /// <summary>
+        /// External components configuration
+        /// </summary>
+        public ExternalComponents ExternalComponents { get; }
 
         /// <summary>
         /// 

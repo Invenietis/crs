@@ -37,6 +37,11 @@ namespace CK.Crs.Runtime
         CKTraitContext TraitContext { get; }
 
         /// <summary>
+        /// External components configuration
+        /// </summary>
+        ExternalComponents ExternalComponents { get; }
+
+        /// <summary>
         /// Selects the commands from the <see cref="ICommandRegistry"/> this CommandReceiver is able to handle. 
         /// </summary>
         /// <param name="selection">A projection lambda to filter commands</param>

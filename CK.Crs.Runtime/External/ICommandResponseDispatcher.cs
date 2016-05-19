@@ -4,9 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using CK.Crs.Runtime;
 
-namespace CK.Crs.Runtime.Execution
+namespace CK.Crs.Runtime
 {
     /// <summary>
     /// </summary>
@@ -17,6 +16,7 @@ namespace CK.Crs.Runtime.Execution
         /// </summary>
         /// <param name="callbackId"></param>
         /// <param name="response"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
         Task DispatchAsync( string callbackId, CommandResponse response, CancellationToken cancellationToken = default( CancellationToken ) );
     }

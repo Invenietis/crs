@@ -9,17 +9,24 @@ namespace CK.Crs.Runtime
 {
     public class CrsReceiverBuilder : CrsHandlerBuilder<CrsConfiguration>
     {
+        protected string RoutePrefix { get; private set; }
+
+        protected IServiceProvider ApplicationServices { get; private set; }
+
         public CrsReceiverBuilder( string routePrefix, IServiceProvider services )
         {
-            var registry = services.GetRequiredService<ICommandRegistry>();
+            RoutePrefix = routePrefix;
+            ApplicationServices = services;
+
+            var registry = ApplicationServices.GetRequiredService<ICommandRegistry>();
             var routes = new CommandRouteCollection();
-            var config = new CrsConfiguration( routePrefix, registry, routes );
+            var config = new CrsConfiguration( RoutePrefix, registry, routes );
             AddConfiguration( config );
         }
 
-        protected override void ConfigureDefaultPipeline( IPipelineBuilder pipeline )
+        protected override void ConfigureDefaultPipeline( ICrsConfiguration configuration )
         {
-            pipeline.UseDefault();
+            configuration.Pipeline.UseDefault();
         }
     }
 }

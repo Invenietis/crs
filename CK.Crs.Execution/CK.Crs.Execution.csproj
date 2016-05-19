@@ -51,17 +51,10 @@
     <Compile Include="CommandExecutionContext.cs" />
     <Compile Include="DefaultFactories.cs" />
     <Compile Include="Extensions\CommandExecutorExtensions.cs" />
-    <Compile Include="ICommandDecoratorFactory.cs" />
-    <Compile Include="ICommandExecutionFactories.cs" />
     <Compile Include="ICommandHandlerFactory.cs" />
-    <Compile Include="ICommandResponseDispatcher.cs" />
-    <Compile Include="IExternalComponentFactory.cs" />
-    <Compile Include="Operations\Events\Event.cs" />
     <Compile Include="Operations\Events\TransactionnalEventPublisher.cs" />
-    <Compile Include="Operations\IOperationExecutor.cs" />
     <Compile Include="Operations\Scheduler\CommandSchedulingPipeline.cs" />
     <Compile Include="Operations\Scheduler\InMemoryScheduler.cs" />
-    <Compile Include="Operations\Scheduler\ScheduledCommand.cs" />
     <Compile Include="Operations\Scheduler\TransactionnalCommandScheduler.cs" />
     <Compile Include="Operations\TransactionnalOperationManager.cs" />
     <Compile Include="Extensions\PipelineBuilderExecutionExtension.cs" />

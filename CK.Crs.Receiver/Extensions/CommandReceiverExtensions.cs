@@ -13,7 +13,7 @@ namespace CK.Crs
     {
         public static void AddCommandReceiver( this IServiceCollection services, Action<CommandReceiverOption> registration )
         {
-            services.AddCaching();
+            services.AddMemoryCache();
             services.AddScoped<ICommandFilterFactory, DefaultCommandFilterFactory>();
             services.AddScoped<IAmbientValueProviderFactory, DefaultAmbientValueFactory>();
             services.AddScoped<IAmbientValues, AmbientValues>();
@@ -24,8 +24,8 @@ namespace CK.Crs
 
             registration( o );
 
-            services.AddInstance<ICommandRegistry>( r );
-            services.AddInstance<IAmbientValuesRegistration>( a );
+            services.AddSingleton<ICommandRegistry>( r );
+            services.AddSingleton<IAmbientValuesRegistration>( a );
         }
     }
 }

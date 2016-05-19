@@ -5,11 +5,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CK.Crs.Runtime.Execution
 {
-    public class DefaultFactories : ICommandExecutionFactories
+    public class DefaultFactory : ICommandHandlerFactory
     {
         readonly DefaultCreateInstanceStrategy _s;
 
-        public DefaultFactories( IServiceProvider serviceProvider )
+        public DefaultFactory( IServiceProvider serviceProvider )
         {
             _s = new DefaultCreateInstanceStrategy( serviceProvider );
         }
@@ -27,21 +27,6 @@ namespace CK.Crs.Runtime.Execution
         {
             var d = handler as IDisposable;
             if( d != null ) d.Dispose();
-        }
-
-        public virtual ICommandResponseDispatcher CreateResponseDispatcher()
-        {
-            return _s._serviceProvider.GetRequiredService<ICommandResponseDispatcher>();
-        }
-
-        public virtual IOperationExecutor<Event> CreateExternalEventPublisher()
-        {
-            return _s._serviceProvider.GetRequiredService<IOperationExecutor<Event>>();
-        }
-
-        public virtual IOperationExecutor<ScheduledCommand> CreateCommandScheduler()
-        {
-            return _s._serviceProvider.GetRequiredService<IOperationExecutor<ScheduledCommand>>();
         }
 
         public class DefaultCreateInstanceStrategy

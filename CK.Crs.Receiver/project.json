@@ -23,16 +23,16 @@
     "win": {}
   },
   "dependencies": {
-    "CK.ActivityMonitor.StandardSender": "5.0.0-d03",
-    "CK.Core": "5.0.0-d03",
-    "Microsoft.Extensions.Caching.Abstractions": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Caching.Memory": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Configuration": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Configuration.Abstractions": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Configuration.Binder": "1.0.0-rc1-final",
+    "CK.ActivityMonitor.StandardSender": "5.0.0-e01",
+    "CK.Core": "5.0.0-e01",
+    "Microsoft.Extensions.Caching.Abstractions": "1.0.0-rc2-final",
+    "Microsoft.Extensions.Caching.Memory": "1.0.0-rc2-final",
+    "Microsoft.Extensions.Configuration": "1.0.0-rc2-final",
+    "Microsoft.Extensions.Configuration.Abstractions": "1.0.0-rc2-final",
+    "Microsoft.Extensions.Configuration.Binder": "1.0.0-rc2-final",
     "Microsoft.Extensions.OptionsModel": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Primitives": "1.0.0-rc1-final",
+    "Microsoft.Extensions.Primitives": "1.0.0-rc2-final",
     "Newtonsoft.Json": "8.0.3",
-    "SimpleGitVersionTask": "0.16.0-b"
+    "SimpleGitVersionTask": "0.16.0"
   }
 }

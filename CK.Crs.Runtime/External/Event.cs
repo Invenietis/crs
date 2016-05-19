@@ -1,7 +1,7 @@
 ﻿using System;
 using CK.Core;
 
-namespace CK.Crs.Runtime.Execution
+namespace CK.Crs
 {
     public class Event
     {

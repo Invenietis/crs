@@ -51,6 +51,10 @@
     <Compile Include="CrsPipelineHandler.cs" />
     <Compile Include="ICrsConfiguration.cs" />
     <Compile Include="ICrsHandler.cs" />
+    <Compile Include="External\ExternalComponents.cs" />
+    <Compile Include="External\ICommandResponseDispatcher.cs" />
+    <Compile Include="External\IOperationExecutor.cs" />
+    <Compile Include="External\Event.cs" />
     <Compile Include="Pipeline\CommandErrorResponse.cs" />
     <Compile Include="Pipeline\CommandInvalidResponse.cs" />
     <Compile Include="Pipeline\CommandRequest.cs" />
@@ -67,6 +71,7 @@
     <Compile Include="Registration\AutoRegisterOption.cs" />
     <Compile Include="Registration\CommandRegistryExtensions.cs" />
     <Compile Include="Registration\ICommandRegistration.cs" />
+    <Compile Include="External\ScheduledCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />

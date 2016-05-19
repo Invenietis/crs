@@ -11,14 +11,14 @@ namespace CK.Crs.Runtime.Execution
 
     public abstract class AbstractCommandExecutor : PipelineComponent
     {
-        public AbstractCommandExecutor( ICommandExecutionFactories factories )
+        public AbstractCommandExecutor( ICommandHandlerFactory factories )
         {
-            Factories = factories;
+            Factory = factories;
         }
 
-        protected ICommandExecutionFactories Factories { get; }
+        protected ICommandHandlerFactory Factory { get; }
 
-        protected abstract Task<CommandResponse> ExecuteAsync( CommandContext context );
+        protected abstract Task<CommandResponse> ExecuteAsync( IPipeline pipeline, CommandContext context );
 
         /// <summary>
         /// Implementations should tell if the are capable to execute a command described by its <see cref="CommandDescription"/>.
@@ -37,14 +37,14 @@ namespace CK.Crs.Runtime.Execution
         {
             using( pipeline.Monitor.OpenTrace().Send( "Preparing asynchronous command execution..." ) )
             {
-                var executionContext = new CommandExecutionContext( pipeline.Action, pipeline.Monitor, token, Factories );
+                var executionContext = new CommandExecutionContext( pipeline );
                 var context = new CommandContext( executionContext );
 
                 if( pipeline.Configuration.Events.CommandExecuting != null )
                     await pipeline.Configuration.Events.CommandExecuting?.Invoke( context );
 
                 if( pipeline.Response == null )
-                    pipeline.Response = await ExecuteAsync( context );
+                    pipeline.Response = await ExecuteAsync( pipeline, context );
             }
         }
         protected CommandResponse CreateFromContext( CommandContext context )

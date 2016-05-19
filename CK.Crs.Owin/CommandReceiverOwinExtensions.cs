@@ -1,6 +1,7 @@
 ﻿using System;
 using CK.Core;
 using CK.Crs.Runtime;
+using CK.Crs.Runtime.Execution;
 using CK.Crs.Runtime.Routing;
 using Microsoft.Owin;
 using Owin;
@@ -28,9 +29,9 @@ namespace CK.Crs
         {
             public CrsBuilder( string routePrefix, IServiceProvider services ) : base( routePrefix, services ) { }
 
-            protected override void ConfigureDefaultPipeline( IPipelineBuilder pipeline )
+            protected override void ConfigureDefaultPipeline( ICrsConfiguration config )
             {
-                pipeline
+                config.Pipeline
                     .Clear()
                     .UseMetaComponent()
                     .UseCommandRouter()
@@ -40,6 +41,8 @@ namespace CK.Crs
                     .UseTaskBasedCommandExecutor( Config.TraitContext )
                     .UseSyncCommandExecutor()
                     .UseJsonCommandWriter();
+
+                config.ExternalComponents.CommandScheduler = new InMemoryScheduler( config, ApplicationServices );
             }
         }
     }

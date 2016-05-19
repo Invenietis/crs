@@ -4,14 +4,17 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using CK.Core;
+using CK.Crs.Runtime;
 
-namespace CK.Crs.Runtime.Execution
+namespace CK.Crs
 {
     public class ScheduledCommand : CommandAction
     {
         public ScheduledCommand( Guid commandId ) : base( commandId )
         {
         }
+
+        public IPipeline Pipeline { get; set; }
 
         /// <summary>
         /// Gets or sets the scheduling configuration for this command.

@@ -9,24 +9,23 @@ using CK.Crs.Runtime;
 
 namespace CK.Crs.Runtime.Execution
 {
-    class InMemoryScheduler : IOperationExecutor<ScheduledCommand>, IDisposable
+    public class InMemoryScheduler : IOperationExecutor<ScheduledCommand>, IDisposable
     {
         readonly IList<Timer> _timers;
-        readonly ICrsConfiguration _config;
         readonly SyncCommandExecutor _executor;
-        readonly IServiceProvider _serviceProvider;
 
         CancellationTokenSource _source;
+        readonly IServiceProvider _applicationServices;
+        readonly ICrsConfiguration _configuration;
 
-        public InMemoryScheduler( IServiceProvider serviceProvider, ICrsConfiguration config, ICommandExecutionFactories factories )
+        public InMemoryScheduler( ICrsConfiguration configuration, IServiceProvider services )
         {
-            if( serviceProvider == null ) throw new ArgumentNullException( nameof( serviceProvider ) );
-            if( config == null ) throw new ArgumentNullException( nameof( config ) );
-            if( factories == null ) throw new ArgumentNullException( nameof( factories ) );
+            if( configuration == null ) throw new ArgumentNullException( nameof( configuration ) );
+            if( services == null ) throw new ArgumentNullException( nameof( services ) );
 
-            _serviceProvider = serviceProvider;
-            _config = config;
-            _executor = new SyncCommandExecutor( factories );
+            //_executor = new SyncCommandExecutor( factory );
+            _applicationServices = services;
+            _configuration = configuration;
 
             _timers = new List<Timer>();
             _source = new CancellationTokenSource();
@@ -37,12 +36,11 @@ namespace CK.Crs.Runtime.Execution
             foreach( var t in _timers ) t.Dispose();
         }
 
-        public async void TimerCallback( object state )
-        {
-            var scheduledOperation = state as ScheduledCommand;
+        public async void TimerCallback( object state ) => await ExecuteOperation( state as ScheduledCommand );
 
-            // TODO: provides access to the scheduling pipeline configuration
-            using( var pipeline = new CommandSchedulingPipeline( _serviceProvider, _config, scheduledOperation ) )
+        private async Task ExecuteOperation( ScheduledCommand operation )
+        {
+            using( var pipeline = new CommandSchedulingPipeline( _applicationServices, _configuration, operation ) )
             {
                 // Provides specific steps for the command scheduling :
                 // - ICommandFilter implementation will be different: they will not rely on HttpContext for example.
@@ -53,14 +51,22 @@ namespace CK.Crs.Runtime.Execution
                 // Ot : schedule a command is full trust on the command scheduling, since the command is crafted server-side.
                 //await new CommandFiltersInvoker( _factory ).Invoke( pipeline, _source.Token );
 
-                await _executor.Invoke( pipeline, _source.Token );
+                await new SyncCommandExecutor( pipeline.CommandServices.GetService<ICommandHandlerFactory>() ).TryInvoke( pipeline, pipeline.CancellationToken );
+                pipeline.Monitor.Info().Send( "ScheduledCommand executed {0}.", operation.CommandId );
             }
         }
 
         public void Execute( IActivityMonitor monitor, ScheduledCommand operation )
         {
-            Timer t = new Timer( TimerCallback, operation, (int) (operation.Scheduling.WhenCommandShouldBeRaised - DateTime.UtcNow ).TotalMilliseconds, Timeout.Infinite);
-            _timers.Add( t );
+            if( operation.Scheduling.WhenCommandShouldBeRaised <= DateTime.UtcNow )
+            {
+                Task.Factory.StartNew( TimerCallback, operation ).Wait();
+            }
+            else
+            {
+                Timer t = new Timer( TimerCallback, operation, (int) (operation.Scheduling.WhenCommandShouldBeRaised - DateTime.UtcNow ).TotalMilliseconds, Timeout.Infinite);
+                _timers.Add( t );
+            }
         }
     }
 }

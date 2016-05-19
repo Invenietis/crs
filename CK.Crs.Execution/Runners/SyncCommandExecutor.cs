@@ -14,7 +14,7 @@ namespace CK.Crs.Runtime.Execution
     /// </summary>
     class SyncCommandExecutor : AbstractCommandExecutor
     {
-        public SyncCommandExecutor( ICommandExecutionFactories factories ) : base( factories )
+        public SyncCommandExecutor( ICommandHandlerFactory factory ) : base( factory )
         {
         }
 
@@ -24,12 +24,12 @@ namespace CK.Crs.Runtime.Execution
             return true;
         }
 
-        protected override async Task<CommandResponse> ExecuteAsync( CommandContext context )
+        protected override async Task<CommandResponse> ExecuteAsync( IPipeline pipeline, CommandContext context )
         {
             var mon = context.ExecutionContext.Monitor;
             try
             {
-                await CommandRunner.ExecuteAsync( context, Factories );
+                await CommandRunner.ExecuteAsync( context, Factory );
                 mon.Trace().Send( "Done." );
             }
             catch( Exception ex )

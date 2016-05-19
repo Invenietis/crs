@@ -24,8 +24,8 @@
     "win": {}
   },
   "dependencies": {
-    "CK.ActivityMonitor.StandardSender": "5.0.0-d03",
-    "CK.Core": "5.0.0-d03",
-    "SimpleGitVersionTask": "0.16.0-b"
+    "CK.ActivityMonitor.StandardSender": "5.0.0-e01",
+    "CK.Core": "5.0.0-e01",
+    "SimpleGitVersionTask": "0.16.0"
   }
 }

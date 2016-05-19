@@ -12,7 +12,7 @@ namespace CK.Crs.Runtime.Execution
     {
         public static readonly string Trait = "Async";
 
-        public TaskBasedCommandExecutor( ICommandExecutionFactories factories  ) : base( factories )
+        public TaskBasedCommandExecutor( ICommandHandlerFactory factory ) : base( factory )
         {
         }
 
@@ -25,7 +25,7 @@ namespace CK.Crs.Runtime.Execution
             return trait.IsSupersetOf( executorTrait );
         }
 
-        protected override Task<CommandResponse> ExecuteAsync( CommandContext context )
+        protected override Task<CommandResponse> ExecuteAsync( IPipeline pipeline, CommandContext context )
         {
             var token = context.ExecutionContext.Monitor.DependentActivity().CreateTokenWithTopic( GetType().Name );
 
@@ -38,14 +38,13 @@ namespace CK.Crs.Runtime.Execution
                 {
                     context.ExecutionContext.Monitor = dependentMonitor;
 
-                    await CommandRunner.ExecuteAsync( context, Factories );
+                    await CommandRunner.ExecuteAsync( context, Factory );
 
                     var response = new CommandResultResponse( context.Result, context.ExecutionContext.Action );
-                    var responseDispatcher = Factories.CreateResponseDispatcher();
-                    if( responseDispatcher == null )
+                    if( pipeline.Configuration.ExternalComponents.ResponseDispatcher == null )
                         dependentMonitor.Warn().Send("No response dispatcher were available...");
                     else
-                        await responseDispatcher.DispatchAsync( context.ExecutionContext.Action.CallbackId, response );
+                        await pipeline.Configuration.ExternalComponents.ResponseDispatcher.DispatchAsync( context.ExecutionContext.Action.CallbackId, response );
                 }
             } );
 

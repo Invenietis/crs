@@ -4,6 +4,6 @@
     <NuGetPackageRoot>$(UserProfile)\.nuget\packages\</NuGetPackageRoot>
   </PropertyGroup>
   <ImportGroup>
-    <Import Project="$(NuGetPackageRoot)\SimpleGitVersionTask\0.16.0-a02\Build\SimpleGitVersionTask.targets" Condition="Exists('$(NuGetPackageRoot)\SimpleGitVersionTask\0.16.0-a02\Build\SimpleGitVersionTask.targets')" />
+    <Import Project="$(NuGetPackageRoot)\SimpleGitVersionTask\0.16.0\Build\SimpleGitVersionTask.targets" Condition="Exists('$(NuGetPackageRoot)\SimpleGitVersionTask\0.16.0\Build\SimpleGitVersionTask.targets')" />
   </ImportGroup>
 </Project>

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CK.Core;
 
-namespace CK.Crs.Runtime.Execution
+namespace CK.Crs.Runtime
 {
     /// <summary>
     /// Defines an executor of an operation. An operation can be anything executable by the underlying executor.

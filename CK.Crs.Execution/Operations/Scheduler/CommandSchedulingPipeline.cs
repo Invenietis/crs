@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CK.Core;
 using CK.Crs.Runtime;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CK.Crs.Runtime.Execution
 {
@@ -27,11 +28,16 @@ namespace CK.Crs.Runtime.Execution
         {
             get { return default( CancellationToken ); }
         }
+
+        IServiceScope _scope;
+
         public IServiceProvider CommandServices { get; }
 
         public CommandSchedulingPipeline( IServiceProvider serviceProvider, ICrsConfiguration configuration, ScheduledCommand command )
         {
-            CommandServices = serviceProvider;
+            _scope = serviceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
+
+            CommandServices = _scope.ServiceProvider;
             Configuration = configuration;
             Monitor = command.Token.CreateDependentMonitor();
             Action = command;
@@ -39,6 +45,7 @@ namespace CK.Crs.Runtime.Execution
         }
         public void Dispose()
         {
+            _scope.Dispose();
             ((IDisposableActivityMonitor)Monitor).Dispose();
         }
     }
