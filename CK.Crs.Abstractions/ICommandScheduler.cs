@@ -33,8 +33,6 @@ namespace CK.Crs
     {
         public CommandSchedulingOption( DateTime time, bool cancellable = true )
         {
-            if( time < DateTime.UtcNow ) throw new ArgumentException( "A negative timespan is not supported", "laps" );
-
             WhenCommandShouldBeRaised = time;
             Cancellable = cancellable;
         }

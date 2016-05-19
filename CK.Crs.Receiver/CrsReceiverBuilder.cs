@@ -11,17 +11,21 @@ namespace CK.Crs.Runtime
     {
         protected string RoutePrefix { get; private set; }
 
-        protected IServiceProvider ApplicationServices { get; private set; }
+        protected ICommandRegistry Registry { get; private set; }
 
-        public CrsReceiverBuilder( string routePrefix, IServiceProvider services )
+        public CrsReceiverBuilder( string routePrefix, ICommandRegistry registry )
         {
             RoutePrefix = routePrefix;
-            ApplicationServices = services;
+            Registry = registry;
 
-            var registry = ApplicationServices.GetRequiredService<ICommandRegistry>();
             var routes = new CommandRouteCollection();
-            var config = new CrsConfiguration( RoutePrefix, registry, routes );
+            var config = new CrsConfiguration( RoutePrefix, Registry, routes );
             AddConfiguration( config );
+        }
+
+        public override ICrsHandler Build( IServiceProvider applicationServices )
+        {
+            return base.Build( applicationServices );
         }
 
         protected override void ConfigureDefaultPipeline( ICrsConfiguration configuration )

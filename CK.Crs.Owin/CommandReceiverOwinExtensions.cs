@@ -27,7 +27,11 @@ namespace CK.Crs
 
         class CrsBuilder : CrsReceiverBuilder
         {
-            public CrsBuilder( string routePrefix, IServiceProvider services ) : base( routePrefix, services ) { }
+            IServiceProvider _services;
+            public CrsBuilder( string routePrefix, IServiceProvider services ) : base( routePrefix, services.GetService<ICommandRegistry>() )
+            {
+                _services = services;
+            }
 
             protected override void ConfigureDefaultPipeline( ICrsConfiguration config )
             {
@@ -42,7 +46,7 @@ namespace CK.Crs
                     .UseSyncCommandExecutor()
                     .UseJsonCommandWriter();
 
-                config.ExternalComponents.CommandScheduler = new InMemoryScheduler( config, ApplicationServices );
+                config.ExternalComponents.CommandScheduler = new InMemoryScheduler( config, _services );
             }
         }
     }
