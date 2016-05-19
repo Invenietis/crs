@@ -17,12 +17,13 @@ namespace CK.Crs.Runtime.Routing
 
         public override Task Invoke( IPipeline pipeline, CancellationToken token )
         {
-            pipeline.Action.Description = pipeline.Configuration.Routes.FindRoute( pipeline.Configuration.ReceiverPath, pipeline.Request.Path );
-            if( pipeline.Action.Description != null )
+            var routeData =  pipeline.Configuration.Routes.FindRoute( pipeline.Configuration.ReceiverPath, pipeline.Request.Path );
+            if( routeData != null )
             {
-                if( pipeline.Action.Description.Descriptor.HandlerType == null )
+                pipeline.Action.Description = routeData.Descriptor;
+                if( pipeline.Action.Description.HandlerType == null )
                 {
-                    string msg = $"No handler found for command [type={pipeline.Action.Description.Descriptor.CommandType}].";
+                    string msg = $"No handler found for command [type={pipeline.Action.Description.CommandType}].";
                     pipeline.Monitor.Error().Send( msg );
                     pipeline.Response = new CommandInvalidResponse( pipeline.Action.CommandId, msg );
                 }

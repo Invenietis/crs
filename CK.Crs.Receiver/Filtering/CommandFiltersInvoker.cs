@@ -38,10 +38,17 @@ namespace CK.Crs.Runtime.Filtering
         {
             var filterContext = new FilterContext(pipeline.Monitor, pipeline.Action.Description, pipeline.Request.User, pipeline.Action.Command);
 
+            // TODO: optimize this to avoid multiple lookups during pipeline execution. By looking up in a shared data between components ?
+            var routeData =  pipeline.Configuration.Routes.FindRoute( pipeline.Configuration.ReceiverPath, pipeline.Request.Path );
+            if( routeData == null )
+            {
+                throw new InvalidOperationException( "The command should have valid routing definition..." );
+            }
+
             using( pipeline.Monitor.OpenTrace().Send( "Applying filters..." )
                 .ConcludeWith( () => filterContext.Rejected ? "INVALID" : "OK" ) )
             {
-                foreach( var filter in pipeline.Action.Description.Filters.Select( f => new FilterInfo( _commandFilterFactory.CreateFilter( f ) ) ) )
+                foreach( var filter in routeData.Filters.Select( f => new FilterInfo( _commandFilterFactory.CreateFilter( f ) ) ) )
                 {
                     if( filter.Instance == null )
                     {

@@ -8,14 +8,17 @@ using CK.Core;
 
 namespace CK.Crs.Runtime.Execution
 {
-    class TransactionnalCommandScheduler : ICommandScheduler
+    public class TransactionnalCommandScheduler : ICommandScheduler
     {
         readonly IOperationExecutor<ScheduledCommand> _operationExecutor;
+        readonly ICommandRegistry _commandRegistry;
 
-        public TransactionnalCommandScheduler( IOperationExecutor<ScheduledCommand> operationExecutor  )
+        public TransactionnalCommandScheduler( ICommandRegistry commandRegistry, IOperationExecutor<ScheduledCommand> operationExecutor )
         {
+            if( commandRegistry == null ) throw new ArgumentNullException( nameof( commandRegistry ) );
             if( operationExecutor == null ) throw new ArgumentNullException( nameof( operationExecutor ) );
 
+            _commandRegistry = commandRegistry;
             _operationExecutor = operationExecutor;
         }
 
@@ -27,10 +30,16 @@ namespace CK.Crs.Runtime.Execution
 
         public Guid Schedule<T>( IActivityMonitor monitor, T command, CommandSchedulingOption option )
         {
+            var description = _commandRegistry.Registration.FirstOrDefault( x => x.CommandType == typeof(T));
+            if( description == null )
+            {
+                throw new InvalidOperationException( $"Unable to schedule command of type {typeof( T ).Name}. Make sure it is registered on the global ICommandRegistry." );
+            }
+
             ScheduledCommand operation = new ScheduledCommand(monitor, CreateCommandIdentifier() )
             {
                 Command = command,
-                Description = null, // TODO: obtain description for the command to schedule.
+                Description = description,
                 Scheduling = option
             };
 

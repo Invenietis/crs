@@ -14,13 +14,13 @@ namespace CK.Crs.Runtime.Filtering
         public ReflectionAmbientValueValidationContext( IActivityMonitor monitor, CommandAction action, IAmbientValues ambientValues ) : base( monitor, action, ambientValues )
         {
             // TODO: cache properties for the command type.
-            Properties = action.Description.Descriptor.CommandType.GetProperties().ToArray();
+            Properties = action.Description.CommandType.GetProperties().ToArray();
         }
 
         public sealed override async Task<bool> ValidateValue<T>( string valueName, AmbientValueComparer<T> comparer )
         {
             var property = Properties.FirstOrDefault( x => x.Name == valueName);
-            if( property == null ) Monitor.Info().Send("Property {0} not found for value {1} on command {2}", valueName, valueName, Action.Description.Descriptor.CommandType.Name );
+            if( property == null ) Monitor.Info().Send("Property {0} not found for value {1} on command {2}", valueName, valueName, Action.Description.CommandType.Name );
             else
             {
                 T value = (T) property.GetMethod.Invoke( Action.Command, null );

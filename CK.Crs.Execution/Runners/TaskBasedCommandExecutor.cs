@@ -12,7 +12,7 @@ namespace CK.Crs.Runtime.Execution
     {
         public static readonly string Trait = "Async";
 
-        public TaskBasedCommandExecutor( ICommandHandlerFactory factory ) : base( factory )
+        public TaskBasedCommandExecutor( ICommandHandlerFactory factory, ICommandRegistry registry ) : base( factory, registry )
         {
         }
 

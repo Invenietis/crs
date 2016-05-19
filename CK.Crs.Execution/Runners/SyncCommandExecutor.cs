@@ -14,7 +14,7 @@ namespace CK.Crs.Runtime.Execution
     /// </summary>
     class SyncCommandExecutor : AbstractCommandExecutor
     {
-        public SyncCommandExecutor( ICommandHandlerFactory factory ) : base( factory )
+        public SyncCommandExecutor( ICommandHandlerFactory factory, ICommandRegistry registry ) : base( factory, registry )
         {
         }
 

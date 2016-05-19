@@ -17,7 +17,7 @@ namespace CK.Crs
         /// <summary>
         /// Gets the command description.
         /// </summary>
-        CommandRoute Description { get; }
+        CommandDescription Description { get; }
 
         /// <summary>
         /// Gets the command instance

@@ -12,7 +12,6 @@ namespace CK.Crs.Runtime.Execution
     public class InMemoryScheduler : IOperationExecutor<ScheduledCommand>, IDisposable
     {
         readonly IList<Timer> _timers;
-        readonly SyncCommandExecutor _executor;
 
         CancellationTokenSource _source;
         readonly IServiceProvider _applicationServices;
@@ -23,7 +22,6 @@ namespace CK.Crs.Runtime.Execution
             if( configuration == null ) throw new ArgumentNullException( nameof( configuration ) );
             if( services == null ) throw new ArgumentNullException( nameof( services ) );
 
-            //_executor = new SyncCommandExecutor( factory );
             _applicationServices = services;
             _configuration = configuration;
 
@@ -51,7 +49,9 @@ namespace CK.Crs.Runtime.Execution
                 // Ot : schedule a command is full trust on the command scheduling, since the command is crafted server-side.
                 //await new CommandFiltersInvoker( _factory ).Invoke( pipeline, _source.Token );
 
-                await new SyncCommandExecutor( pipeline.CommandServices.GetService<ICommandHandlerFactory>() ).TryInvoke( pipeline, pipeline.CancellationToken );
+                var h =  pipeline.CommandServices.GetService<ICommandHandlerFactory>();
+                var r =  pipeline.CommandServices.GetService<ICommandRegistry>();
+                await new SyncCommandExecutor( h, r ).TryInvoke( pipeline, pipeline.CancellationToken );
                 pipeline.Monitor.Info().Send( "ScheduledCommand executed {0}.", operation.CommandId );
             }
         }

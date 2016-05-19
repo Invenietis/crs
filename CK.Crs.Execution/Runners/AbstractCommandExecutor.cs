@@ -11,9 +11,11 @@ namespace CK.Crs.Runtime.Execution
 
     public abstract class AbstractCommandExecutor : PipelineComponent
     {
-        public AbstractCommandExecutor( ICommandHandlerFactory factories )
+        readonly ICommandRegistry _registry;
+        public AbstractCommandExecutor( ICommandHandlerFactory factories, ICommandRegistry registry )
         {
             Factory = factories;
+            _registry = registry;
         }
 
         protected ICommandHandlerFactory Factory { get; }
@@ -30,14 +32,14 @@ namespace CK.Crs.Runtime.Execution
 
         public override bool ShouldInvoke( IPipeline pipeline )
         {
-            return pipeline.Response == null && pipeline.Action.Command != null && CanExecute( pipeline, pipeline.Action.Description.Descriptor );
+            return pipeline.Response == null && pipeline.Action.Command != null && CanExecute( pipeline, pipeline.Action.Description );
         }
 
         public override async Task Invoke( IPipeline pipeline, CancellationToken token = default( CancellationToken ) )
         {
             using( pipeline.Monitor.OpenTrace().Send( "Preparing asynchronous command execution..." ) )
             {
-                var executionContext = new CommandExecutionContext( pipeline );
+                var executionContext = new CommandExecutionContext( pipeline, _registry );
                 var context = new CommandContext( executionContext );
 
                 if( pipeline.Configuration.Events.CommandExecuting != null )

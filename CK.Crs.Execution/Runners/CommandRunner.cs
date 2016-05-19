@@ -19,11 +19,11 @@ namespace CK.Crs.Runtime.Execution
         {
             var mon = context.ExecutionContext.Monitor;
 
-            var decorators = context.ExecutionContext.Action.Description.Descriptor.Decorators.Select( factory.CreateDecorator ).ToArray();
-            using( mon.OpenTrace().Send( $"Running Command [{context.ExecutionContext.Action.Description.Descriptor.CommandType.Name}]..." ) )
+            var decorators = context.ExecutionContext.Action.Description.Decorators.Select( factory.CreateDecorator ).ToArray();
+            using( mon.OpenTrace().Send( $"Running Command [{context.ExecutionContext.Action.Description.CommandType.Name}]..." ) )
             {
-                ICommandHandler handler = factory.CreateHandler( context.ExecutionContext.Action.Description.Descriptor.HandlerType );
-                if( handler == null ) throw new InvalidOperationException( $"Unable to create type {context.ExecutionContext.Action.Description.Descriptor.HandlerType}" );
+                ICommandHandler handler = factory.CreateHandler( context.ExecutionContext.Action.Description.HandlerType );
+                if( handler == null ) throw new InvalidOperationException( $"Unable to create type {context.ExecutionContext.Action.Description.HandlerType}" );
                 try
                 {
                     using( mon.OpenTrace().Send( "OnCommandExecuting..." ) )

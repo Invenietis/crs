@@ -32,12 +32,12 @@ namespace CK.Crs.Runtime.Formatting
         {
             if( pipeline.Action.Description == null ) throw new InvalidOperationException( "Cannot build a command without a valid description" );
 
-            pipeline.Action.Command = CreateCommand( pipeline.Action.Description.Descriptor.CommandType );
+            pipeline.Action.Command = CreateCommand( pipeline.Action.Description.CommandType );
             if( pipeline.Action.Command == null )
             {
                 string msg = String.Format(
                         "A valid command definition has been infered from routes, but the command type {0} failed to be instanciated.",
-                        pipeline.Action.Description.Descriptor.CommandType.Name );
+                        pipeline.Action.Description.CommandType.Name );
                 pipeline.Monitor.Error().Send( msg );
             }
             else
