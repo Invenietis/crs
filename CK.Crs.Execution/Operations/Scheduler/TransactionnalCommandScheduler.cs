@@ -11,14 +11,12 @@ namespace CK.Crs.Runtime.Execution
     class TransactionnalCommandScheduler : ICommandScheduler
     {
         readonly IOperationExecutor<ScheduledCommand> _operationExecutor;
-        readonly IPipeline _originalPipeline;
 
-        public TransactionnalCommandScheduler( IOperationExecutor<ScheduledCommand> operationExecutor, IPipeline pipeline )
+        public TransactionnalCommandScheduler( IOperationExecutor<ScheduledCommand> operationExecutor  )
         {
             if( operationExecutor == null ) throw new ArgumentNullException( nameof( operationExecutor ) );
 
             _operationExecutor = operationExecutor;
-            _originalPipeline = pipeline;
         }
 
         public bool CancelScheduling( IActivityMonitor mointor, Guid commandId )
@@ -29,12 +27,11 @@ namespace CK.Crs.Runtime.Execution
 
         public Guid Schedule<T>( IActivityMonitor monitor, T command, CommandSchedulingOption option )
         {
-            ScheduledCommand operation = new ScheduledCommand( CreateCommandIdentifier() )
+            ScheduledCommand operation = new ScheduledCommand(monitor, CreateCommandIdentifier() )
             {
                 Command = command,
                 Description = null, // TODO: obtain description for the command to schedule.
-                Scheduling = option,
-                Pipeline = _originalPipeline
+                Scheduling = option
             };
 
             if( Transaction.Current == null )

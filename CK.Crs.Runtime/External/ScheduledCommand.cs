@@ -10,11 +10,10 @@ namespace CK.Crs
 {
     public class ScheduledCommand : CommandAction
     {
-        public ScheduledCommand( Guid commandId ) : base( commandId )
+        public ScheduledCommand( IActivityMonitor monitor, Guid commandId ) : base( commandId )
         {
+            Token = monitor.DependentActivity().CreateToken();
         }
-
-        public IPipeline Pipeline { get; set; }
 
         /// <summary>
         /// Gets or sets the scheduling configuration for this command.
