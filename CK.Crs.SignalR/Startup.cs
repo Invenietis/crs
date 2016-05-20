@@ -29,6 +29,7 @@ namespace CK.Crs
                 EnableDetailedErrors = true,
                 Resolver = resolver
             } );
+            
             GlobalHost.DependencyResolver = resolver;
         }
 

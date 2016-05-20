@@ -33,11 +33,13 @@ namespace CK.Crs.Runtime.Execution
             if( String.IsNullOrEmpty( context.ExecutionContext.Action.CallbackId ) )
                 throw new InvalidOperationException( "You must supply a CallbackId in order to be notified of command responses..." );
 
-            var token = context.ExecutionContext.Monitor.DependentActivity().CreateTokenWithTopic( GetType().Name );
-
             // This implementation does not guarantee that the command will be correctly handled...
             // We need some retry mechanism and a pending command persistence mechanism to be resilient.
-            var t = new Task( async () =>
+
+            await _commandRunningStore.AddCommandAsync( context.ExecutionContext.Action.CallbackId, context.ExecutionContext.Action.CommandId );
+
+            var token = context.ExecutionContext.Monitor.DependentActivity().CreateTokenWithTopic( GetType().Name );
+            await Task.Run( async () =>
             {
                 // We override the IActivityMonitor with a dependant one to be thread safe !
                 using( var dependentMonitor = token.CreateDependentMonitor() )
@@ -54,10 +56,8 @@ namespace CK.Crs.Runtime.Execution
                 }
             } );
 
-            await _commandRunningStore.AddCommandAsync( context.ExecutionContext.Action.CallbackId, context.ExecutionContext.Action.CommandId );
 
             var deferredResponse = new CommandDeferredResponse( context.ExecutionContext.Action );
-            t.Start( TaskScheduler.Current );
             return deferredResponse;
         }
     }
