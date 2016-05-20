@@ -78,6 +78,10 @@
       <Project>{52c1088b-f87d-489d-b592-38f3881b2271}</Project>
       <Name>CK.Crs.Runtime</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CK.Crs.SignalR\CK.Crs.SignalR.csproj">
+      <Project>{fcb6ab15-c31c-4b7a-bd2a-4ab38cb9aefc}</Project>
+      <Name>CK.Crs.SignalR</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

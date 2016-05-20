@@ -22,6 +22,8 @@ namespace CK.Crs
 
                 var commandReceiver = crsBuilder.Build( applicationServices );
                 app.Use<CommandReceiverOwinMiddleware>( commandReceiver );
+
+                Startup.ConfigureSignalR( app, applicationServices );
             } );
         }
 

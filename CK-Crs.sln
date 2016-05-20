@@ -26,6 +26,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CK.Crs.Extensions", "CK.Crs
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CK.Crs.Runtime.Extensions", "CK.Crs.Runtime.Extensions\CK.Crs.Runtime.Extensions.csproj", "{B41506A4-037D-4B1E-A298-AE7B14F9E07B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CK.Crs.SignalR", "CK.Crs.SignalR\CK.Crs.SignalR.csproj", "{FCB6AB15-C31C-4B7A-BD2A-4AB38CB9AEFC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -90,6 +92,14 @@ Global
 		{B41506A4-037D-4B1E-A298-AE7B14F9E07B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B41506A4-037D-4B1E-A298-AE7B14F9E07B}.Release|x86.ActiveCfg = Release|Any CPU
 		{B41506A4-037D-4B1E-A298-AE7B14F9E07B}.Release|x86.Build.0 = Release|Any CPU
+		{FCB6AB15-C31C-4B7A-BD2A-4AB38CB9AEFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FCB6AB15-C31C-4B7A-BD2A-4AB38CB9AEFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FCB6AB15-C31C-4B7A-BD2A-4AB38CB9AEFC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FCB6AB15-C31C-4B7A-BD2A-4AB38CB9AEFC}.Debug|x86.Build.0 = Debug|Any CPU
+		{FCB6AB15-C31C-4B7A-BD2A-4AB38CB9AEFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FCB6AB15-C31C-4B7A-BD2A-4AB38CB9AEFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FCB6AB15-C31C-4B7A-BD2A-4AB38CB9AEFC}.Release|x86.ActiveCfg = Release|Any CPU
+		{FCB6AB15-C31C-4B7A-BD2A-4AB38CB9AEFC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
