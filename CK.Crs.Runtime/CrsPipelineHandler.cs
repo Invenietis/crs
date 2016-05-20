@@ -73,7 +73,10 @@ namespace CK.Crs.Runtime
                 Monitor = monitor;
                 Request = request;
                 Output = outputStream;
-                Action = new CommandAction( Guid.NewGuid() );
+                Action = new CommandAction( Guid.NewGuid() )
+                {
+                    CallbackId = Request.CallbackIdentifier
+                };
                 CancellationToken = cancellationToken;
                 _group = Monitor.OpenTrace().Send( "Invoking command receiver Pipeline..." );
             }
