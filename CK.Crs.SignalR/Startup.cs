@@ -22,6 +22,7 @@ namespace CK.Crs
             CrsSignalRConfiguration config = new CrsSignalRConfiguration();
             if( configuration != null ) configuration( config );
 
+            services.AddTransient<CrsHub>();
             services.AddSingleton<ICommandResponseDispatcher, CrsCommandDispatcher>();
             if( String.IsNullOrEmpty( config.RunningCommandStoreImplementation ) )
             {
@@ -32,11 +33,8 @@ namespace CK.Crs
                 services.AddSingleton( typeof( ICommandRunningStore ), CK.Core.SimpleTypeFinder.WeakResolver( config.RunningCommandStoreImplementation, true ) );
             }
         }
-    }
 
-    public class Startup
-    {
-        public static void ConfigureSignalR( IAppBuilder app, IServiceProvider services )
+        public static void MapCrsSignalR( this IAppBuilder app, IServiceProvider services )
         {
             var resolver = new DependencyResolver( services );
 
