@@ -48,7 +48,7 @@ namespace CK.Crs.Runtime.Execution
 
                     await CommandRunner.ExecuteAsync( context, Factory );
 
-                    var response = new CommandResultResponse( context.Result, context.ExecutionContext.Action );
+                    var response = CreateFromContext( context );
                     if( pipeline.Configuration.ExternalComponents.ResponseDispatcher == null )
                         dependentMonitor.Warn().Send("No response dispatcher were available...");
                     else
