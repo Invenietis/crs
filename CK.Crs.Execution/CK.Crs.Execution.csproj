@@ -52,6 +52,7 @@
     <Compile Include="DefaultFactories.cs" />
     <Compile Include="Extensions\CommandExecutorExtensions.cs" />
     <Compile Include="ICommandHandlerFactory.cs" />
+    <Compile Include="ICommandRunningStore.cs" />
     <Compile Include="Operations\Events\TransactionnalEventPublisher.cs" />
     <Compile Include="Operations\Scheduler\CommandSchedulingPipeline.cs" />
     <Compile Include="Operations\Scheduler\InMemoryScheduler.cs" />

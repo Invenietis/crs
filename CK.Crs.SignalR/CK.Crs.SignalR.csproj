@@ -84,7 +84,6 @@
   <ItemGroup>
     <Compile Include="CrsCommandDispatcher.cs" />
     <Compile Include="CrsHub.cs" />
-    <Compile Include="ICommandRunningStore.cs" />
     <Compile Include="ICrsClientProxy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -93,6 +92,10 @@
     <ProjectReference Include="..\CK.Crs.Abstractions\CK.Crs.Abstractions.csproj">
       <Project>{7605f8fb-b447-4d6b-91f6-d85acc9ddbb7}</Project>
       <Name>CK.Crs.Abstractions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CK.Crs.Execution\CK.Crs.Execution.csproj">
+      <Project>{f09f1cac-1c01-498b-9cd3-8a6d0e6928d5}</Project>
+      <Name>CK.Crs.Execution</Name>
     </ProjectReference>
     <ProjectReference Include="..\CK.Crs.Runtime\CK.Crs.Runtime.csproj">
       <Project>{52c1088b-f87d-489d-b592-38f3881b2271}</Project>

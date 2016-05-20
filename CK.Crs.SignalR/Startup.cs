@@ -11,32 +11,16 @@ using Owin;
 
 namespace CK.Crs
 {
-    public class CrsSignalRConfiguration
-    {
-        public string RunningCommandStoreImplementation { get; set; }
-    }
     public static class SignalRExtensions
     {
-        public static void AddCrsSignalR( this IServiceCollection services, Action<CrsSignalRConfiguration> configuration = null )
+        public static void AddCrsSignalR( this IServiceCollection services )
         {
-            CrsSignalRConfiguration config = new CrsSignalRConfiguration();
-            if( configuration != null ) configuration( config );
-
             services.AddTransient<CrsHub>();
-            services.AddSingleton<ICommandResponseDispatcher, CrsCommandDispatcher>();
-            if( String.IsNullOrEmpty( config.RunningCommandStoreImplementation ) )
-            {
-                services.AddSingleton<ICommandRunningStore, InMemoryCommandRunningStore>();
-            }
-            else
-            {
-                services.AddSingleton( typeof( ICommandRunningStore ), CK.Core.SimpleTypeFinder.WeakResolver( config.RunningCommandStoreImplementation, true ) );
-            }
         }
 
         public static void MapCrsSignalR( this IAppBuilder app, IServiceProvider services )
         {
-            var resolver = new DependencyResolver( services );
+            var resolver = new CustomSignalRDependencyResolver( services );
 
             app.MapSignalR( new HubConfiguration
             {
@@ -45,25 +29,32 @@ namespace CK.Crs
                 EnableDetailedErrors = true,
                 Resolver = resolver
             } );
+            GlobalHost.DependencyResolver = resolver;
         }
 
-        class DependencyResolver : DefaultDependencyResolver
+        public class CustomSignalRDependencyResolver : DefaultDependencyResolver
         {
-            IServiceProvider _serviceProvider;
-            public DependencyResolver( IServiceProvider serviceProvider )
+            private readonly IServiceProvider _serviceProvider;
+
+            public CustomSignalRDependencyResolver( IServiceProvider serviceProvider )
             {
                 _serviceProvider = serviceProvider;
             }
 
             public override object GetService( Type serviceType )
             {
-                return _serviceProvider.GetService( serviceType ) ?? base.GetService( serviceType );
+                var service = _serviceProvider.GetService(serviceType);
+
+                return service ?? base.GetService( serviceType );
             }
 
             public override IEnumerable<object> GetServices( Type serviceType )
             {
-                return _serviceProvider.GetServices( serviceType ) ?? base.GetServices( serviceType );
+                var services = _serviceProvider.GetServices(serviceType);
+
+                return services.Concat( base.GetServices( serviceType ) );
             }
+
         }
     }
 }

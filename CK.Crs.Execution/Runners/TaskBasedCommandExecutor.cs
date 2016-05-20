@@ -12,8 +12,11 @@ namespace CK.Crs.Runtime.Execution
     {
         public static readonly string Trait = "Async";
 
-        public TaskBasedCommandExecutor( ICommandHandlerFactory factory, ICommandRegistry registry ) : base( factory, registry )
+        readonly ICommandRunningStore _commandRunningStore;
+
+        public TaskBasedCommandExecutor( ICommandRunningStore commandRunningStore, ICommandHandlerFactory factory, ICommandRegistry registry ) : base( factory, registry )
         {
+            _commandRunningStore = commandRunningStore;
         }
 
         protected override bool CanExecute( IPipeline pipeline, CommandDescription commandDescription )
@@ -25,8 +28,11 @@ namespace CK.Crs.Runtime.Execution
             return trait.IsSupersetOf( executorTrait );
         }
 
-        protected override Task<CommandResponse> ExecuteAsync( IPipeline pipeline, CommandContext context )
+        protected override async Task<CommandResponse> ExecuteAsync( IPipeline pipeline, CommandContext context )
         {
+            if( String.IsNullOrEmpty( context.ExecutionContext.Action.CallbackId ) )
+                throw new InvalidOperationException( "You must supply a CallbackId in order to be notified of command responses..." );
+
             var token = context.ExecutionContext.Monitor.DependentActivity().CreateTokenWithTopic( GetType().Name );
 
             // This implementation does not guarantee that the command will be correctly handled...
@@ -48,9 +54,11 @@ namespace CK.Crs.Runtime.Execution
                 }
             } );
 
+            await _commandRunningStore.AddCommandAsync( context.ExecutionContext.Action.CallbackId, context.ExecutionContext.Action.CommandId );
+
             var deferredResponse = new CommandDeferredResponse( context.ExecutionContext.Action );
             t.Start( TaskScheduler.Current );
-            return Task.FromResult<CommandResponse>( deferredResponse );
+            return deferredResponse;
         }
     }
 }
