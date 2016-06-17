@@ -33,29 +33,25 @@ namespace CK.Crs
         /// </summary>
         public Exception Exception { get; private set; }
 
-        public bool IsDirty
-        {
-            get { return Result != null || Exception != null; }
-        }
+        public bool Handled { get; private set; }
 
         public void SetException( Exception ex )
         {
-            if( Exception == null )
-            {
-                Exception = ex;
-            }
-            else
+            if( Exception != null )
             {
                 ExecutionContext.Monitor.Warn().Send( "Try to set an Exception of type {0} but the context already has an exception set.", ex.GetType().Name );
             }
+            Handled = true;
+            Exception = ex;
         }
 
         public void SetResult( object result )
         {
-            if( Result != null )
+            if( Handled )
             {
                 ExecutionContext.Monitor.Warn().Send( "A Result already exists. It has been overriden..." );
             }
+            Handled = true;
             Result = result;
         }
     }

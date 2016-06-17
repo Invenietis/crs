@@ -51,7 +51,7 @@ namespace CK.Crs.Runtime.Execution
         }
         protected CommandResponse CreateFromContext( CommandContext context )
         {
-            if( context.IsDirty )
+            if( context.Handled )
             {
                 if( context.Exception != null )
                     return new CommandErrorResponse( context.Exception.Message, context.ExecutionContext.Action.CommandId );
