@@ -12,7 +12,7 @@
       <group targetFramework=".NETFramework4.5.1">
         <dependency id="CK.Core" version="5.0.0-d03" />
         <dependency id="CK.ActivityMonitor.StandardSender" version="5.0.0-d03" />
-        <dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="1.0.0-rc1-final" />
+        <dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="1.0.0" />
       </group>
     </dependencies>
   </metadata>

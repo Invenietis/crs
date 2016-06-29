@@ -13,7 +13,7 @@
         <dependency id="Microsoft.Owin" version="[3.0.1, )" />
         <dependency id="Microsoft.AspNet.SignalR.Core" version="[2.2.0, )" />
         <dependency id="CK.Crs.Execution" version="[$version$, )" />
-        <dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="1.0.0-rc2-final" />
+        <dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="1.0.0" />
       </group>
     </dependencies>
   </metadata>
