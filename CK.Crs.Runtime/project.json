@@ -1,4 +1,4 @@
-﻿{
+﻿ {
   "version": "1.0.0-*",
   "description": "CK.Crs.Runtime.Runtime Class Library",
   "authors": [
@@ -23,8 +23,8 @@
     "win": {}
   },
   "dependencies": {
-    "CK.ActivityMonitor.StandardSender": "5.0.0-e01",
-    "CK.Core": "5.0.0-e01",
-    "SimpleGitVersionTask": "0.16.0"
+    "CK.ActivityMonitor.StandardSender": "5.0.0",
+    "CK.Core": "5.0.0",
+    "SimpleGitVersionTask": "0.18.0"
   }
 }
