@@ -6,9 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Reflection;
 using Microsoft.Extensions.Caching.Memory;
-using CK.Core;
-using System.Text;
-using System.Diagnostics;
 
 namespace CK.Crs.Runtime.Meta
 {
@@ -50,41 +47,27 @@ namespace CK.Crs.Runtime.Meta
                 }
                 if( command.ShowCommands )
                 {
-                    Stopwatch w = new Stopwatch();
-
                     result.Commands = new Dictionary<string, MetaCommand.MetaResult.MetaCommandDescription>();
-                    foreach( var c in pipeline.Configuration.Routes.All.ToList() )
+                    foreach( var c in pipeline.Configuration.Routes.All )
                     {
-                        //MetaCommand.MetaResult.MetaCommandDescription desc;
-                        //if( !_cache.TryGetValue( c.Route.FullPath, out desc ) )
-                        //{
-                        w.Restart();
-                        var commandType =  c.Descriptor.CommandType;
-                        var properties = commandType.GetProperties();
-                        File.AppendAllText( @"E:\Sites\Babel\Private\mylogtoutpourri.txt", $"{commandType.Name} {properties.Length} in {w.Elapsed} {Environment.NewLine}" );
-                        w.Reset();
-                        var commandProperties = properties.Select( e => new CommandPropertyInfo( e, _registration ) ).ToArray();
-
-                        File.AppendAllText( @"E:\Sites\Babel\Private\mylogtoutpourri.txt", $"{commandType.Name} {commandProperties.Length} in {w.Elapsed} {Environment.NewLine}" );
-                        var desc = new MetaCommand.MetaResult.MetaCommandDescription
+                        MetaCommand.MetaResult.MetaCommandDescription desc;
+                        if( !_cache.TryGetValue( c.Route.FullPath, out desc ) )
                         {
-                            Route = c.Route,
-                            //CommandType = c.Descriptor.CommandType.AssemblyQualifiedName,
-                            Parameters = commandProperties,
-                            Traits = c.Descriptor.Traits,
-                            Description = c.Descriptor.Description
-                        };
-                        //    _cache.Set( c.Route.FullPath, desc );
-                        //}
-                        File.AppendAllText( @"E:\Sites\Babel\Private\mylogtoutpourri.txt", $"{commandType.Name} in {w.Elapsed} {Environment.NewLine}" );
-
+                            desc = new MetaCommand.MetaResult.MetaCommandDescription
+                            {
+                                Route = c.Route,
+                                CommandType = c.Descriptor.CommandType.AssemblyQualifiedName,
+                                Parameters = c.Descriptor.CommandType.GetTypeInfo().DeclaredProperties.Select( e => new CommandPropertyInfo( e, _registration ) ).ToArray(),
+                                Traits = c.Descriptor.Traits,
+                                Description = c.Descriptor.Description
+                            };
+                            _cache.Set( c.Route.FullPath, desc );
+                        }
                         result.Commands.Add( c.Route.CommandName, desc );
                     }
                 }
-                File.AppendAllText( @"E:\Sites\Babel\Private\mylogtoutpourri.txt", $"DONE {Environment.NewLine}" );
 
                 pipeline.Response = new MetaCommandResponse( result );
-                File.AppendAllText( @"E:\Sites\Babel\Private\mylogtoutpourri.txt", $"AFTER RESPONSE {Environment.NewLine}" );
             }
         }
     }

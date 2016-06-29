@@ -11,15 +11,12 @@ namespace CK.Crs.Runtime.Meta
         {
             _propertyInfo = e;
             _ambientValue = ambientValue;
-            ParameterName = _propertyInfo.Name;
-            ParameterType = _propertyInfo.PropertyType.Name;
-            IsAmbientValue = _ambientValue.AmbientValues.FirstOrDefault( x => x.Name == _propertyInfo.Name ) != null;
         }
 
-        public readonly string ParameterName;
+        public string ParameterName => _propertyInfo.Name;
 
-        public readonly string ParameterType;
+        public string ParameterType => _propertyInfo.PropertyType.Name;
 
-        public readonly bool IsAmbientValue;
+        public bool IsAmbientValue => _ambientValue.AmbientValues.FirstOrDefault( e => e.Name == _propertyInfo.Name ) != null;
     }
 }
