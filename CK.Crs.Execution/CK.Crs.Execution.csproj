@@ -49,8 +49,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandExecutionContext.cs" />
+    <Compile Include="Configuration\CrsExecutorConfiguration.cs" />
     <Compile Include="DefaultFactories.cs" />
-    <Compile Include="Extensions\CommandExecutorExtensions.cs" />
+    <Compile Include="Configuration\CommandExecutorExtensions.cs" />
     <Compile Include="ICommandHandlerFactory.cs" />
     <Compile Include="ICommandRunningStore.cs" />
     <Compile Include="Operations\Events\TransactionnalEventPublisher.cs" />
@@ -58,12 +59,12 @@
     <Compile Include="Operations\Scheduler\InMemoryScheduler.cs" />
     <Compile Include="Operations\Scheduler\TransactionnalCommandScheduler.cs" />
     <Compile Include="Operations\TransactionnalOperationManager.cs" />
-    <Compile Include="Extensions\PipelineBuilderExecutionExtension.cs" />
+    <Compile Include="Configuration\PipelineBuilderExecutionExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Responses\CommandDeferredResponse.cs" />
     <Compile Include="Responses\CommandResultResponse.cs" />
     <Compile Include="Runners\AbstractCommandExecutor.cs" />
-    <Compile Include="Runners\CommandRunner.cs" />
+    <Compile Include="Runners\Engine.cs" />
     <Compile Include="Runners\SyncCommandExecutor.cs" />
     <Compile Include="Runners\TaskBasedCommandExecutor.cs" />
   </ItemGroup>

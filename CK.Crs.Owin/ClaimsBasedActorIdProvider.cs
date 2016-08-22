@@ -23,12 +23,12 @@ namespace CK.Crs.Owin
             var claimsPrincipal = HttpContext.Current.User as ClaimsPrincipal;
             if( claimsPrincipal != null )
             {
-                if( claimsPrincipal.HasClaim( p => p.Type == "CK.ActorId" ) )
+                if( claimsPrincipal.HasClaim( p => p.Type == ClaimTypes.NameIdentifier ) )
                 {
                     int actorId = 0;
                     return Task.FromResult( new UserIdResult
                     {
-                        IsValid = int.TryParse( claimsPrincipal.FindFirst( "CK.ActorId" ).Value, out actorId ) && actorId != 0,
+                        IsValid = int.TryParse( claimsPrincipal.FindFirst( ClaimTypes.NameIdentifier ).Value, out actorId ) && actorId != 0,
                         UserId = actorId
                     } );
                 }

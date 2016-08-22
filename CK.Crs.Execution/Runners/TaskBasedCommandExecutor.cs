@@ -13,10 +13,12 @@ namespace CK.Crs.Runtime.Execution
         public static readonly string Trait = "Async";
 
         readonly ICommandRunningStore _commandRunningStore;
+        readonly IExecutionFactory _factory;
 
-        public TaskBasedCommandExecutor( ICommandRunningStore commandRunningStore, ICommandHandlerFactory factory, ICommandRegistry registry ) : base( factory, registry )
+        public TaskBasedCommandExecutor( ICommandRunningStore commandRunningStore, IExecutionFactory factory, ICommandRegistry registry ) : base( registry )
         {
             _commandRunningStore = commandRunningStore;
+            _factory = factory;
         }
 
         protected override bool CanExecute( IPipeline pipeline, CommandDescription commandDescription )
@@ -45,8 +47,8 @@ namespace CK.Crs.Runtime.Execution
                 using( var dependentMonitor = token.CreateDependentMonitor() )
                 {
                     context.ExecutionContext.Monitor = dependentMonitor;
-
-                    await CommandRunner.ExecuteAsync( context, Factory );
+                    
+                    await Engine.RunAsync( context, _factory );
 
                     var response = CreateFromContext( context );
                     if( pipeline.Configuration.ExternalComponents.ResponseDispatcher == null )

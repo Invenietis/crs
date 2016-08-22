@@ -49,7 +49,7 @@ namespace CK.Crs.Runtime.Execution
                 // Ot : schedule a command is full trust on the command scheduling, since the command is crafted server-side.
                 //await new CommandFiltersInvoker( _factory ).Invoke( pipeline, _source.Token );
 
-                var h =  pipeline.CommandServices.GetService<ICommandHandlerFactory>();
+                var h =  pipeline.CommandServices.GetService<IExecutionFactory>();
                 var r =  pipeline.CommandServices.GetService<ICommandRegistry>();
                 await new SyncCommandExecutor( h, r ).TryInvoke( pipeline, pipeline.CancellationToken );
                 pipeline.Monitor.Info().Send( "ScheduledCommand executed {0}.", operation.CommandId );

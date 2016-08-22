@@ -12,13 +12,10 @@ namespace CK.Crs.Runtime.Execution
     public abstract class AbstractCommandExecutor : PipelineComponent
     {
         readonly ICommandRegistry _registry;
-        public AbstractCommandExecutor( ICommandHandlerFactory factories, ICommandRegistry registry )
+        public AbstractCommandExecutor( ICommandRegistry registry )
         {
-            Factory = factories;
             _registry = registry;
         }
-
-        protected ICommandHandlerFactory Factory { get; }
 
         protected abstract Task<CommandResponse> ExecuteAsync( IPipeline pipeline, CommandContext context );
 

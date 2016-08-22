@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace CK.Crs.Runtime.Execution
 {
-    public interface ICommandHandlerFactory
+    public interface IExecutionFactory
     {
         /// <summary>
         /// Creates an instance of the given type or return null if the type cannot be instanciated.

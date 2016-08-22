@@ -5,11 +5,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CK.Crs.Runtime.Execution
 {
-    public class DefaultFactory : ICommandHandlerFactory
+    public class DefaultExecutionFactory : IExecutionFactory
     {
         readonly DefaultCreateInstanceStrategy _s;
 
-        public DefaultFactory( IServiceProvider serviceProvider )
+        public DefaultExecutionFactory( IServiceProvider serviceProvider )
         {
             _s = new DefaultCreateInstanceStrategy( serviceProvider );
         }

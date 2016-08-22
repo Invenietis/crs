@@ -14,8 +14,10 @@ namespace CK.Crs.Runtime.Execution
     /// </summary>
     class SyncCommandExecutor : AbstractCommandExecutor
     {
-        public SyncCommandExecutor( ICommandHandlerFactory factory, ICommandRegistry registry ) : base( factory, registry )
+        readonly IExecutionFactory _factory;
+        public SyncCommandExecutor( IExecutionFactory factory, ICommandRegistry registry ) : base( registry )
         {
+            _factory = factory;
         }
 
 
@@ -29,7 +31,7 @@ namespace CK.Crs.Runtime.Execution
             var mon = context.ExecutionContext.Monitor;
             try
             {
-                await CommandRunner.ExecuteAsync( context, Factory );
+                await Engine.RunAsync( context, _factory );
                 mon.Trace().Send( "Done." );
             }
             catch( Exception ex )
