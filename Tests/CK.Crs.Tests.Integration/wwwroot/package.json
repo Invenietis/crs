@@ -1,0 +1,42 @@
+{
+  "name": "ck-infrastructure-command-tests-integration",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+    "dependencies": {
+        "jquery": "^2.2.0",
+        "ck-crs": "../../../../component-kitchen/src/ck-crs",
+        "ck-qrs": "../../../../component-kitchen/src/ck-qrs",
+         "angular2": "2.0.0-beta.6",
+            "systemjs": "0.19.20",
+            "es6-promise": "^3.0.2",
+            "es6-shim": "^0.33.3",
+            "reflect-metadata": "0.1.2",
+            "rxjs": "5.0.0-beta.0",
+        "zone.js": "0.5.14",
+        "immutable": "3.7.6"
+    },
+    "devDependencies": {
+        "gulp": "3.8.11",
+        "gulp-concat": "2.5.2",
+        "gulp-cssmin": "0.1.7",
+        "gulp-uglify": "1.2.0",
+        "rimraf": "2.2.8",
+        "gulp-sourcemaps": "^1.6.0",
+        "gulp-typescript": "^2.10.0",
+        "gulp-plumber": "^1.0.1",
+        "merge2": "^1.0.0",
+        "jasmine-core": "^2.4.1",
+        "ts-loader": "^0.7.2",
+        "typescript": "^1.7.5",
+        "systemjs": "^0.19.*",
+        "concurrently": "^1.0.0",
+        "webpack-stream": "^3.1.0",
+        "es6-promise": "^3.0.2"
+    },
+  "author": "",
+  "license": "ISC"
+}

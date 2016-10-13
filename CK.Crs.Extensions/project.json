@@ -1,0 +1,28 @@
+﻿{
+  "version": "1.0.0-*",
+  "description": "CK.Crs.Extensions Class Library",
+  "authors": [
+    "Cédric Legendre"
+  ],
+  "tags": [
+    ""
+  ],
+  "projectUrl": "",
+  "licenseUrl": "",
+  "compilationOptions": {
+    "xmlDoc": true
+  },
+  "frameworks": {
+    "net451": {
+      "frameworkAssemblies": {
+        "System.Transactions": "4.0.0.0"
+      }
+    }
+  },
+  "runtimes": {
+    "win": {}
+  },
+  "dependencies": {
+    "SimpleGitVersionTask": "0.18.0"
+  }
+}

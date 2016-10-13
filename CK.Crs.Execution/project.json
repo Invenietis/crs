@@ -1,0 +1,31 @@
+﻿{
+  "version": "1.0.0-*",
+  "description": "CK.Crs.Execution Class Library",
+  "authors": [
+    "Cédric Legendre"
+  ],
+  "tags": [
+    ""
+  ],
+  "projectUrl": "",
+  "licenseUrl": "",
+  "compilationOptions": {
+    "xmlDoc": true
+  },
+  "frameworks": {
+    "net451": {
+      "frameworkAssemblies": {
+        "System.Transactions": "4.0.0.0"
+      }
+    }
+  },
+  "runtimes": {
+    "win": {}
+  },
+  "dependencies": {
+    "CK.ActivityMonitor.StandardSender": "5.0.0",
+    "CK.Core": "5.0.0",
+    "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0",
+    "SimpleGitVersionTask": "0.18.0"
+  }
+}

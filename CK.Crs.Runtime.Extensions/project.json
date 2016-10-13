@@ -1,0 +1,27 @@
+﻿{
+  "version": "1.0.0-*",
+  "description": "CK.Crs.Runtime.Extensions Class Library",
+  "authors": [
+    "Cédric Legendre"
+  ],
+  "tags": [
+    ""
+  ],
+  "projectUrl": "",
+  "licenseUrl": "",
+  "compilationOptions": {
+    "xmlDoc": true
+  },
+  "frameworks": {
+    "net451": {
+      "frameworkAssemblies": {}
+    }
+  },
+  "runtimes": {
+    "win": {}
+  },
+  "dependencies": {
+    "CK.Core": "5.0.0",
+    "SimpleGitVersionTask": "0.18.0"
+  }
+}
