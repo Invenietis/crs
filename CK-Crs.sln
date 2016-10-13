@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".SolutionItems", ".SolutionItems", "{22EC622B-B1FE-4EA5-B828-83D2FF952DA4}"
 	ProjectSection(SolutionItems) = preProject
@@ -27,6 +27,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CK.Crs.Runtime.Extensions", "CK.Crs.Runtime.Extensions\CK.Crs.Runtime.Extensions.csproj", "{B41506A4-037D-4B1E-A298-AE7B14F9E07B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CK.Crs.SignalR", "CK.Crs.SignalR\CK.Crs.SignalR.csproj", "{FCB6AB15-C31C-4B7A-BD2A-4AB38CB9AEFC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions", "Extensions", "{2A6CECFE-345E-44B5-885B-A8F78BDF7929}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -103,5 +105,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D6009499-F1E5-40DC-BA95-3440A2E721A6} = {2A6CECFE-345E-44B5-885B-A8F78BDF7929}
+		{B41506A4-037D-4B1E-A298-AE7B14F9E07B} = {2A6CECFE-345E-44B5-885B-A8F78BDF7929}
 	EndGlobalSection
 EndGlobal

@@ -38,19 +38,38 @@ namespace CK.Crs
 
             foreach( var a in option.Assemblies )
             {
-                var assembly = Assembly.Load( a );
-                var handlers = assembly.GetTypes().Where( t => typeof( ICommandHandler<>  ).IsAssignableFrom( t) ).Where( option.CommandHandlerFilter );
-
-                foreach( var h in handlers )
+                using( monitor.OpenTrace().Send( "Discovering types in assembly {0}", a ) )
                 {
-                    CommandDescription description = new CommandDescription();
-                    description.CommandType = h.GenericTypeArguments[0];
-                    description.HandlerType = h;
-                    description.Name = option.CommandNameProvider( description.CommandType );
-                    description.Description = option.CommandDescriptionProvider( description.CommandType );
-                    description.Traits = option.CommandTraitsProvider( description.CommandType );
-                    description.Decorators = option.CommandDecorators( description.CommandType, description.HandlerType );
-                    registry.Register( description );
+                    try
+                    {
+                        var assembly = Assembly.LoadFrom( a );
+                        var handlers = assembly.GetTypes().Where( t => typeof( ICommandHandler<>  ).IsAssignableFrom( t) ).Where( option.CommandHandlerFilter );
+
+                        foreach( var h in handlers )
+                        {
+                            using( monitor.OpenTrace().Send( "Registering handler {0}", h.AssemblyQualifiedName ) )
+                            {
+                                CommandDescription description = new CommandDescription();
+                                description.HandlerType = h;
+                                monitor.Trace().Send( "...HandlerType is {0}", description.HandlerType.Name );
+
+                                description.CommandType = h.GenericTypeArguments[0];
+                                monitor.Trace().Send( "...CommandType is {0}", description.CommandType.Name );
+
+                                description.Name = option.CommandNameProvider( description.CommandType );
+                                monitor.Trace().Send( "...CommandName is {0}", description.CommandType.Name );
+
+                                description.Description = option.CommandDescriptionProvider( description.CommandType );
+                                description.Traits = option.CommandTraitsProvider( description.CommandType );
+                                description.Decorators = option.CommandDecorators( description.CommandType, description.HandlerType );
+                                registry.Register( description );
+                            }
+                        }
+                    }
+                    catch( Exception ex )
+                    {
+                        monitor.Error().Send( ex, "An error occured..." );
+                    }
                 }
             }
         }
