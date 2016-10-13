@@ -14,8 +14,8 @@
         <dependency id="Owin" version="[1.0.0, )" />
         <dependency id="CK.Crs.Runtime" version="[$version$, )" />
         <dependency id="CK.Crs.Runtime.Extensions" version="[$version$, )" />
-	<dependency id="CK.Crs.Receiver" version="[$version$, )" />
-	<dependency id="CK.Crs.Execution" version="[$version$, )" />
+        <dependency id="CK.Crs.Receiver" version="[$version$, )" />
+        <dependency id="CK.Crs.Execution" version="[$version$, )" />
       </group>
     </dependencies>
   </metadata>
