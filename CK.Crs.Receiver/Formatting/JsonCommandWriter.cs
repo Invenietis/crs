@@ -18,6 +18,9 @@ namespace CK.Crs.Runtime.Formatting
             } );
 
             using( StreamWriter sw = new StreamWriter( pipeline.Output ) ) await sw.WriteAsync( jsonResponse );
+
+            pipeline.Response.Headers.Add( "Content-Type", "application/json" );
+            pipeline.Response.Headers.Add( "ContentLength", pipeline.Output.Length.ToString() );
         }
 
         public override bool ShouldInvoke( IPipeline pipeline )

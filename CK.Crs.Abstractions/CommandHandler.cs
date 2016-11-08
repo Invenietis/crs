@@ -30,7 +30,7 @@ namespace CK.Crs
         public async Task<object> HandleAsync( ICommandExecutionContext context, T command )
         {
             await DoHandleAsync( context, command );
-            return EmptyResult.Empty;
+            return Type.Missing;
         }
 
         protected abstract Task DoHandleAsync( ICommandExecutionContext context, T command );
@@ -39,10 +39,5 @@ namespace CK.Crs
         {
             return HandleAsync( context, (T)command );
         }
-    }
-
-    internal class EmptyResult
-    {
-        public static EmptyResult Empty = new EmptyResult();
     }
 }

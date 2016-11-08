@@ -35,8 +35,13 @@ namespace CK.Crs
         {
             var connectionId = context.Request.Query["c"];
             var commandRequest = new CommandRequest( context.Request.Path.Value, context.Request.Body, context.Authentication.User, connectionId );
-            var hasResponse = await _handler.ProcessCommandAsync( commandRequest, context.Response.Body );
-            if( hasResponse == false && Next != null )
+            var response = await _handler.ProcessCommandAsync( commandRequest, context.Response.Body );
+            if( response != null )
+            {
+                foreach( var kv in response.Headers )
+                    context.Response.Headers.Set( kv.Key, kv.Value );
+            }
+            if( response == null && Next != null )
                 await Next.Invoke( context );
         }
 

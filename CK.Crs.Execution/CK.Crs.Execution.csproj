@@ -50,10 +50,10 @@
   <ItemGroup>
     <Compile Include="CommandExecutionContext.cs" />
     <Compile Include="Configuration\CrsExecutorConfiguration.cs" />
-    <Compile Include="DefaultFactories.cs" />
     <Compile Include="Configuration\CommandExecutorExtensions.cs" />
-    <Compile Include="ICommandHandlerFactory.cs" />
+    <Compile Include="DefaultExecutionFactory.cs" />
     <Compile Include="ICommandRunningStore.cs" />
+    <Compile Include="IExecutionFactory.cs" />
     <Compile Include="Operations\Events\TransactionnalEventPublisher.cs" />
     <Compile Include="Operations\Scheduler\CommandSchedulingPipeline.cs" />
     <Compile Include="Operations\Scheduler\InMemoryScheduler.cs" />

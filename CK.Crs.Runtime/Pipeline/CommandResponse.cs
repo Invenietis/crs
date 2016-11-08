@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace CK.Crs.Runtime
 {
@@ -8,6 +9,7 @@ namespace CK.Crs.Runtime
         {
             ResponseType = (char)responseType;
             CommandId = commandId;
+            Headers = new Dictionary<string, string>();
         }
 
         public Guid CommandId { get; private set; }
@@ -15,5 +17,7 @@ namespace CK.Crs.Runtime
         public char ResponseType { get; protected set; }
 
         public object Payload { get; protected set; }
+
+        public IDictionary<string, string> Headers { get; }
     }
 }

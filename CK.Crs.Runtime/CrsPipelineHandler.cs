@@ -23,14 +23,14 @@ namespace CK.Crs.Runtime
             _config = config;
         }
 
-        public async Task<bool> ProcessCommandAsync( CommandRequest request, Stream response, CancellationToken cancellationToken = default( CancellationToken ) )
+        public async Task<CommandResponse> ProcessCommandAsync( CommandRequest request, Stream response, CancellationToken cancellationToken = default( CancellationToken ) )
         {
             var monitor = new ActivityMonitor( request.Path );
 
             using( var pipeline = new CommandReceivingPipeline( _scopeFactory, _config, monitor, request, response, cancellationToken ) )
             {
                 foreach( var c in _config.Pipeline.Components ) await c.Invoke( pipeline );
-                return pipeline.Response != null;
+                return pipeline.Response;
             }
         }
 
