@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="AmbientValues\AmbientValueComparer.cs" />
     <Compile Include="AmbientValues\AmbientValuesValidationContext.cs" />
+    <Compile Include="AmbientValues\IAmbientValueProviderDescriptor.cs" />
     <Compile Include="AmbientValues\IAmbientValueProvider.cs" />
     <Compile Include="AmbientValues\IAmbientValueProviderFactory.cs" />
     <Compile Include="AmbientValues\IAmbientValues.cs" />
@@ -72,7 +73,6 @@
     <Compile Include="IExternalEventPublisher.cs" />
     <Compile Include="IRejectable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RequestCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />

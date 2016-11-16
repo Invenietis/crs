@@ -5,12 +5,6 @@ using CK.Core;
 
 namespace CK.Crs
 {
-    public interface IAmbientValueProviderDescriptor
-    {
-        string Name { get; }
-
-        IAmbientValueProvider Resolve( IServiceProvider services );
-    }
 
     public interface IAmbientValuesRegistration
     {

@@ -4,21 +4,21 @@ using System.Threading.Tasks;
 using Microsoft.Owin;
 using CK.Crs.Runtime;
 
-namespace CK.Crs
+namespace CK.Crs.Owin
 {
     // You may need to install the Microsoft.AspNet.Http.Abstractions package into your project
-    public class CommandReceiverOwinMiddleware : OwinMiddleware
+    class CrsOwinMiddleware : OwinMiddleware
     {
         /// <summary>
         /// Shared options
         /// </summary>
         private readonly ICrsHandler _handler;
 
-        public CommandReceiverOwinMiddleware( ICrsHandler handler ) : this( null, handler )
+        public CrsOwinMiddleware( ICrsHandler handler ) : this( null, handler )
         {
         }
 
-        public CommandReceiverOwinMiddleware( OwinMiddleware next, ICrsHandler handler )
+        public CrsOwinMiddleware( OwinMiddleware next, ICrsHandler handler )
             : base( next )
         {
             if( handler == null ) throw new ArgumentNullException( nameof( handler ) );

@@ -5,22 +5,27 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using Microsoft.Owin;
 
 namespace CK.Crs.Owin
 {
     public class ClaimsBasedActorIdProvider : ActorIdProvider
     {
-        public ClaimsBasedActorIdProvider( IActorIdProvider actorIdProvider ) : this( actorIdProvider, new OwinRequestUserNameProvider() )
+        Func<IOwinContext> _owinContextProvider;
+        public ClaimsBasedActorIdProvider( IActorIdProvider actorIdProvider, Func<IOwinContext> owinContextProvider ) : 
+            this( actorIdProvider, owinContextProvider, new UserNameProvider( owinContextProvider ) )
         {
         }
 
-        public ClaimsBasedActorIdProvider( IActorIdProvider actorIdProvider, IUserNameProvider userNameProvider ) : base( actorIdProvider, userNameProvider )
+        public ClaimsBasedActorIdProvider( IActorIdProvider actorIdProvider, Func<IOwinContext> owinContextProvider, IUserNameProvider userNameProvider ) : base( actorIdProvider, userNameProvider )
         {
+            _owinContextProvider = owinContextProvider;
         }
 
         protected override Task<UserIdResult> PreReadUserIdAsync( string userName, IAmbientValues values )
         {
-            var claimsPrincipal = HttpContext.Current.User as ClaimsPrincipal;
+            var ctx = _owinContextProvider();
+            var claimsPrincipal = ctx.Authentication.User as ClaimsPrincipal;
             if( claimsPrincipal != null )
             {
                 if( claimsPrincipal.HasClaim( p => p.Type == ClaimTypes.NameIdentifier ) )

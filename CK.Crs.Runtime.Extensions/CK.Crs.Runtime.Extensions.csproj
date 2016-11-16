@@ -50,6 +50,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActorIdProvider.cs" />
+    <Compile Include="IActorIdProvider.cs" />
+    <Compile Include="IUserNameProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,15 +1,16 @@
 ﻿using System;
 using CK.Core;
+using CK.Crs;
+using CK.Crs.Owin;
 using CK.Crs.Runtime;
 using CK.Crs.Runtime.Execution;
 using CK.Crs.Runtime.Routing;
 using Microsoft.Owin;
-using Owin;
 
-namespace CK.Crs
+namespace Owin
 {
     // Extension method used to add the middleware to the HTTP request pipeline.
-    public static class CommandReceiverOwinExtensions
+    public static class CrsExtensions
     {
         public static IAppBuilder UseCrs( this IAppBuilder builder, string routePrefix, IServiceProvider applicationServices, Action<CrsConfiguration> configure = null )
         {
@@ -21,20 +22,8 @@ namespace CK.Crs
                 crsBuilder.ApplyDefaultConfigurationOrConfigure( configure );
 
                 var commandReceiver = crsBuilder.Build( applicationServices );
-                app.Use<CommandReceiverOwinMiddleware>( commandReceiver );
+                app.Use<CrsOwinMiddleware>( commandReceiver );
             } );
-        }
-
-        static public IPipelineBuilder UseDefault( this IPipelineBuilder builder )
-        {
-            return builder.Clear()
-                .UseMetaComponent()
-                .UseCommandRouter()
-                .UseJsonCommandBuilder()
-                .UseAmbientValuesValidator()
-                .UseFilters()
-                .UseSyncCommandExecutor()
-                .UseJsonCommandWriter();
         }
 
         class CrsBuilder : CrsReceiverBuilder

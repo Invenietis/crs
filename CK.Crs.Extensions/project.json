@@ -23,6 +23,6 @@
     "win": {}
   },
   "dependencies": {
-    "SimpleGitVersionTask": "0.18.0"
+    "SimpleGitVersionTask": "0.21.0"
   }
 }

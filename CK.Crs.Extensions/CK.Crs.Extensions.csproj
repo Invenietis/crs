@@ -37,7 +37,6 @@
     <DocumentationFile>bin\$(Configuration)\$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="CommandDescriptionExtensions.cs" />
     <Compile Include="DefaultCommandValidator.cs" />
     <Compile Include="HandlerAttributeBase.cs" />
     <Compile Include="TransactionAttribute.cs" />
