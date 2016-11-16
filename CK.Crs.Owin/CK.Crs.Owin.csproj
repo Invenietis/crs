@@ -42,15 +42,10 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClaimsBasedActorIdProvider.cs" />
     <Compile Include="CrsExtensions.cs" />
     <Compile Include="CrsOwinMiddleware.cs" />
     <Compile Include="CrsRuntimeExtensions.cs" />
-    <Compile Include="UserNameProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CK.Crs.Abstractions\CK.Crs.Abstractions.csproj">
@@ -73,6 +68,9 @@
       <Project>{52c1088b-f87d-489d-b592-38f3881b2271}</Project>
       <Name>CK.Crs.Runtime</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

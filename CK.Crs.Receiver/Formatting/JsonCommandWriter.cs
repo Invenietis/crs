@@ -10,17 +10,19 @@ namespace CK.Crs.Runtime.Formatting
 {
     class JsonCommandWriter : PipelineComponent
     {
+        readonly IJsonConverter _jsonConverter;
+        public JsonCommandWriter( IJsonConverter jsonConverter )
+        {
+            _jsonConverter = jsonConverter;
+        }
+
         async public override Task Invoke( IPipeline pipeline, CancellationToken token = default( CancellationToken ) )
         {
-            string jsonResponse = Newtonsoft.Json.JsonConvert.SerializeObject( pipeline.Response, new Newtonsoft.Json.JsonSerializerSettings
-            {
-                ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver()
-            } );
+            string jsonResponse = _jsonConverter.ToJson( pipeline.Response );
 
             using( StreamWriter sw = new StreamWriter( pipeline.Output ) ) await sw.WriteAsync( jsonResponse );
 
             pipeline.Response.Headers.Add( "Content-Type", "application/json" );
-            pipeline.Response.Headers.Add( "ContentLength", pipeline.Output.Length.ToString() );
         }
 
         public override bool ShouldInvoke( IPipeline pipeline )

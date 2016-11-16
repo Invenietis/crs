@@ -4,8 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using CK.Core;
 using CK.Crs.Runtime;
 
@@ -13,14 +11,11 @@ namespace CK.Crs.Runtime.Formatting
 {
     class JsonCommandBuilder : PipelineComponent
     {
-        readonly JsonSerializer _serializer;
+        readonly IJsonConverter _jsonConverter;
 
-        public JsonCommandBuilder()
+        public JsonCommandBuilder( IJsonConverter jsonConverter )
         {
-            _serializer = JsonSerializer.Create( new JsonSerializerSettings
-            {
-                ContractResolver = new CamelCasePropertyNamesContractResolver()
-            } );
+            _jsonConverter = jsonConverter;
         }
 
         public override bool ShouldInvoke( IPipeline pipeline )
@@ -32,23 +27,13 @@ namespace CK.Crs.Runtime.Formatting
         {
             if( pipeline.Action.Description == null ) throw new InvalidOperationException( "Cannot build a command without a valid description" );
 
-            pipeline.Action.Command = CreateCommand( pipeline.Action.Description.CommandType );
-            if( pipeline.Action.Command == null )
+            using( var reader = new StreamReader( pipeline.Request.Body ) )
             {
-                string msg = String.Format(
-                        "A valid command definition has been infered from routes, but the command type {0} failed to be instanciated.",
-                        pipeline.Action.Description.CommandType.Name );
-                pipeline.Monitor.Error().Send( msg );
+                string json = await reader.ReadToEndAsync();
+                pipeline.Action.Command = _jsonConverter.ParseJson( json, pipeline.Action.Description.CommandType );
             }
-            else
-            {
-                using( var reader = new StreamReader( pipeline.Request.Body ) )
-                {
-                    _serializer.Populate( reader, pipeline.Action.Command );
-                }
-                if( pipeline.Configuration.Events.CommandBuilt != null )
-                    await pipeline.Configuration.Events.CommandBuilt.Invoke( pipeline.Action );
-            }
+            if( pipeline.Configuration.Events.CommandBuilt != null )
+                await pipeline.Configuration.Events.CommandBuilt.Invoke( pipeline.Action );
         }
 
         protected virtual object CreateCommand( Type commandType )

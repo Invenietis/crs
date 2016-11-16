@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 namespace CK.Crs
 {
 
-    public class ActorIdProvider : IAmbientValueProvider
+    public class ActorIdAmbientValueProvider : IAmbientValueProvider
     {
         readonly IActorIdProvider _actorIdProvider;
         readonly IUserNameProvider _userNameProvider;
 
-        public ActorIdProvider( IActorIdProvider actorIdProvider, IUserNameProvider userNameProvider )
+        public ActorIdAmbientValueProvider( IActorIdProvider actorIdProvider, IUserNameProvider userNameProvider )
         {
             if( actorIdProvider == null ) throw new ArgumentNullException( nameof( actorIdProvider ), "You must provides an implementation of IActorIdProvider." );
             if( userNameProvider == null ) throw new ArgumentNullException( nameof( userNameProvider ), "You must provides an implementation of IUserNameProvider." );

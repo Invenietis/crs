@@ -6,7 +6,6 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".SolutionItems", ".SolutionItems", "{22EC622B-B1FE-4EA5-B828-83D2FF952DA4}"
 	ProjectSection(SolutionItems) = preProject
 		BuildPackPackarium.bat = BuildPackPackarium.bat
-		global.json = global.json
 		RepositoryInfo.xml = RepositoryInfo.xml
 	EndProjectSection
 EndProject
@@ -31,6 +30,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions", "Extensions", "{2A6CECFE-345E-44B5-885B-A8F78BDF7929}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CK.Crs.Tests", "CK.Crs.Tests\CK.Crs.Tests.csproj", "{F7F05FBB-33D0-472E-85D9-68B9DB22FFD3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CK.Crs.AspNetCore", "CK.Crs.AspNetCore\CK.Crs.AspNetCore.csproj", "{B08C79A1-2543-402B-9819-8F8E26F0152D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

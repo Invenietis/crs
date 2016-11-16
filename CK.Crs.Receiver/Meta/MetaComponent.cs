@@ -14,11 +14,13 @@ namespace CK.Crs.Runtime.Meta
         readonly IAmbientValues _ambientValues;
         readonly IAmbientValuesRegistration _registration;
         readonly IMemoryCache _cache;
+        readonly IJsonConverter _jsonConverter;
 
-        public MetaComponent( IAmbientValues ambientValues, IAmbientValuesRegistration registration, IMemoryCache cache )
+        public MetaComponent( IAmbientValues ambientValues, IAmbientValuesRegistration registration, IJsonConverter jsonConverter, IMemoryCache cache )
         {
             _ambientValues = ambientValues;
             _registration = registration;
+            _jsonConverter = jsonConverter;
             _cache = cache;
         }
 
@@ -32,7 +34,11 @@ namespace CK.Crs.Runtime.Meta
             using( StreamReader sr = new StreamReader( pipeline.Request.Body ) )
             {
                 var result = new MetaCommand.MetaResult();
-                var command = Newtonsoft.Json.JsonConvert.DeserializeObject<MetaCommand>( sr.ReadToEnd() ) ?? new MetaCommand { ShowAmbientValues = true, ShowCommands = true };
+                var command = (MetaCommand)_jsonConverter.ParseJson( await sr.ReadToEndAsync(), typeof( MetaCommand ) ) ?? new MetaCommand
+                {
+                    ShowAmbientValues = true,
+                    ShowCommands = true
+                };
                 if( command.ShowAmbientValues )
                 {
                     result.AmbientValues = new Dictionary<string, object>();
