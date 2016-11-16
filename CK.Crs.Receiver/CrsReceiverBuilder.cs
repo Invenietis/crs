@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CK.Crs.Runtime
 {
-    public class CrsReceiverBuilder : CrsHandlerBuilder<CrsConfiguration>
+    public abstract class CrsReceiverBuilder : CrsHandlerBuilder<CrsConfiguration>
     {
         protected string RoutePrefix { get; private set; }
 
@@ -21,16 +21,6 @@ namespace CK.Crs.Runtime
             var routes = new CommandRouteCollection();
             var config = new CrsConfiguration( RoutePrefix, Registry, routes );
             AddConfiguration( config );
-        }
-
-        public override ICrsHandler Build( IServiceProvider applicationServices )
-        {
-            return base.Build( applicationServices );
-        }
-
-        protected override void ConfigureDefaultPipeline( ICrsConfiguration configuration )
-        {
-            configuration.Pipeline.UseDefault();
         }
     }
 }

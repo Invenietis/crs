@@ -6,7 +6,7 @@ namespace CK.Crs.Runtime
     /// <summary>
     /// Builds a <see cref="ICrsHandler"/>
     /// </summary>
-    public class CrsHandlerBuilder<T> where T : ICrsConfiguration
+    public abstract class CrsHandlerBuilder<T> where T : ICrsConfiguration
     {
         T _config;
 
@@ -45,9 +45,7 @@ namespace CK.Crs.Runtime
             return new CrsPipelineHandler( scopeFactory, _config );
         }
 
-        protected virtual void ConfigureDefaultPipeline( ICrsConfiguration configuration )
-        {
-        }
+        protected abstract void ConfigureDefaultPipeline( ICrsConfiguration configuration );
     }
 
 }

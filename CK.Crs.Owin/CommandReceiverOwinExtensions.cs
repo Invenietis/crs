@@ -25,6 +25,18 @@ namespace CK.Crs
             } );
         }
 
+        static public IPipelineBuilder UseDefault( this IPipelineBuilder builder )
+        {
+            return builder.Clear()
+                .UseMetaComponent()
+                .UseCommandRouter()
+                .UseJsonCommandBuilder()
+                .UseAmbientValuesValidator()
+                .UseFilters()
+                .UseSyncCommandExecutor()
+                .UseJsonCommandWriter();
+        }
+
         class CrsBuilder : CrsReceiverBuilder
         {
             IServiceProvider _services;

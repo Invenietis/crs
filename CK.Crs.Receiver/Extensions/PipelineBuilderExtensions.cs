@@ -59,17 +59,5 @@ namespace CK.Crs
         {
             return builder.Use<CommandFiltersInvoker>();
         }
-
-        static public IPipelineBuilder UseDefault( this IPipelineBuilder builder )
-        {
-            return builder
-                .Clear()
-                .UseMetaComponent()
-                .UseCommandRouter()
-                .UseJsonCommandBuilder()
-                .UseAmbientValuesValidator()
-                .UseFilters()
-                .UseJsonCommandWriter();
-        }
     }
 }
