@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace CK.Crs.Runtime.Execution
 {
-    public class CrsExecutorConfiguration
+    /// <summary>
+    /// Options for CK.Crs.Execution 
+    /// </summary>
+    public class ExecutorOption
     {
         /// <summary>
         /// Gets or sets the store that manage persistence of running (live) commands. Defaults to <see cref="InMemoryCommandRunningStore"/>.

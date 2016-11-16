@@ -10,24 +10,56 @@ using Microsoft.Owin;
 
 namespace Owin
 {
+    /// <summary>
+    /// Root Crs options used in Crs configuration
+    /// </summary>
     public class CrsOptions
     {
+        /// <summary>
+        /// Receiver configuration
+        /// </summary>
         public CommandReceiverOption Receiver { get; set; }
-        public CrsExecutorConfiguration Executor { get; set; }
+        /// <summary>
+        /// Executor configuration
+        /// </summary>
+        public ExecutorOption Executor { get; set; }
+        /// <summary>
+        /// The JsonConverter to use
+        /// </summary>
+        public IJsonConverter JsonConverter { get; set; }
     }
-    // Extension method used to add the middleware to the HTTP request pipeline.
+
+    /// <summary>
+    /// Extension method used to add the middleware to the HTTP request pipeline.
+    /// </summary>
     public static class CrsExtensions
     {
+        /// <summary>
+        /// Add Crs services into the service collection.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="options"></param>
         public static void AddCrs( this IServiceCollection services, Action<CrsOptions> options = null )
         {
             CrsOptions crsOptions = new Owin.CrsOptions();
             crsOptions.Receiver = services.AddCommandReceiver();
 
             options?.Invoke( crsOptions );
+            if( crsOptions.JsonConverter == null ) crsOptions.UseJsonNet();
+            services.AddSingleton( crsOptions.JsonConverter );
 
             services.AddCommandExecutor( o => o = crsOptions.Executor );
         }
 
+        /// <summary>
+        /// Registered Crs into the OWIN pipeline for the given routePrefix. 
+        /// Multiple Crs can exists on different routes.
+        /// </summary>
+        /// <param name="builder"><see cref="IAppBuilder"/></param>
+        /// <param name="routePrefix"></param>
+        /// <param name="applicationServices"></param>
+        /// <param name="configure"></param>
+        /// <returns></returns>
         public static IAppBuilder UseCrs( this IAppBuilder builder, string routePrefix, IServiceProvider applicationServices, Action<CrsConfiguration> configure = null )
         {
             if( routePrefix == null ) throw new ArgumentNullException( nameof( routePrefix ) );
@@ -40,6 +72,17 @@ namespace Owin
                 var commandReceiver = crsBuilder.Build( applicationServices );
                 app.Use<CrsOwinMiddleware>( commandReceiver );
             } );
+        }
+
+        /// <summary>
+        /// Uses JSON.Net as the default Json Converter
+        /// </summary>
+        /// <param name="o"></param>
+        /// <returns></returns>
+        public static CrsOptions UseJsonNet( this CrsOptions o )
+        {
+            o.JsonConverter = new JsonNetConverter();
+            return o;
         }
 
         class CrsBuilder : CrsReceiverBuilder
