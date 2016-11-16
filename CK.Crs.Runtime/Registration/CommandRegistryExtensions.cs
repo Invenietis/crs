@@ -42,27 +42,42 @@ namespace CK.Crs
                 {
                     try
                     {
-                        var assembly = Assembly.LoadFrom( a );
-                        var handlers = assembly.GetTypes().Where( t => typeof( ICommandHandler<>  ).IsAssignableFrom( t) ).Where( option.CommandHandlerFilter );
-
-                        foreach( var h in handlers )
+                        monitor.Trace().Send( "Loading assembly {0}", a );
+                        var assembly = Assembly.Load( a );
+                        monitor.Trace().Send( "Assembly {0} loaded successfuly", assembly.FullName );
+                        var handlers = assembly.GetTypes().Where( t => typeof( ICommandHandler ).IsAssignableFrom( t ) ).Where( option.CommandHandlerFilter ).ToArray();
+                        if( handlers.Length == 0 )
                         {
-                            using( monitor.OpenTrace().Send( "Registering handler {0}", h.AssemblyQualifiedName ) )
+                            monitor.Warn().Send( "No handler found..." );
+                        }
+                        else
+                        {
+                            foreach( var h in handlers )
                             {
-                                CommandDescription description = new CommandDescription();
-                                description.HandlerType = h;
-                                monitor.Trace().Send( "...HandlerType is {0}", description.HandlerType.Name );
+                                using( monitor.OpenTrace().Send( "Registering handler {0}", h.AssemblyQualifiedName ) )
+                                {
+                                    foreach( var commandType in h.GetInterfaces()
+                                        .Where( interfaceType => interfaceType != typeof( ICommandHandler ) )
+                                        .Where( interfaceType => typeof( ICommandHandler ).IsAssignableFrom( interfaceType ) )
+                                        .Where( interfaceType => interfaceType.IsGenericType && interfaceType.GenericTypeArguments.Length == 1 )
+                                        .Select( interfaceType => interfaceType.GenericTypeArguments[0] ) )
+                                    {
+                                        CommandDescription description = new CommandDescription();
+                                        description.HandlerType = h;
+                                        monitor.Trace().Send( "...HandlerType is {0}", description.HandlerType.Name );
 
-                                description.CommandType = h.GenericTypeArguments[0];
-                                monitor.Trace().Send( "...CommandType is {0}", description.CommandType.Name );
+                                        description.CommandType = commandType;
+                                        monitor.Trace().Send( "...CommandType is {0}", description.CommandType.Name );
 
-                                description.Name = option.CommandNameProvider( description.CommandType );
-                                monitor.Trace().Send( "...CommandName is {0}", description.CommandType.Name );
+                                        description.Name = option.CommandNameProvider( description.CommandType );
+                                        monitor.Trace().Send( "...CommandName is {0}", description.CommandType.Name );
 
-                                description.Description = option.CommandDescriptionProvider( description.CommandType );
-                                description.Traits = option.CommandTraitsProvider( description.CommandType );
-                                description.Decorators = option.CommandDecorators( description.CommandType, description.HandlerType );
-                                registry.Register( description );
+                                        description.Description = option.CommandDescriptionProvider( description.CommandType );
+                                        description.Traits = option.CommandTraitsProvider( description.CommandType );
+                                        description.Decorators = option.CommandDecorators( description.CommandType, description.HandlerType );
+                                        registry.Register( description );
+                                    }
+                                }
                             }
                         }
                     }
