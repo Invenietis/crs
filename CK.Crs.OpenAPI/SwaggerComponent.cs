@@ -39,8 +39,9 @@ namespace CK.Crs.OpenAPI
             pipeline.Response.Headers.Add( "X-Meta-Type", "Swagger" );
             pipeline.Response.Headers.Add( "Content-Type", "application/json" );
 
-            string jsonResponse = _jsonConverter.ToJson( pipeline.Response);
+            string jsonResponse = _jsonConverter.ToJson( pipeline.Response );
             var buffer = Encoding.UTF8.GetBytes(jsonResponse);
+            pipeline.Response.Headers.Add( "ContentLength", buffer.Length.ToString() );
 
             await pipeline.Output.WriteAsync( buffer, 0, buffer.Length );
         }

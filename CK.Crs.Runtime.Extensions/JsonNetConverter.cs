@@ -13,7 +13,7 @@ namespace CK.Crs.Runtime
     {
         readonly JsonSerializerSettings _converterSettings;
 
-        public JsonSerializerSettings ConverterSettings
+        public virtual JsonSerializerSettings ConverterSettings
         {
             get
             {

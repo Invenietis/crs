@@ -36,15 +36,22 @@ namespace CK.Crs.Owin
         {
             var connectionId = context.Request.Query["c"];
             var commandRequest = new CommandRequest( context.Request.Path.Value, context.Request.Body, context.Authentication.User, connectionId );
-            var response = await _handler.ProcessCommandAsync( commandRequest, context.Response.Body );
-            if( response != null )
+            CommandResponse response;
+            using( var ms = new MemoryStream() )
             {
-                string contentType;
-                response.Headers.TryGetValue( "Content-Type", out contentType );
-                context.Response.ContentType = contentType;
+                response = await _handler.ProcessCommandAsync( commandRequest, ms );
+                if( response != null )
+                {
+                    string contentType;
+                    response.Headers.TryGetValue( "Content-Type", out contentType );
+                    context.Response.ContentType = contentType;
 
-                foreach( var kv in response.Headers )
-                    context.Response.Headers.Set( kv.Key, kv.Value );
+                    foreach( var kv in response.Headers )
+                        context.Response.Headers.Set( kv.Key, kv.Value );
+
+                    ms.Seek( 0, SeekOrigin.Begin );
+                    await ms.CopyToAsync( context.Response.Body );
+                }
             }
             if( response == null && Next != null )
                 await Next.Invoke( context );
