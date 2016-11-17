@@ -156,7 +156,7 @@
     <Compile Include="SwaggerDocument.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SwaggerJsonConverter.cs" />
-    <Compile Include="SwaggerPipelineComponent.cs" />
+    <Compile Include="SwaggerExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

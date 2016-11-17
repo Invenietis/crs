@@ -8,6 +8,7 @@ using System.Reflection;
 using CK.Crs.Runtime;
 using CK.Crs.OpenAPI.Generator;
 using CK.Core;
+using System.Text;
 
 namespace CK.Crs.OpenAPI
 {
@@ -16,7 +17,7 @@ namespace CK.Crs.OpenAPI
         readonly ISchemaRegistryFactory _schemaRegistryFactory;
         readonly SwaggerGeneratorSettings _settings;
         readonly IJsonConverter _jsonConverter;
-        
+
         public SwaggerComponent( ISchemaRegistryFactory schemaRegistryFactory, SwaggerGeneratorSettings settings )
         {
             if( schemaRegistryFactory == null ) throw new ArgumentNullException( nameof( schemaRegistryFactory ) );
@@ -32,14 +33,16 @@ namespace CK.Crs.OpenAPI
             return pipeline.Request.Path.CommandName == "swagger";
         }
 
-        public override Task Invoke( IPipeline pipeline, CancellationToken token = default( CancellationToken ) )
+        public override async Task Invoke( IPipeline pipeline, CancellationToken token = default( CancellationToken ) )
         {
             pipeline.Response = new SwaggerCommandResponse( CommandResponseType.Meta, GetSwagger( pipeline.Configuration ) );
             pipeline.Response.Headers.Add( "X-Meta-Type", "Swagger" );
             pipeline.Response.Headers.Add( "Content-Type", "application/json" );
 
             string jsonResponse = _jsonConverter.ToJson( pipeline.Response);
-            using( StreamWriter sw = new StreamWriter( pipeline.Output ) ) return sw.WriteAsync( jsonResponse );
+            var buffer = Encoding.UTF8.GetBytes(jsonResponse);
+
+            await pipeline.Output.WriteAsync( buffer, 0, buffer.Length );
         }
 
 
@@ -105,9 +108,9 @@ namespace CK.Crs.OpenAPI
             return null;
         }
 
-        private IDictionary<string, Response> GenerateResponsesFromCommandResult( 
-            ICrsConfiguration configuration, 
-            ISchemaRegistry registry, 
+        private IDictionary<string, Response> GenerateResponsesFromCommandResult(
+            ICrsConfiguration configuration,
+            ISchemaRegistry registry,
             CommandDescription c )
         {
             Type type = c.HandlerType;

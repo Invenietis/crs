@@ -10,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CK.Crs
 {
-    public static class SwaggerPipelineComponent
+    public static class SwaggerExtensions
     {
         /// <summary>
         /// Looks up the route collection for a registered command.

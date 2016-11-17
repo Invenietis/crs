@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Owin;
 using CK.Crs.Runtime;
+using System.IO;
 
 namespace CK.Crs.Owin
 {
@@ -38,6 +39,10 @@ namespace CK.Crs.Owin
             var response = await _handler.ProcessCommandAsync( commandRequest, context.Response.Body );
             if( response != null )
             {
+                string contentType;
+                response.Headers.TryGetValue( "Content-Type", out contentType );
+                context.Response.ContentType = contentType;
+
                 foreach( var kv in response.Headers )
                     context.Response.Headers.Set( kv.Key, kv.Value );
             }

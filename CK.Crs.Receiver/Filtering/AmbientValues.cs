@@ -28,7 +28,7 @@ namespace CK.Crs.Runtime.Filtering
 
             var provider = _factory.Create( ambientValueDescriptor );
             if( provider == null )
-                throw new InvalidOperationException( $"Unable to create an instace of {ambientValueDescriptor.Name}." );
+                throw new InvalidOperationException( $"Unable to create an instance of {ambientValueDescriptor.Name}." );
 
             var value = await provider.GetValueAsync( this );
             var disposable = ambientValueDescriptor as IDisposable;
