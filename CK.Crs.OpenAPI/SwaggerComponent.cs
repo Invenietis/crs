@@ -9,6 +9,7 @@ using CK.Crs.Runtime;
 using CK.Crs.OpenAPI.Generator;
 using CK.Core;
 using System.Text;
+using System.Diagnostics;
 
 namespace CK.Crs.OpenAPI
 {
@@ -62,7 +63,7 @@ namespace CK.Crs.OpenAPI
             result.Produces = new List<string> { "application/json" };
             result.Paths = new Dictionary<string, PathItem>();
             result.Definitions = new Dictionary<string, Schema>();
-            result.BasePath = configuration.ReceiverPath;
+            result.BasePath = CommandRoutePath.EnsureTrailingSlash( configuration.ReceiverPath );
             result.Host = host;
             result.Schemes = schemes;
 
@@ -120,24 +121,23 @@ namespace CK.Crs.OpenAPI
                 type = type.BaseType;
             }
             while( type != null &&
-                (type.IsGenericType == false || (type.IsGenericType && type.GetGenericTypeDefinition() != typeof( CommandHandler<> ))) );
+                (type.IsGenericType == false || (type.IsGenericType && type.GetGenericTypeDefinition() != typeof( CommandHandler<,> ))) );
 
             Dictionary<string, Response> responses = new Dictionary<string, Response>();
+            var error = registry.GetOrRegister( typeof( CommandResponse ) );
+            error.Properties["payload"] = new Schema
+            {
+                Type = "string"
+            };
             responses.Add( "V", new Response
             {
                 Description = ResponseDescriptionMap["V"],
-                Schema = new Schema
-                {
-                    Type = "string"
-                }
+                Schema = error
             } );
             responses.Add( "I", new Response
             {
                 Description = ResponseDescriptionMap["I"],
-                Schema = new Schema
-                {
-                    Type = "string"
-                }
+                Schema = error
             } );
             if( type == null )
             {
@@ -148,22 +148,27 @@ namespace CK.Crs.OpenAPI
                 {
                     responses.Add( "A", new Response
                     {
-                        Description = ResponseDescriptionMap["A"]
+                        Description = ResponseDescriptionMap["A"],
+                        Schema = registry.GetOrRegister( typeof( CommandResponse ) )
                     } );
                     return responses;
                 }
 
                 responses.Add( "S", new Response
                 {
-                    Description = ResponseDescriptionMap["A"]
+                    Description = ResponseDescriptionMap["A"],
+                    Schema = registry.GetOrRegister( typeof( CommandResponse ) )
                 } );
                 return responses;
             }
+            Debug.Assert( type != null && type.GetGenericArguments().Length == 2 );
 
+            var s = registry.GetOrRegister( typeof( CommandResponse ) );
+            s.Properties["payload"] = registry.GetOrRegister( type.GetGenericArguments()[1] );
             responses.Add( "S", new Response
             {
-                Description = ResponseDescriptionMap["A"],
-                Schema = registry.GetOrRegister( type.GetGenericArguments()[0] )
+                Description = ResponseDescriptionMap["S"],
+                Schema = s
             } );
             return responses;
         }

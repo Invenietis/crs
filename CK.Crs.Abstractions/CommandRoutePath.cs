@@ -70,7 +70,6 @@ namespace CK.Crs
             FullPath = $"{BasePath}{PATH_SEPARATOR}{CommandName}";
         }
 
-
         /// <summary>
         /// Gets wether this instance is prefixed by the given receiver path
         /// </summary>
@@ -89,6 +88,15 @@ namespace CK.Crs
         {
             if( s.EndsWith( PATH_SEPARATOR, StringComparison.OrdinalIgnoreCase ) ) return s.Remove( s.Length - 1 );
             return s;
+        }
+
+        public static string EnsureTrailingSlash( string receiverPath )
+        {
+            if( !String.IsNullOrWhiteSpace( receiverPath ) && 
+                !receiverPath.EndsWith( PATH_SEPARATOR, StringComparison.OrdinalIgnoreCase ) )
+                return String.Concat( receiverPath, '/' );
+
+            return receiverPath;
         }
 
         public override string ToString()
