@@ -21,16 +21,39 @@
         /// <returns></returns>
         ICommandConfiguration<TConfig> CommandName( string commandName );
 
+        /// <summary>
+        /// Adds extra data to the command description
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
         ICommandConfiguration<TConfig> AddExtraData( string key, object data );
 
+        /// <summary>
+        /// This command should be handled by an asynchronous executor and supports by the way deferred execution.
+        /// </summary>
+        /// <returns></returns>
         ICommandConfiguration<TConfig> IsAsync();
     }
 
+    /// <summary>
+    /// Fluent command configuration
+    /// </summary>
+    /// <typeparam name="TConfig"></typeparam>
     public interface ICommandConfigurationWithHandling<TConfig>
     {
+        /// <summary>
+        /// Sets an handler for a command.
+        /// </summary>
+        /// <typeparam name="THandler"></typeparam>
+        /// <returns></returns>
         ICommandConfigurationWithHandling<TConfig> HandledBy<THandler>() where THandler : ICommandHandler;
     }
 
+    /// <summary>
+    /// Fluent command configuration
+    /// </summary>
+    /// <typeparam name="TConfig"></typeparam>
     public interface ICommandConfigurationWithFilter<TConfig>
     {
         /// <summary>
@@ -41,10 +64,16 @@
         ICommandConfigurationWithFilter<TConfig> AddFilter<T>() where T : ICommandFilter;
     }
 
+    /// <summary>
+    /// Fluent command configuration
+    /// </summary>
     public interface ICommandRegistration : ICommandConfiguration<ICommandRegistration>, ICommandConfigurationWithHandling<ICommandRegistration>
     {
     }
 
+    /// <summary>
+    /// Fluent command configuration
+    /// </summary>
     public interface ICommandRegistrationWithFilter : ICommandConfiguration<ICommandRegistrationWithFilter>, ICommandConfigurationWithFilter<ICommandRegistrationWithFilter>
     {
     }

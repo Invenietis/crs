@@ -4,13 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F7F05FBB-33D0-472E-85D9-68B9DB22FFD3}</ProjectGuid>
+    <ProjectGuid>{F6C59020-78EF-473C-8816-B65B0C45A7B5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CK.Crs.Tests</RootNamespace>
-    <AssemblyName>CK.Crs.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <RootNamespace>CK.Crs.OpenAPI</RootNamespace>
+    <AssemblyName>CK.Crs.OpenAPI</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -20,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\CK.Crs.OpenAPI.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,10 +32,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Castle.Core, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <HintPath>..\packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="CK.ActivityMonitor, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
       <HintPath>..\packages\CK.ActivityMonitor.5.0.1\lib\net45\CK.ActivityMonitor.dll</HintPath>
       <Private>True</Private>
@@ -58,16 +56,8 @@
       <HintPath>..\packages\Microsoft.Win32.Primitives.4.3.0\lib\net46\Microsoft.Win32.Primitives.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Moq, Version=4.5.28.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
-      <HintPath>..\packages\Moq.4.5.28\lib\net45\Moq.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="nunit.framework, Version=3.5.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
-      <HintPath>..\packages\NUnit.3.5.0\lib\net45\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -76,6 +66,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Console, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Console.4.3.0\lib\net46\System.Console.dll</HintPath>
       <Private>True</Private>
@@ -146,38 +137,44 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AutoRegistrationTest.cs" />
-    <Compile Include="OpenAPIGenTests.cs" />
+    <Compile Include="Generator\ISchemaFilter.cs" />
+    <Compile Include="Generator\ISchemaRegistry.cs" />
+    <Compile Include="Generator\ISchemaRegistryFactory.cs" />
+    <Compile Include="Generator\JsonContractExtensions.cs" />
+    <Compile Include="Generator\JsonPropertyExtensions.cs" />
+    <Compile Include="Generator\SchemaExtensions.cs" />
+    <Compile Include="Generator\SchemaIdManager.cs" />
+    <Compile Include="Generator\SchemaRegistry.cs" />
+    <Compile Include="Generator\SchemaRegistryFactory.cs" />
+    <Compile Include="Generator\SchemaRegistrySettings.cs" />
+    <Compile Include="Generator\StringExtensions.cs" />
+    <Compile Include="Generator\SwaggerGeneratorSettings.cs" />
+    <Compile Include="Generator\TypeExtensions.cs" />
+    <Compile Include="ISwaggerProvider.cs" />
+    <Compile Include="SwaggerCommandResponse.cs" />
+    <Compile Include="SwaggerComponent.cs" />
+    <Compile Include="SwaggerDocument.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CK.Crs.Abstractions\CK.Crs.Abstractions.csproj">
-      <Project>{7605f8fb-b447-4d6b-91f6-d85acc9ddbb7}</Project>
-      <Name>CK.Crs.Abstractions</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CK.Crs.Execution\CK.Crs.Execution.csproj">
-      <Project>{f09f1cac-1c01-498b-9cd3-8a6d0e6928d5}</Project>
-      <Name>CK.Crs.Execution</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CK.Crs.OpenAPI\CK.Crs.OpenAPI.csproj">
-      <Project>{f6c59020-78ef-473c-8816-b65b0c45a7b5}</Project>
-      <Name>CK.Crs.OpenAPI</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CK.Crs.Receiver\CK.Crs.Receiver.csproj">
-      <Project>{56baeda5-6ea6-4e23-8fdd-d1dc428ea6be}</Project>
-      <Name>CK.Crs.Receiver</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CK.Crs.Runtime\CK.Crs.Runtime.csproj">
-      <Project>{52C1088B-F87D-489D-B592-38F3881B2271}</Project>
-      <Name>CK.Crs.Runtime</Name>
-    </ProjectReference>
+    <Compile Include="SwaggerJsonConverter.cs" />
+    <Compile Include="SwaggerPipelineComponent.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+    <ProjectReference Include="..\CK.Crs.Abstractions\CK.Crs.Abstractions.csproj">
+      <Project>{7605f8fb-b447-4d6b-91f6-d85acc9ddbb7}</Project>
+      <Name>CK.Crs.Abstractions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CK.Crs.Runtime.Extensions\CK.Crs.Runtime.Extensions.csproj">
+      <Project>{b41506a4-037d-4b1e-a298-ae7b14f9e07b}</Project>
+      <Name>CK.Crs.Runtime.Extensions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CK.Crs.Runtime\CK.Crs.Runtime.csproj">
+      <Project>{52c1088b-f87d-489d-b592-38f3881b2271}</Project>
+      <Name>CK.Crs.Runtime</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

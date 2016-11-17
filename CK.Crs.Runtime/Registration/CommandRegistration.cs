@@ -14,12 +14,20 @@ namespace CK.Crs
         CommandRoute _CommandRoute;
         CommandDescription _commandDescription;
 
-        public CommandRegistration( CommandRoute description )
+        /// <summary>
+        /// Creates a <see cref="CommandRegistration"/> from a <see cref="CommandRoute"/>
+        /// </summary>
+        /// <param name="route"></param>
+        public CommandRegistration( CommandRoute route )
         {
-            _CommandRoute = description;
-            _commandDescription = description.Descriptor;
+            _CommandRoute = route;
+            _commandDescription = route.Descriptor;
         }
 
+        /// <summary>
+        /// Creates a <see cref="CommandRegistration"/> from a <see cref="CommandDescription"/>
+        /// </summary>
+        /// <param name="description"></param>
         public CommandRegistration( CommandDescription description )
         {
             _commandDescription = description;
@@ -27,7 +35,7 @@ namespace CK.Crs
 
         CommandRegistration HandledBy<THandler>() where THandler : ICommandHandler
         {
-            _commandDescription.HandlerType = typeof( THandler );
+            _commandDescription = new CommandDescription( _commandDescription.Name, _commandDescription.CommandType, typeof( THandler ) );
             return this;
         }
 
@@ -45,9 +53,10 @@ namespace CK.Crs
 
         CommandRegistration CommandName( string commandName )
         {
-            _commandDescription.Name = commandName;
+            _commandDescription = new CommandDescription( commandName, _commandDescription.CommandType, _commandDescription.HandlerType );
             return this;
         }
+
         CommandRegistration IsAsync()
         {
             _commandDescription.Traits = "Async";
@@ -56,6 +65,7 @@ namespace CK.Crs
 
         CommandRegistration AddFilter<TFilter>() where TFilter : ICommandFilter
         {
+            if( _CommandRoute == null ) throw new NotSupportedException( "Cannot add filters in this registration context" );
             _CommandRoute.Filters = _CommandRoute.Filters.Union( new[] { typeof( TFilter ) } ).ToArray();
             return this;
         }

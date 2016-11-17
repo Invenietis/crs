@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CK.Crs.Tests", "CK.Crs.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CK.Crs.AspNetCore", "CK.Crs.AspNetCore\CK.Crs.AspNetCore.csproj", "{B08C79A1-2543-402B-9819-8F8E26F0152D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CK.Crs.OpenAPI", "CK.Crs.OpenAPI\CK.Crs.OpenAPI.csproj", "{F6C59020-78EF-473C-8816-B65B0C45A7B5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -121,6 +123,14 @@ Global
 		{B08C79A1-2543-402B-9819-8F8E26F0152D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B08C79A1-2543-402B-9819-8F8E26F0152D}.Release|x86.ActiveCfg = Release|Any CPU
 		{B08C79A1-2543-402B-9819-8F8E26F0152D}.Release|x86.Build.0 = Release|Any CPU
+		{F6C59020-78EF-473C-8816-B65B0C45A7B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6C59020-78EF-473C-8816-B65B0C45A7B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6C59020-78EF-473C-8816-B65B0C45A7B5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F6C59020-78EF-473C-8816-B65B0C45A7B5}.Debug|x86.Build.0 = Debug|Any CPU
+		{F6C59020-78EF-473C-8816-B65B0C45A7B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6C59020-78EF-473C-8816-B65B0C45A7B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6C59020-78EF-473C-8816-B65B0C45A7B5}.Release|x86.ActiveCfg = Release|Any CPU
+		{F6C59020-78EF-473C-8816-B65B0C45A7B5}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

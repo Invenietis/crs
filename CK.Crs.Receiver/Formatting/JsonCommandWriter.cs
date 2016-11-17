@@ -27,7 +27,7 @@ namespace CK.Crs.Runtime.Formatting
 
         public override bool ShouldInvoke( IPipeline pipeline )
         {
-            return pipeline.Response != null;
+            return pipeline.Response != null && pipeline.Output.Length == 0;
         }
     }
 }

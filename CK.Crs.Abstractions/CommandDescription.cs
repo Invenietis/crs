@@ -10,25 +10,39 @@ namespace CK.Crs
     /// </summary>
     public class CommandDescription
     {
-        public CommandDescription()
+        /// <summary>
+        /// Creates a command description
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="commandType"></param>
+        /// <param name="handlerType"></param>
+        public CommandDescription( string name, Type commandType, Type handlerType )
         {
+            if( String.IsNullOrEmpty( name ) ) throw new ArgumentNullException( nameof( name ) );
+            if( commandType == null ) throw new ArgumentNullException( nameof( commandType ) );
+            if( handlerType == null ) throw new ArgumentNullException( nameof( handlerType ) );
+
+            Name = name;
+            CommandType = commandType;
+            HandlerType = handlerType;
             Decorators = CK.Core.Util.Array.Empty<Type>();
+            Traits = String.Empty;
         }
 
         /// <summary>
         /// The name of the command
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; }
 
         /// <summary>
         /// The <see cref="Type"/> of the command to process.
         /// </summary>
-        public Type CommandType { get; set; }
+        public Type CommandType { get; }
 
         /// <summary>
         /// The <see cref="Type"/> of the command to process.
         /// </summary>
-        public Type HandlerType { get; set; }
+        public Type HandlerType { get; }
 
         /// <summary>
         /// Gets commands traits

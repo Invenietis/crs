@@ -5,8 +5,16 @@ using System.Threading.Tasks;
 
 namespace CK.Crs
 {
+    /// <summary>
+    /// Describes a command registration in an CrsEndpoint.
+    /// </summary>
     public class CommandRoute
     {
+        /// <summary>
+        /// Creates a <see cref="CommandRoute"/> from a path and a description
+        /// </summary>
+        /// <param name="route">The <see cref="CommandRoutePath"/> of the command</param>
+        /// <param name="commandDescriptor">A <see cref="CommandDescription"/> of the command</param>
         public CommandRoute( CommandRoutePath route, CommandDescription commandDescriptor )
         {
             if( route == null ) throw new ArgumentNullException( "route" );

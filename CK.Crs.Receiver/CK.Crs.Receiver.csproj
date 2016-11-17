@@ -110,7 +110,6 @@
     <Compile Include="Filtering\FilterContext.cs" />
     <Compile Include="Filtering\ICommandFilterFactory.cs" />
     <Compile Include="Filtering\ReflectionAmbientValueValidationContext.cs" />
-    <Compile Include="Formatting\IJsonConverter.cs" />
     <Compile Include="Formatting\JsonCommandBuilder.cs" />
     <Compile Include="Formatting\JsonCommandWriter.cs" />
     <Compile Include="Meta\CommandPropertyInfo.cs" />
