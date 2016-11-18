@@ -31,7 +31,7 @@ namespace CK.Crs.OpenAPI
 
         public override bool ShouldInvoke( IPipeline pipeline )
         {
-            return pipeline.Request.Path.CommandName == "swagger";
+            return pipeline.Request.Path.CommandName == _settings.SwaggerPath;
         }
 
         public override async Task Invoke( IPipeline pipeline, CancellationToken token = default( CancellationToken ) )

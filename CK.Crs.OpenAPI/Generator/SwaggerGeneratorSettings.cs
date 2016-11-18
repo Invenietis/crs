@@ -6,16 +6,23 @@ namespace CK.Crs.OpenAPI.Generator
 {
     public class SwaggerGeneratorSettings
     {
-        public SwaggerGeneratorSettings()
+        public SwaggerGeneratorSettings() : this( ".swagger" )
         {
+        }
+
+        public SwaggerGeneratorSettings( string swaggerPath )
+        {
+            SwaggerPath = swaggerPath;
             SwaggerDocs = new Dictionary<string, SwaggerDocumentDescriptor>();
             TagComparer = Comparer<string>.Default;
             SecurityDefinitions = new Dictionary<string, SecurityScheme>();
         }
 
+        public string SwaggerPath { get; private set; }
+
         public IDictionary<string, SwaggerDocumentDescriptor> SwaggerDocs { get; private set; }
 
-        public bool IgnoreObsoleteActions { get; set; }
+        public bool IgnoreObsoleteCommands { get; set; }
 
         public IComparer<string> TagComparer { get; set; }
 
@@ -28,7 +35,7 @@ namespace CK.Crs.OpenAPI.Generator
             return new SwaggerGeneratorSettings
             {
                 SwaggerDocs = SwaggerDocs,
-                IgnoreObsoleteActions = IgnoreObsoleteActions,
+                IgnoreObsoleteCommands = IgnoreObsoleteCommands,
                 TagComparer = TagComparer,
                 SecurityDefinitions = SecurityDefinitions,
             };
@@ -37,7 +44,7 @@ namespace CK.Crs.OpenAPI.Generator
 
     public class SwaggerDocumentDescriptor
     {
-        public SwaggerDocumentDescriptor(Info info )
+        public SwaggerDocumentDescriptor( Info info )
         {
             Info = info;
         }

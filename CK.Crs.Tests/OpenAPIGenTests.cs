@@ -37,7 +37,7 @@ namespace CK.Crs.Tests
             ISwaggerProvider swaggerProvider = new SwaggerComponent( factory, new SwaggerGeneratorSettings
             {
                 DescribeAllParametersInCamelCase = true,
-                IgnoreObsoleteActions = true
+                IgnoreObsoleteCommands = true
             });
             SwaggerDocument document = swaggerProvider.GetSwagger( config );
 
@@ -61,7 +61,7 @@ namespace CK.Crs.Tests
             ISwaggerProvider swaggerProvider = new SwaggerComponent( factory, new SwaggerGeneratorSettings
             {
                 DescribeAllParametersInCamelCase = true,
-                IgnoreObsoleteActions = true
+                IgnoreObsoleteCommands = true
             });
             SwaggerDocument document = swaggerProvider.GetSwagger( config);
 

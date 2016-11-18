@@ -36,7 +36,7 @@ namespace CK.Crs
             services.AddSingleton( new SwaggerGeneratorSettings
             {
                 DescribeAllParametersInCamelCase = true,
-                IgnoreObsoleteActions = true
+                IgnoreObsoleteCommands = true
             } );
         }
     }
