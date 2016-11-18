@@ -5,7 +5,9 @@ using CK.Core;
 
 namespace CK.Crs
 {
-
+    /// <summary>
+    /// Ambient values registrations
+    /// </summary>
     public interface IAmbientValuesRegistration
     {
         /// <summary>
@@ -14,7 +16,7 @@ namespace CK.Crs
         IEnumerable<IAmbientValueProviderDescriptor> AmbientValues { get; }
 
         /// <summary>
-        /// Registers an ambient <see cref="IAmbientValueProvider"/> capable to resolve the value of an ambient parameter.
+        /// Registers an ambient <see cref="IAmbientValueProvider"/> which should be able to resolve the value of an ambient parameter.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="name">The name of the ambient parameter managed by this <see cref="IAmbientValueProvider"/></param>

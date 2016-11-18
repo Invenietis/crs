@@ -9,6 +9,7 @@ namespace CK.Crs.Runtime.Filtering
     {
         readonly IAmbientValuesRegistration _registration;
         readonly IAmbientValueProviderFactory _factory;
+
         public AmbientValues( IAmbientValuesRegistration registration, IAmbientValueProviderFactory factory )
         {
             _registration = registration;

@@ -5,6 +5,12 @@ using System.Threading.Tasks;
 
 namespace CK.Crs
 {
+    /// <summary>
+    /// Resolves the value of an ambient parameter.
+    /// </summary>
+    /// <remarks>
+    /// The returned value is always "context-bounded" since this is by defintion an ambient value.
+    /// </remarks>
     public interface IAmbientValues
     {
         /// <summary>

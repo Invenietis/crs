@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 
 namespace CK.Crs
 {
-
+    /// <summary>
+    /// <see cref="IAmbientValueProvider"/> factory which should creates a new instance each time create is called.
+    /// </summary>
     public interface IAmbientValueProviderFactory
     {
         /// <summary>

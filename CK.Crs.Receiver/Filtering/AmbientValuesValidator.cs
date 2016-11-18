@@ -4,17 +4,22 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CK.Core;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace CK.Crs.Runtime.Filtering
 {
     class AmbientValuesValidator : PipelineComponent
     {
         readonly IAmbientValues _ambientValues;
+        readonly IMemoryCache _memoryCache;
 
-        public AmbientValuesValidator( IAmbientValues ambientValues )
+        public AmbientValuesValidator( IAmbientValues ambientValues, IMemoryCache memoryCache )
         {
             if( ambientValues == null ) throw new ArgumentNullException( nameof( ambientValues ) );
+            if( memoryCache == null ) throw new ArgumentNullException( nameof( memoryCache ) );
+
             _ambientValues = ambientValues;
+            _memoryCache = memoryCache;
         }
 
         /// <summary>
@@ -29,7 +34,12 @@ namespace CK.Crs.Runtime.Filtering
         {
             using( pipeline.Monitor.OpenTrace().Send("Ambient values validation..." ) )
             {
-                var context = new ReflectionAmbientValueValidationContext( pipeline.Monitor, pipeline.Action, _ambientValues );
+                var context = new ReflectionAmbientValueValidationContext( 
+                    pipeline.Monitor, 
+                    pipeline.Action, 
+                    _ambientValues, 
+                    _memoryCache );
+
                 if( pipeline.Configuration.Events.AmbientValuesValidating != null )
                     await pipeline.Configuration.Events.AmbientValuesValidating?.Invoke( context );
 

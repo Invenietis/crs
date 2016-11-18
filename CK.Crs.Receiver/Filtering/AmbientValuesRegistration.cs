@@ -38,6 +38,11 @@ namespace CK.Crs.Runtime.Filtering
             } );
         }
 
+        /// <summary>
+        /// Registers an <see cref="IAmbientValueProvider"/> and registers it into the DI Container.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
         public void Register<T>( string key ) where T : class, IAmbientValueProvider
         {
             if( _lazyBag == null ) _lazyBag = new Dictionary<string, IAmbientValueProviderDescriptor>();
@@ -46,7 +51,7 @@ namespace CK.Crs.Runtime.Filtering
                 Name = key,
                 AmbientValueType = typeof( T )
             } );
-            _services.AddScoped<T>();
+            _services.AddTransient<T>();
         }
 
         public IAmbientValueProviderDescriptor GetByName( string name )
