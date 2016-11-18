@@ -7,7 +7,7 @@ namespace CK.Crs.Runtime
     /// Defines a response of a command.
     /// A response can be of VISAM type defined by the enum <see cref="CommandResponseType"/>.
     /// </summary>
-    public abstract class CommandResponse
+    public abstract class CommandResponse<T>
     {
         /// <summary>
         /// Creates a CommandResponse
@@ -34,11 +34,27 @@ namespace CK.Crs.Runtime
         /// <summary>
         /// The raw response of the command. Can be null.
         /// </summary>
-        public object Payload { get; protected set; }
+        public T Payload { get; protected set; }
 
         /// <summary>
         /// Extra informations returned by Crs.
         /// </summary>
         public IDictionary<string, string> Headers { get; }
+    }
+
+    /// <summary>
+    /// Defines a response of a command.
+    /// A response can be of VISAM type defined by the enum <see cref="CommandResponseType"/>.
+    /// </summary>
+    public abstract class CommandResponse : CommandResponse<object>
+    {
+        /// <summary>
+        /// Creates a CommandResponse
+        /// </summary>
+        /// <param name="responseType">The type of a response.</param>
+        /// <param name="commandId"></param>
+        protected CommandResponse( CommandResponseType responseType, Guid commandId ) : base( responseType, commandId )
+        {
+        }
     }
 }

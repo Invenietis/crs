@@ -63,7 +63,7 @@ namespace CK.Crs.OpenAPI
             result.Produces = new List<string> { "application/json" };
             result.Paths = new Dictionary<string, PathItem>();
             result.Definitions = new Dictionary<string, Schema>();
-            result.BasePath = CommandRoutePath.EnsureTrailingSlash( configuration.ReceiverPath );
+            result.BasePath = configuration.ReceiverPath;
             result.Host = host;
             result.Schemes = schemes;
 
@@ -83,7 +83,7 @@ namespace CK.Crs.OpenAPI
                 {
                     Post = operation
                 };
-                result.Paths.Add( a.Route.CommandName, pathItem );
+                result.Paths.Add( '/' + a.Route.CommandName, pathItem );
 
                 //var oeprationFilterContext = new OperationFilterContext(apiDescription, schemaRegistry);
                 //foreach( var filter in _settings.OperationFilters )
@@ -124,11 +124,8 @@ namespace CK.Crs.OpenAPI
                 (type.IsGenericType == false || (type.IsGenericType && type.GetGenericTypeDefinition() != typeof( CommandHandler<,> ))) );
 
             Dictionary<string, Response> responses = new Dictionary<string, Response>();
-            var error = registry.GetOrRegister( typeof( CommandResponse ) );
-            error.Properties["payload"] = new Schema
-            {
-                Type = "string"
-            };
+            var error = registry.GetOrRegister( typeof( CommandResponse<string> ) );
+
             responses.Add( "V", new Response
             {
                 Description = ResponseDescriptionMap["V"],
@@ -156,15 +153,17 @@ namespace CK.Crs.OpenAPI
 
                 responses.Add( "S", new Response
                 {
-                    Description = ResponseDescriptionMap["A"],
+                    Description = ResponseDescriptionMap["S"],
                     Schema = registry.GetOrRegister( typeof( CommandResponse ) )
                 } );
                 return responses;
             }
             Debug.Assert( type != null && type.GetGenericArguments().Length == 2 );
 
-            var s = registry.GetOrRegister( typeof( CommandResponse ) );
-            s.Properties["payload"] = registry.GetOrRegister( type.GetGenericArguments()[1] );
+            var genericArgument =  type.GetGenericArguments()[1];
+            var responseType = registry.GetOrRegister( genericArgument );
+            var t =  typeof( CommandResponse<> ).MakeGenericType( genericArgument );
+            var s = registry.GetOrRegister( t );
             responses.Add( "S", new Response
             {
                 Description = ResponseDescriptionMap["S"],
