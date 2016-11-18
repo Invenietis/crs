@@ -7,61 +7,96 @@ using System.Threading.Tasks;
 
 namespace CK.Crs
 {
+    /// <summary>
+    /// Defines the a command route path: composed of a prefix (the receiver base path) and a command name.
+    /// </summary>
     public struct CommandRoutePath : IEquatable<CommandRoutePath>
     {
         const string PATH_SEPARATOR = "/";
 
-        public string FullPath { get; set; }
+        /// <summary>
+        /// Gets the full command route path
+        /// </summary>
+        public string FullPath { get; }
 
-        public string Prefix { get; set; }
+        /// <summary>
+        /// Gets the command basePath
+        /// </summary>
+        public string BasePath { get; }
 
-        public string CommandName { get; set; }
+        /// <summary>
+        /// Gets the command name
+        /// </summary>
+        public string CommandName { get; }
 
+        /// <summary>
+        /// Creates a <see cref="CommandRoutePath"/> from a full request path
+        /// </summary>
+        /// <param name="requestPath"></param>
         public CommandRoutePath( string requestPath )
         {
             FullPath = requestPath;
 
-            int separatorIdx = requestPath.IndexOf( PATH_SEPARATOR );
+            int separatorIdx = requestPath.LastIndexOf( PATH_SEPARATOR );
             if( separatorIdx == -1 )
             {
-                Prefix = String.Empty;
+                BasePath = String.Empty;
                 CommandName = requestPath;
             }
             else
             {
-                Prefix = requestPath.Substring( 0, separatorIdx );
+                BasePath = requestPath.Substring( 0, separatorIdx );
                 CommandName = requestPath.Substring( separatorIdx + 1 );
             }
         }
 
+        /// <summary>
+        /// Creates a <see cref="CommandRoutePath"/> from a basePath and a commandName.
+        /// </summary>
+        /// <param name="basePath"></param>
+        /// <param name="commandName"></param>
+        public CommandRoutePath( string basePath, string commandName )
+        {
+            if( String.IsNullOrEmpty( basePath ) ) throw new ArgumentNullException( nameof( basePath ) );
+            if( String.IsNullOrEmpty( commandName ) ) throw new ArgumentNullException( nameof( commandName ) );
+
+            if( !basePath.StartsWith( PATH_SEPARATOR, StringComparison.OrdinalIgnoreCase ) ) throw new ArgumentException( $"The route prefix should start with a {PATH_SEPARATOR}" );
+
+            BasePath = EnsureNormalized( basePath );
+
+            CommandName = commandName;
+            if( CommandName.StartsWith( PATH_SEPARATOR, StringComparison.OrdinalIgnoreCase ) ) CommandName = CommandName.Remove( 0, 1 );
+
+            FullPath = $"{BasePath}{PATH_SEPARATOR}{CommandName}";
+        }
+
+        /// <summary>
+        /// Gets wether this instance is prefixed by the given receiver path
+        /// </summary>
+        /// <param name="receiverPath"></param>
+        /// <returns></returns>
         public bool IsPrefixedBy( string receiverPath )
         {
             if( !receiverPath.StartsWith( PATH_SEPARATOR, StringComparison.OrdinalIgnoreCase ) )
                 throw new ArgumentException( $"The receiverPath should start with a {PATH_SEPARATOR}" );
 
             receiverPath = EnsureNormalized( receiverPath );
-            return receiverPath.Equals( Prefix, StringComparison.OrdinalIgnoreCase );
-        }
-
-        public CommandRoutePath( string routePrefix, string commandName )
-        {
-            if( String.IsNullOrEmpty( routePrefix ) ) throw new ArgumentNullException( nameof( routePrefix ) );
-            if( String.IsNullOrEmpty( commandName ) ) throw new ArgumentNullException( nameof( commandName ) );
-
-            if( !routePrefix.StartsWith( PATH_SEPARATOR, StringComparison.OrdinalIgnoreCase ) ) throw new ArgumentException( $"The route prefix should start with a {PATH_SEPARATOR}" );
-
-            Prefix = EnsureNormalized( routePrefix );
-
-            CommandName = commandName;
-            if( CommandName.StartsWith( PATH_SEPARATOR, StringComparison.OrdinalIgnoreCase ) ) CommandName = CommandName.Remove( 0, 1 );
-
-            FullPath = $"{Prefix}{PATH_SEPARATOR}{CommandName}";
+            return receiverPath.Equals( BasePath, StringComparison.OrdinalIgnoreCase );
         }
 
         static string EnsureNormalized( string s )
         {
             if( s.EndsWith( PATH_SEPARATOR, StringComparison.OrdinalIgnoreCase ) ) return s.Remove( s.Length - 1 );
             return s;
+        }
+
+        public static string EnsureTrailingSlash( string receiverPath )
+        {
+            if( !String.IsNullOrWhiteSpace( receiverPath ) && 
+                !receiverPath.EndsWith( PATH_SEPARATOR, StringComparison.OrdinalIgnoreCase ) )
+                return String.Concat( receiverPath, '/' );
+
+            return receiverPath;
         }
 
         public override string ToString()

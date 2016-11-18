@@ -12,6 +12,15 @@ namespace CK.Crs.Runtime
     public class JsonNetConverter : IJsonConverter
     {
         readonly JsonSerializerSettings _converterSettings;
+
+        public virtual JsonSerializerSettings ConverterSettings
+        {
+            get
+            {
+                return _converterSettings;
+            }
+        }
+
         public JsonNetConverter()
         {
             _converterSettings = new JsonSerializerSettings
@@ -20,14 +29,19 @@ namespace CK.Crs.Runtime
             };
         }
 
-        public string ToJson( CommandResponse o )
+        public virtual string ToJson( CommandResponse o )
         {
-            return JsonConvert.SerializeObject( o, _converterSettings );
+            return JsonConvert.SerializeObject( new
+            {
+                CommandId = o.CommandId,
+                Payload = o.Payload,
+                ResponseType = o.ResponseType
+            }, ConverterSettings );
         }
 
-        public object ParseJson( string json, Type type )
+        public virtual object ParseJson( string json, Type type )
         {
-            return JsonConvert.DeserializeObject( json, type, _converterSettings );
+            return JsonConvert.DeserializeObject( json, type, ConverterSettings );
         }
     }
 }

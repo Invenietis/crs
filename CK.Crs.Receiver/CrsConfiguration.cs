@@ -7,6 +7,9 @@ using CK.Crs.Runtime.Routing;
 
 namespace CK.Crs.Runtime
 {
+    /// <summary>
+    /// Main Crs configuration entry
+    /// </summary>
     public class CrsConfiguration : ICrsConfiguration
     {
         internal CommandRouteCollection _routes;
@@ -32,6 +35,9 @@ namespace CK.Crs.Runtime
         /// </summary>
         public CKTraitContext TraitContext { get; set; }
 
+        /// <summary>
+        /// Gets the base path of this receiver
+        /// </summary>
         public string ReceiverPath => _path;
 
         /// <summary>
@@ -78,7 +84,8 @@ namespace CK.Crs.Runtime
         /// <summary>
         /// Selects the commands from the <see cref="ICommandRegistry"/> this CommandReceiver is able to handle. 
         /// </summary>
-        /// <param name="selection">A projection lambda to filter commands</param>
+        /// <param name="selection">A projection lambda to select commands</param>
+        /// <param name="globalConfiguration">A projection lambda to filter commands</param>
         /// <returns><see cref="CrsConfiguration"/></returns>
         public ICrsConfiguration AddCommands(
             Func<ICommandRegistry, IEnumerable<CommandDescription>> selection,
@@ -92,6 +99,11 @@ namespace CK.Crs.Runtime
             return this;
         }
 
+        /// <summary>
+        /// Add a command to the registry
+        /// </summary>
+        /// <param name="commandType"></param>
+        /// <returns></returns>
         public ICommandConfiguration<ICommandRegistrationWithFilter> AddCommand( Type commandType )
         {
             var commandDescription = _registry.Registration.SingleOrDefault( c => c.CommandType == commandType );

@@ -76,6 +76,7 @@
   <ItemGroup>
     <Compile Include="CrsHandlerBuilder.cs" />
     <Compile Include="CrsPipelineHandler.cs" />
+    <Compile Include="External\IJsonConverter.cs" />
     <Compile Include="ICrsConfiguration.cs" />
     <Compile Include="ICrsHandler.cs" />
     <Compile Include="External\ExternalComponents.cs" />

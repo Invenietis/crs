@@ -13,7 +13,7 @@ namespace CK.Crs
         /// <summary>
         /// Looks up the route collection for a registered command.
         /// </summary>
-        /// <param name="routes"></param>
+        /// <param name="builder"></param>
         static public IPipelineBuilder UseCommandRouter( this IPipelineBuilder builder )
         {
             return builder.Use<CommandRouter>();

@@ -9,6 +9,9 @@ using CK.Core;
 
 namespace CK.Crs
 {
+    /// <summary>
+    /// Registry extensions
+    /// </summary>
     public static class CommandRegistryExtensions
     {
         /// <summary>
@@ -17,7 +20,7 @@ namespace CK.Crs
         /// <remarks>
         /// Given assemblies must exists in the output folder of the solution, otherwise they will not be loaded.
         /// </remarks>
-        /// <param name="r"></param>
+        /// <param name="registry"></param>
         /// <param name="monitor">An optional <see cref="IActivityMonitor"/></param>
         /// <param name="assemblies">A list of assembly name.</param>
         public static void AutoRegisterSimple( this ICommandRegistry registry, IActivityMonitor monitor = null, params string[] assemblies )
@@ -62,16 +65,10 @@ namespace CK.Crs
                                         .Where( interfaceType => interfaceType.IsGenericType && interfaceType.GenericTypeArguments.Length == 1 )
                                         .Select( interfaceType => interfaceType.GenericTypeArguments[0] ) )
                                     {
-                                        CommandDescription description = new CommandDescription();
-                                        description.HandlerType = h;
-                                        monitor.Trace().Send( "...HandlerType is {0}", description.HandlerType.Name );
-
-                                        description.CommandType = commandType;
-                                        monitor.Trace().Send( "...CommandType is {0}", description.CommandType.Name );
-
-                                        description.Name = option.CommandNameProvider( description.CommandType );
-                                        monitor.Trace().Send( "...CommandName is {0}", description.CommandType.Name );
-
+                                        CommandDescription description = new CommandDescription(
+                                            option.CommandNameProvider( commandType ),
+                                            commandType,
+                                            h );
                                         description.Description = option.CommandDescriptionProvider( description.CommandType );
                                         description.Traits = option.CommandTraitsProvider( description.CommandType );
                                         description.Decorators = option.CommandDecorators( description.CommandType, description.HandlerType );
@@ -94,19 +91,13 @@ namespace CK.Crs
         /// </summary>
         /// <typeparam name="TCommand"></typeparam>
         /// <typeparam name="THandler"></typeparam>
-        /// <param name="route"></param>
-        /// <param name="isLongRunning"></param>
+        /// <param name="registry"></param>
         /// <returns></returns>
         public static ICommandRegistration Register<TCommand, THandler>( this ICommandRegistry registry )
             where TCommand : class
             where THandler : class, ICommandHandler<TCommand>
         {
-            var d = new CommandDescription
-            {
-                Name = GetDefaultName( typeof(TCommand)),
-                CommandType = typeof( TCommand),
-                HandlerType = typeof(THandler)
-            };
+            var d = new CommandDescription( GetDefaultName( typeof(TCommand)),  typeof( TCommand), typeof(THandler));
             d.Decorators = ExtractDecoratorsFromHandlerAttributes( d.CommandType, d.HandlerType ).ToArray();
 
             var registration = new CommandRegistration( d );
@@ -114,12 +105,12 @@ namespace CK.Crs
             return registration;
         }
 
-        public static IReadOnlyCollection<Type> ExtractDecoratorsFromHandlerAttributes( Type commandType, Type handlerType ) =>
+        internal static IReadOnlyCollection<Type> ExtractDecoratorsFromHandlerAttributes( Type commandType, Type handlerType ) =>
             handlerType.GetTypeInfo().GetCustomAttributes().OfType<ICommandDecorator>().Select( t => t.GetType() ).ToArray();
 
-        public static string GetDefaultName( Type type ) => type.Name.RemoveSuffixes( "Command", "Cmd" );
+        internal static string GetDefaultName( Type type ) => type.Name.RemoveSuffixes( "Command", "Cmd" );
 
-        static string RemoveSuffixes( this string s, params string[] suffixes )
+        internal static string RemoveSuffixes( this string s, params string[] suffixes )
         {
             foreach( var suf in suffixes )
             {
