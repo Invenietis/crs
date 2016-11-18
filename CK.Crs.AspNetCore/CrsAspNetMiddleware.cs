@@ -11,8 +11,8 @@ namespace CK.Crs.AspNetCore
     // You may need to install the Microsoft.AspNet.Http.Abstractions package into your project
     class CrsMiddleware
     {
-        ICrsHandler _handler;
-        RequestDelegate _next;
+        readonly ICrsHandler _handler;
+        readonly RequestDelegate _next;
 
         /// <summary>
         /// Shared options

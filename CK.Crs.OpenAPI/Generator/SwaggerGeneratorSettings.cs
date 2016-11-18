@@ -6,7 +6,7 @@ namespace CK.Crs.OpenAPI.Generator
 {
     public class SwaggerGeneratorSettings
     {
-        public SwaggerGeneratorSettings() : this( ".swagger" )
+        public SwaggerGeneratorSettings() : this( "swagger" )
         {
         }
 
@@ -18,6 +18,9 @@ namespace CK.Crs.OpenAPI.Generator
             SecurityDefinitions = new Dictionary<string, SecurityScheme>();
         }
 
+        /// <summary>
+        /// The path to the swagger description
+        /// </summary>
         public string SwaggerPath { get; private set; }
 
         public IDictionary<string, SwaggerDocumentDescriptor> SwaggerDocs { get; private set; }
