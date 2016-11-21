@@ -23,7 +23,7 @@ namespace CK.Crs.Runtime.Filtering
             {
                 return Action.Description.CommandType.GetProperties().ToDictionary( k => k.Name );
             } );
-            var property = properties[valueName];
+            var property = properties.GetValueWithDefault(valueName, null );
             if( property == null ) Monitor.Info().Send( "Property {0} not found for value {1} on command {2}", valueName, valueName, Action.Description.CommandType.Name );
             else
             {
