@@ -18,10 +18,10 @@ namespace CK.Crs
         /// Process a <see cref="CommandRequest"/> and potentially writes to the given <see cref="Stream"/> a response.
         /// </summary>
         /// <param name="command"><see cref="CommandRequest"/></param>
-        /// <param name="output">The output stream to output a <see cref="CommandResponse"/></param>
+        /// <param name="response">The output stream to output a <see cref="CommandResponseBuilder"/></param>
         /// <param name="cancellationToken"></param>
         /// <returns>Returns true if the command has been processed (a <see cref="CommandResponse"/> has been created.).</returns>
-        Task<CommandResponse> ProcessCommandAsync( CommandRequest command, Stream output, CancellationToken cancellationToken = default( CancellationToken ) );
+        Task ProcessCommandAsync( CommandRequest command, CommandResponseBuilder response, CancellationToken cancellationToken = default( CancellationToken ) );
     }
 
 }

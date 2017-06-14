@@ -20,9 +20,7 @@ namespace CK.Crs.Runtime.Execution
 
         public CommandRequest Request { get; }
 
-        public CommandResponse Response { get; set; }
-
-        public Stream Output { get; set; }
+        public CommandResponseBuilder Response { get; set; }
 
         public virtual CancellationToken CancellationToken
         {
@@ -30,6 +28,7 @@ namespace CK.Crs.Runtime.Execution
         }
 
         IServiceScope _scope;
+        IDisposable _dependentTokenGroup;
 
         public IServiceProvider CommandServices { get; }
 
@@ -39,14 +38,16 @@ namespace CK.Crs.Runtime.Execution
 
             CommandServices = _scope.ServiceProvider;
             Configuration = configuration;
-            Monitor = command.Token.CreateDependentMonitor();
+            Monitor = new ActivityMonitor();
+            _dependentTokenGroup = Monitor.StartDependentActivity( command.Token );
+
             Action = command;
             Request = null;
         }
         public void Dispose()
         {
             _scope.Dispose();
-            ((IDisposableActivityMonitor)Monitor).Dispose();
+            _dependentTokenGroup.Dispose();
         }
     }
 }

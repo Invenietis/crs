@@ -16,8 +16,8 @@ namespace CK.Crs.Runtime.Execution
                  pipeline.Action,
                  pipeline.Monitor,
                  pipeline.CancellationToken,
-                  () => new TransactionnalEventPublisher( pipeline.Configuration.ExternalComponents.EventPublisher ),
-                  () => new TransactionnalCommandScheduler( registry, pipeline.Configuration.ExternalComponents.CommandScheduler  )
+                  () => new SimpleEventPublisher( pipeline.Configuration.ExternalComponents.EventPublisher ),
+                  () => new SimpleCommandScheduler( registry, pipeline.Configuration.ExternalComponents.CommandScheduler  )
             )
         {
         }

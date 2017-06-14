@@ -20,7 +20,7 @@ namespace CK.Crs.Runtime.Formatting
 
         public override bool ShouldInvoke( IPipeline pipeline )
         {
-            return pipeline.Response == null && pipeline.Action.Description != null;
+            return pipeline.Response.HasReponse == false && pipeline.Action.Description != null;
         }
 
         public override async Task Invoke( IPipeline pipeline, CancellationToken token )

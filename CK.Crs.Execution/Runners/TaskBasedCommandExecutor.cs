@@ -44,15 +44,16 @@ namespace CK.Crs.Runtime.Execution
             await Task.Run( async () =>
             {
                 // We override the IActivityMonitor with a dependant one to be thread safe !
-                using( var dependentMonitor = token.CreateDependentMonitor() )
+                var dependentMonitor = new ActivityMonitor();
+                using( dependentMonitor.StartDependentActivity( token ) )
                 {
                     context.ExecutionContext.Monitor = dependentMonitor;
-                    
+
                     await Engine.RunAsync( context, _factory );
 
                     var response = CreateFromContext( context );
                     if( pipeline.Configuration.ExternalComponents.ResponseDispatcher == null )
-                        dependentMonitor.Warn().Send("No response dispatcher were available...");
+                        dependentMonitor.Warn().Send( "No response dispatcher were available..." );
                     else
                         await pipeline.Configuration.ExternalComponents.ResponseDispatcher.DispatchAsync( context.ExecutionContext.Action.CallbackId, response );
                 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,13 +11,16 @@ namespace CK.Crs
     /// </summary>
     public class CommandReceiverOption
     {
-        public CommandReceiverOption( ICommandRegistry r, IAmbientValuesRegistration a )
+        public CommandReceiverOption( IServiceCollection services, ICommandRegistry r, IAmbientValuesRegistration a )
         {
-            Registry = r;
+            Services = services;
+            Commands = r;
             AmbientValues = a;
         }
 
-        public ICommandRegistry Registry { get; }
+        public ICommandRegistry Commands { get; }
+
+        public IServiceCollection Services { get; }
 
         public IAmbientValuesRegistration AmbientValues { get; }
     }

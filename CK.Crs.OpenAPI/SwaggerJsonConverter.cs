@@ -6,16 +6,21 @@ using Newtonsoft.Json.Serialization;
 
 namespace CK.Crs.OpenAPI
 {
-    class SwaggerJsonConverter : JsonNetConverter
+    class SwaggerJsonConverter : IJsonConverter
     {
         JsonSerializerSettings _converterSettings;
 
-        public override string ToJson( CommandResponse o )
+        public string ToJson( CommandResponse o )
         {
             return JsonConvert.SerializeObject( o.Payload, ConverterSettings );
         }
 
-        public override JsonSerializerSettings ConverterSettings
+        public object ParseJson(string json, Type type)
+        {
+            return JsonConvert.DeserializeObject(json, type);
+        }
+
+        public JsonSerializerSettings ConverterSettings
         {
             get
             {
@@ -23,8 +28,8 @@ namespace CK.Crs.OpenAPI
                     _converterSettings = new JsonSerializerSettings
                     {
                         NullValueHandling = NullValueHandling.Ignore,
-                        Formatting = base.ConverterSettings.Formatting,
-                        ContractResolver = new SwaggerContractResolver( base.ConverterSettings )
+                        Formatting = Formatting.Indented,
+                        ContractResolver = new SwaggerContractResolver( new JsonSerializerSettings() )
                     };
 
                 return _converterSettings;

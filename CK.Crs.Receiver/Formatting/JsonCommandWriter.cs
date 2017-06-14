@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using CK.Crs.Runtime;
 
 namespace CK.Crs.Runtime.Formatting
 {
@@ -17,17 +16,22 @@ namespace CK.Crs.Runtime.Formatting
             _jsonConverter = jsonConverter;
         }
 
-        async public override Task Invoke( IPipeline pipeline, CancellationToken token = default( CancellationToken ) )
+        public override Task Invoke( IPipeline pipeline, CancellationToken token = default( CancellationToken ) )
         {
-            string jsonResponse = _jsonConverter.ToJson( pipeline.Response );
             pipeline.Response.Headers.Add( "Content-Type", "application/json" );
+            pipeline.Response.RegisterOutputHandler( async ( response, output ) =>
+            {
+                string jsonResponse = _jsonConverter.ToJson(response);
+                using (StreamWriter sw = new StreamWriter(output, Encoding.UTF8, 8096, true))
+                    await sw.WriteAsync(jsonResponse);
+            });
 
-            using( StreamWriter sw = new StreamWriter( pipeline.Output, Encoding.UTF8, 1024, true ) ) await sw.WriteAsync( jsonResponse );
+            return Task.CompletedTask;
         }
 
         public override bool ShouldInvoke( IPipeline pipeline )
         {
-            return pipeline.Response != null && pipeline.Output.Length == 0;
+            return pipeline.Response.HasReponse;
         }
     }
 }

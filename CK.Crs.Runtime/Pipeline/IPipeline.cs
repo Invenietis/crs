@@ -28,11 +28,8 @@ namespace CK.Crs.Runtime
         /// <summary>
         /// The response creating by the invokation of the action
         /// </summary>
-        CommandResponse Response { get; set; }
-        /// <summary>
-        /// The output stream
-        /// </summary>
-        Stream Output { get; }
+        CommandResponseBuilder Response { get; set; }
+
         /// <summary>
         /// An <see cref="IActivityMonitor"/> that monitors operations of the pipeline.
         /// </summary>

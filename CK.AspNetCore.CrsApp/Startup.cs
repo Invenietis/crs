@@ -50,6 +50,7 @@ namespace CK.AspNetCore.CrsApp
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSwagger();
             services.AddCommandExecutor();
             services.AddCommandReceiver(configuration =>
            {
@@ -79,7 +80,7 @@ namespace CK.AspNetCore.CrsApp
             }
 
             app.UseCrsWithDefault();
-
+            
             app.Run(async (context) =>
             {
                 await context.Response.WriteAsync("Hello World!");

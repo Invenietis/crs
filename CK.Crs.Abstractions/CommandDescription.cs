@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace CK.Crs
@@ -10,21 +11,34 @@ namespace CK.Crs
     /// </summary>
     public class CommandDescription
     {
+        public static string GetDefaultName(Type type) => RemoveSuffixes( type, "Command", "Cmd");
+
+        internal static string RemoveSuffixes( Type t, params string[] suffixes)
+        {
+            var s = t.Name;
+            foreach (var suf in suffixes)
+            {
+                if (s.EndsWith(suf, StringComparison.OrdinalIgnoreCase))
+                {
+                    int idx = s.IndexOf(suf);
+                    return s.Substring(0, idx);
+                }
+            }
+            return s;
+        }
+        public static IReadOnlyCollection<Type> ExtractDecoratorsFromHandlerAttributes(Type commandType, Type handlerType) =>
+            handlerType.GetTypeInfo().GetCustomAttributes().OfType<ICommandDecorator>().Select(t => t.GetType()).ToArray();
+
         /// <summary>
         /// Creates a command description
         /// </summary>
         /// <param name="name"></param>
         /// <param name="commandType"></param>
         /// <param name="handlerType"></param>
-        public CommandDescription( string name, Type commandType, Type handlerType )
+        public CommandDescription( Type commandType )
         {
-            if( String.IsNullOrEmpty( name ) ) throw new ArgumentNullException( nameof( name ) );
-            if( commandType == null ) throw new ArgumentNullException( nameof( commandType ) );
-            if( handlerType == null ) throw new ArgumentNullException( nameof( handlerType ) );
-
-            Name = name;
-            CommandType = commandType;
-            HandlerType = handlerType;
+            CommandType = commandType ?? throw new ArgumentNullException( nameof( commandType ) );
+            Name = GetDefaultName( commandType );
             Decorators = CK.Core.Util.Array.Empty<Type>();
             Traits = String.Empty;
         }
@@ -32,7 +46,7 @@ namespace CK.Crs
         /// <summary>
         /// The name of the command
         /// </summary>
-        public string Name { get; }
+        public string Name { get; set; }
 
         /// <summary>
         /// The <see cref="Type"/> of the command to process.
@@ -42,7 +56,7 @@ namespace CK.Crs
         /// <summary>
         /// The <see cref="Type"/> of the command to process.
         /// </summary>
-        public Type HandlerType { get; }
+        public Type HandlerType { get; set; }
 
         /// <summary>
         /// Gets commands traits

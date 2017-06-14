@@ -73,7 +73,7 @@ namespace CK.Crs.Runtime.Meta
                     }
                 }
 
-                pipeline.Response = new MetaCommandResponse( result );
+                pipeline.Response.Set( new MetaCommandResponse( result ) );
             }
         }
     }

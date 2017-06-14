@@ -31,7 +31,7 @@ namespace CK.Crs.Runtime.Filtering
 
         public override bool ShouldInvoke( IPipeline pipeline )
         {
-            return pipeline.Response == null && pipeline.Action.Command != null;
+            return pipeline.Response.HasReponse == false && pipeline.Action.Command != null;
         }
 
         public override async Task Invoke( IPipeline pipeline, CancellationToken token )
@@ -67,7 +67,7 @@ namespace CK.Crs.Runtime.Filtering
 
                             if( rejectedContext.Canceled == false )
                             {
-                                pipeline.Response = new CommandInvalidResponse( pipeline.Action.CommandId, filterContext.RejectReason );
+                                pipeline.Response.Set( new CommandInvalidResponse( pipeline.Action.CommandId, filterContext.RejectReason ) );
                                 break;
                             }
                         }

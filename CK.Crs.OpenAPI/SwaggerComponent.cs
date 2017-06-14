@@ -34,17 +34,20 @@ namespace CK.Crs.OpenAPI
             return pipeline.Request.Path.CommandName == _settings.SwaggerPath;
         }
 
-        public override async Task Invoke( IPipeline pipeline, CancellationToken token = default( CancellationToken ) )
+        public override Task Invoke( IPipeline pipeline, CancellationToken token = default( CancellationToken ) )
         {
-            pipeline.Response = new SwaggerCommandResponse( CommandResponseType.Meta, GetSwagger( pipeline.Configuration ) );
+            pipeline.Response.Set( new SwaggerCommandResponse( CommandResponseType.Meta, GetSwagger( pipeline.Configuration ) ) );
             pipeline.Response.Headers.Add( "X-Meta-Type", "Swagger" );
             pipeline.Response.Headers.Add( "Content-Type", "application/json" );
+            pipeline.Response.RegisterOutputHandler(async (response, output) =>
+            {
+                string jsonResponse = _jsonConverter.ToJson(response);
+                var buffer = Encoding.UTF8.GetBytes(jsonResponse);
+                pipeline.Response.Headers.Add( "ContentLength", buffer.Length.ToString() );
 
-            string jsonResponse = _jsonConverter.ToJson( pipeline.Response );
-            var buffer = Encoding.UTF8.GetBytes(jsonResponse);
-            pipeline.Response.Headers.Add( "ContentLength", buffer.Length.ToString() );
-
-            await pipeline.Output.WriteAsync( buffer, 0, buffer.Length );
+                await output.WriteAsync( buffer, 0, buffer.Length );
+           });
+            return Task.CompletedTask;
         }
 
 
@@ -118,10 +121,10 @@ namespace CK.Crs.OpenAPI
             Type type = c.HandlerType;
             do
             {
-                type = type.BaseType;
+                type = type.GetTypeInfo().BaseType;
             }
             while( type != null &&
-                (type.IsGenericType == false || (type.IsGenericType && type.GetGenericTypeDefinition() != typeof( CommandHandler<,> ))) );
+                (type.GetTypeInfo().IsGenericType == false || (type.GetTypeInfo().IsGenericType && type.GetTypeInfo().GetGenericTypeDefinition() != typeof( CommandHandler<,> ))) );
 
             Dictionary<string, Response> responses = new Dictionary<string, Response>();
             var error = registry.GetOrRegister( typeof( CommandResponse<string> ) );

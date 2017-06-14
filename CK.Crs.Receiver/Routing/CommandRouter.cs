@@ -12,7 +12,7 @@ namespace CK.Crs.Runtime.Routing
     {
         public override bool ShouldInvoke( IPipeline pipeline )
         {
-            return pipeline.Response == null;
+            return !pipeline.Response.HasReponse;
         }
 
         public override Task Invoke( IPipeline pipeline, CancellationToken token )
@@ -25,7 +25,7 @@ namespace CK.Crs.Runtime.Routing
                 {
                     string msg = $"No handler found for command [type={pipeline.Action.Description.CommandType}].";
                     pipeline.Monitor.Error().Send( msg );
-                    pipeline.Response = new CommandInvalidResponse( pipeline.Action.CommandId, msg );
+                    pipeline.Response.Set( new CommandInvalidResponse( pipeline.Action.CommandId, msg ) );
                 }
             }
             else

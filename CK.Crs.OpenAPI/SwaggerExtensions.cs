@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 using CK.Crs.OpenAPI;
 using CK.Crs.OpenAPI.Generator;
 using CK.Crs.Runtime;
-using Microsoft.Extensions.DependencyInjection;
 
-namespace CK.Crs
+namespace Microsoft.Extensions.DependencyInjection
 {
     public static class SwaggerExtensions
     {

@@ -12,14 +12,11 @@ namespace CK.Crs.Runtime.Filtering
     {
         readonly IAmbientValues _ambientValues;
         readonly IMemoryCache _memoryCache;
-
-        public AmbientValuesValidator( IAmbientValues ambientValues, IMemoryCache memoryCache )
+        IAmbientValuesRegistration _ambientValueProviders;
+        public AmbientValuesValidator(IAmbientValuesRegistration ambientValueProviders, IAmbientValues ambientValues, IMemoryCache memoryCache )
         {
-            if( ambientValues == null ) throw new ArgumentNullException( nameof( ambientValues ) );
-            if( memoryCache == null ) throw new ArgumentNullException( nameof( memoryCache ) );
-
-            _ambientValues = ambientValues;
-            _memoryCache = memoryCache;
+            _ambientValues = ambientValues ?? throw new ArgumentNullException( nameof( ambientValues ) );
+            _memoryCache = memoryCache ?? throw new ArgumentNullException( nameof( memoryCache ) );
         }
 
         /// <summary>
@@ -27,7 +24,7 @@ namespace CK.Crs.Runtime.Filtering
         /// </summary>
         public override bool ShouldInvoke( IPipeline pipeline )
         {
-            return pipeline.Response == null && pipeline.Action.Command != null;
+            return pipeline.Response.HasReponse == false && pipeline.Action.Command != null;
         }
 
         public override async Task Invoke( IPipeline pipeline, CancellationToken token )
@@ -46,9 +43,12 @@ namespace CK.Crs.Runtime.Filtering
                 if( context.Rejected ) pipeline.Monitor.Info().Send("Validation failed by custom processing in Pipeline.Events.ValidatingAmbientValues." );
                 else
                 {
-                    await context.ValidateValueAndRejectOnError<int>( "ActorId" );
-                    await context.ValidateValueAndRejectOnError<int>( "AuthenticatedActorId" );
+                    foreach( var v in _ambientValueProviders.AmbientValues)
+                    {
+                        await context.ValidateValueAndRejectOnError<int>( v.Name );
+                    }
                 }
+
                 if( pipeline.Configuration.Events.AmbientValuesValidated != null )
                     await pipeline.Configuration.Events.AmbientValuesValidated?.Invoke( context );
 
@@ -71,7 +71,7 @@ namespace CK.Crs.Runtime.Filtering
             {
                 string msg =  $"Invalid ambient values detected: {context.RejectReason}";
                 pipeline.Monitor.Warn().Send( msg );
-                pipeline.Response = new CommandErrorResponse( msg, pipeline.Action.CommandId );
+                pipeline.Response.Set( new CommandErrorResponse( msg, pipeline.Action.CommandId ) );
             }
             else
             {

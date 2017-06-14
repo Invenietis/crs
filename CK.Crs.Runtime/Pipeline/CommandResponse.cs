@@ -18,7 +18,6 @@ namespace CK.Crs.Runtime
         {
             ResponseType = (char)responseType;
             CommandId = commandId;
-            Headers = new Dictionary<string, string>();
         }
 
         /// <summary>
@@ -35,11 +34,6 @@ namespace CK.Crs.Runtime
         /// The raw response of the command. Can be null.
         /// </summary>
         public T Payload { get; protected set; }
-
-        /// <summary>
-        /// Extra informations returned by Crs.
-        /// </summary>
-        public IDictionary<string, string> Headers { get; }
     }
 
     /// <summary>

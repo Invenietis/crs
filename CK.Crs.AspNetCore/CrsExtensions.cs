@@ -4,23 +4,29 @@ using CK.Crs;
 using CK.Crs.AspNetCore;
 using CK.Crs.Runtime;
 using CK.Crs.Runtime.Execution;
-using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Microsoft.AspNetCore
+namespace Microsoft.AspNetCore.Builder
 {
     // Extension method used to add the middleware to the HTTP request pipeline.
     public static class CrsExtensions
     {
-        public static IApplicationBuilder UseCrs( this IApplicationBuilder builder, string routePrefix, IServiceProvider applicationServices, Action<CrsConfiguration> configure = null )
+        public static IApplicationBuilder UseCrsWithDefault(this IApplicationBuilder builder )
+        {
+            return UseCrs(builder, new PathString( "/commands" ) );
+        }
+
+        public static IApplicationBuilder UseCrs( this IApplicationBuilder builder, PathString routePrefix, Action<CrsConfiguration> configure = null )
         {
             if( routePrefix == null ) throw new ArgumentNullException( nameof( routePrefix ) );
 
             return builder.Map( routePrefix, ( app ) =>
             {
-                var crsBuilder = new CrsBuilder( routePrefix, applicationServices);
+                var crsBuilder = new CrsBuilder( routePrefix, builder.ApplicationServices);
                 crsBuilder.ApplyDefaultConfigurationOrConfigure( configure );
-
-                var commandReceiver = crsBuilder.Build( applicationServices );
+                
+                var commandReceiver = crsBuilder.Build(builder.ApplicationServices);
 
                 app.UseMiddleware<CrsMiddleware>( commandReceiver );
             } );
@@ -29,7 +35,7 @@ namespace Microsoft.AspNetCore
         class CrsBuilder : CrsReceiverBuilder
         {
             IServiceProvider _services;
-            public CrsBuilder( string routePrefix, IServiceProvider services ) : base( routePrefix, services.GetService<ICommandRegistry>() )
+            public CrsBuilder( string routePrefix, IServiceProvider services ) : base( routePrefix, services.GetRequiredService<ICommandRegistry>() )
             {
                 _services = services;
             }

@@ -34,6 +34,13 @@
         /// </summary>
         /// <returns></returns>
         ICommandConfiguration<TConfig> IsAsync();
+
+        /// <summary>
+        /// Register a new command
+        /// </summary>
+        /// <typeparam name="TCommand"></typeparam>
+        /// <returns></returns>
+        ICommandRegistration Register<TCommand>() where TCommand: class;
     }
 
     /// <summary>
@@ -41,13 +48,14 @@
     /// </summary>
     /// <typeparam name="TConfig"></typeparam>
     public interface ICommandConfigurationWithHandling<TConfig>
+         where TConfig : ICommandConfiguration<TConfig>
     {
         /// <summary>
         /// Sets an handler for a command.
         /// </summary>
         /// <typeparam name="THandler"></typeparam>
         /// <returns></returns>
-        ICommandConfigurationWithHandling<TConfig> HandledBy<THandler>() where THandler : ICommandHandler;
+        ICommandConfiguration<TConfig> HandledBy<THandler>() where THandler : ICommandHandler;
     }
 
     /// <summary>

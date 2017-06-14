@@ -22,16 +22,22 @@ namespace CK.Crs
         /// </summary>
         public Func<Type, Type, IReadOnlyCollection<Type>> CommandDecorators { get; set; }
 
-        public string[] Assemblies { get; set; }
+        public string[] Assemblies { get; }
 
-        public AutoRegisterOption( params string[] assemblies )
+        public AutoRegisterOption( AssemblyName assemblyName )
+        {
+            Assemblies = new string[] { assemblyName.FullName };
+        }
+
+
+        public AutoRegisterOption( string[] assemblies )
         {
             Assemblies = assemblies;
             CommandHandlerFilter = t => true;
-            CommandNameProvider = CommandRegistryExtensions.GetDefaultName;
+            CommandNameProvider = CommandDescription.GetDefaultName;
             CommandDescriptionProvider = t => null;
             CommandTraitsProvider = t => null;
-            CommandDecorators = CommandRegistryExtensions.ExtractDecoratorsFromHandlerAttributes;
+            CommandDecorators = CommandDescription.ExtractDecoratorsFromHandlerAttributes;
         }
     }
 }

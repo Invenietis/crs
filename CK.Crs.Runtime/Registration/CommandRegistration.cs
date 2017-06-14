@@ -13,13 +13,14 @@ namespace CK.Crs
     {
         CommandRoute _CommandRoute;
         CommandDescription _commandDescription;
-
+        ICommandRegistry _registry;
         /// <summary>
         /// Creates a <see cref="CommandRegistration"/> from a <see cref="CommandRoute"/>
         /// </summary>
         /// <param name="route"></param>
-        public CommandRegistration( CommandRoute route )
+        public CommandRegistration( ICommandRegistry registry, CommandRoute route )
         {
+            _registry = registry;
             _CommandRoute = route;
             _commandDescription = route.Descriptor;
         }
@@ -28,14 +29,19 @@ namespace CK.Crs
         /// Creates a <see cref="CommandRegistration"/> from a <see cref="CommandDescription"/>
         /// </summary>
         /// <param name="description"></param>
-        public CommandRegistration( CommandDescription description )
+        public CommandRegistration(ICommandRegistry registry, CommandDescription description )
         {
+            _registry = registry;
             _commandDescription = description;
         }
 
         CommandRegistration HandledBy<THandler>() where THandler : ICommandHandler
         {
-            _commandDescription = new CommandDescription( _commandDescription.Name, _commandDescription.CommandType, typeof( THandler ) );
+            _commandDescription.HandlerType = typeof( THandler );
+            _commandDescription.Decorators = CommandDescription.ExtractDecoratorsFromHandlerAttributes(
+                _commandDescription.CommandType, 
+                _commandDescription.HandlerType).ToArray();
+
             return this;
         }
 
@@ -53,7 +59,7 @@ namespace CK.Crs
 
         CommandRegistration CommandName( string commandName )
         {
-            _commandDescription = new CommandDescription( commandName, _commandDescription.CommandType, _commandDescription.HandlerType );
+            _commandDescription.Name = commandName;
             return this;
         }
 
@@ -116,9 +122,19 @@ namespace CK.Crs
         }
 
 
-        ICommandConfigurationWithHandling<ICommandRegistration> ICommandConfigurationWithHandling<ICommandRegistration>.HandledBy<THandler>()
+        ICommandConfiguration<ICommandRegistration> ICommandConfigurationWithHandling<ICommandRegistration>.HandledBy<THandler>()
         {
             return HandledBy<THandler>();
+        }
+
+        ICommandRegistration ICommandConfiguration<ICommandRegistration>.Register<TCommand>()
+        {
+            return _registry.Register<TCommand>();
+        }
+
+        ICommandRegistration ICommandConfiguration<ICommandRegistrationWithFilter>.Register<TCommand>()
+        {
+            return _registry.Register<TCommand>();
         }
     }
 

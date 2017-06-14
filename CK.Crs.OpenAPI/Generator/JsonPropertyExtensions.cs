@@ -31,13 +31,7 @@ namespace CK.Crs.OpenAPI.Generator
         {
             if( jsonProperty.UnderlyingName == null ) return null;
 
-            var metadata = jsonProperty.DeclaringType.GetTypeInfo()
-                .GetCustomAttributes(typeof(MetadataTypeAttribute), true)
-                .FirstOrDefault();
-
-            var typeToReflect = (metadata != null)
-                ? ((MetadataTypeAttribute)metadata).MetadataClassType
-                : jsonProperty.DeclaringType;
+            var typeToReflect = jsonProperty.DeclaringType.GetTypeInfo();
 
             return typeToReflect.GetProperty( jsonProperty.UnderlyingName, jsonProperty.PropertyType );
         }

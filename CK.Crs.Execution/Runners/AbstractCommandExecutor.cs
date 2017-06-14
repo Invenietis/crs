@@ -29,7 +29,7 @@ namespace CK.Crs.Runtime.Execution
 
         public override bool ShouldInvoke( IPipeline pipeline )
         {
-            return pipeline.Response == null && pipeline.Action.Command != null && CanExecute( pipeline, pipeline.Action.Description );
+            return pipeline.Response.HasReponse == false && CanExecute( pipeline, pipeline.Action.Description );
         }
 
         public override async Task Invoke( IPipeline pipeline, CancellationToken token = default( CancellationToken ) )
@@ -42,8 +42,8 @@ namespace CK.Crs.Runtime.Execution
                 if( pipeline.Configuration.Events.CommandExecuting != null )
                     await pipeline.Configuration.Events.CommandExecuting?.Invoke( context );
 
-                if( pipeline.Response == null )
-                    pipeline.Response = await ExecuteAsync( pipeline, context );
+                if( pipeline.Response.HasReponse == false )
+                    pipeline.Response.Set( await ExecuteAsync( pipeline, context ) );
             }
         }
         protected CommandResponse CreateFromContext( CommandContext context )

@@ -8,12 +8,6 @@ namespace CK.Crs.Runtime
 {
     public class CommandRegistry : ICommandRegistry
     {
-        IServiceCollection _services;
-        public CommandRegistry( IServiceCollection services )
-        {
-            _services = services;
-        }
-
         List<CommandDescription> Map { get; } = new List<CommandDescription>();
 
         public IEnumerable<CommandDescription> Registration
@@ -24,7 +18,6 @@ namespace CK.Crs.Runtime
         public void Register( CommandDescription descriptor )
         {
             Map.Add( descriptor );
-            _services.AddTransient( descriptor.HandlerType );
         }
     }
 }

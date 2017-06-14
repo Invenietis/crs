@@ -1,9 +1,7 @@
 ﻿using System;
-using CK.Core;
 using CK.Crs.Runtime.Execution;
-using Microsoft.Extensions.DependencyInjection;
 
-namespace CK.Crs
+namespace Microsoft.Extensions.DependencyInjection
 {
     public static class CommandExecutorExtensions
     {

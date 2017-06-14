@@ -106,7 +106,7 @@ namespace CK.Crs
 
         public override int GetHashCode()
         {
-            return FullPath.GetHashCode();
+            return FullPath.ToLowerInvariant().GetHashCode();
         }
 
         public override bool Equals( object obj )

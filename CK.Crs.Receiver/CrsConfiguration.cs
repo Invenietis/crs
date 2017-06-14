@@ -93,7 +93,7 @@ namespace CK.Crs.Runtime
         {
             foreach( var c in selection( _registry ) )
             {
-                var registration = new CommandRegistration( _routes.AddRoute( ReceiverPath, c ) );
+                var registration = new CommandRegistration(_registry, _routes.AddRoute( ReceiverPath, c ) );
                 globalConfiguration?.Invoke( registration );
             }
             return this;
@@ -111,7 +111,7 @@ namespace CK.Crs.Runtime
             {
                 throw new InvalidOperationException( $"Command {commandType.FullName} not found in global CommandRegistry. Make sure to register it in AddCommandReceiver options from ConfigureServices." );
             }
-            return new CommandRegistration( _routes.AddRoute( ReceiverPath, commandDescription ) );
+            return new CommandRegistration(_registry, _routes.AddRoute( ReceiverPath, commandDescription ) );
         }
 
 

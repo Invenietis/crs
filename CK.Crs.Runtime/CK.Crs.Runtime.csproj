@@ -1,114 +1,16 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{52C1088B-F87D-489D-B592-38F3881B2271}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CK.Crs.Runtime</RootNamespace>
-    <AssemblyName>CK.Crs.Runtime</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <OutputPath>bin\$(Configuration)\</OutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\CK.Crs.Runtime.XML</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\SharedKey.snk</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
-  <PropertyGroup Condition=" $(GenerateDocumentation) != '' ">
-    <DocumentationFile>bin\$(Configuration)\$(AssemblyName).xml</DocumentationFile>
+    <TargetFramework>netstandard1.5</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CK.ActivityMonitor, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.ActivityMonitor.5.0.1\lib\net45\CK.ActivityMonitor.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="CK.ActivityMonitor.StandardSender, Version=0.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.ActivityMonitor.StandardSender.5.0.1\lib\net45\CK.ActivityMonitor.StandardSender.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="CK.Core, Version=5.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.Core.5.0.1\lib\net45\CK.Core.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="CK.Text, Version=1.0.0.0, Culture=neutral, PublicKeyToken=731c291b31fb8d27, processorArchitecture=MSIL">
-      <HintPath>..\packages\CK.Text.5.0.1\lib\net45\CK.Text.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=1.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.1.1.0\lib\netstandard1.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.IO.Compression" />
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="1.1.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="1.1.1" />
+    <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CrsHandlerBuilder.cs" />
-    <Compile Include="CrsPipelineHandler.cs" />
-    <Compile Include="External\IJsonConverter.cs" />
-    <Compile Include="ICrsConfiguration.cs" />
-    <Compile Include="ICrsHandler.cs" />
-    <Compile Include="External\ExternalComponents.cs" />
-    <Compile Include="External\ICommandResponseDispatcher.cs" />
-    <Compile Include="External\IOperationExecutor.cs" />
-    <Compile Include="External\Event.cs" />
-    <Compile Include="Pipeline\CommandErrorResponse.cs" />
-    <Compile Include="Pipeline\CommandInvalidResponse.cs" />
-    <Compile Include="Pipeline\CommandRequest.cs" />
-    <Compile Include="Pipeline\CommandResponse.cs" />
-    <Compile Include="Pipeline\CommandResponseType.cs" />
-    <Compile Include="Pipeline\IPipeline.cs" />
-    <Compile Include="Pipeline\IPipelineBuilder.cs" />
-    <Compile Include="Pipeline\PipelineBuilder.cs" />
-    <Compile Include="Pipeline\PipelineComponent.cs" />
-    <Compile Include="Pipeline\PipelineEvents.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Registration\CommandReceiverOption.cs" />
-    <Compile Include="Registration\CommandRegistration.cs" />
-    <Compile Include="Registration\AutoRegisterOption.cs" />
-    <Compile Include="Registration\CommandRegistryExtensions.cs" />
-    <Compile Include="Registration\ICommandRegistration.cs" />
-    <Compile Include="External\ScheduledCommand.cs" />
+    <ProjectReference Include="..\CK.Crs.Abstractions\CK.Crs.Abstractions.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CK.Crs.Abstractions\CK.Crs.Abstractions.csproj">
-      <Project>{7605f8fb-b447-4d6b-91f6-d85acc9ddbb7}</Project>
-      <Name>CK.Crs.Abstractions</Name>
-    </ProjectReference>
+    <Folder Include="Properties\" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
