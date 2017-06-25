@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using CK.Core;
-using System.Linq;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace CK.Crs.Runtime
 {

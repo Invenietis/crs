@@ -27,8 +27,8 @@ namespace CK.Crs.Runtime.Execution
             get { return default( CancellationToken ); }
         }
 
-        IServiceScope _scope;
-        IDisposable _dependentTokenGroup;
+        readonly IServiceScope _scope;
+        readonly IDisposable _dependentTokenGroup;
 
         public IServiceProvider CommandServices { get; }
 

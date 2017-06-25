@@ -9,7 +9,7 @@ using CK.Crs.Runtime;
 namespace CK.Crs.Runtime.Execution
 {
 
-    public abstract class AbstractCommandExecutor : PipelineComponent
+    abstract class AbstractCommandExecutor : PipelineComponent
     {
         readonly ICommandRegistry _registry;
         public AbstractCommandExecutor( ICommandRegistry registry )

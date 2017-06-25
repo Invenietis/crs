@@ -11,10 +11,11 @@ namespace CK.Crs.Runtime.Filtering
     class CommandFiltersInvoker : PipelineComponent
     {
         readonly ICommandFilterFactory _commandFilterFactory;
-
-        public CommandFiltersInvoker( ICommandFilterFactory commandFilterFactory )
+        readonly ICommandRouteCollection _routes;
+        public CommandFiltersInvoker( ICommandFilterFactory commandFilterFactory, ICommandRouteCollection routes )
         {
             _commandFilterFactory = commandFilterFactory;
+            _routes = routes;
         }
 
         class FilterInfo
@@ -39,7 +40,7 @@ namespace CK.Crs.Runtime.Filtering
             var filterContext = new FilterContext(pipeline.Monitor, pipeline.Action.Description, pipeline.Request.User, pipeline.Action.Command);
 
             // TODO: optimize this to avoid multiple lookups during pipeline execution. By looking up in a shared data between components ?
-            var routeData =  pipeline.Configuration.Routes.FindRoute( pipeline.Configuration.ReceiverPath, pipeline.Request.Path );
+            var routeData = _routes.FindRoute( pipeline.Configuration.ReceiverPath, pipeline.Request.Path );
             if( routeData == null )
             {
                 throw new InvalidOperationException( "The command should have valid routing definition..." );

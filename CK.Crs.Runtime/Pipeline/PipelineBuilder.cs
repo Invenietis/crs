@@ -30,13 +30,13 @@ namespace CK.Crs.Runtime
             return this;
         }
 
-        public IPipelineBuilder Use<T>() where T : PipelineComponent
+        public IPipelineBuilder Use<T>( params object[] parameters ) where T : PipelineComponent
         {
             return Use( pipeline =>
             {
                 using( pipeline.Monitor.OpenTrace().Send( "Invoking component {0}", typeof( T ).Name ) )
                 {
-                    var component = ActivatorUtilities.GetServiceOrCreateInstance<T>( pipeline.CommandServices );
+                    var component = ActivatorUtilities.CreateInstance<T>( pipeline.CommandServices, parameters);
                     if( component == null )
                         throw new InvalidOperationException( String.Format( "The component {0} has not been created.", typeof( T ).Name ) );
 

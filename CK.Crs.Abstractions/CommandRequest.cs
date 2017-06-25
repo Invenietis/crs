@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Claims;
 
-namespace CK.Crs.Runtime
+namespace CK.Crs
 {
     public class CommandRequest
     {

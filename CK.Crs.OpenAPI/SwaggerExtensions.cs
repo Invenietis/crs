@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CK.Crs.OpenAPI;
 using CK.Crs.OpenAPI.Generator;
 using CK.Crs.Runtime;
+using CK.Crs;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -15,9 +16,9 @@ namespace Microsoft.Extensions.DependencyInjection
         /// Looks up the route collection for a registered command.
         /// </summary>
         /// <param name="builder"></param>
-        static public IPipelineBuilder UseSwagger( this IPipelineBuilder builder )
+        static public IPipelineBuilder UseSwagger( this IPipelineBuilder builder, ICommandRouteCollection routes )
         {
-            return builder.Use<SwaggerComponent>();
+            return builder.Use<SwaggerComponent>( routes );
         }
 
         static public void AddSwagger( this IServiceCollection services )

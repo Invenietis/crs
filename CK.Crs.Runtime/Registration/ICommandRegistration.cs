@@ -77,6 +77,10 @@
     /// </summary>
     public interface ICommandRegistration : ICommandConfiguration<ICommandRegistration>, ICommandConfigurationWithHandling<ICommandRegistration>
     {
+        /// <summary>
+        /// Gets the <see cref="CommandDescription"/>.
+        /// </summary>
+        CommandDescription Description { get; }
     }
 
     /// <summary>

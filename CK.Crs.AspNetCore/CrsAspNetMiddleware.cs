@@ -34,7 +34,7 @@ namespace CK.Crs.AspNetCore
             await _handler.ProcessCommandAsync( commandRequest, responseBuilder );
                 
             foreach( var kv in responseBuilder.Headers ) context.Response.Headers.SetCommaSeparatedValues( kv.Key, kv.Value );
-            var hasBuiltResponse = await responseBuilder.BuildAsync(context.Response.Body);
+            var hasBuiltResponse = await responseBuilder.WriteAsync(context.Response.Body);
 
             if( !hasBuiltResponse && _next != null ) await _next.Invoke( context );
         }

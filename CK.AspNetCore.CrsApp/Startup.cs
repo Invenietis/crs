@@ -9,41 +9,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using CK.Crs;
 using System.Reflection;
+using CK.Crs.Samples.Messages;
+using CK.Crs.Samples.Handlers;
+using CK.Crs.Scalability.FileSystem;
 
-namespace CK.AspNetCore.CrsApp
+namespace CK.Crs.Samples.AspNetCoreApp
 {
-    class CommandBase
-    {
-        public int ActorId { get; set; }
-        public int AuthenticatedActorId { get; set; }
-    }
-
-    class SuperCommand : CommandBase
-    {
-    }
-
-    class Super2Command : CommandBase
-    {
-    }
-
-    class SuperHandler : CommandHandler<SuperCommand>
-    {
-        protected override Task DoHandleAsync(ICommandExecutionContext context, SuperCommand command)
-        {
-            Console.WriteLine("Super");
-            return Task.CompletedTask;
-        }
-    }
-
-    class Super2Handler : CommandHandler<Super2Command>
-    {
-        protected override Task DoHandleAsync(ICommandExecutionContext context, Super2Command command)
-        {
-            Console.WriteLine("Super Super");
-            return Task.CompletedTask;
-        }
-    }
-
     public class Startup
     {
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -58,7 +29,8 @@ namespace CK.AspNetCore.CrsApp
 
                configuration.Commands.AutoRegisterSimpleCurrentAssembly();
                configuration.Commands
-                  .Register<SuperCommand>().HandledBy<SuperHandler>().IsAsync()
+                  .Register<SuperCommand>().IsAsync()
+                  .Register<Super3Command>().IsScalable()
                   .Register<Super2Command>().HandledBy<Super2Handler>();
 
                configuration.AmbientValues
@@ -80,6 +52,22 @@ namespace CK.AspNetCore.CrsApp
             }
 
             app.UseCrsWithDefault();
+
+            app.UseCrs("/commands", config =>
+            {
+                config.Pipeline
+                    .Clear()
+                    .UseMetaComponent( config.Routes )
+                    .UseSwagger( config.Routes )
+                    .UseCommandRouter(config.Routes)
+                    .UseJsonCommandBuilder()
+                    .UseAmbientValuesValidator()
+                    .UseFilters( config.Routes )
+                    .UseFileSystemCommandBus( new FileSystemConfiguration("//SharedDrive/CommandsJobs/Inputs") )
+                    .UseTaskBasedCommandExecutor(config.TraitContext)
+                    .UseSyncCommandExecutor()
+                    .UseJsonCommandWriter();
+            });
             
             app.Run(async (context) =>
             {

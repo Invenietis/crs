@@ -27,7 +27,7 @@ namespace CK.Crs.Runtime
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        IPipelineBuilder Use<T>() where T : PipelineComponent;
+        IPipelineBuilder Use<T>( params object[] parameters) where T : PipelineComponent;
 
         /// <summary>
         /// Clears all registered components in the pipeline.

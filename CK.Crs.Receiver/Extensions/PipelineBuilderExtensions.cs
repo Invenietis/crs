@@ -14,26 +14,11 @@ namespace CK.Crs
         /// Looks up the route collection for a registered command.
         /// </summary>
         /// <param name="builder"></param>
-        static public IPipelineBuilder UseCommandRouter( this IPipelineBuilder builder )
+        static public IPipelineBuilder UseCommandRouter( this IPipelineBuilder builder, ICommandRouteCollection routes )
         {
-            return builder.Use<CommandRouter>();
+            return builder.Use<CommandRouter>(routes);
         }
 
-        /// <summary>
-        /// Build the command from the CommandRequest data.
-        /// </summary>
-        static public IPipelineBuilder UseJsonCommandBuilder( this IPipelineBuilder builder )
-        {
-            return builder.Use<JsonCommandBuilder>();
-        }
-
-        /// <summary>
-        /// Build the command from the CommandRequest data.
-        /// </summary>
-        static public IPipelineBuilder UseJsonCommandWriter( this IPipelineBuilder builder )
-        {
-            return builder.Use<JsonCommandWriter>();
-        }
 
         /// <summary>
         /// Check the ambient values of the command parameters.
@@ -46,16 +31,16 @@ namespace CK.Crs
         /// <summary>
         /// Build the command from the CommandRequest data.
         /// </summary>
-        static public IPipelineBuilder UseMetaComponent( this IPipelineBuilder builder )
+        static public IPipelineBuilder UseMetaComponent( this IPipelineBuilder builder, ICommandRouteCollection routes )
         {
-            return builder.Use<MetaComponent>();
+            return builder.Use<MetaComponent>( routes );
         }
 
 
         /// <summary>
         /// Invoke command filters. 
         /// </summary>
-        static public IPipelineBuilder UseFilters( this IPipelineBuilder builder )
+        static public IPipelineBuilder UseFilters( this IPipelineBuilder builder, ICommandRouteCollection routes)
         {
             return builder.Use<CommandFiltersInvoker>();
         }

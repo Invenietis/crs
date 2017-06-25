@@ -21,9 +21,9 @@ namespace CK.Crs.Runtime
             _config = config;
         }
 
-        public async Task ProcessCommandAsync( CommandRequest request, CommandResponseBuilder response, CancellationToken cancellationToken = default( CancellationToken ) )
+        public async Task ProcessCommandAsync( CommandRequest request, CommandResponseBuilder response, IActivityMonitor monitor = null, CancellationToken cancellationToken = default( CancellationToken ) )
         {
-            var monitor = new ActivityMonitor( request.Path );
+            monitor = monitor ?? new ActivityMonitor( request.Path );
 
             using( var pipeline = new CommandReceivingPipeline( _scopeFactory, _config, monitor, request, response, cancellationToken ) )
             {

@@ -8,7 +8,7 @@ namespace CK.Crs.Runtime
 {
     public interface IJsonConverter
     {
-        string ToJson( CommandResponse response );
+        string ToJson( object payload );
 
         object ParseJson( string json, Type type );
     }

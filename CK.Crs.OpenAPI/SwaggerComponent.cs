@@ -18,12 +18,13 @@ namespace CK.Crs.OpenAPI
         readonly ISchemaRegistryFactory _schemaRegistryFactory;
         readonly SwaggerGeneratorSettings _settings;
         readonly IJsonConverter _jsonConverter;
-
-        public SwaggerComponent( ISchemaRegistryFactory schemaRegistryFactory, SwaggerGeneratorSettings settings )
+        readonly ICommandRouteCollection _routes;
+        public SwaggerComponent( ICommandRouteCollection routes, ISchemaRegistryFactory schemaRegistryFactory, SwaggerGeneratorSettings settings )
         {
             if( schemaRegistryFactory == null ) throw new ArgumentNullException( nameof( schemaRegistryFactory ) );
             if( settings == null ) throw new ArgumentNullException( nameof( settings ) );
 
+            _routes = routes;
             _schemaRegistryFactory = schemaRegistryFactory;
             _settings = settings;
             _jsonConverter = new SwaggerJsonConverter();
@@ -38,8 +39,8 @@ namespace CK.Crs.OpenAPI
         {
             pipeline.Response.Set( new SwaggerCommandResponse( CommandResponseType.Meta, GetSwagger( pipeline.Configuration ) ) );
             pipeline.Response.Headers.Add( "X-Meta-Type", "Swagger" );
-            pipeline.Response.Headers.Add( "Content-Type", "application/json" );
-            pipeline.Response.RegisterOutputHandler(async (response, output) =>
+            pipeline.Response.Headers.Add( CommandResponseHeaders.ContentType, "application/json" );
+            pipeline.Response.RegisterWriteHandler(async (response, output) =>
             {
                 string jsonResponse = _jsonConverter.ToJson(response);
                 var buffer = Encoding.UTF8.GetBytes(jsonResponse);
@@ -57,20 +58,21 @@ namespace CK.Crs.OpenAPI
 
             var schemaRegistry = _schemaRegistryFactory.Create();
 
-            var result = new SwaggerDocument();
-            result.Info = new OpenAPI.Info
+            var result = new SwaggerDocument()
             {
-                Title = configuration.ReceiverPath,
-                Version = "1.0.0"
+                Info = new OpenAPI.Info
+                {
+                    Title = configuration.ReceiverPath,
+                    Version = "1.0.0"
+                },
+                Produces = new List<string> { "application/json" },
+                Paths = new Dictionary<string, PathItem>(),
+                Definitions = new Dictionary<string, Schema>(),
+                BasePath = configuration.ReceiverPath,
+                Host = host,
+                Schemes = schemes
             };
-            result.Produces = new List<string> { "application/json" };
-            result.Paths = new Dictionary<string, PathItem>();
-            result.Definitions = new Dictionary<string, Schema>();
-            result.BasePath = configuration.ReceiverPath;
-            result.Host = host;
-            result.Schemes = schemes;
-
-            foreach( var a in configuration.Routes.All.Where( x => x.Descriptor.Traits.Contains( "Swagger" ) ) )
+            foreach ( var a in _routes.All.Where( x => x.Descriptor.Traits.Contains( "Swagger" ) ) )
             {
                 var operation = new Operation
                 {

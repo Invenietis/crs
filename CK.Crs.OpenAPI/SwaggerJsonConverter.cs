@@ -10,9 +10,9 @@ namespace CK.Crs.OpenAPI
     {
         JsonSerializerSettings _converterSettings;
 
-        public string ToJson( CommandResponse o )
+        public string ToJson( object payload )
         {
-            return JsonConvert.SerializeObject( o.Payload, ConverterSettings );
+            return JsonConvert.SerializeObject(payload, ConverterSettings );
         }
 
         public object ParseJson(string json, Type type)

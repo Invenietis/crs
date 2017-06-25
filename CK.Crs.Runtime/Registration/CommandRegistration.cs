@@ -14,6 +14,9 @@ namespace CK.Crs
         CommandRoute _CommandRoute;
         CommandDescription _commandDescription;
         ICommandRegistry _registry;
+
+        public CommandDescription Description  => _commandDescription;
+
         /// <summary>
         /// Creates a <see cref="CommandRegistration"/> from a <see cref="CommandRoute"/>
         /// </summary>

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CK.Crs.Runtime;
+using CK.Core;
 
 namespace CK.Crs
 {
@@ -19,9 +20,10 @@ namespace CK.Crs
         /// </summary>
         /// <param name="command"><see cref="CommandRequest"/></param>
         /// <param name="response">The output stream to output a <see cref="CommandResponseBuilder"/></param>
+        /// <param name="monitor">A previous <see cref="IActivityMonitor"/>. Can be null.</param>
         /// <param name="cancellationToken"></param>
         /// <returns>Returns true if the command has been processed (a <see cref="CommandResponse"/> has been created.).</returns>
-        Task ProcessCommandAsync( CommandRequest command, CommandResponseBuilder response, CancellationToken cancellationToken = default( CancellationToken ) );
+        Task ProcessCommandAsync( CommandRequest command, CommandResponseBuilder response, IActivityMonitor monitor = null, CancellationToken cancellationToken = default( CancellationToken ) );
     }
 
 }

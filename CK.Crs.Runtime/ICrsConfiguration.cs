@@ -17,11 +17,6 @@ namespace CK.Crs.Runtime
         string ReceiverPath { get; }
 
         /// <summary>
-        /// Gets the <see cref="ICommandRouteCollection"/> 
-        /// </summary>
-        ICommandRouteCollection Routes { get; }
-
-        /// <summary>
         /// Gets the <see cref="PipelineEvents"/> 
         /// </summary>
         PipelineEvents Events { get; }
@@ -40,14 +35,6 @@ namespace CK.Crs.Runtime
         /// External components configuration
         /// </summary>
         ExternalComponents ExternalComponents { get; }
-
-        /// <summary>
-        /// Selects the commands from the <see cref="ICommandRegistry"/> this CommandReceiver is able to handle. 
-        /// </summary>
-        /// <param name="selection">A projection lambda to filter commands</param>
-        /// <param name="globalConfiguration">Global configuration delegate</param>
-        /// <returns><see cref="ICrsConfiguration"/></returns>
-        ICrsConfiguration AddCommands( Func<ICommandRegistry, IEnumerable<CommandDescription>> selection, Action<ICommandRegistrationWithFilter> globalConfiguration = null );
     }
 
 }

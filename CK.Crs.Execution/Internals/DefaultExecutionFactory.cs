@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CK.Crs.Runtime.Execution
 {
-    public class DefaultExecutionFactory : IExecutionFactory
+    internal class DefaultExecutionFactory : IExecutionFactory
     {
         readonly DefaultCreateInstanceStrategy _s;
 

@@ -19,6 +19,7 @@ namespace CK.Crs
         {
             return builder.Use<SyncCommandExecutor>();
         }
+
         /// <summary>
         /// Command execution step
         /// </summary>

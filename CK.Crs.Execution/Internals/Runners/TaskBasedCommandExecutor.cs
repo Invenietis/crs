@@ -51,11 +51,17 @@ namespace CK.Crs.Runtime.Execution
 
                     await Engine.RunAsync( context, _factory );
 
-                    var response = CreateFromContext( context );
-                    if( pipeline.Configuration.ExternalComponents.ResponseDispatcher == null )
-                        dependentMonitor.Warn().Send( "No response dispatcher were available..." );
+                    var dispatcher = pipeline.Configuration.ExternalComponents.ResponseDispatcher;
+                    if (dispatcher == null) dependentMonitor.Warn().Send("No response dispatcher were available...");
                     else
-                        await pipeline.Configuration.ExternalComponents.ResponseDispatcher.DispatchAsync( context.ExecutionContext.Action.CallbackId, response );
+                    { 
+                        var response = CreateFromContext( context );
+                        pipeline.Response.Set( response );
+                        await dispatcher.DispatchAsync( 
+                            context.ExecutionContext.Monitor, 
+                            context.ExecutionContext.Action.CallbackId, 
+                            pipeline.Response );
+                    }
                 }
             } );
 

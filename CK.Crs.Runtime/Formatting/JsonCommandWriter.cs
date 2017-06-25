@@ -18,8 +18,8 @@ namespace CK.Crs.Runtime.Formatting
 
         public override Task Invoke( IPipeline pipeline, CancellationToken token = default( CancellationToken ) )
         {
-            pipeline.Response.Headers.Add( "Content-Type", "application/json" );
-            pipeline.Response.RegisterOutputHandler( async ( response, output ) =>
+            pipeline.Response.Headers.Add( CommandResponseHeaders.ContentType, "application/json" );
+            pipeline.Response.RegisterWriteHandler( async ( response, output ) =>
             {
                 string jsonResponse = _jsonConverter.ToJson(response);
                 using (StreamWriter sw = new StreamWriter(output, Encoding.UTF8, 8096, true))

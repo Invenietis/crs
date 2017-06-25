@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CK.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,13 +13,13 @@ namespace CK.Crs.Runtime
     public interface ICommandResponseDispatcher
     {
         /// <summary>
-        /// Dispatch a <see cref="CommandResponse"/> to the identified callback identifier.
+        /// Dispatch a <see cref="CommandResponseBuilder"/> to the identified callback identifier.
         /// </summary>
         /// <param name="callbackId"></param>
         /// <param name="response"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Task DispatchAsync( string callbackId, CommandResponse response, CancellationToken cancellationToken = default( CancellationToken ) );
+        Task DispatchAsync( IActivityMonitor monitor, string callbackId, CommandResponseBuilder response, CancellationToken cancellationToken = default( CancellationToken ) );
     }
 
 }

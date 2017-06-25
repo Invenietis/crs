@@ -40,15 +40,17 @@ namespace Microsoft.AspNetCore.Builder
                 _services = services;
             }
 
-            protected override void ConfigureDefaultPipeline( ICrsConfiguration config )
+            protected override void ConfigureDefaultPipeline( CrsConfiguration config )
             {
+                config.AddCommands(e => e.Registration);
+
                 config.Pipeline
                     .Clear()
-                    .UseMetaComponent()
-                    .UseCommandRouter()
+                    .UseMetaComponent(config.Routes)
+                    .UseCommandRouter( config.Routes )
                     .UseJsonCommandBuilder()
                     .UseAmbientValuesValidator()
-                    .UseFilters()
+                    .UseFilters( config.Routes )
                     .UseTaskBasedCommandExecutor( Config.TraitContext )
                     .UseSyncCommandExecutor()
                     .UseJsonCommandWriter();

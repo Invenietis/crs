@@ -12,18 +12,14 @@ namespace CK.Crs.Runtime.Execution
     public class InMemoryScheduler : IOperationExecutor<ScheduledCommand>, IDisposable
     {
         readonly IList<Timer> _timers;
-
-        CancellationTokenSource _source;
+        readonly CancellationTokenSource _source;
         readonly IServiceProvider _applicationServices;
         readonly ICrsConfiguration _configuration;
 
         public InMemoryScheduler( ICrsConfiguration configuration, IServiceProvider services )
         {
-            if( configuration == null ) throw new ArgumentNullException( nameof( configuration ) );
-            if( services == null ) throw new ArgumentNullException( nameof( services ) );
-
-            _applicationServices = services;
-            _configuration = configuration;
+            _applicationServices = services ?? throw new ArgumentNullException( nameof( services ) );
+            _configuration = configuration ?? throw new ArgumentNullException( nameof( configuration ) );
 
             _timers = new List<Timer>();
             _source = new CancellationTokenSource();

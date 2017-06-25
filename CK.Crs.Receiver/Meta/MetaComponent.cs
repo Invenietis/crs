@@ -15,13 +15,15 @@ namespace CK.Crs.Runtime.Meta
         readonly IAmbientValuesRegistration _registration;
         readonly IMemoryCache _cache;
         readonly IJsonConverter _jsonConverter;
+        readonly ICommandRouteCollection _routes;
 
-        public MetaComponent( IAmbientValues ambientValues, IAmbientValuesRegistration registration, IJsonConverter jsonConverter, IMemoryCache cache )
+        public MetaComponent( IAmbientValues ambientValues, IAmbientValuesRegistration registration, IJsonConverter jsonConverter, IMemoryCache cache, ICommandRouteCollection routes)
         {
             _ambientValues = ambientValues;
             _registration = registration;
             _jsonConverter = jsonConverter;
             _cache = cache;
+            _routes = routes;
         }
 
         public override bool ShouldInvoke( IPipeline pipeline )
@@ -54,7 +56,7 @@ namespace CK.Crs.Runtime.Meta
                 if( command.ShowCommands )
                 {
                     result.Commands = new Dictionary<string, MetaCommand.MetaResult.MetaCommandDescription>();
-                    foreach( var c in pipeline.Configuration.Routes.All )
+                    foreach( var c in _routes.All )
                     {
                         MetaCommand.MetaResult.MetaCommandDescription desc;
                         if( !_cache.TryGetValue( c.Route.FullPath, out desc ) )
