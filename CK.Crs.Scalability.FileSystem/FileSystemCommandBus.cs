@@ -1,4 +1,5 @@
-﻿using CK.Crs.Runtime;
+﻿using CK.Core;
+using CK.Crs.Runtime;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,20 +13,25 @@ namespace CK.Crs.Scalability.FileSystem
     {
         readonly CommandConverter _converter;
         readonly FileSystemConfiguration _configuration;
-        public FileSystemCommandBus( IJsonConverter jsonConverter, FileSystemConfiguration configuration )
+        readonly CKTrait _componentTrait;
+        public FileSystemCommandBus( IJsonConverter jsonConverter, FileSystemConfiguration configuration, CKTrait trait )
         {
             _converter = new CommandConverter(jsonConverter);
             _configuration = configuration;
+            _componentTrait = trait;
         }
 
-        public override Task Invoke(IPipeline pipeline, CancellationToken token = default(CancellationToken))
+        public override async Task Invoke(IPipeline pipeline, CancellationToken token = default(CancellationToken))
         {
-            return _converter.WriteCommand(pipeline.Monitor, pipeline.Action, _configuration.Path);
+            await _converter.WriteCommand(pipeline.Monitor, pipeline.Action, _configuration.Path);
+
+            var response = new ScalableCommandResponse( pipeline.Action );
+            pipeline.Response.Set(response);
         }
 
         public override bool ShouldInvoke(IPipeline pipeline)
         {
-            return !pipeline.Response.HasReponse && pipeline.Action.Description.Traits.Contains(Traits.Scalable);
+            return !pipeline.Response.HasReponse && _componentTrait.Overlaps(  pipeline.Action.Description.Traits );
         }
     }
 }

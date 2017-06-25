@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CK.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -15,7 +16,7 @@ namespace CK.Crs
 
         public Func<Type, string> CommandDescriptionProvider { get; set; }
 
-        public Func<Type, string> CommandTraitsProvider { get; set; }
+        public Func<Type, CKTrait> CommandTraitsProvider { get; set; }
 
         /// <summary>
         /// First argument is the command type. Second argument is the handler type. Returns a read only collection of <see cref="ICommandDecorator"/> types.

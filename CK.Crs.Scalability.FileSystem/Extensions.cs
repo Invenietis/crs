@@ -1,4 +1,5 @@
-﻿using CK.Crs.Runtime;
+﻿using CK.Core;
+using CK.Crs.Runtime;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -28,10 +29,10 @@ namespace CK.Crs.Scalability.FileSystem
             return builder;
         }
 
-        public static IPipelineBuilder UseFileSystemCommandBus( this IPipelineBuilder builder, FileSystemConfiguration configuration )
+        public static IPipelineBuilder UseFileSystemCommandBus( this IPipelineBuilder builder, CKTraitContext traitContext,  FileSystemConfiguration configuration )
         {
-            builder.Use<FileSystemCommandBus>(configuration);
-            return builder;
+            traitContext.FindOrCreate(Traits.Scalable);
+            return builder.Use<FileSystemCommandBus>(configuration);
         }
     }
 

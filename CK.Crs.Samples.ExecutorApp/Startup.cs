@@ -18,7 +18,7 @@ namespace CK.Crs.Samples.ExecutorApp
 
             services.AddCommandRegistration(registry =>
             {
-                registry.Register<Super3Command>().HandledBy<Super3Handler>();
+                registry.Register<Super3Command>().HandledBy<Super3Handler>().IsAsync();
             });
             services.AddCommandExecutor(configuration =>
             {

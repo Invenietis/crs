@@ -72,7 +72,7 @@ namespace CK.Crs.OpenAPI
                 Host = host,
                 Schemes = schemes
             };
-            foreach ( var a in _routes.All.Where( x => x.Descriptor.Traits.Contains( "Swagger" ) ) )
+            foreach ( var a in _routes.All.Where( x => x.Descriptor.Traits.Overlaps( configuration.TraitContext.FindOrCreate( "Swagger" ) ) ) )
             {
                 var operation = new Operation
                 {
@@ -80,7 +80,7 @@ namespace CK.Crs.OpenAPI
                     Description = a.Descriptor.Description,
                     Parameters = GenerateParametersFromCommandType( schemaRegistry, a.Descriptor.CommandType ),
                     Responses = GenerateResponsesFromCommandResult( configuration, schemaRegistry, a.Descriptor ),
-                    Tags = a.Descriptor.Traits.Split(configuration.TraitContext.Separator),
+                    Tags = a.Descriptor.Traits.AtomicTraits.Select( t => t.ToString() ).ToList(),
                     Security = GenerateSecurityFromFilters( a.Filters ),
                     //Deprecated = apiDescription.IsObsolete() ? true : (bool?)null
                 };
@@ -144,23 +144,26 @@ namespace CK.Crs.OpenAPI
             if( type == null )
             {
                 CKTrait asyncTrait = configuration.TraitContext.FindOrCreate( "Async" );
-                CKTrait trait = configuration.TraitContext.FindOrCreate( c.Traits );
+                CKTrait scalableTrait = configuration.TraitContext.FindOrCreate( "Scalable" );
+                CKTrait aTraits = asyncTrait.Union(scalableTrait);
 
-                if( trait.IsSupersetOf( asyncTrait ) )
+                if (c.Traits.Overlaps(aTraits))
                 {
-                    responses.Add( "A", new Response
+                    responses.Add("A", new Response
                     {
                         Description = ResponseDescriptionMap["A"],
-                        Schema = registry.GetOrRegister( typeof( CommandResponse ) )
-                    } );
+                        Schema = registry.GetOrRegister(typeof(CommandResponse))
+                    });
                     return responses;
                 }
-
-                responses.Add( "S", new Response
+                else
                 {
-                    Description = ResponseDescriptionMap["S"],
-                    Schema = registry.GetOrRegister( typeof( CommandResponse ) )
-                } );
+                    responses.Add("S", new Response
+                    {
+                        Description = ResponseDescriptionMap["S"],
+                        Schema = registry.GetOrRegister(typeof(CommandResponse))
+                    });
+                }
                 return responses;
             }
             Debug.Assert( type != null && type.GetGenericArguments().Length == 2 );

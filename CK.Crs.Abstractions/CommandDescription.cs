@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CK.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -40,7 +41,7 @@ namespace CK.Crs
             CommandType = commandType ?? throw new ArgumentNullException( nameof( commandType ) );
             Name = GetDefaultName( commandType );
             Decorators = CK.Core.Util.Array.Empty<Type>();
-            Traits = String.Empty;
+            Traits = null;
         }
 
         /// <summary>
@@ -62,7 +63,7 @@ namespace CK.Crs
         /// Gets commands traits
         /// This gives a hint to CRS to pick the best command executor.
         /// </summary>
-        public string Traits { get; set; }
+        public CKTrait Traits { get; set; }
 
         /// <summary>
         /// Gets or sets a description for this command. Can you any format like Markdown or HTML.

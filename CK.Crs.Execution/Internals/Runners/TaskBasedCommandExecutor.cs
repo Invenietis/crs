@@ -14,20 +14,18 @@ namespace CK.Crs.Runtime.Execution
 
         readonly ICommandRunningStore _commandRunningStore;
         readonly IExecutionFactory _factory;
-
-        public TaskBasedCommandExecutor( ICommandRunningStore commandRunningStore, IExecutionFactory factory, ICommandRegistry registry ) : base( registry )
+        readonly CKTrait _componentTrait;
+        public TaskBasedCommandExecutor( ICommandRunningStore commandRunningStore, IExecutionFactory factory, ICommandRegistry registry, CKTrait trait ) : base( registry )
         {
             _commandRunningStore = commandRunningStore;
             _factory = factory;
+            _componentTrait = trait;
         }
 
         protected override bool CanExecute( IPipeline pipeline, CommandDescription commandDescription )
         {
-            var executorTrait = pipeline.Configuration.TraitContext.FindOnlyExisting( TaskBasedCommandExecutor.Trait );
-
             // Traits can be: Asynchronous|Anonymous|Premium
-            CKTrait trait = pipeline.Configuration.TraitContext.FindOrCreate( commandDescription.Traits );
-            return trait.IsSupersetOf( executorTrait );
+            return _componentTrait.Overlaps( commandDescription.Traits );
         }
 
         protected override async Task<CommandResponse> ExecuteAsync( IPipeline pipeline, CommandContext context )

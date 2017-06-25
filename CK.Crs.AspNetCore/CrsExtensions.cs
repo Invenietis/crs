@@ -23,7 +23,11 @@ namespace Microsoft.AspNetCore.Builder
 
             return builder.Map( routePrefix, ( app ) =>
             {
-                var crsBuilder = new CrsBuilder( routePrefix, builder.ApplicationServices);
+                var crsBuilder = new CrsBuilder( 
+                    routePrefix, 
+                    builder.ApplicationServices, 
+                    builder.ApplicationServices.GetRequiredService<CommandReceiverOption>() );
+
                 crsBuilder.ApplyDefaultConfigurationOrConfigure( configure );
                 
                 var commandReceiver = crsBuilder.Build(builder.ApplicationServices);
@@ -35,7 +39,8 @@ namespace Microsoft.AspNetCore.Builder
         class CrsBuilder : CrsReceiverBuilder
         {
             IServiceProvider _services;
-            public CrsBuilder( string routePrefix, IServiceProvider services ) : base( routePrefix, services.GetRequiredService<ICommandRegistry>() )
+            public CrsBuilder( string routePrefix, IServiceProvider services, CommandReceiverOption options ) 
+                : base( routePrefix, options.Commands, options.Traits )
             {
                 _services = services;
             }

@@ -1,4 +1,6 @@
-﻿namespace CK.Crs
+﻿using CK.Core;
+
+namespace CK.Crs
 {
     /// <summary>
     /// Fluent command registration and configuration
@@ -7,6 +9,11 @@
     public interface ICommandConfiguration<TConfig>
         where TConfig : ICommandConfiguration<TConfig>
     {
+        /// <summary>
+        /// Gets the <see cref="CKTraitContext"/>
+        /// </summary>
+        CKTraitContext Traits { get; }
+
         /// <summary>
         /// Add a <see cref="ICommandDecorator"/> to this command that will be invoked during command handling.
         /// </summary>

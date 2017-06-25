@@ -1,4 +1,5 @@
 ﻿using CK.Core;
+using CK.Crs.Scalability;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -15,7 +16,10 @@ namespace CK.Crs
         /// <returns></returns>
         public static ICommandRegistration IsScalable( this ICommandRegistration @this )
         {
-            @this.Description.Traits = "Scalable";
+            var t = @this.Traits.FindOrCreate( Traits.Scalable );
+            if (@this.Description.Traits == null) @this.Description.Traits = t;
+            else @this.Description.Traits = @this.Description.Traits.Union(t);
+
             return @this;
         }
     }

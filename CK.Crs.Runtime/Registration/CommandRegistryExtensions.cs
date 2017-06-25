@@ -112,7 +112,7 @@ namespace CK.Crs
             where TCommand : class
         {
             var d = new CommandDescription(typeof(TCommand));
-            var registration = new CommandRegistration(registry, d);
+            var registration = new CommandRegistration(registry, d, registry.TraitContext );
             registry.Register(d);
             return registration;
         }

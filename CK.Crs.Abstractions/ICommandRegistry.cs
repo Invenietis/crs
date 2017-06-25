@@ -2,10 +2,11 @@
 
 namespace CK.Crs
 {
+
     /// <summary>
     /// Defines a command registry, which commands are globaly stored.
     /// </summary>
-    public interface ICommandRegistry
+    public interface ICommandRegistry : ITraitContextProvider
     {
         void Register( CommandDescription descriptor );
 

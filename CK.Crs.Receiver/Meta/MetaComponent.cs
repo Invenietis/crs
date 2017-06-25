@@ -66,7 +66,7 @@ namespace CK.Crs.Runtime.Meta
                                 Route = c.Route,
                                 CommandType = c.Descriptor.CommandType.AssemblyQualifiedName,
                                 Parameters = c.Descriptor.CommandType.GetTypeInfo().DeclaredProperties.Select( e => new CommandPropertyInfo( e, _registration ) ).ToArray(),
-                                Traits = c.Descriptor.Traits,
+                                Traits = c.Descriptor.Traits.ToString(),
                                 Description = c.Descriptor.Description
                             };
                             _cache.Set( c.Route.FullPath, desc );

@@ -16,24 +16,24 @@ namespace CK.Crs.Runtime
         internal ICommandRegistry _registry;
         readonly HashSet<Type> _filters;
         string _path;
-        internal CrsConfiguration( string path, ICommandRegistry registry, CommandRouteCollection routes )
+        internal CrsConfiguration( string path, ICommandRegistry registry, CommandRouteCollection routes, CKTraitContext traits )
         {
             _path = path;
             _registry = registry;
             _routes = routes;
+            TraitContext = traits;
 
             _filters = new HashSet<Type>();
 
             Pipeline = new PipelineBuilder();
             Events = new PipelineEvents();
-            TraitContext = new CKTraitContext( "CrsDefault" );
             ExternalComponents = new ExternalComponents();
         }
 
         /// <summary>
         /// Gets or sets the <see cref="CKTraitContext"/>
         /// </summary>
-        public CKTraitContext TraitContext { get; set; }
+        public CKTraitContext TraitContext { get; }
 
         /// <summary>
         /// Gets the base path of this receiver
@@ -93,7 +93,7 @@ namespace CK.Crs.Runtime
         {
             foreach( var c in selection( _registry ) )
             {
-                var registration = new CommandRegistration(_registry, _routes.AddRoute( ReceiverPath, c ) );
+                var registration = new CommandRegistration(_registry, _routes.AddRoute( ReceiverPath, c ), TraitContext);
                 globalConfiguration?.Invoke( registration );
             }
             return this;
@@ -111,7 +111,7 @@ namespace CK.Crs.Runtime
             {
                 throw new InvalidOperationException( $"Command {commandType.FullName} not found in global CommandRegistry. Make sure to register it in AddCommandReceiver options from ConfigureServices." );
             }
-            return new CommandRegistration(_registry, _routes.AddRoute( ReceiverPath, commandDescription ) );
+            return new CommandRegistration(_registry, _routes.AddRoute( ReceiverPath, commandDescription ), TraitContext );
         }
 
 

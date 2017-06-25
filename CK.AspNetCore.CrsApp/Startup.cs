@@ -26,7 +26,7 @@ namespace CK.Crs.Samples.AspNetCoreApp
             services.AddCommandReceiver(configuration =>
            {
                configuration.UseJsonNet();
-
+               
                configuration.Commands.AutoRegisterSimpleCurrentAssembly();
                configuration.Commands
                   .Register<SuperCommand>().IsAsync()
@@ -63,7 +63,7 @@ namespace CK.Crs.Samples.AspNetCoreApp
                     .UseJsonCommandBuilder()
                     .UseAmbientValuesValidator()
                     .UseFilters( config.Routes )
-                    .UseFileSystemCommandBus( new FileSystemConfiguration("//SharedDrive/CommandsJobs/Inputs") )
+                    .UseFileSystemCommandBus( config.TraitContext, new FileSystemConfiguration("//SharedDrive/CommandsJobs/Inputs") )
                     .UseTaskBasedCommandExecutor(config.TraitContext)
                     .UseSyncCommandExecutor()
                     .UseJsonCommandWriter();

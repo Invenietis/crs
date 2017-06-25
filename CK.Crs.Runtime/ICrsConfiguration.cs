@@ -9,7 +9,7 @@ namespace CK.Crs.Runtime
     /// <summary>
     /// Holds configuration specific to a CRS Handler.
     /// </summary>
-    public interface ICrsConfiguration
+    public interface ICrsConfiguration : ITraitContextProvider
     {
         /// <summary>
         /// Gets the receiver path.
@@ -25,11 +25,6 @@ namespace CK.Crs.Runtime
         /// Gets the <see cref="IPipelineBuilder"/>
         /// </summary>
         IPipelineBuilder Pipeline { get; }
-
-        /// <summary>
-        /// Gets or sets the <see cref="CKTraitContext"/>.
-        /// </summary>
-        CKTraitContext TraitContext { get; }
 
         /// <summary>
         /// External components configuration

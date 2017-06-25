@@ -14,6 +14,7 @@ namespace CK.Crs
         CommandRoute _CommandRoute;
         CommandDescription _commandDescription;
         ICommandRegistry _registry;
+        CKTraitContext _traits;
 
         public CommandDescription Description  => _commandDescription;
 
@@ -21,22 +22,26 @@ namespace CK.Crs
         /// Creates a <see cref="CommandRegistration"/> from a <see cref="CommandRoute"/>
         /// </summary>
         /// <param name="route"></param>
-        public CommandRegistration( ICommandRegistry registry, CommandRoute route )
+        public CommandRegistration( ICommandRegistry registry, CommandRoute route, CKTraitContext traits )
         {
             _registry = registry;
             _CommandRoute = route;
             _commandDescription = route.Descriptor;
+            _traits = traits;
         }
 
         /// <summary>
         /// Creates a <see cref="CommandRegistration"/> from a <see cref="CommandDescription"/>
         /// </summary>
         /// <param name="description"></param>
-        public CommandRegistration(ICommandRegistry registry, CommandDescription description )
+        public CommandRegistration(ICommandRegistry registry, CommandDescription description, CKTraitContext traits)
         {
             _registry = registry;
             _commandDescription = description;
+            _traits = traits;
         }
+
+        public CKTraitContext Traits => _traits;
 
         CommandRegistration HandledBy<THandler>() where THandler : ICommandHandler
         {
@@ -68,7 +73,10 @@ namespace CK.Crs
 
         CommandRegistration IsAsync()
         {
-            _commandDescription.Traits = "Async";
+            var t = _traits.FindOrCreate("Async");
+            if (_commandDescription.Traits == null) _commandDescription.Traits = t;
+            else _commandDescription.Traits = _commandDescription.Traits.Union(t);
+
             return this;
         }
 

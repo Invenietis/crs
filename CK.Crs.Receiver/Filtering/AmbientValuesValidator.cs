@@ -12,9 +12,11 @@ namespace CK.Crs.Runtime.Filtering
     {
         readonly IAmbientValues _ambientValues;
         readonly IMemoryCache _memoryCache;
-        IAmbientValuesRegistration _ambientValueProviders;
-        public AmbientValuesValidator(IAmbientValuesRegistration ambientValueProviders, IAmbientValues ambientValues, IMemoryCache memoryCache )
+        readonly IAmbientValuesRegistration _ambientValueRegistration;
+
+        public AmbientValuesValidator(IAmbientValuesRegistration ambientValueRegistration, IAmbientValues ambientValues, IMemoryCache memoryCache )
         {
+            _ambientValueRegistration = ambientValueRegistration;
             _ambientValues = ambientValues ?? throw new ArgumentNullException( nameof( ambientValues ) );
             _memoryCache = memoryCache ?? throw new ArgumentNullException( nameof( memoryCache ) );
         }
@@ -43,7 +45,7 @@ namespace CK.Crs.Runtime.Filtering
                 if( context.Rejected ) pipeline.Monitor.Info().Send("Validation failed by custom processing in Pipeline.Events.ValidatingAmbientValues." );
                 else
                 {
-                    foreach( var v in _ambientValueProviders.AmbientValues)
+                    foreach( var v in _ambientValueRegistration.AmbientValues)
                     {
                         await context.ValidateValueAndRejectOnError<int>( v.Name );
                     }

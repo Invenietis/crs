@@ -8,7 +8,7 @@ namespace CK.Crs.Runtime
     /// <summary>
     /// Main Crs configuration entry
     /// </summary>
-    public class CrsConfiguration : ICrsConfiguration
+    class CrsConfiguration : ICrsConfiguration
     {
         internal ICommandRegistry _registry;
         readonly HashSet<Type> _filters;

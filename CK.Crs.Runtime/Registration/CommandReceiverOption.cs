@@ -1,8 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using CK.Core;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CK.Crs
 {
@@ -11,12 +8,15 @@ namespace CK.Crs
     /// </summary>
     public class CommandReceiverOption
     {
-        public CommandReceiverOption( IServiceCollection services, ICommandRegistry r, IAmbientValuesRegistration a )
+        public CommandReceiverOption( IServiceCollection services, ICommandRegistry r, IAmbientValuesRegistration a, CKTraitContext traits )
         {
             Services = services;
             Commands = r;
             AmbientValues = a;
+            Traits = traits;
         }
+
+        public CKTraitContext Traits { get; }
 
         public ICommandRegistry Commands { get; }
 
