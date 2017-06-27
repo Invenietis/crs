@@ -44,34 +44,45 @@ namespace CK.Crs.Scalability.Internals
                 while (!_queue.IsCompleted)
                 {
                     var job = _queue.Take(_source.Token);
-                    using (job.Monitor.OpenInfo().Send("Getting job {0} for execution.", job.MetaData.CommandType))
+                    try
                     {
-                        var commandRequest = _factory.CreateFrom(job);
-                        var responseBuilder = new Runtime.CommandResponseBuilder();
+                        using (job.Monitor.OpenInfo().Send("Getting job {0} for execution.", job.MetaData.CommandType))
+                        {
+                            var commandRequest = _factory.CreateFrom(job);
+                            var responseBuilder = new Runtime.CommandResponseBuilder();
 
-                        try
-                        {
-                            await _handler
-                                .ProcessCommandAsync(commandRequest, responseBuilder, job.Monitor, _source.Token)
-                                .ConfigureAwait(false);
-                        }
-                        catch (Exception ex)
-                        {
-                            job.Monitor.Error().Send(ex);
-                            if (!responseBuilder.HasReponse)
+                            try
                             {
-                                responseBuilder.Set(new Runtime.CommandErrorResponse(ex, Guid.Empty));
+                                await _handler
+                                    .ProcessCommandAsync(commandRequest, responseBuilder, job.Monitor, _source.Token)
+                                    .ConfigureAwait(false);
+                            }
+                            catch (Exception ex)
+                            {
+                                job.Monitor.Error().Send(ex);
+                                if (!responseBuilder.HasReponse)
+                                {
+                                    responseBuilder.Set(new Runtime.CommandErrorResponse(ex, Guid.Empty));
+                                }
+                            }
+
+                            try
+                            {
+                                JobCompleted?.Invoke(this, new JobCompletedEventArgs(job, responseBuilder));
+                            }
+                            catch (Exception ex)
+                            {
+                                job.Monitor.Error().Send(ex);
                             }
                         }
-
-                        try
-                        {
-                            JobCompleted?.Invoke(this, new JobCompletedEventArgs(job, responseBuilder));
-                        }
-                        catch (Exception ex)
-                        {
-                            job.Monitor.Error().Send(ex);
-                        }
+                    }
+                    catch( Exception ex )
+                    {
+                        job.Monitor.Error().Send(ex);
+                    }
+                    finally
+                    {
+                        job.Dispose();
                     }
                 }
             });

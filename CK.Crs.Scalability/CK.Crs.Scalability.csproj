@@ -9,6 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CK.Crs.Execution\CK.Crs.Execution.csproj" />
     <ProjectReference Include="..\CK.Crs.Runtime\CK.Crs.Runtime.csproj" />
   </ItemGroup>
 

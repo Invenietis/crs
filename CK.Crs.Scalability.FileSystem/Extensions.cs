@@ -31,8 +31,7 @@ namespace CK.Crs.Scalability.FileSystem
 
         public static IPipelineBuilder UseFileSystemCommandBus( this IPipelineBuilder builder, CKTraitContext traitContext,  FileSystemConfiguration configuration )
         {
-            traitContext.FindOrCreate(Traits.Scalable);
-            return builder.Use<FileSystemCommandBus>(configuration);
+            return builder.Use<FileSystemCommandBus>(configuration, traitContext.FindOrCreate(Traits.Scalable));
         }
     }
 

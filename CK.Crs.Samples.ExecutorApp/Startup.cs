@@ -7,39 +7,38 @@ using CK.Crs.Scalability;
 using CK.Crs.Scalability.Azure;
 using CK.Crs.Scalability.FileSystem;
 using Microsoft.Extensions.DependencyInjection;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CK.Crs.Samples.ExecutorApp
 {
     class Startup : ICrsStartup
     {
+        public Startup()
+        {
+        }
+
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Add(ServiceDescriptor.Singleton<IJsonConverter, JsonNetConverter>());
+            services.AddSingleton<IJsonConverter, JsonNetConverter>();
 
             services.AddCommandRegistration(registry =>
             {
-                registry.Register<Super3Command>().HandledBy<Super3Handler>().IsAsync();
+                registry.Register<Super3Command>().HandledBy<Super3Handler>();
             });
-            services.AddCommandExecutor(configuration =>
-            {
-                //configuration.CommandRunningStore = new DistributedCommandRunningStore();
-            });
-
+            services.AddCommandExecutor();
         }
 
-        public void ConfigurePipeline( IPipelineBuilder pipeline )
+        public void ConfigureCrs( ICrsConfiguration configuration )
         {
-            pipeline
-                .UseJsonCommandBuilder()
-                .UseSyncCommandExecutor()
-                .UseJsonCommandWriter();
+            // Uses default configuration
         }
 
         public void Configure( ICrsBuilder app)
         {
             app
-                .UseFileSystem( "//SharedDrive/CommandsJobs" )
-                .UseAzure( "storage.azure.net", "ck-crs-samples-messages" );
+                .UseFileSystem("D:\\Dev\\vNext\\ck-crs\\FileSystemBus\\");
+                //.UseAzure( "storage.azure.net", "ck-crs-samples-messages" );
         }
 
     }

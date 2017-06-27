@@ -19,36 +19,36 @@ namespace CK.Crs.Scalability.FileSystem
         public void Receive(ICommandWorkerQueue queue, CancellationToken token)
         {
             IActivityMonitor monitor = new ActivityMonitor();
-            using (monitor.OpenInfo().Send("FileSystem Command Receiver Started."))
+            using (var resetEvent = new ManualResetEventSlim())
             {
-                FileSystemWatcher watcher = new FileSystemWatcher(_configuration.Path, "*.command.xml");
-                try
+                using (monitor.OpenInfo().Send("FileSystem Command Receiver Started."))
                 {
-                    ActivityMonitor.DependentToken monitorToken = monitor.DependentActivity().CreateToken();
-                    watcher.Created += (object sender, FileSystemEventArgs e) =>
+                    using (var watcher = new FileSystemWatcher(_configuration.Path, "*.command.xml"))
                     {
-                        if (e.ChangeType == WatcherChangeTypes.Created)
+                        ActivityMonitor.DependentToken monitorToken = monitor.DependentActivity().CreateToken();
+                        watcher.Created += (object sender, FileSystemEventArgs e) =>
                         {
-                            IActivityMonitor dependentMonitor = new ActivityMonitor();
-                            using (dependentMonitor.StartDependentActivity(monitorToken))
+                            if (e.ChangeType == WatcherChangeTypes.Created)
                             {
-                                using (dependentMonitor.OpenInfo().Send("New file detected"))
+                                IActivityMonitor dependentMonitor = new ActivityMonitor();
+                                using (dependentMonitor.StartDependentActivity(monitorToken))
                                 {
-                                    var enveloppe = _commandConverter.ReadCommand( dependentMonitor, e.FullPath);
-                                    if (enveloppe != null)
+                                    using (dependentMonitor.OpenInfo().Send("New file detected"))
                                     {
-                                        dependentMonitor.Trace().Send("Queue job");
-                                        queue.Add(enveloppe);
+                                        var enveloppe = _commandConverter.ReadCommand(dependentMonitor, e.FullPath);
+                                        if (enveloppe != null)
+                                        {
+                                            dependentMonitor.Trace().Send("Queue job");
+                                            queue.Add(enveloppe);
+                                        }
                                     }
                                 }
                             }
-                        }
-                    };
-                    token.WaitHandle.WaitOne();
-                }
-                finally
-                {
-                    watcher.Dispose();
+                        };
+                        watcher.EnableRaisingEvents = true;
+                        resetEvent.Wait(token);
+                        //token.WaitHandle.WaitOne();
+                    }
                 }
             }
         }

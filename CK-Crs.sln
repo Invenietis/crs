@@ -32,6 +32,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CK.Crs.Samples.Handlers", "CK.Crs.Samples.Handlers\CK.Crs.Samples.Handlers.csproj", "{A51A8BDD-272D-4537-BFB7-0249E80D66A5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps", "Apps", "{4F6E7165-EB7C-45F6-BFA7-C0F62717E8B4}"
+	ProjectSection(SolutionItems) = preProject
+		SharedConfig.json = SharedConfig.json
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Labs", "Labs", "{D542773A-132C-4242-A086-BC6505F12B89}"
 EndProject
@@ -46,6 +49,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CK.Crs.Scalability.Azure", "CK.Crs.Scalability.Azure\CK.Crs.Scalability.Azure.csproj", "{FD4E4F09-5590-4BAF-BB93-D8C56D5D08AD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CK.Crs.Scalability.Http", "CK.Crs.Scalability.Http\CK.Crs.Scalability.Http.csproj", "{502FB2C3-32D1-47AF-9993-089089182BA9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CK.Crs.Scalability.Tests", "Tests\CK.Crs.Scalability.Tests\CK.Crs.Scalability.Tests.csproj", "{91D7865B-DB67-4B8F-A0AD-5345BBC3F515}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -183,6 +188,14 @@ Global
 		{502FB2C3-32D1-47AF-9993-089089182BA9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{502FB2C3-32D1-47AF-9993-089089182BA9}.Release|x86.ActiveCfg = Release|Any CPU
 		{502FB2C3-32D1-47AF-9993-089089182BA9}.Release|x86.Build.0 = Release|Any CPU
+		{91D7865B-DB67-4B8F-A0AD-5345BBC3F515}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91D7865B-DB67-4B8F-A0AD-5345BBC3F515}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91D7865B-DB67-4B8F-A0AD-5345BBC3F515}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{91D7865B-DB67-4B8F-A0AD-5345BBC3F515}.Debug|x86.Build.0 = Debug|Any CPU
+		{91D7865B-DB67-4B8F-A0AD-5345BBC3F515}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91D7865B-DB67-4B8F-A0AD-5345BBC3F515}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91D7865B-DB67-4B8F-A0AD-5345BBC3F515}.Release|x86.ActiveCfg = Release|Any CPU
+		{91D7865B-DB67-4B8F-A0AD-5345BBC3F515}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -199,5 +212,6 @@ Global
 		{4BDB9E9F-2BF4-4FD4-8FE8-814D1236E6F3} = {D542773A-132C-4242-A086-BC6505F12B89}
 		{FD4E4F09-5590-4BAF-BB93-D8C56D5D08AD} = {D542773A-132C-4242-A086-BC6505F12B89}
 		{502FB2C3-32D1-47AF-9993-089089182BA9} = {D542773A-132C-4242-A086-BC6505F12B89}
+		{91D7865B-DB67-4B8F-A0AD-5345BBC3F515} = {D542773A-132C-4242-A086-BC6505F12B89}
 	EndGlobalSection
 EndGlobal

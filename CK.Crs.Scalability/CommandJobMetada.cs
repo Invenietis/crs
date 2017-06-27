@@ -14,9 +14,8 @@ namespace CK.Crs.Scalability
 
         public string MonitorToken { get; }
 
-        public CommandJobMetada( XElement element )
+        public CommandJobMetada( XElement root)
         {
-            var root = element.Element("Metadata");
             CommandType =CK.Core.SimpleTypeFinder.WeakResolver(root.Element("CommandType").Value, true );
             CallbackId = root.Element("CallbackId").Value;
             ContentType = root.Element("ContentType").Value;

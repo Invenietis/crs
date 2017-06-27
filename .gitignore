@@ -42,3 +42,4 @@ Tests/CK.Crs.Tests.Integration/Properties/launchSettings.json
 wrap
 .vscode
 .vs
+FileSystemBus/

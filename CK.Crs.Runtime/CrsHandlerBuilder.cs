@@ -26,7 +26,7 @@ namespace CK.Crs.Runtime
             if( configure != null ) configure( _config );
             else
             {
-                ConfigureDefaultPipeline( _config );
+                ConfigureDefault( _config );
             }
         }
 
@@ -44,7 +44,7 @@ namespace CK.Crs.Runtime
             return new CrsPipelineHandler( scopeFactory, _config );
         }
 
-        protected abstract void ConfigureDefaultPipeline( T configuration );
+        protected abstract void ConfigureDefault( T configuration );
     }
 
 }

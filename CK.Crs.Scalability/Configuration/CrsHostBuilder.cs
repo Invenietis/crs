@@ -1,5 +1,6 @@
 ﻿using CK.Core;
 using CK.Crs.Runtime;
+using CK.Crs.Scalability.Internals;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Text;
@@ -42,13 +43,15 @@ namespace CK.Crs.Scalability
 
             var services = _services.BuildServiceProvider();
 
-            var crsConfiguration = new CrsConfiguration(String.Empty, services.GetRequiredService<ICommandRegistry>());
-            startup.ConfigurePipeline( crsConfiguration.Pipeline );
-
             var app = new DefaultCrsBuilder( services );
             startup.Configure( app );
 
+            var crsConfiguration = new CrsConfiguration(String.Empty, services.GetRequiredService<ICommandRegistry>());
             var handlerBuilder = new CrsHostHandlerBuilder( crsConfiguration );
+            handlerBuilder.ApplyDefaultConfigurationOrConfigure();
+
+            startup.ConfigureCrs( crsConfiguration );
+
             var handler = handlerBuilder.Build( services );
             return new CrsHost(_monitor, handler, services, app.Listeners, app.Dispatchers);
         }
@@ -59,8 +62,14 @@ namespace CK.Crs.Scalability
             {
                 AddConfiguration(config);
             }
-            protected override void ConfigureDefaultPipeline( CrsConfiguration configuration)
+            protected override void ConfigureDefault( CrsConfiguration configuration)
             {
+                configuration.Pipeline
+                   .Clear()
+                   .Use<DirectCommandRouterComponent>()
+                   .UseJsonCommandBuilder()
+                   .UseDefaultCommandExecutor()
+                   .UseJsonCommandWriter();
             }
         }
     }

@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using CK.Core;
+using CK.Crs.Runtime;
 
-namespace CK.Crs.Runtime
+namespace CK.Crs.Scalability.Internals
 {
     /// <summary>
     /// Main Crs configuration entry

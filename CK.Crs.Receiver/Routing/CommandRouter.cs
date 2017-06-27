@@ -18,7 +18,7 @@ namespace CK.Crs.Runtime.Routing
 
         public override bool ShouldInvoke( IPipeline pipeline )
         {
-            return !pipeline.Response.HasReponse;
+            return pipeline.Response.HasReponse == false;
         }
 
         public override Task Invoke( IPipeline pipeline, CancellationToken token )
@@ -27,12 +27,12 @@ namespace CK.Crs.Runtime.Routing
             if( routeData != null )
             {
                 pipeline.Action.Description = routeData.Descriptor;
-                if( pipeline.Action.Description.HandlerType == null )
-                {
-                    string msg = $"No handler found for command [type={pipeline.Action.Description.CommandType}].";
-                    pipeline.Monitor.Error().Send( msg );
-                    pipeline.Response.Set( new CommandInvalidResponse( pipeline.Action.CommandId, msg ) );
-                }
+                //if( pipeline.Action.Description.HandlerType == null )
+                //{
+                //    string msg = $"No handler found for command [type={pipeline.Action.Description.CommandType}].";
+                //    pipeline.Monitor.Error().Send( msg );
+                //    pipeline.Response.Set( new CommandInvalidResponse( pipeline.Action.CommandId, msg ) );
+                //}
             }
             else
             {
@@ -48,7 +48,7 @@ namespace CK.Crs.Runtime.Routing
                 }
 #endif                    
             }
-            return Task.FromResult( 0 );
+            return Task.CompletedTask;
         }
     }
 }

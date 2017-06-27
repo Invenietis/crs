@@ -5,11 +5,14 @@ using System.Text;
 
 namespace CK.Crs.Scalability
 {
-    public sealed class CommandJob
+    public sealed class CommandJob : IDisposable
     {
-        public CommandJob( IActivityMonitor monitor, CommandJobMetada metaData, byte[] payload )
+        readonly IDisposable _jobActivity;
+        public CommandJob( CommandJobMetada metaData, byte[] payload )
         {
-            Monitor = monitor;
+            var m = new ActivityMonitor();
+            _jobActivity = m.StartDependentActivity( ActivityMonitor.DependentToken.Parse( metaData.MonitorToken) );
+            Monitor = m; 
             MetaData = metaData;
             Payload = payload;
         }
@@ -19,5 +22,10 @@ namespace CK.Crs.Scalability
         public byte[] Payload { get; }
 
         public CommandJobMetada MetaData { get; }
+
+        public void Dispose()
+        {
+            _jobActivity.Dispose();
+        }
     }
 }

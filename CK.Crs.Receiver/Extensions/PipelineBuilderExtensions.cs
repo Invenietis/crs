@@ -42,7 +42,7 @@ namespace CK.Crs
         /// </summary>
         static public IPipelineBuilder UseFilters( this IPipelineBuilder builder, ICommandRouteCollection routes)
         {
-            return builder.Use<CommandFiltersInvoker>();
+            return builder.Use<CommandFiltersInvoker>(routes);
         }
     }
 }

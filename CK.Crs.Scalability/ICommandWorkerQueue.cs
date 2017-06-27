@@ -18,6 +18,9 @@ namespace CK.Crs.Scalability
         /// </summary>
         void Start();
 
+        /// <summary>
+        /// Should be raised when a job is completed
+        /// </summary>
         event EventHandler<JobCompletedEventArgs> JobCompleted;
     }
 }

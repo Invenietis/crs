@@ -12,7 +12,7 @@ namespace CK.Crs.Scalability
     {
         void ConfigureServices(IServiceCollection services);
 
-        void ConfigurePipeline( IPipelineBuilder pipeline );
+        void ConfigureCrs( ICrsConfiguration configuration );
 
         void Configure( ICrsBuilder app);
     } 

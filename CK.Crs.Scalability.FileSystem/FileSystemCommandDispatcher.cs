@@ -12,7 +12,7 @@ namespace CK.Crs.Scalability.FileSystem
 {
     class FileSystemCommandDispatcher : ICommandResponseDispatcher
     {
-        FileSystemConfiguration _configuration;
+        readonly FileSystemConfiguration _configuration;
 
         public FileSystemCommandDispatcher(FileSystemConfiguration configuration)
         {
@@ -26,7 +26,7 @@ namespace CK.Crs.Scalability.FileSystem
             {
                 contentType = response.Headers[CommandResponseHeaders.ContentType];
             }
-            var metaData = new CommandResponseEnvelopeMetada(callbackId, contentType, monitor);
+            var metaData = new CommandResponseMetada(callbackId, contentType, monitor);
 
             var payloadPath = _configuration.FormatResponsePath(response.CommandResponse);
             var metaDataPath = payloadPath + ".xml";
@@ -38,10 +38,12 @@ namespace CK.Crs.Scalability.FileSystem
 
             using (var fs = File.OpenWrite(metaDataPath))
             {
-                using (var xmlW = XmlWriter.Create(fs))
+                using (var xmlW = XmlWriter.Create(fs, new XmlWriterSettings
+                {
+                    Async = true
+                }))
                 {
                     metaData.ToXml().WriteTo(xmlW);
-                    await response.WriteAsync(fs);
                 }
             }
         }

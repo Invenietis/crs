@@ -1,4 +1,5 @@
 ﻿using CK.Crs.Runtime;
+using CK.Crs.Scalability.Internals;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -22,8 +23,6 @@ namespace CK.Crs.Scalability
 
         public IList<ICommandListener> Listeners => _listeners;
         public IList<ICommandResponseDispatcher> Dispatchers => _dispatchers;
-
-        public CrsHandlerBuilder<CrsConfiguration> Handler => throw new NotImplementedException();
 
         ICommandReceiverConfigurationInput ICrsBuilder.Input => this;
 

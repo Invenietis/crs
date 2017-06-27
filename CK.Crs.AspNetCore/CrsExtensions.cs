@@ -45,7 +45,7 @@ namespace Microsoft.AspNetCore.Builder
                 _services = services;
             }
 
-            protected override void ConfigureDefaultPipeline( CrsConfiguration config )
+            protected override void ConfigureDefault( CrsConfiguration config )
             {
                 config.AddCommands(e => e.Registration);
 
@@ -57,7 +57,7 @@ namespace Microsoft.AspNetCore.Builder
                     .UseAmbientValuesValidator()
                     .UseFilters( config.Routes )
                     .UseTaskBasedCommandExecutor( Config.TraitContext )
-                    .UseSyncCommandExecutor()
+                    .UseDefaultCommandExecutor()
                     .UseJsonCommandWriter();
 
                 config.ExternalComponents.CommandScheduler = new InMemoryScheduler( config, _services );

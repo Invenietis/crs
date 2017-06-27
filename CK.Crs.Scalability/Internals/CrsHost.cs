@@ -6,9 +6,9 @@ using CK.Crs.Runtime;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CK.Crs.Scalability
+namespace CK.Crs.Scalability.Internals
 {
-    public class CrsHost : ICrsHost
+    class CrsHost : ICrsHost
     {
         private IActivityMonitor _monitor;
         private IServiceProvider _services;

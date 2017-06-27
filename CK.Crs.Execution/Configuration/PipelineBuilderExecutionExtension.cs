@@ -15,7 +15,7 @@ namespace CK.Crs
         /// </summary>
         /// <param name="builder"></param>
         /// <returns></returns>
-        static public IPipelineBuilder UseSyncCommandExecutor( this IPipelineBuilder builder )
+        static public IPipelineBuilder UseDefaultCommandExecutor( this IPipelineBuilder builder )
         {
             return builder.Use<SyncCommandExecutor>();
         }
@@ -27,8 +27,7 @@ namespace CK.Crs
         /// <returns></returns>
         static public IPipelineBuilder UseTaskBasedCommandExecutor( this IPipelineBuilder builder, CKTraitContext traitContext )
         {
-            traitContext.FindOrCreate( "Async" );
-            return builder.Use<TaskBasedCommandExecutor>();
+            return builder.Use<TaskBasedCommandExecutor>(traitContext.FindOrCreate(TaskBasedCommandExecutor.Trait));
         }
 
     }

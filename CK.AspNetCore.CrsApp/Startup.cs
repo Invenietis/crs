@@ -26,12 +26,12 @@ namespace CK.Crs.Samples.AspNetCoreApp
             services.AddCommandReceiver(configuration =>
            {
                configuration.UseJsonNet();
-               
-               configuration.Commands.AutoRegisterSimpleCurrentAssembly();
+
+               //configuration.Commands.AutoRegisterSimpleCurrentAssembly();
                configuration.Commands
-                  .Register<SuperCommand>().IsAsync()
-                  .Register<Super3Command>().IsScalable()
-                  .Register<Super2Command>().HandledBy<Super2Handler>();
+                  .Register<SuperCommand>().HandledBy<SuperHandler>().IsAsync()
+                  .Register<Super2Command>().HandledBy<Super2Handler>()
+                  .Register<Super3Command>().IsScalable();
 
                configuration.AmbientValues
                     .AddAmbientValueProviderFrom<CommandBase>()
@@ -51,10 +51,10 @@ namespace CK.Crs.Samples.AspNetCoreApp
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseCrsWithDefault();
-
             app.UseCrs("/commands", config =>
             {
+                config.AddCommands(e => e.Registration);
+
                 config.Pipeline
                     .Clear()
                     .UseMetaComponent( config.Routes )
@@ -63,9 +63,9 @@ namespace CK.Crs.Samples.AspNetCoreApp
                     .UseJsonCommandBuilder()
                     .UseAmbientValuesValidator()
                     .UseFilters( config.Routes )
-                    .UseFileSystemCommandBus( config.TraitContext, new FileSystemConfiguration("//SharedDrive/CommandsJobs/Inputs") )
+                    .UseFileSystemCommandBus( config.TraitContext, new FileSystemConfiguration("D:\\Dev\\vNext\\ck-crs\\FileSystemBus\\Inputs") )
                     .UseTaskBasedCommandExecutor(config.TraitContext)
-                    .UseSyncCommandExecutor()
+                    .UseDefaultCommandExecutor()
                     .UseJsonCommandWriter();
             });
             

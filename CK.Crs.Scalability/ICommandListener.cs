@@ -4,7 +4,7 @@ using System.Threading;
 namespace CK.Crs.Scalability
 {
     /// <summary>
-    /// Defines a command listener, whiche receives jobs and push them to the shared <see cref="ICommandWorkerQueue"/>.
+    /// Defines a command listener, which receives jobs and push them to the shared <see cref="ICommandWorkerQueue"/>.
     /// </summary>
     public interface ICommandListener
     {
