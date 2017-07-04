@@ -34,8 +34,8 @@ namespace CK.Crs.Runtime.Filtering
             using( pipeline.Monitor.OpenTrace().Send("Ambient values validation..." ) )
             {
                 var context = new ReflectionAmbientValueValidationContext( 
+                    pipeline.Action.Command, 
                     pipeline.Monitor, 
-                    pipeline.Action, 
                     _ambientValues, 
                     _memoryCache );
 

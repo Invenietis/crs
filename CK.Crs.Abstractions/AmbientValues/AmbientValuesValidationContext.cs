@@ -9,13 +9,11 @@ namespace CK.Crs
     public abstract class AmbientValueValidationContext : IRejectable
     {
         public IActivityMonitor Monitor { get; }
-        public CommandAction Action { get; }
         public IAmbientValues AmbientValues { get; }
 
-        public AmbientValueValidationContext( IActivityMonitor monitor, CommandAction action, IAmbientValues _ambientValues )
+        public AmbientValueValidationContext( IActivityMonitor monitor,IAmbientValues _ambientValues )
         {
             Monitor = monitor;
-            Action = action;
             AmbientValues = _ambientValues;
         }
 

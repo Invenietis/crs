@@ -62,7 +62,7 @@ namespace CK.Crs
         /// </summary>
         /// <typeparam name="THandler"></typeparam>
         /// <returns></returns>
-        ICommandConfiguration<TConfig> HandledBy<THandler>() where THandler : ICommandHandler;
+        ICommandConfiguration<TConfig> HandledBy<THandler>();
     }
 
     /// <summary>

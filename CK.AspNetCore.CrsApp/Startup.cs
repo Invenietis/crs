@@ -12,6 +12,10 @@ using System.Reflection;
 using CK.Crs.Samples.Messages;
 using CK.Crs.Samples.Handlers;
 using CK.Crs.Scalability.FileSystem;
+using Paramore.Brighter;
+using Microsoft.AspNetCore.Mvc.Internal;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using CK.Crs.Samples.AspNetCoreApp.Core;
 
 namespace CK.Crs.Samples.AspNetCoreApp
 {
@@ -22,57 +26,37 @@ namespace CK.Crs.Samples.AspNetCoreApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSwagger();
-            services.AddCommandExecutor();
-            services.AddCommandReceiver(configuration =>
-           {
-               configuration.UseJsonNet();
 
-               //configuration.Commands.AutoRegisterSimpleCurrentAssembly();
-               configuration.Commands
-                  .Register<SuperCommand>().HandledBy<SuperHandler>().IsAsync()
-                  .Register<Super2Command>().HandledBy<Super2Handler>()
-                  .Register<Super3Command>().IsScalable();
+            var configuration = services.AddCommandReceiver(c =>
+            {
+                // Commands configuration
+                c.Commands.Register<SuperCommand>().HandledBy<SuperHandler>();
+                c.Commands.Register<Super2Command>().HandledBy<Super2Handler>();
 
-               configuration.AmbientValues
+                // Ambient values configuration
+                c.AmbientValues
                     .AddAmbientValueProviderFrom<CommandBase>()
                         .Select(t => t.ActorId).ProvidedBy<ActorIdAmbientValueProvider>()
                         .Select(t => t.AuthenticatedActorId).ProvidedBy<ActorIdAmbientValueProvider>();
+            });
 
-           });
+            // Brighter configuration
+            services.AddBrighterExecutor(configuration.Commands, c => c.DefaultPolicy().NoTaskQueues());
+
+            // MVC Core configuration
+            services
+                .AddMvcCore()
+                .AddJsonFormatters()
+                .ConfigureApplicationPartManager(p =>
+                     p.FeatureProviders.Add(new CrsControllerFeatureProvider(configuration.Commands)));
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddConsole();
-
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
-            app.UseCrs("/commands", config =>
-            {
-                config.AddCommands(e => e.Registration);
-
-                config.Pipeline
-                    .Clear()
-                    .UseMetaComponent( config.Routes )
-                    .UseSwagger( config.Routes )
-                    .UseCommandRouter(config.Routes)
-                    .UseJsonCommandBuilder()
-                    .UseAmbientValuesValidator()
-                    .UseFilters( config.Routes )
-                    .UseFileSystemCommandBus( config.TraitContext, new FileSystemConfiguration("D:\\Dev\\vNext\\ck-crs\\FileSystemBus\\Inputs") )
-                    .UseTaskBasedCommandExecutor(config.TraitContext)
-                    .UseDefaultCommandExecutor()
-                    .UseJsonCommandWriter();
-            });
-            
-            app.Run(async (context) =>
-            {
-                await context.Response.WriteAsync("Hello World!");
-            });
+            app.UseDeveloperExceptionPage();
+            app.UseMvc();
         }
     }
 }

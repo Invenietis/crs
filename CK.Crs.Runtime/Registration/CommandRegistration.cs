@@ -43,7 +43,7 @@ namespace CK.Crs
 
         public CKTraitContext Traits => _traits;
 
-        CommandRegistration HandledBy<THandler>() where THandler : ICommandHandler
+        CommandRegistration HandledBy<THandler>()
         {
             _commandDescription.HandlerType = typeof( THandler );
             _commandDescription.Decorators = CommandDescription.ExtractDecoratorsFromHandlerAttributes(

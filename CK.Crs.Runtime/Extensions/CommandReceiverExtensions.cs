@@ -13,7 +13,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="services"></param>
         /// <param name="configuration"></param>
         /// <returns></returns>
-        public static IServiceCollection AddCommandRegistration( this IServiceCollection services, Action<ICommandRegistry> configuration, CKTraitContext existingTraitContext = null )
+        public static ICommandRegistry AddCommandRegistration( this IServiceCollection services, Action<ICommandRegistry> configuration, CKTraitContext existingTraitContext = null )
         {
             var r =  new CommandRegistry(existingTraitContext ?? new CKTraitContext("Crs"));
 
@@ -21,7 +21,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddSingleton<ICommandRegistry>( r );
 
-            return services;
+            return r;
         }
     }
 }

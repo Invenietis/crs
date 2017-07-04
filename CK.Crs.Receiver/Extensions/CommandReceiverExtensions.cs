@@ -10,7 +10,7 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class CommandReceiverExtensions
     {
-        public static IServiceCollection AddCommandReceiver( this IServiceCollection services, Action<CommandReceiverOption> configuration )
+        public static CommandReceiverOption AddCommandReceiver( this IServiceCollection services, Action<CommandReceiverOption> configuration )
         {
             services.AddMemoryCache();
             services.AddSingleton<ICommandFilterFactory, DefaultCommandFilterFactory>();
@@ -20,15 +20,14 @@ namespace Microsoft.Extensions.DependencyInjection
 
             CKTraitContext traitContext = new CKTraitContext("Crs");
 
-            return services.AddCommandRegistration( r =>
-            {
-                var a = new AmbientValuesRegistration(services);
-                var o = new CommandReceiverOption(services, r, a, traitContext);
+            var r = services.AddCommandRegistration( _ => { }, traitContext);
+            var a = new AmbientValuesRegistration(services);
+            var o = new CommandReceiverOption(services, r, a, traitContext);
+            configuration(o);
+            services.AddSingleton<IAmbientValuesRegistration>(a);
+            services.AddSingleton(o);
 
-                configuration(o);
-                services.AddSingleton<IAmbientValuesRegistration>(a);
-                services.AddSingleton(o);
-            }, traitContext);
+            return o;
         }
     }
 }

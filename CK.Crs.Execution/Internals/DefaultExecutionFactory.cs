@@ -2,10 +2,11 @@
 using System.Reflection;
 using CK.Core;
 using Microsoft.Extensions.DependencyInjection;
+using Paramore.Brighter;
 
 namespace CK.Crs.Runtime.Execution
 {
-    internal class DefaultExecutionFactory : IExecutionFactory
+    internal class DefaultExecutionFactory : IExecutionFactory, IAmAHandlerFactory, IAmAHandlerFactoryAsync
     {
         readonly DefaultCreateInstanceStrategy _s;
 
@@ -23,6 +24,33 @@ namespace CK.Crs.Runtime.Execution
         {
             return _s.CreateInstanceOrDefault<ICommandHandler>( handlerType );
         }
+
+        public IHandleRequestsAsync Create(Type handlerType)
+        {
+            return _s.CreateInstanceOrDefault<IHandleRequestsAsync>( handlerType );
+        }
+
+        IHandleRequests IAmAHandlerFactory.Create(Type handlerType)
+        {
+            return _s.CreateInstanceOrDefault<IHandleRequests>( handlerType );
+        }
+
+        public void Release(IHandleRequestsAsync handler)
+        {
+            if( handler is IDisposable)
+            {
+                ((IDisposable)handler).Dispose();
+            }
+        }
+
+        public void Release(IHandleRequests handler)
+        {
+            if (handler is IDisposable)
+            {
+                ((IDisposable)handler).Dispose();
+            }
+        }
+
         public virtual void ReleaseHandler( ICommandHandler handler )
         {
             var d = handler as IDisposable;
