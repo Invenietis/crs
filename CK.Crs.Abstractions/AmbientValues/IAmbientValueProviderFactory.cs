@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CK.Crs
+namespace CK.Core
 {
     /// <summary>
     /// <see cref="IAmbientValueProvider"/> factory which should creates a new instance each time create is called.

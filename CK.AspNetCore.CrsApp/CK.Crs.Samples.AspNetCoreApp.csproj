@@ -17,11 +17,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CK.Crs.AspNetCore\CK.Crs.AspNetCore.csproj" />
-    <ProjectReference Include="..\CK.Crs.OpenAPI\CK.Crs.OpenAPI.csproj" />
     <ProjectReference Include="..\CK.Crs.Samples.Handlers\CK.Crs.Samples.Handlers.csproj" />
     <ProjectReference Include="..\CK.Crs.Samples.Messages\CK.Crs.Samples.Messages.csproj" />
-    <ProjectReference Include="..\CK.Crs.Scalability.FileSystem\CK.Crs.Scalability.FileSystem.csproj" />
-    <ProjectReference Include="..\CK.Crs.Scalability\CK.Crs.Scalability.csproj" />
   </ItemGroup>
 
 </Project>

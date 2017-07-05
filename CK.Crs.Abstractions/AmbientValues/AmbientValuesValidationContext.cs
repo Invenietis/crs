@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using CK.Core;
 
-namespace CK.Crs
+namespace CK.Core
 {
-    public abstract class AmbientValueValidationContext : IRejectable
+    public abstract class AmbientValueValidationContext
     {
         public IActivityMonitor Monitor { get; }
         public IAmbientValues AmbientValues { get; }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CK.Crs
+namespace CK.Core
 {
 
     public class ActorIdAmbientValueProvider : IAmbientValueProvider

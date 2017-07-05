@@ -27,8 +27,6 @@ namespace CK.Crs
             }
             return s;
         }
-        public static IReadOnlyCollection<Type> ExtractDecoratorsFromHandlerAttributes(Type commandType, Type handlerType) =>
-            handlerType.GetTypeInfo().GetCustomAttributes().OfType<ICommandDecorator>().Select(t => t.GetType()).ToArray();
 
         /// <summary>
         /// Creates a command description

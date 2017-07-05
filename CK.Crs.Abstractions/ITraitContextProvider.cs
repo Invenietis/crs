@@ -1,6 +1,4 @@
-﻿using CK.Core;
-
-namespace CK.Crs
+﻿namespace CK.Core
 {
     public interface ITraitContextProvider
     {

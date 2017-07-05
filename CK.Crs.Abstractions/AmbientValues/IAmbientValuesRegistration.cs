@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using CK.Core;
 
-namespace CK.Crs
+namespace CK.Core
 {
     /// <summary>
     /// Ambient values registrations

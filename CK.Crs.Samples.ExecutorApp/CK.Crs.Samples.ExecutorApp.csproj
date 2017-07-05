@@ -11,14 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CK.Crs.Execution\CK.Crs.Execution.csproj" />
     <ProjectReference Include="..\CK.Crs.Samples.Handlers\CK.Crs.Samples.Handlers.csproj" />
     <ProjectReference Include="..\CK.Crs.Samples.Messages\CK.Crs.Samples.Messages.csproj" />
-    <ProjectReference Include="..\CK.Crs.Scalability.Azure\CK.Crs.Scalability.Azure.csproj" />
-    <ProjectReference Include="..\CK.Crs.Scalability.FileSystem\CK.Crs.Scalability.FileSystem.csproj" />
-    <ProjectReference Include="..\CK.Crs.Scalability.Redis\CK.Crs.Scalability.Redis.csproj" />
-    <ProjectReference Include="..\CK.Crs.Scalability.Tcp\CK.Crs.Scalability.Tcp.csproj" />
-    <ProjectReference Include="..\CK.Crs.Scalability\CK.Crs.Scalability.csproj" />
   </ItemGroup>
 
 </Project>

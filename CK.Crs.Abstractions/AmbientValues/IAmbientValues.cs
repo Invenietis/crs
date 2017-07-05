@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CK.Crs
+namespace CK.Core
 {
     /// <summary>
     /// Resolves the value of an ambient parameter.

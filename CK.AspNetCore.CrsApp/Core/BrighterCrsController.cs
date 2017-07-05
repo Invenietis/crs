@@ -1,8 +1,7 @@
 ﻿using Paramore.Brighter;
 using System.Threading.Tasks;
-using CK.Crs.Runtime;
 
-namespace CK.Crs.Samples.AspNetCoreApp.Core
+namespace CK.Crs.Samples.AspNetCoreApp
 {
     [CrsControllerNameConvention] // This attribute will be removed and automatically configured by the Framwework.
     public abstract class BrighterCrsController<T> : ICrsEndpoint<T> where T : class, ICommand

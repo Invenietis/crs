@@ -11,11 +11,7 @@ using CK.Crs;
 using System.Reflection;
 using CK.Crs.Samples.Messages;
 using CK.Crs.Samples.Handlers;
-using CK.Crs.Scalability.FileSystem;
-using Paramore.Brighter;
-using Microsoft.AspNetCore.Mvc.Internal;
-using Microsoft.AspNetCore.Mvc.Formatters;
-using CK.Crs.Samples.AspNetCoreApp.Core;
+using CK.Core;
 
 namespace CK.Crs.Samples.AspNetCoreApp
 {
@@ -25,30 +21,32 @@ namespace CK.Crs.Samples.AspNetCoreApp
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSwagger();
-
-            var configuration = services.AddCommandReceiver(c =>
-            {
-                // Commands configuration
-                c.Commands.Register<SuperCommand>().HandledBy<SuperHandler>();
-                c.Commands.Register<Super2Command>().HandledBy<Super2Handler>();
-
-                // Ambient values configuration
-                c.AmbientValues
-                    .AddAmbientValueProviderFrom<CommandBase>()
-                        .Select(t => t.ActorId).ProvidedBy<ActorIdAmbientValueProvider>()
-                        .Select(t => t.AuthenticatedActorId).ProvidedBy<ActorIdAmbientValueProvider>();
-            });
-
-            // Brighter configuration
-            services.AddBrighterExecutor(configuration.Commands, c => c.DefaultPolicy().NoTaskQueues());
-
-            // MVC Core configuration
             services
                 .AddMvcCore()
                 .AddJsonFormatters()
-                .ConfigureApplicationPartManager(p =>
-                     p.FeatureProviders.Add(new CrsControllerFeatureProvider(configuration.Commands)));
+                .AddCrs(  crs =>
+               {
+                   crs
+                    .AddAmbientValues( ambientValues =>
+                    {
+                        ambientValues.AddAmbientValueProviderFrom<CommandBase>()
+                            .Select(t => t.ActorId).ProvidedBy<ActorIdAmbientValueProvider>()
+                            .Select(t => t.AuthenticatedActorId).ProvidedBy<ActorIdAmbientValueProvider>();
+                    })
+                    .AddCommands( registry =>
+                    {
+                        registry
+                            .Register<SuperCommand>().HandledBy<SuperHandler>()
+                            .Register<Super2Command>().HandledBy<Super2Handler>();
+                    })
+                    .AddEndpoints( endpoints => 
+                    {
+                        endpoints
+                            .For(typeof(CrsAdminEndpoint<>)).Apply(command => command.CommandType.Namespace.EndsWith("Admin"))
+                            .For(typeof(CrsPublicEndpoint<>)).Apply(command => !command.CommandType.Namespace.EndsWith("Admin"));
+                    });
+                    //.AddBrighterExecutor( c => c.DefaultPolicy().NoTaskQueues() );
+               });
 
         }
 
