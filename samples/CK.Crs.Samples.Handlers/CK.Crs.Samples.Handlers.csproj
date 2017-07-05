@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CK.Crs.Abstractions\CK.Crs.Abstractions.csproj" />
+    <ProjectReference Include="..\..\CK.Crs.Abstractions\CK.Crs.Abstractions.csproj" />
     <ProjectReference Include="..\CK.Crs.Samples.Messages\CK.Crs.Samples.Messages.csproj" />
   </ItemGroup>
 
