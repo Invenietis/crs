@@ -16,6 +16,7 @@ namespace CK.Crs
     {
         public static void AddCrs(this IServiceCollection services, Action<ICrsConfiguration> configuration)
         {
+            services.AddSingleton<ICommandDispatcher, DefaultCommandDispatcher>();
             services.AddMemoryCache();
             services.AddMvcCore(o =>
             {

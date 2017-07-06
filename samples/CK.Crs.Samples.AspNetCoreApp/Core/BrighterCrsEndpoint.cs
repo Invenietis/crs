@@ -3,12 +3,11 @@ using System.Threading.Tasks;
 
 namespace CK.Crs.Samples.AspNetCoreApp
 {
-    [CrsControllerNameConvention] // This attribute will be removed and automatically configured by the Framwework.
-    public abstract class BrighterCrsController<T> : ICrsEndpoint<T> where T : class, ICommand
+    public abstract class BrighterCrsEndpoint<T> : ICrsEndpoint<T> where T : class, ICommand
     {
         readonly IAmACommandProcessor _processor;
 
-        public BrighterCrsController(IAmACommandProcessor processor)
+        public BrighterCrsEndpoint(IAmACommandProcessor processor)
         {
             _processor = processor;
         }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Caching.Memory;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CK.Crs
@@ -33,17 +34,21 @@ namespace CK.Crs
                 var commandArgumentName = context.ActionDescriptor.GetProperty<CrsCommandArgumentName>();
                 var commandArgument = context.ActionArguments[commandArgumentName];
 
-                var vContext = new ReflectionAmbientValueValidationContext(commandArgument, monitor, _ambientValues, _memoryCache);
-
-                foreach (var v in _registration.AmbientValues)
+                var obj = context.Filters.SingleOrDefault(t => t.GetType() == typeof(NoAmbientValuesValidationAttribute));
+                if (obj == null)
                 {
-                    await vContext.ValidateValueAndRejectOnError<int>(v.Name);
-                }
+                    var vContext = new ReflectionAmbientValueValidationContext(commandArgument, monitor, _ambientValues, _memoryCache);
 
-                if (vContext.Rejected)
-                {
-                    context.Result = new BadRequestObjectResult(vContext.RejectReason);
-                    return;
+                    foreach (var v in _registration.AmbientValues)
+                    {
+                        await vContext.ValidateValueAndRejectOnError<int>(v.Name);
+                    }
+
+                    if (vContext.Rejected)
+                    {
+                        context.Result = new BadRequestObjectResult(vContext.RejectReason);
+                        return;
+                    }
                 }
 
                 await next();

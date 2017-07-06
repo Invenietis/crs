@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Routing;
 namespace CK.Crs.Samples.AspNetCoreApp
 {
     [Route("my-crs-admin/[Action]")]
-    public class CrsAdminEndpoint<T> : BrighterCrsController<T> where T : class, ICommand
+    public class CrsAdminEndpoint<T> : BrighterCrsEndpoint<T> where T : class, ICommand
     {
         public CrsAdminEndpoint(IAmACommandProcessor processor) : base(processor) { }
 
