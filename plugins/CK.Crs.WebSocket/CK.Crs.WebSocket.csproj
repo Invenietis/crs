@@ -1,4 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="../../common/shared.props" />
 
   <PropertyGroup>
     <TargetFramework>netstandard1.4</TargetFramework>
@@ -6,10 +7,11 @@
 
   <ItemGroup>
     <PackageReference Include="CK.Communication.WebSockets" Version="1.5.0" />
+    <PackageReference Include="SimpleGitVersionTask" Version="0.28.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CK.Crs.Abstractions\CK.Crs.Abstractions.csproj" />
+    <ProjectReference Include="..\..\core\CK.Crs.Abstractions\CK.Crs.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>

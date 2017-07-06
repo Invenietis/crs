@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- SharedDir is the /Common directory. -->
+  <PropertyGroup>
+    <SharedDir>$(MSBuildThisFileDirectory)</SharedDir>
+    <IsInTestsFolder Condition="$(MSBuildProjectDirectoryNoRoot.Contains('\Tests\'))">true</IsInTestsFolder>
+  </PropertyGroup>
+
+  <!-- Xml documentation is generated in Release or during Cake builds (except for tests projects). -->
+  <PropertyGroup Condition=" '$(IsInTestsFolder)' != 'true' And '$(IsInIntegrationTestsFolder)' != 'true' And ('$(CakeBuild)' == 'true' Or '$(Configuration)' == 'Release') ">
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Centralized dependencies versions. -->
+  </PropertyGroup>
+
+  <!-- 
+    When building from the CI (ie. from Cake, hence directly with the msbuild tool, SolutionDir is not defined),
+    we unify the behavior here as well as setting the BaseIntermediateOutputPath (the /obj folder)
+    below CodeCakeBuilder/Releases/ so that compilation from external sources does not interfere with visual studio work.
+  -->
+  <PropertyGroup Condition=" '$(CakeBuild)' == 'true' ">
+    <SolutionDir>$([System.IO.Path]::GetDirectoryName($([System.IO.Path]::GetDirectoryName($(MSBuildThisFileDirectory)))))\</SolutionDir>
+    <BaseIntermediateOutputPath>$(SolutionDir)CodeCakeBuilder\Releases\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+  </PropertyGroup>
+  <!-- When not building from the CI, assemblies do not have any AssemblyInfo attributes. -->
+  <PropertyGroup Condition=" '$(CakeBuild)' != 'true' ">
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+
+
+  <PropertyGroup>
+    <!-- Standard properties. -->
+    <AssemblyOriginatorKeyFile>$(SharedDir)SharedKey.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>false</SignAssembly>
+    <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
+    <RepositoryType>git</RepositoryType>
+
+    <!-- Invenietis standard properties. -->
+    <Copyright>Copyright Invenietis 2017-$([System.DateTime]::UtcNow.ToString("yyyy"))</Copyright>
+    <Company>Invenietis</Company>
+    <Authors>Invenietis</Authors>
+
+    <!-- Properties that are solution depdendents. -->
+    <ProductName>CK-Framework</ProductName>
+    <PackageReleaseNotes>https://github.com/Invenietis/CK-Auth-Abstractions/releases</PackageReleaseNotes>
+    <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/Invenietis/CK-Auth-Abstractions</RepositoryUrl>
+
+  </PropertyGroup>
+</Project>

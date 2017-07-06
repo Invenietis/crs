@@ -1,10 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="../../common/shared.props" />
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CK.ActivityMonitor.StandardSender" Version="7.0.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="1.1.1" />
+    <PackageReference Include="SimpleGitVersionTask" Version="0.28.0" />
     <PackageReference Include="System.Security.Claims" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>

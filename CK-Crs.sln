@@ -7,13 +7,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".SolutionItems", ".Solution
 	ProjectSection(SolutionItems) = preProject
 		BuildPackPackarium.bat = BuildPackPackarium.bat
 		RepositoryInfo.xml = RepositoryInfo.xml
+		common\shared.props = common\shared.props
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Runtime", "CK.Crs.Runtime\CK.Crs.Runtime.csproj", "{52C1088B-F87D-489D-B592-38F3881B2271}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Runtime", "core\CK.Crs.Runtime\CK.Crs.Runtime.csproj", "{52C1088B-F87D-489D-B592-38F3881B2271}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Abstractions", "CK.Crs.Abstractions\CK.Crs.Abstractions.csproj", "{7605F8FB-B447-4D6B-91F6-D85ACC9DDBB7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Abstractions", "core\CK.Crs.Abstractions\CK.Crs.Abstractions.csproj", "{7605F8FB-B447-4D6B-91F6-D85ACC9DDBB7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.AspNetCore", "CK.Crs.AspNetCore\CK.Crs.AspNetCore.csproj", "{B08C79A1-2543-402B-9819-8F8E26F0152D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.AspNetCore", "core\CK.Crs.AspNetCore\CK.Crs.AspNetCore.csproj", "{B08C79A1-2543-402B-9819-8F8E26F0152D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Samples.AspNetCoreApp", "samples\CK.Crs.Samples.AspNetCoreApp\CK.Crs.Samples.AspNetCoreApp.csproj", "{C412DB42-9922-470C-B78B-21D60443EF9F}"
 EndProject
@@ -23,13 +24,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Samples.Messages", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Samples.Handlers", "samples\CK.Crs.Samples.Handlers\CK.Crs.Samples.Handlers.csproj", "{A51A8BDD-272D-4537-BFB7-0249E80D66A5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.WebSocket", "CK.Crs.WebSocket\CK.Crs.WebSocket.csproj", "{90D9E014-5A4F-4F48-A828-630A74493694}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.WebSocket", "plugins\CK.Crs.WebSocket\CK.Crs.WebSocket.csproj", "{90D9E014-5A4F-4F48-A828-630A74493694}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Brighter", "CK.Crs.Brighter\CK.Crs.Brighter.csproj", "{001B2947-6681-4B83-93C3-4B4C9132DE60}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Brighter", "plugins\CK.Crs.Brighter\CK.Crs.Brighter.csproj", "{001B2947-6681-4B83-93C3-4B4C9132DE60}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{9DDCC6E6-2DBA-4F14-9FB3-2C8A7E37F722}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framework", "Framework", "{F15FAD1E-E5E2-4AFF-927F-8FD756CEED6C}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{F15FAD1E-E5E2-4AFF-927F-8FD756CEED6C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeCakeBuilder", "build\CodeCakeBuilder.csproj", "{C7E8DC3E-8D5D-4556-BF35-3B1A3E536280}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -103,6 +106,14 @@ Global
 		{001B2947-6681-4B83-93C3-4B4C9132DE60}.Release|Any CPU.Build.0 = Release|Any CPU
 		{001B2947-6681-4B83-93C3-4B4C9132DE60}.Release|x86.ActiveCfg = Release|Any CPU
 		{001B2947-6681-4B83-93C3-4B4C9132DE60}.Release|x86.Build.0 = Release|Any CPU
+		{C7E8DC3E-8D5D-4556-BF35-3B1A3E536280}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7E8DC3E-8D5D-4556-BF35-3B1A3E536280}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7E8DC3E-8D5D-4556-BF35-3B1A3E536280}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C7E8DC3E-8D5D-4556-BF35-3B1A3E536280}.Debug|x86.Build.0 = Debug|Any CPU
+		{C7E8DC3E-8D5D-4556-BF35-3B1A3E536280}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7E8DC3E-8D5D-4556-BF35-3B1A3E536280}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7E8DC3E-8D5D-4556-BF35-3B1A3E536280}.Release|x86.ActiveCfg = Release|Any CPU
+		{C7E8DC3E-8D5D-4556-BF35-3B1A3E536280}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

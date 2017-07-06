@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net461</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Code.Cake" Version="0.15.0" />
+    <PackageReference Include="SimpleGitVersion.Cake" Version="0.28.0" />
+  </ItemGroup>
+
+</Project>

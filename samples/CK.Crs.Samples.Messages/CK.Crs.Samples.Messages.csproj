@@ -1,10 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="../../common/shared.props" />
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <TargetFramework>netstandard1.5</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Paramore.Brighter" Version="7.1.5" />
+    <PackageReference Include="SimpleGitVersionTask" Version="0.28.0" />
   </ItemGroup>
 </Project>
