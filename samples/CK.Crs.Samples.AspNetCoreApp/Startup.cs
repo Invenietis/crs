@@ -21,32 +21,28 @@ namespace CK.Crs.Samples.AspNetCoreApp
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services
-                .AddMvcCore()
-                .AddJsonFormatters()
-                .AddCrs(  crs =>
-               {
-                   crs
-                    .AddAmbientValues( ambientValues =>
-                    {
-                        ambientValues.AddAmbientValueProviderFrom<CommandBase>()
-                            .Select(t => t.ActorId).ProvidedBy<ActorIdAmbientValueProvider>()
-                            .Select(t => t.AuthenticatedActorId).ProvidedBy<ActorIdAmbientValueProvider>();
-                    })
-                    .AddCommands( registry =>
-                    {
-                        registry
-                            .Register<SuperCommand>().HandledBy<SuperHandler>()
-                            .Register<Super2Command>().HandledBy<Super2Handler>();
-                    })
-                    .AddEndpoints( endpoints => 
-                    {
-                        endpoints
-                            .For(typeof(CrsAdminEndpoint<>)).Apply(command => command.CommandType.Namespace.EndsWith("Admin"))
-                            .For(typeof(CrsPublicEndpoint<>)).Apply(command => !command.CommandType.Namespace.EndsWith("Admin"));
-                    });
-                    //.AddBrighterExecutor( c => c.DefaultPolicy().NoTaskQueues() );
-               });
+            services.AddCrs( config => config
+                .AddAmbientValues( ambientValues =>
+                {
+                    ambientValues.AddAmbientValueProviderFrom<CommandBase>()
+                        .Select(t => t.ActorId).ProvidedBy<ActorIdAmbientValueProvider>()
+                        .Select(t => t.AuthenticatedActorId).ProvidedBy<ActorIdAmbientValueProvider>();
+                })
+                .AddCommands( registry =>
+                {
+                    registry
+                        .Register<SuperCommand>().HandledBy<SuperHandler>()
+                        .Register<Super2Command>().HandledBy<Super2Handler>();
+                })
+                .AddEndpoints( endpoints => 
+                {
+                    endpoints
+                        .For(typeof(CrsAdminEndpoint<>)).Apply(command => command.CommandType.Namespace.EndsWith("Admin"))
+                        .For(typeof(CrsPublicEndpoint<>)).Apply(command => !command.CommandType.Namespace.EndsWith("Admin"));
+                })
+           );
+            //.AddBrighterExecutor( c => c.DefaultPolicy().NoTaskQueues() );
+
 
         }
 

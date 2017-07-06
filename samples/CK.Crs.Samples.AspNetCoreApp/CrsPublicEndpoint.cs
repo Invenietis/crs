@@ -12,11 +12,7 @@ namespace CK.Crs.Samples.AspNetCoreApp
     {
         public CrsPublicEndpoint(IAmACommandProcessor processor) : base(processor) { }
 
-        [CrsActionConvention] // Should be the first in order. Will be removed and automatically configured by the Framwework.
-        [CrsMetaProvider]
         [HttpPost]
-        [Authorize]
-        [ValidateAmbientValues]
         public override Task<CommandResponse> ReceiveCommand([FromBody] T command, string callbackId)
             => base.ReceiveCommand(command, callbackId);
     }

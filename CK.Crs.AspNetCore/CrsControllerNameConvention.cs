@@ -17,14 +17,14 @@ namespace CK.Crs
     {
         public void Apply(ControllerModel controller)
         {
-            if (!typeof(ICrsEndpoint<>).IsAssignableFrom(controller.ControllerType.GetGenericTypeDefinition()))
+            if (controller.ControllerType.IsGenericType &&
+                ReflectionUtil.IsAssignableToGenericType(
+                    controller.ControllerType.GetGenericTypeDefinition(), 
+                    typeof(ICrsEndpoint<>)))
             {
-                // Not a Crs Controller, ignore.
-                return;
+                var entityType = controller.ControllerType.GenericTypeArguments[0];
+                controller.ControllerName = entityType.Name;
             }
-
-            var entityType = controller.ControllerType.GenericTypeArguments[0];
-            controller.ControllerName = entityType.Name;
         }
     }
 

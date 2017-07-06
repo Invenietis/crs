@@ -1,4 +1,5 @@
 ﻿using CK.Core;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,13 +14,18 @@ namespace CK.Crs
 {
     public static class CrsCoreBuilderExtension
     {
-        public static void AddCrs(this IMvcCoreBuilder builder, Action<ICrsConfiguration> configuration)
+        public static void AddCrs(this IServiceCollection services, Action<ICrsConfiguration> configuration)
         {
-            builder.Services.AddMemoryCache();
-
-            builder.ConfigureApplicationPartManager(p =>
+            services.AddMemoryCache();
+            services.AddMvcCore(o =>
             {
-                CrsConfigurationBuilder feature = new CrsConfigurationBuilder( builder.Services );
+                o.Conventions.Add(new CrsControllerNameConvention());
+                o.Conventions.Add(new CrsActionConvention());
+            })
+            .AddJsonFormatters()
+            .ConfigureApplicationPartManager(p =>
+            {
+                CrsConfigurationBuilder feature = new CrsConfigurationBuilder( services );
                 configuration(feature);
                 p.FeatureProviders.Add(feature);
             });
@@ -43,31 +49,14 @@ namespace CK.Crs
 
         public ICrsEndpointConfiguration For(Type endpoint)
         {
-            if (!IsAssignableToGenericType(endpoint.GetGenericTypeDefinition(), typeof(ICrsEndpoint<>)) )
+            if (!ReflectionUtil.IsAssignableToGenericType(endpoint.GetGenericTypeDefinition(), typeof(ICrsEndpoint<>)) )
                 throw new ArgumentException("The endpoint must implement ICrsEndpoint", nameof(endpoint));
 
             _currentConfiguredEndpoint = endpoint;
+            
             return this;
         }
 
-        public static bool IsAssignableToGenericType(Type givenType, Type genericType)
-        {
-            var interfaceTypes = givenType.GetInterfaces();
-
-            foreach (var it in interfaceTypes)
-            {
-                if (it.GetTypeInfo().IsGenericType && it.GetGenericTypeDefinition() == genericType)
-                    return true;
-            }
-
-            if (givenType.GetTypeInfo().IsGenericType && givenType.GetGenericTypeDefinition() == genericType)
-                return true;
-
-            Type baseType = givenType.GetTypeInfo().BaseType;
-            if (baseType == null) return false;
-
-            return IsAssignableToGenericType(baseType, genericType);
-        }
 
         public ICrsEndpointConfigurationRoot Apply(Func<CommandDescription, bool> filter)
         {
