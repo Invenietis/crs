@@ -1,4 +1,5 @@
-﻿using CK.Crs.Samples.Messages;
+﻿using CK.Core;
+using CK.Crs.Samples.Messages;
 using Paramore.Brighter;
 using System;
 using System.Threading;
@@ -6,12 +7,13 @@ using System.Threading.Tasks;
 
 namespace CK.Crs.Samples.Handlers
 {
-    public class Super2Handler : RequestHandlerAsync<Super2Command>
+    public class Super2Handler : CommandHandlerAsync<Super2Command>
     {
-        public override Task<Super2Command> HandleAsync(Super2Command command, CancellationToken cancellationToken = default(CancellationToken))
+        protected override Task<object> HandleCommandAsync(Super2Command command, ICommandContext context )
         {
-            Console.WriteLine("Super 2 - I'm Actor=" + command.ActorId + " on behalf of Actor=" + command.AuthenticatedActorId);
-            return base.HandleAsync(command, cancellationToken);
+            context.Monitor.Trace().Send( "Super 2 - I'm Actor=" + command.ActorId + " on behalf of Actor=" + command.AuthenticatedActorId);
+
+            return Task.FromResult<object>( null );
         }
     }
 }

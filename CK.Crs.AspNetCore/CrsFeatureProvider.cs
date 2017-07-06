@@ -12,10 +12,13 @@ using System.Threading.Tasks;
 
 namespace CK.Crs
 {
+
     public static class CrsCoreBuilderExtension
     {
-        public static void AddCrs(this IServiceCollection services, Action<ICrsConfiguration> configuration)
+        public static ICrsCoreBuilder AddCrs(this IServiceCollection services, Action<ICrsConfiguration> configuration)
         {
+            CrsConfigurationBuilder feature = new CrsConfigurationBuilder(services);
+
             services.AddSingleton<ICommandDispatcher, DefaultCommandDispatcher>();
             services.AddMemoryCache();
             services.AddMvcCore(o =>
@@ -26,10 +29,11 @@ namespace CK.Crs
             .AddJsonFormatters()
             .ConfigureApplicationPartManager(p =>
             {
-                CrsConfigurationBuilder feature = new CrsConfigurationBuilder( services );
                 configuration(feature);
                 p.FeatureProviders.Add(feature);
             });
+
+            return new CrsCoreBuilder( services, feature );
         }
     }
 
@@ -73,7 +77,10 @@ namespace CK.Crs
 
     public class CrsConfigurationBuilder : ICrsConfiguration, IApplicationFeatureProvider<ControllerFeature>
     {
+        ICommandRegistry _commands;
         IServiceCollection _services;
+        CrsEndpointConfiguration _endpoints;
+
         public CrsConfigurationBuilder( IServiceCollection services )
         {
             _services = services;
@@ -87,31 +94,30 @@ namespace CK.Crs
             return this;
         }
 
-        ICommandRegistry _commands;
+        internal ICommandRegistry Registry => _commands;
+        internal CrsEndpointConfiguration Endpoints => _endpoints;
 
         public ICrsConfiguration AddCommands(Action<ICommandRegistry> registryConfiguration)
         {
             _commands = new CommandRegistry( new CKTraitContext("Crs") );
 
-            registryConfiguration(_commands);
+            registryConfiguration(Registry);
                 
-            _services.AddSingleton<ICommandRegistry>(_commands);
+            _services.AddSingleton<ICommandRegistry>(Registry);
 
             return this;
         }
 
-        CrsEndpointConfiguration _endpoints;
-
         public ICrsConfiguration AddEndpoints(Action<ICrsEndpointConfigurationRoot> endpointConfiguration)
         {
-            _endpoints = new CrsEndpointConfiguration( _commands );
+            _endpoints = new CrsEndpointConfiguration( Registry );
             endpointConfiguration(_endpoints);
             return this;
         }
 
         public void PopulateFeature(IEnumerable<ApplicationPart> parts, ControllerFeature feature)
         {
-            if (_commands == null) throw new InvalidOperationException("No CRS Commands configured. Consider calling AddCommands.");
+            if (Registry == null) throw new InvalidOperationException("No CRS Commands configured. Consider calling AddCommands.");
             if (_endpoints == null) throw new InvalidOperationException("No CRS Endpoint configured. Consider calling AddEndpoints.");
 
             foreach (var endpoint in _endpoints.ConfiguredEndpoints)

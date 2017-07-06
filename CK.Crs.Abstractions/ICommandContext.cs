@@ -4,7 +4,7 @@ using CK.Core;
 
 namespace CK.Crs
 {
-    public interface ICommandExecutionContext
+    public interface ICommandContext
     {
         /// <summary>
         /// Gets the <see cref="IActivityMonitor"/> that goes with the command throughout its lifetime.

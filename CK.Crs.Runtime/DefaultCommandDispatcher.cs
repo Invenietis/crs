@@ -20,25 +20,36 @@ namespace CK.Crs
             _registry = registry;
         }
 
-        public Task SendAsync<T>(T command, ICommandExecutionContext context) where T : class
+        public async Task PublishAsync<T>(T evt, ICommandContext context) where T : class
         {
-            var desc = _registry.Registration.SingleOrDefault( c => c.CommandType == typeof(T) );
-            if (desc == null) throw new ArgumentException( String.Format( "Command {0} not registered", typeof(T).Name) );
+            var all = _registry.Registration.Where( c => c.CommandType == typeof(T) );
+            foreach( var desc in all) await DoSendAsync(evt, context, desc);
+        }
 
-            var handler = CreateInstanceOrDefault<ICommandHandler<T>>( context, desc.HandlerType );
-            if (handler == null) throw new ArgumentException( String.Format( "Handler {0} for {1} impossible to created", desc.HandlerType) );
+        public Task<object> SendAsync<T>(T command, ICommandContext context) where T : class
+        {
+            var desc = _registry.Registration.SingleOrDefault(c => c.CommandType == typeof(T));
+            return DoSendAsync(command, context, desc);
+        }
+
+        private Task<object> DoSendAsync<T>(T command, ICommandContext context, CommandDescription desc) where T : class
+        {
+            if (desc == null) throw new ArgumentException(String.Format("Command {0} not registered", typeof(T).Name));
+
+            var handler = CreateInstanceOrDefault<ICommandHandler<T>>(context, desc.HandlerType);
+            if (handler == null) throw new ArgumentException(String.Format("Handler {0} for {1} impossible to created", desc.HandlerType));
             try
             {
                 return handler.HandleAsync(context, command);
             }
-            catch( Exception ex )
+            catch (Exception ex)
             {
                 context.Monitor.Error().Send(ex);
-                return Task.CompletedTask;
+                return Task.FromResult<object>(null);
             }
         }
 
-        public T CreateInstanceOrDefault<T>( ICommandExecutionContext context, Type instanceType, Func<T> defaultActivator = null) where T : class
+        public T CreateInstanceOrDefault<T>( ICommandContext context, Type instanceType, Func<T> defaultActivator = null) where T : class
         {
             if (!typeof(T).IsAssignableFrom( instanceType )) 
                 throw new InvalidOperationException($"{typeof(T)} is not assignable from {instanceType}");

@@ -7,22 +7,12 @@ using System;
 namespace CK.Crs.Samples.AspNetCoreApp
 {
     [Route("my-crs-public/[Action]")]
-    public class CrsPublicEndpoint<T> : ICrsEndpoint<T> where T : class
+    public class CrsPublicEndpoint<T> : DefaultCrsEndpoint<T> where T : class
     {
-        readonly ICommandDispatcher _processor;
+        public CrsPublicEndpoint(ICommandDispatcher dispatcher) : base(dispatcher) { }
 
-        public CrsPublicEndpoint(ICommandDispatcher processor)
-        {
-            _processor = processor;
-        }
-
-        [HttpPost, NoAmbientValuesValidation] 
-        public async Task<CommandResponse> ReceiveCommand( [FromBody] T command, string callbackId )
-        {
-            var context = new CommandExecutionContext(Guid.NewGuid(), new ActivityMonitor(), callbackId);
-            await _processor.SendAsync( command, context );
-
-            return new CommandDeferredResponse( context.Id, context.CallbackId );
-        }
+        [HttpPost, NoAmbientValuesValidation]
+        public override Task<CommandResponse> ReceiveCommand([FromBody] T command, string callbackId)
+             => base.ReceiveCommand(command, callbackId);
     }
 }

@@ -24,7 +24,7 @@ namespace CK.Crs.Samples.AspNetCoreApp
             services.AddCrs( config => config
                 .AddAmbientValues( ambientValues =>
                 {
-                    ambientValues.AddAmbientValueProviderFrom<CommandBase>()
+                    ambientValues.AddAmbientValueProviderFrom<MessageBase>()
                         .Select(t => t.ActorId).ProvidedBy<ActorIdAmbientValueProvider>()
                         .Select(t => t.AuthenticatedActorId).ProvidedBy<ActorIdAmbientValueProvider>();
                 })
@@ -39,9 +39,8 @@ namespace CK.Crs.Samples.AspNetCoreApp
                     endpoints
                         .For(typeof(CrsAdminEndpoint<>)).Apply(command => command.CommandType.Namespace.EndsWith("Admin"))
                         .For(typeof(CrsPublicEndpoint<>)).Apply(command => !command.CommandType.Namespace.EndsWith("Admin"));
-                })
-           );
-            //.AddBrighterExecutor( c => c.DefaultPolicy().NoTaskQueues() );
+                }) )
+                .AddBrighter( c => c.DefaultPolicy().NoTaskQueues() );
 
 
         }

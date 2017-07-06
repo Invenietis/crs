@@ -9,6 +9,8 @@ namespace CK.Crs
 {
     public interface ICommandDispatcher
     {
-        Task SendAsync<T>(T command, ICommandExecutionContext context) where T : class;
+        Task<object> SendAsync<T>(T command, ICommandContext context) where T : class;
+
+        Task PublishAsync<T>( T evt, ICommandContext context) where T : class;
     }
 }

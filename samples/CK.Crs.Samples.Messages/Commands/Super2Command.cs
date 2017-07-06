@@ -1,6 +1,6 @@
 ﻿namespace CK.Crs.Samples.Messages
 {
-    public class SuperCommand : CommandBase
+    public class Super2Command : MessageBase
     {
     }
 

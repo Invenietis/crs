@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Routing;
 namespace CK.Crs.Samples.AspNetCoreApp
 {
     [Route("my-crs-admin/[Action]")]
-    public class CrsAdminEndpoint<T> : BrighterCrsEndpoint<T> where T : class, ICommand
+    public class CrsAdminEndpoint<T> : DefaultCrsEndpoint<T> where T : class
     {
-        public CrsAdminEndpoint(IAmACommandProcessor processor) : base(processor) { }
+        public CrsAdminEndpoint(ICommandDispatcher dispatcher) : base(dispatcher) { }
 
         [HttpPost, Authorize]
         public override Task<CommandResponse> ReceiveCommand([FromBody] T command, string callbackId)

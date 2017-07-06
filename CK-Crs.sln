@@ -23,6 +23,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Samples.Messages", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Samples.Handlers", "samples\CK.Crs.Samples.Handlers\CK.Crs.Samples.Handlers.csproj", "{A51A8BDD-272D-4537-BFB7-0249E80D66A5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CK.Crs.WebSocket", "CK.Crs.WebSocket\CK.Crs.WebSocket.csproj", "{90D9E014-5A4F-4F48-A828-630A74493694}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CK.Crs.Brighter", "CK.Crs.Brighter\CK.Crs.Brighter.csproj", "{001B2947-6681-4B83-93C3-4B4C9132DE60}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -79,6 +83,22 @@ Global
 		{A51A8BDD-272D-4537-BFB7-0249E80D66A5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A51A8BDD-272D-4537-BFB7-0249E80D66A5}.Release|x86.ActiveCfg = Release|Any CPU
 		{A51A8BDD-272D-4537-BFB7-0249E80D66A5}.Release|x86.Build.0 = Release|Any CPU
+		{90D9E014-5A4F-4F48-A828-630A74493694}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90D9E014-5A4F-4F48-A828-630A74493694}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90D9E014-5A4F-4F48-A828-630A74493694}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{90D9E014-5A4F-4F48-A828-630A74493694}.Debug|x86.Build.0 = Debug|Any CPU
+		{90D9E014-5A4F-4F48-A828-630A74493694}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90D9E014-5A4F-4F48-A828-630A74493694}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90D9E014-5A4F-4F48-A828-630A74493694}.Release|x86.ActiveCfg = Release|Any CPU
+		{90D9E014-5A4F-4F48-A828-630A74493694}.Release|x86.Build.0 = Release|Any CPU
+		{001B2947-6681-4B83-93C3-4B4C9132DE60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{001B2947-6681-4B83-93C3-4B4C9132DE60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{001B2947-6681-4B83-93C3-4B4C9132DE60}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{001B2947-6681-4B83-93C3-4B4C9132DE60}.Debug|x86.Build.0 = Debug|Any CPU
+		{001B2947-6681-4B83-93C3-4B4C9132DE60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{001B2947-6681-4B83-93C3-4B4C9132DE60}.Release|Any CPU.Build.0 = Release|Any CPU
+		{001B2947-6681-4B83-93C3-4B4C9132DE60}.Release|x86.ActiveCfg = Release|Any CPU
+		{001B2947-6681-4B83-93C3-4B4C9132DE60}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
