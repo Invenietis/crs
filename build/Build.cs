@@ -29,16 +29,16 @@ namespace CodeCake
     /// Sample build "script".
     /// It can be decorated with AddPath attributes that inject paths into the PATH environment variable. 
     /// </summary>
-    [AddPath( "CodeCakeBuilder/Tools" )]
+    [AddPath( "build/Tools" )]
     public class Build : CodeCakeHost
     {
         public Build()
         {
-            var coreBuildFile = Cake.File("build/CoreBuild.proj");
-            var releasesDir = Cake.Directory( "build/Releases" );
+            var coreBuildFile = Cake.File("CoreBuild.proj");
+            var releasesDir = Cake.Directory( "Releases" );
             SimpleRepositoryInfo gitInfo = null;
             string configuration = null;
-            var projectsToPublish = Cake.ParseSolution( "CK-Crs.sln" )
+            var projectsToPublish = Cake.ParseSolution( "../CK-Crs.sln" )
                                         .Projects
                                         .Where( p => p.Name != "CodeCakeBuilder"
                                                      && !p.Path.Segments.Contains( "Tests" ) );
@@ -78,10 +78,17 @@ namespace CodeCake
                 .IsDependentOn( "Check-Repository" )
                 .Does( () =>
                 {
-                    Cake.CleanDirectories( "**/bin/" + configuration, d => !d.Path.Segments.Contains( "build" ) );
-                    Cake.CleanDirectories( "**/obj/" + configuration, d => !d.Path.Segments.Contains("build") );
+                    Cake.CleanDirectories( "../**/bin/" + configuration, d => !d.Path.Segments.Contains( "build" ) );
+                    try
+                    {
+                        Cake.CleanDirectories("../**/obj/" + configuration, d => !d.Path.Segments.Contains("build"));
+                    }
+                    catch ( Exception )
+                    {
+
+                    }
                     Cake.CleanDirectories( releasesDir );
-                    Cake.DeleteFiles( "Tests/**/TestResult.xml" );
+                    Cake.DeleteFiles( "../Tests/**/TestResult.xml" );
                 } );
 
             Task( "Build" )
