@@ -15,7 +15,7 @@ namespace CK.Crs
 
         Task ICommandDispatcher.PublishAsync<T>(T evt, ICommandContext context)
         {
-            return _processor.PublishAsync( (dynamic)evt, false, context.CommandAborted ).ConfigureAwait(false);
+            return _processor.PublishAsync( (dynamic)evt, false, context.CommandAborted );
         }
 
         async Task<object> ICommandDispatcher.SendAsync<T>(T command, ICommandContext context)

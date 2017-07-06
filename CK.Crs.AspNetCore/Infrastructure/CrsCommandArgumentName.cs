@@ -1,6 +1,6 @@
 ﻿namespace CK.Crs
 {
-    internal struct CrsCommandArgumentName
+    struct CrsCommandArgumentName
     {
         public CrsCommandArgumentName( string commandName )
         {

@@ -5,76 +5,11 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
 namespace CK.Crs
 {
-
-    public static class CrsCoreBuilderExtension
-    {
-        public static ICrsCoreBuilder AddCrs(this IServiceCollection services, Action<ICrsConfiguration> configuration)
-        {
-            CrsConfigurationBuilder feature = new CrsConfigurationBuilder(services);
-
-            services.AddSingleton<ICommandDispatcher, DefaultCommandDispatcher>();
-            services.AddMemoryCache();
-            services.AddMvcCore(o =>
-            {
-                o.Conventions.Add(new CrsControllerNameConvention());
-                o.Conventions.Add(new CrsActionConvention());
-            })
-            .AddJsonFormatters()
-            .ConfigureApplicationPartManager(p =>
-            {
-                configuration(feature);
-                p.FeatureProviders.Add(feature);
-            });
-
-            return new CrsCoreBuilder( services, feature );
-        }
-    }
-
-    public class CrsEndpointConfiguration : ICrsEndpointConfigurationRoot, ICrsEndpointConfiguration
-    {
-        readonly ICommandRegistry _registry;
-        readonly Dictionary<Type, ISet<CommandDescription>> _endpoints;
-
-        Type _currentConfiguredEndpoint;
-
-        internal Dictionary<Type, ISet<CommandDescription>> ConfiguredEndpoints => _endpoints;
-
-        public CrsEndpointConfiguration( ICommandRegistry registry )
-        {
-            _registry = registry ?? throw new ArgumentNullException(nameof(registry), "You must first AddCommands before AddEndpoint.");
-            _endpoints = new Dictionary<Type, ISet<CommandDescription>>();
-        }
-
-        public ICrsEndpointConfiguration For(Type endpoint)
-        {
-            if (!ReflectionUtil.IsAssignableToGenericType(endpoint.GetGenericTypeDefinition(), typeof(ICrsEndpoint<>)) )
-                throw new ArgumentException("The endpoint must implement ICrsEndpoint", nameof(endpoint));
-
-            _currentConfiguredEndpoint = endpoint;
-            
-            return this;
-        }
-
-
-        public ICrsEndpointConfigurationRoot Apply(Func<CommandDescription, bool> filter)
-        {
-            Debug.Assert(_currentConfiguredEndpoint != null);
-            
-            ISet<CommandDescription> commands = new HashSet<CommandDescription>(_registry.Registration.Where(filter) );
-            _endpoints.Add(_currentConfiguredEndpoint, commands);
-
-            return this;
-        }
-
-    }
-
     public class CrsConfigurationBuilder : ICrsConfiguration, IApplicationFeatureProvider<ControllerFeature>
     {
         ICommandRegistry _commands;

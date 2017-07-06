@@ -17,9 +17,13 @@ namespace CK.Crs.Samples.Handlers
 
         protected override async Task<object> HandleCommandAsync(SuperCommand command, ICommandContext context )
         {
-            context.Monitor.Trace().Send( "Super - I'm Actor=" + command.ActorId + " on behalf of Actor=" + command.AuthenticatedActorId);
+            var evt = new SuperCommandHandledEvent(command.Id, command.ActorId, command.AuthenticatedActorId)
+            {
+                Message = "Super - I'm Actor=" + command.ActorId + " on behalf of Actor=" + command.AuthenticatedActorId
+            };
 
-            var evt = new SuperCommandHandledEvent(command.Id, command.ActorId, command.AuthenticatedActorId);
+            context.Monitor.Trace().Send( evt.Message );
+
             await _dispatcher.PublishAsync( evt, context );
 
             return null;

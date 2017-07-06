@@ -12,7 +12,7 @@ namespace CK.Crs.Samples.AspNetCoreApp
         public CrsPublicEndpoint(ICommandDispatcher dispatcher) : base(dispatcher) { }
 
         [HttpPost, NoAmbientValuesValidation]
-        public override Task<CommandResponse> ReceiveCommand([FromBody] T command, string callbackId)
-             => base.ReceiveCommand(command, callbackId);
+        public override Task<CommandResponse> ReceiveCommand([FromBody] T command, IActivityMonitor monitor, string callbackId)
+             => base.ReceiveCommand(command, monitor, callbackId);
     }
 }

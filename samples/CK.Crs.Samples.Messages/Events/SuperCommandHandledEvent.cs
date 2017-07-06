@@ -12,5 +12,7 @@ namespace CK.Crs.Samples.Messages
             ActorId = actorId;
             AuthenticatedActorId = authenticatedActorId;
         }
+
+        public string Message { get; set; }
     }
 }

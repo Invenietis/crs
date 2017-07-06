@@ -3,6 +3,8 @@ using Paramore.Brighter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CK.Crs
 {
@@ -13,7 +15,7 @@ namespace CK.Crs
             var partialBuilder = CommandProcessorBuilder.With()
                 .Handlers(new HandlerConfiguration(
                     subscriberRegistry: new RegistryAdapter( builder.Registry ),
-                    asyncHandlerFactory: new BrighterCommandFactory( builder.Services.BuildServiceProvider() ) ) );
+                    asyncHandlerFactory: new BrighterCommandFactory( new Lazy<IServiceProvider>( () => builder.Services.BuildServiceProvider() ) ) ) );
 
             var processorBuilder = configuration(partialBuilder).RequestContextFactory(new InMemoryRequestContextFactory());
             var processor = processorBuilder.Build();
@@ -21,6 +23,14 @@ namespace CK.Crs
             builder.Services.AddSingleton<ICommandDispatcher, BrighterCommandDispatcher>();
 
             return builder;
+        }
+
+        class BrighterGenericHandler<T> : RequestHandlerAsync<T> where T : class, IRequest
+        {
+            public override Task<T> HandleAsync(T command, CancellationToken cancellationToken = default(CancellationToken))
+            {
+                return base.HandleAsync(command, cancellationToken);
+            }
         }
 
         class RegistryAdapter : IAmASubscriberRegistry

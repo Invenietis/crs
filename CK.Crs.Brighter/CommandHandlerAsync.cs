@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using CK.Core;
 
-namespace CK.Crs.Samples.Handlers
+namespace CK.Crs
 {
     public abstract class CommandHandlerAsync<T> : RequestHandlerAsync<T>, ICommandHandler<T> where T : class, IRequest
     {
@@ -16,15 +16,15 @@ namespace CK.Crs.Samples.Handlers
 
         public async override Task<T> HandleAsync(T command, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var mon = (IActivityMonitor)Context.Bag["CK.Crs.ActivityMonitor"];
-            var callerId = (string)Context.Bag["CK.Crs.CallerId"];
+            var mon = (IActivityMonitor)Context.Bag.GetValueWithDefaultFunc("CK.Crs.ActivityMonitor", k => new ActivityMonitor());
+            var callerId = (string)Context.Bag.GetValueWithDefault("CK.Crs.CallerId", null);
 
-            var ctx = new CommandExecutionContext(command.Id, mon, callerId, cancellationToken);
+            var ctx = new CommandContext(command.Id, mon, callerId, cancellationToken);
             var result = await HandleCommandAsync(command, ctx);
             // Dispatch ?
             return await base.HandleAsync(command, cancellationToken);
         }
 
-        protected abstract Task<object> HandleCommandAsync(T command, ICommandContext context );
+        protected abstract Task<object> HandleCommandAsync(T command, ICommandContext context);
     }
 }

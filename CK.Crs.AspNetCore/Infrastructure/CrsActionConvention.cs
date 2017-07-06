@@ -3,12 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
 using System.Threading.Tasks;
 
 namespace CK.Crs
 {
-    public class CrsActionConvention : IActionModelConvention
+    class CrsActionConvention : IActionModelConvention
     {
         public void Apply(ActionModel action)
         {
@@ -18,10 +19,26 @@ namespace CK.Crs
                     typeof(ICrsEndpoint<>)))
             {
                 action.ActionName = action.Controller.ControllerType.GetGenericArguments()[0].Name;
+                action.Parameters[1].BindingInfo = new BindingInfo
+                {
+                    BinderType = typeof( ActivityMonitorModelBinder )
+                };
                 action.Filters.Add(new CrsActionFilter());
-                action.Filters.Add(new CrsMetaProviderAttribute());
+                action.Filters.Add(new MetaProviderAttribute());
                 action.Filters.Add(new ValidateAmbientValuesAttribute());
                 action.Filters.Add(new ValidateModelAttribute());
+            }
+        }
+
+        private class ActivityMonitorModelBinder : IModelBinder
+        {
+            public Task BindModelAsync(ModelBindingContext bindingContext)
+            {
+                var actioName = bindingContext.ActionContext.ActionDescriptor.DisplayName;
+                var monitor = new ActivityMonitor(actioName);
+                bindingContext.Model = monitor;
+                bindingContext.ActionContext.ActionDescriptor.SetProperty<IActivityMonitor>( monitor );
+                return Task.CompletedTask;
             }
         }
 
@@ -32,8 +49,8 @@ namespace CK.Crs
                 var monitor = EnsureActivityMonitor(context);
                 var commandArgumentName = context.ActionDescriptor.Parameters[0].Name;
                 context.ActionDescriptor.SetProperty(new CrsCommandArgumentName(commandArgumentName));
-                
-                using (monitor.OpenTrace().Send("Executing command {0}", context.RouteData.DataTokens["Action"]))
+
+                using (monitor.OpenTrace().Send("Executing command {0}", context.RouteData.Values["action"]))
                 {
                     await next();
                 }
@@ -41,13 +58,7 @@ namespace CK.Crs
 
             private static IActivityMonitor EnsureActivityMonitor(ActionExecutingContext context)
             {
-                var monitor = context.ActionDescriptor.GetProperty<IActivityMonitor>();
-                if (monitor == null)
-                {
-                    monitor = new ActivityMonitor();
-                    context.ActionDescriptor.SetProperty(monitor);
-                }
-                return monitor;
+                return context.ActionDescriptor.GetProperty<IActivityMonitor>() ?? new ActivityMonitor();
             }
         }
     }

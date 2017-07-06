@@ -13,8 +13,8 @@ namespace CK.Crs.Samples.AspNetCoreApp
         public CrsAdminEndpoint(ICommandDispatcher dispatcher) : base(dispatcher) { }
 
         [HttpPost, Authorize]
-        public override Task<CommandResponse> ReceiveCommand([FromBody] T command, string callbackId)
-            => base.ReceiveCommand(command, callbackId);
+        public override Task<CommandResponse> ReceiveCommand([FromBody] T command, IActivityMonitor monitor, string callbackId)
+            => base.ReceiveCommand(command, monitor, callbackId);
     }
 
 }

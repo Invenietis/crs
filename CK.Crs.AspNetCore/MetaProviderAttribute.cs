@@ -15,9 +15,9 @@ using Microsoft.AspNetCore.Mvc;
 namespace CK.Crs
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
-    public class CrsMetaProviderAttribute : TypeFilterAttribute
+    public class MetaProviderAttribute : TypeFilterAttribute
     {
-        public CrsMetaProviderAttribute() : base(typeof(CrsMetaProviderImpl)) { }
+        public MetaProviderAttribute() : base(typeof(CrsMetaProviderImpl)) { }
 
         class CrsMetaProviderImpl : IAsyncActionFilter
         {
@@ -34,7 +34,7 @@ namespace CK.Crs
 
             public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
             {
-                if (!context.RouteData.DataTokens.TryGetValue("Action", out object actionTokenValue))
+                if (!context.RouteData.Values.TryGetValue("action", out object actionTokenValue))
                 {
                     await next();
                     return;

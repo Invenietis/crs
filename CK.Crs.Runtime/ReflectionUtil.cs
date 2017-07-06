@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CK.Crs
 {
-    static class ReflectionUtil
+    public static class ReflectionUtil
     {
         public static bool IsAssignableToGenericType(Type givenType, Type genericType)
         {

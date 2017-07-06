@@ -16,12 +16,12 @@ namespace CK.Crs
             _processor = processor;
         }
 
-        public virtual async Task<CommandResponse> ReceiveCommand([FromBody] T command, string callbackId)
+        public virtual async Task<CommandResponse> ReceiveCommand([FromBody] T command, IActivityMonitor monitor, string callerId)
         {
-            var context = new CommandExecutionContext(Guid.NewGuid(), new ActivityMonitor(), callbackId);
+            var context = new CommandContext(Guid.NewGuid(), monitor, callerId);
             await _processor.SendAsync(command, context);
 
-            return new CommandDeferredResponse(context.Id, context.CallbackId);
+            return new CommandDeferredResponse(context.Id, context.CallerId);
         }
     }
 }

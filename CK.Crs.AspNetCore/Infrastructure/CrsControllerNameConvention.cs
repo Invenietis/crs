@@ -7,13 +7,8 @@ using System.Threading.Tasks;
 
 namespace CK.Crs
 {
-
-    // Used to set the controller name for routing purposes. Without this convention the
-    // names would be like 'GenericController`1[Widget]' instead of 'Widget'.
-    //
-    // Conventions can be applied as attributes or added to MvcOptions.Conventions.
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-    public class CrsControllerNameConvention : Attribute, IControllerModelConvention
+    class CrsControllerNameConvention : Attribute, IControllerModelConvention
     {
         public void Apply(ControllerModel controller)
         {

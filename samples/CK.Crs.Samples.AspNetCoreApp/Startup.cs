@@ -12,6 +12,10 @@ using System.Reflection;
 using CK.Crs.Samples.Messages;
 using CK.Crs.Samples.Handlers;
 using CK.Core;
+using CK.Communication.WebSockets;
+using System.IO;
+using CK.Monitoring.Handlers;
+using CK.Monitoring;
 
 namespace CK.Crs.Samples.AspNetCoreApp
 {
@@ -21,6 +25,13 @@ namespace CK.Crs.Samples.AspNetCoreApp
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            ActivityMonitor.AutoConfiguration = m => m.Output.RegisterUniqueClient<ActivityMonitorConsoleClient>();
+            SystemActivityMonitor.RootLogPath = Path.Combine(Directory.GetCurrentDirectory(), "Monitoring");
+            GrandOutput.EnsureActiveDefault(new GrandOutputConfiguration
+            {
+                Handlers = { new TextFileConfiguration { Path = "Logs" } }
+            });
+
             services.AddCrs( config => config
                 .AddAmbientValues( ambientValues =>
                 {
@@ -32,7 +43,8 @@ namespace CK.Crs.Samples.AspNetCoreApp
                 {
                     registry
                         .Register<SuperCommand>().HandledBy<SuperHandler>()
-                        .Register<Super2Command>().HandledBy<Super2Handler>();
+                        .Register<Super2Command>().HandledBy<Super2Handler>()
+                        .Register<SuperCommandHandledEvent>().HandledBy<SuperCommandHandledEventHandler>();
                 })
                 .AddEndpoints( endpoints => 
                 {
@@ -40,7 +52,8 @@ namespace CK.Crs.Samples.AspNetCoreApp
                         .For(typeof(CrsAdminEndpoint<>)).Apply(command => command.CommandType.Namespace.EndsWith("Admin"))
                         .For(typeof(CrsPublicEndpoint<>)).Apply(command => !command.CommandType.Namespace.EndsWith("Admin"));
                 }) )
-                .AddBrighter( c => c.DefaultPolicy().NoTaskQueues() );
+                .AddBrighter( c => c.DefaultPolicy().NoTaskQueues() )
+                .AddWebSockets();
 
 
         }
@@ -49,6 +62,9 @@ namespace CK.Crs.Samples.AspNetCoreApp
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             app.UseDeveloperExceptionPage();
+            app.UseWebSockets();
+            app.MapWebSockets();
+
             app.UseMvc();
         }
     }

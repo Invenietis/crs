@@ -1,11 +1,17 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using CK.Core;
+using System;
 
 namespace CK.Crs
 {
     public interface ICommandContext
     {
+        /// <summary>
+        /// Command identifier
+        /// </summary>
+        Guid Id { get; }
+
         /// <summary>
         /// Gets the <see cref="IActivityMonitor"/> that goes with the command throughout its lifetime.
         /// </summary>
@@ -16,6 +22,9 @@ namespace CK.Crs
         /// </summary>
         CancellationToken CommandAborted { get; }
 
-        string CallbackId { get; }
+        /// <summary>
+        /// Gets the identifier of the caller of this command context.
+        /// </summary>
+        string CallerId { get; }
     }
 }

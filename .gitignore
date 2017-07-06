@@ -43,3 +43,4 @@ wrap
 .vscode
 .vs
 FileSystemBus/
+samples/CK.Crs.Samples.AspNetCoreApp/Monitoring/
