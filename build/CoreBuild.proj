@@ -1,0 +1,21 @@
+﻿﻿<Project ToolsVersion="15.0">
+ 
+  <ItemGroup>
+    <CoreProj Include="..\**\*.csproj" />
+    <CoreProj Remove="..\CodeCakeBuilder\CodeCakeBuilder.csproj" />
+    <CoreProj Remove="..\IntegrationTests\**" />
+  </ItemGroup>
+
+  <Target Name="Build">
+    <MSBuild Targets="Build" Projects="@(CoreProj)" Properties="@(Properties)" />
+  </Target>
+
+  <Target Name="Restore">
+    <MSBuild Targets="Restore" Projects="@(CoreProj)" Properties="@(Properties)" />
+  </Target>
+
+  <Target Name="Pack">
+    <MSBuild Targets="Pack" Projects="@(CoreProj)" Properties="@(Properties)" />
+  </Target>
+
+</Project>
