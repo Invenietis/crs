@@ -17,7 +17,7 @@ namespace CK.Crs
                 public string CommandName { get; internal set; }
                 public string Traits { get; internal set; }
                 public string Description { get; internal set; }
-                public CommandPropertyInfo[] Parameters { get; internal set; }
+                public RequestPropertyInfo[] Parameters { get; internal set; }
             }
         }
     }

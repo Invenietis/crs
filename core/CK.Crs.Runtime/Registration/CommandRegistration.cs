@@ -11,17 +11,17 @@ namespace CK.Crs
     /// </summary>
     public class CommandRegistration : ICommandRegistration
     {
-        CommandDescription _commandDescription;
-        ICommandRegistry _registry;
+        RequestDescription _commandDescription;
+        IRequestRegistry _registry;
         CKTraitContext _traits;
 
-        public CommandDescription Description  => _commandDescription;
+        public RequestDescription Description  => _commandDescription;
 
         /// <summary>
-        /// Creates a <see cref="CommandRegistration"/> from a <see cref="CommandDescription"/>
+        /// Creates a <see cref="CommandRegistration"/> from a <see cref="RequestDescription"/>
         /// </summary>
         /// <param name="description"></param>
-        public CommandRegistration(ICommandRegistry registry, CommandDescription description, CKTraitContext traits)
+        public CommandRegistration(IRequestRegistry registry, RequestDescription description, CKTraitContext traits)
         {
             _registry = registry;
             _commandDescription = description;

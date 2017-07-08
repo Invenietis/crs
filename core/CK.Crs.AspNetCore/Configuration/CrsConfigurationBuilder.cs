@@ -12,7 +12,7 @@ namespace CK.Crs
 {
     public class CrsConfigurationBuilder : ICrsConfiguration, IApplicationFeatureProvider<ControllerFeature>
     {
-        ICommandRegistry _commands;
+        IRequestRegistry _commands;
         IServiceCollection _services;
         CrsEndpointConfiguration _endpoints;
 
@@ -29,16 +29,16 @@ namespace CK.Crs
             return this;
         }
 
-        internal ICommandRegistry Registry => _commands;
+        internal IRequestRegistry Registry => _commands;
         internal CrsEndpointConfiguration Endpoints => _endpoints;
 
-        public ICrsConfiguration AddCommands(Action<ICommandRegistry> registryConfiguration)
+        public ICrsConfiguration AddCommands(Action<IRequestRegistry> registryConfiguration)
         {
-            _commands = new CommandRegistry( new CKTraitContext("Crs") );
+            _commands = new DefaultRequestRegistry( new CKTraitContext("Crs") );
 
             registryConfiguration(Registry);
                 
-            _services.AddSingleton<ICommandRegistry>(Registry);
+            _services.AddSingleton<IRequestRegistry>(Registry);
 
             return this;
         }
@@ -59,7 +59,7 @@ namespace CK.Crs
             {
                 foreach (var command in endpoint.Value)
                 {
-                    var crsEndpointControllerType = endpoint.Key.MakeGenericType(command.CommandType).GetTypeInfo();
+                    var crsEndpointControllerType = endpoint.Key.MakeGenericType(command.Type).GetTypeInfo();
                     feature.Controllers.Add(crsEndpointControllerType);
                 }
             }

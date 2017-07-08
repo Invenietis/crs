@@ -64,8 +64,8 @@ namespace CK.Crs
     public interface ICommandRegistration : ICommandConfiguration<ICommandRegistration>, ICommandConfigurationWithHandling<ICommandRegistration>
     {
         /// <summary>
-        /// Gets the <see cref="CommandDescription"/>.
+        /// Gets the <see cref="RequestDescription"/>.
         /// </summary>
-        CommandDescription Description { get; }
+        RequestDescription Description { get; }
     }
 }

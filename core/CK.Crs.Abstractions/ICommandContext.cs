@@ -20,7 +20,7 @@ namespace CK.Crs
         /// <summary>
         /// Notify when an underlying component has cancel the execution of this command...
         /// </summary>
-        CancellationToken CommandAborted { get; }
+        CancellationToken Aborted { get; }
 
         /// <summary>
         /// Gets the identifier of the caller of this command context.

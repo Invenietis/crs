@@ -9,7 +9,7 @@ namespace CK.Crs
     {
         ICrsConfiguration AddAmbientValues(Action<IAmbientValuesRegistration> ambientValuesConfiguration);
 
-        ICrsConfiguration AddCommands(Action<ICommandRegistry> registryConfiguration);
+        ICrsConfiguration AddCommands(Action<IRequestRegistry> registryConfiguration);
 
         ICrsConfiguration AddEndpoints(Action<ICrsEndpointConfigurationRoot> endpointConfiguration);
 

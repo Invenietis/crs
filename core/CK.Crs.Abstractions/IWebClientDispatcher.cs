@@ -8,16 +8,15 @@ namespace CK.Crs
     public interface IWebClientDispatcher : IDisposable
     {
         /// <summary>
-        /// Sends the given message to the given client.
+        /// Sends a message to the caller identified in the <see cref="ICommandContext"/>.
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">The message to send.</param>
         void Send<T>( T message, ICommandContext context );
 
         /// <summary>
-        /// Broadcast the message
+        /// Broadcast the message to all connected clients.
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">The message to broadcast.</param>
         void Broadcast<T>( T message, ICommandContext context );
-
     }
 }

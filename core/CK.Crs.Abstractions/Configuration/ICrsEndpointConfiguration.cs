@@ -4,7 +4,7 @@ namespace CK.Crs
 {
     public interface ICrsEndpointConfiguration
     {
-        ICrsEndpointConfigurationRoot Apply(Func<CommandDescription, bool> filter);
+        ICrsEndpointConfigurationRoot Apply(Func<RequestDescription, bool> filter);
     }
 
 }

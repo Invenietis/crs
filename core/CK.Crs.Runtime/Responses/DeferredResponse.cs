@@ -10,9 +10,9 @@ namespace CK.Crs
     /// <summary>
     /// Represent the A of VISAM : Asynchronous response.
     /// </summary>
-    public class CommandDeferredResponse : CommandResponse
+    public class DeferredResponse : Response
     {
-        public CommandDeferredResponse(Guid id, string callbackId) : base(CommandResponseType.Asynchronous, id)
+        public DeferredResponse(Guid id, string callbackId) : base(Crs.ResponseType.Asynchronous, id)
         {
             Payload = callbackId;
         }

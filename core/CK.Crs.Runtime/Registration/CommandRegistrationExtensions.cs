@@ -108,10 +108,10 @@ namespace CK.Crs
         /// <typeparam name="THandler"></typeparam>
         /// <param name="registry"></param>
         /// <returns></returns>
-        public static ICommandRegistration Register<TCommand>(this ICommandRegistry registry)
+        public static ICommandRegistration Register<TCommand>(this IRequestRegistry registry)
             where TCommand : class
         {
-            var d = new CommandDescription(typeof(TCommand));
+            var d = new RequestDescription(typeof(TCommand));
             var registration = new CommandRegistration(registry, d, registry.TraitContext);
             registry.Register(d);
             return registration;

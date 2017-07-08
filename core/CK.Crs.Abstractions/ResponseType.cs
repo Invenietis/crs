@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 namespace CK.Crs
 {
     /// <summary>
-    /// Defines all possible response types of a command
+    /// Defines all possible response types of a request
     /// </summary>
-    public enum CommandResponseType
+    public enum ResponseType
     {
         /// <summary>
         /// This is a returned when validation failed on a command (Filtering step).

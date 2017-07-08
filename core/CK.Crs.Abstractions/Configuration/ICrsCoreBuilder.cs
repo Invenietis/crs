@@ -5,6 +5,6 @@ namespace CK.Crs
     public interface ICrsCoreBuilder
     {
         IServiceCollection Services { get; }
-        ICommandRegistry Registry { get; }
+        IRequestRegistry Registry { get; }
     }
 }

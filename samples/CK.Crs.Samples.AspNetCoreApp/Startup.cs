@@ -44,13 +44,13 @@ namespace CK.Crs.Samples.AspNetCoreApp
                     registry
                         .Register<SuperCommand>().HandledBy<SuperHandler>()
                         .Register<Super2Command>().HandledBy<Super2Handler>()
-                        .Register<SuperCommandHandledEvent>().HandledBy<SuperCommandHandledEventHandler>();
+                        .Register<SuperEvent>().HandledBy<SuperEventHandler>();
                 })
                 .AddEndpoints( endpoints => 
                 {
                     endpoints
-                        .For(typeof(CrsAdminEndpoint<>)).Apply(command => command.CommandType.Namespace.EndsWith("Admin"))
-                        .For(typeof(CrsPublicEndpoint<>)).Apply(command => !command.CommandType.Namespace.EndsWith("Admin"));
+                        .For(typeof(CrsAdminEndpoint<>)).Apply(command => command.Type.Namespace.EndsWith("Admin"))
+                        .For(typeof(CrsPublicEndpoint<>)).Apply(command => !command.Type.Namespace.EndsWith("Admin"));
                 }) )
                 .AddBrighter( c => c.DefaultPolicy().NoTaskQueues() )
                 .AddWebSockets();

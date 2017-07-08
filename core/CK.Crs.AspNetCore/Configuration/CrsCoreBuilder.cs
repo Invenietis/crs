@@ -16,6 +16,6 @@ namespace CK.Crs
 
         public IServiceCollection Services => _services;
 
-        public ICommandRegistry Registry => _feature.Registry;
+        public IRequestRegistry Registry => _feature.Registry;
     }
 }

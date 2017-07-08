@@ -10,10 +10,8 @@ namespace CK.Crs
     /// <summary>
     /// Describes a command and its environment.
     /// </summary>
-    public class CommandDescription
+    public class RequestDescription
     {
-        public static string GetDefaultName(Type type) => RemoveSuffixes( type, "Command", "Cmd");
-
         internal static string RemoveSuffixes( Type t, params string[] suffixes)
         {
             var s = t.Name;
@@ -32,12 +30,12 @@ namespace CK.Crs
         /// Creates a command description
         /// </summary>
         /// <param name="name"></param>
-        /// <param name="commandType"></param>
+        /// <param name="type"></param>
         /// <param name="handlerType"></param>
-        public CommandDescription( Type commandType )
+        public RequestDescription( Type type )
         {
-            CommandType = commandType ?? throw new ArgumentNullException( nameof( commandType ) );
-            Name = GetDefaultName( commandType );
+            Type = type ?? throw new ArgumentNullException( nameof( type ) );
+            Name = type.Name;
             Decorators = CK.Core.Util.Array.Empty<Type>();
             Traits = null;
         }
@@ -48,12 +46,12 @@ namespace CK.Crs
         public string Name { get; set; }
 
         /// <summary>
-        /// The <see cref="Type"/> of the command to process.
+        /// The <see cref="System.Type"/> of the command to process.
         /// </summary>
-        public Type CommandType { get; }
+        public Type Type { get; }
 
         /// <summary>
-        /// The <see cref="Type"/> of the command to process.
+        /// The <see cref="System.Type"/> of the command to process.
         /// </summary>
         public Type HandlerType { get; set; }
 

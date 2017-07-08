@@ -9,10 +9,10 @@ namespace CK.Crs.Samples.AspNetCoreApp
     [Route("my-crs-public/[Action]")]
     public class CrsPublicEndpoint<T> : DefaultCrsEndpoint<T> where T : class
     {
-        public CrsPublicEndpoint(ICommandDispatcher dispatcher) : base(dispatcher) { }
+        public CrsPublicEndpoint(IBus dispatcher) : base(dispatcher) { }
 
         [HttpPost, NoAmbientValuesValidation]
-        public override Task<CommandResponse> ReceiveCommand([FromBody] T command, IActivityMonitor monitor, string callbackId)
+        public override Task<Response> ReceiveCommand([FromBody] T command, IActivityMonitor monitor, string callbackId)
              => base.ReceiveCommand(command, monitor, callbackId);
     }
 }

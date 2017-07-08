@@ -7,17 +7,17 @@ namespace CK.Crs
 {
     public class CrsEndpointConfiguration : ICrsEndpointConfigurationRoot, ICrsEndpointConfiguration
     {
-        readonly ICommandRegistry _registry;
-        readonly Dictionary<Type, ISet<CommandDescription>> _endpoints;
+        readonly IRequestRegistry _registry;
+        readonly Dictionary<Type, ISet<RequestDescription>> _endpoints;
 
         Type _currentConfiguredEndpoint;
 
-        internal Dictionary<Type, ISet<CommandDescription>> ConfiguredEndpoints => _endpoints;
+        internal Dictionary<Type, ISet<RequestDescription>> ConfiguredEndpoints => _endpoints;
 
-        public CrsEndpointConfiguration( ICommandRegistry registry )
+        public CrsEndpointConfiguration( IRequestRegistry registry )
         {
             _registry = registry ?? throw new ArgumentNullException(nameof(registry), "You must first AddCommands before AddEndpoint.");
-            _endpoints = new Dictionary<Type, ISet<CommandDescription>>();
+            _endpoints = new Dictionary<Type, ISet<RequestDescription>>();
         }
 
         public ICrsEndpointConfiguration For(Type endpoint)
@@ -31,11 +31,11 @@ namespace CK.Crs
         }
 
 
-        public ICrsEndpointConfigurationRoot Apply(Func<CommandDescription, bool> filter)
+        public ICrsEndpointConfigurationRoot Apply(Func<RequestDescription, bool> filter)
         {
             Debug.Assert(_currentConfiguredEndpoint != null);
             
-            ISet<CommandDescription> commands = new HashSet<CommandDescription>(_registry.Registration.Where(filter) );
+            ISet<RequestDescription> commands = new HashSet<RequestDescription>(_registry.Registration.Where(filter) );
             _endpoints.Add(_currentConfiguredEndpoint, commands);
 
             return this;

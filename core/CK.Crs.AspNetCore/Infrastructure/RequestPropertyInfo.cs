@@ -4,11 +4,11 @@ using CK.Core;
 
 namespace CK.Crs
 {
-    class CommandPropertyInfo
+    class RequestPropertyInfo
     {
         readonly PropertyInfo _propertyInfo;
         readonly IAmbientValuesRegistration _ambientValue;
-        public CommandPropertyInfo( PropertyInfo e, IAmbientValuesRegistration ambientValue )
+        public RequestPropertyInfo( PropertyInfo e, IAmbientValuesRegistration ambientValue )
         {
             _propertyInfo = e;
             _ambientValue = ambientValue;

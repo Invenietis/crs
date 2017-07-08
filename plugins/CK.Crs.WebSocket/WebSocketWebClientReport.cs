@@ -74,7 +74,7 @@ namespace CK.Crs
 
         string Serialize<T>( T message, ICommandContext context )
         {
-            var response = new WebSocketCommandResponse<T>(message, CommandResponseType.Synchronous, context.Id);
+            var response = new WebSocketCommandResponse<T>(message, ResponseType.Synchronous, context.Id);
             return Newtonsoft.Json.JsonConvert.SerializeObject( response );
         }
 
@@ -104,9 +104,9 @@ namespace CK.Crs
             }
         }
 
-        class WebSocketCommandResponse<T> : CommandResponse<T>
+        class WebSocketCommandResponse<T> : Response<T>
         {
-            public WebSocketCommandResponse( T message, CommandResponseType responseType, Guid commandId) : base(responseType, commandId)
+            public WebSocketCommandResponse( T message, ResponseType responseType, Guid commandId) : base(responseType, commandId)
             {
                 Payload = message;
             }

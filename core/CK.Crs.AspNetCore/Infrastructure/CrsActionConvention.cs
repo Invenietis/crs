@@ -19,6 +19,10 @@ namespace CK.Crs
                     typeof(ICrsEndpoint<>)))
             {
                 action.ActionName = action.Controller.ControllerType.GetGenericArguments()[0].Name;
+                action.Parameters[0].BindingInfo = new BindingInfo
+                {
+                    BindingSource = new FromBodyAttribute().BindingSource
+                };
                 action.Parameters[1].BindingInfo = new BindingInfo
                 {
                     BinderType = typeof( ActivityMonitorModelBinder )

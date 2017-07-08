@@ -2,9 +2,9 @@
 
 namespace CK.Crs
 {
-    class MetaCommandResponse : CommandResponse
+    class MetaCommandResponse : Response
     {
-        public MetaCommandResponse( MetaCommand.MetaResult result ) : base( CommandResponseType.Meta, Guid.Empty )
+        public MetaCommandResponse( MetaCommand.MetaResult result ) : base(Crs.ResponseType.Meta, Guid.Empty )
         {
             Payload = result;
         }

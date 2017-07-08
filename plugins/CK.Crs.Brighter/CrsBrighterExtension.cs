@@ -20,7 +20,7 @@ namespace CK.Crs
             var processorBuilder = configuration(partialBuilder).RequestContextFactory(new InMemoryRequestContextFactory());
             var processor = processorBuilder.Build();
             builder.Services.AddSingleton<IAmACommandProcessor>(processor);
-            builder.Services.AddSingleton<ICommandDispatcher, BrighterCommandDispatcher>();
+            builder.Services.AddSingleton<IBus, BrighterCommandDispatcher>();
 
             return builder;
         }
@@ -35,19 +35,19 @@ namespace CK.Crs
 
         class RegistryAdapter : IAmASubscriberRegistry
         {
-            ICommandRegistry _registry;
-            public RegistryAdapter(ICommandRegistry registry)
+            IRequestRegistry _registry;
+            public RegistryAdapter(IRequestRegistry registry)
             {
                 _registry = registry;
             }
             IEnumerable<Type> IAmASubscriberRegistry.Get<T>()
             {
-                return _registry.Registration.Where(t => t.CommandType == typeof(T)).Select(t => t.HandlerType);
+                return _registry.Registration.Where(t => t.Type == typeof(T)).Select(t => t.HandlerType);
             }
 
             void IAmASubscriberRegistry.Register<TRequest, TImplementation>()
             {
-                _registry.Register( new CommandDescription(typeof(TRequest)) { HandlerType = typeof(TImplementation) } );
+                _registry.Register( new RequestDescription(typeof(TRequest)) { HandlerType = typeof(TImplementation) } );
             }
         }
     }

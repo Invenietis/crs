@@ -1,6 +1,8 @@
-﻿namespace CK.Crs.Samples.Messages
+﻿using Paramore.Brighter;
+
+namespace CK.Crs.Samples.Messages
 {
-    public class SuperCommand : MessageBase
+    public class SuperCommand : MessageBase, ICommand
     {
     }
 

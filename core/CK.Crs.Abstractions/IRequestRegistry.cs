@@ -7,10 +7,10 @@ namespace CK.Crs
     /// <summary>
     /// Defines a command registry, which commands are globaly stored.
     /// </summary>
-    public interface ICommandRegistry : ITraitContextProvider
+    public interface IRequestRegistry : ITraitContextProvider
     {
-        void Register( CommandDescription descriptor );
+        void Register( RequestDescription descriptor );
 
-        IEnumerable<CommandDescription> Registration { get; }
+        IEnumerable<RequestDescription> Registration { get; }
     }
 }

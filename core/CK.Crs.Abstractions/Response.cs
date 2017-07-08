@@ -5,28 +5,28 @@ namespace CK.Crs
 {
     /// <summary>
     /// Defines a response of a command.
-    /// A response can be of VISAM type defined by the enum <see cref="CommandResponseType"/>.
+    /// A response can be of VISAM type defined by the enum <see cref="Crs.ResponseType"/>.
     /// </summary>
-    public abstract class CommandResponse<T>
+    public abstract class Response<T>
     {
         /// <summary>
         /// Creates a CommandResponse
         /// </summary>
         /// <param name="responseType">The type of a response.</param>
-        /// <param name="commandId"></param>
-        protected CommandResponse( CommandResponseType responseType, Guid commandId )
+        /// <param name="requestId"></param>
+        protected Response( ResponseType responseType, Guid requestId)
         {
             ResponseType = (char)responseType;
-            CommandId = commandId;
+            RequestId = requestId;
         }
 
         /// <summary>
         /// A unique id for the command
         /// </summary>
-        public Guid CommandId { get; private set; }
+        public Guid RequestId { get; private set; }
 
         /// <summary>
-        /// The VISAM response type. See <see cref="CommandResponseType"/>
+        /// The VISAM response type. See <see cref="Crs.ResponseType"/>
         /// </summary>
         public char ResponseType { get; protected set; }
 
@@ -38,16 +38,16 @@ namespace CK.Crs
 
     /// <summary>
     /// Defines a response of a command.
-    /// A response can be of VISAM type defined by the enum <see cref="CommandResponseType"/>.
+    /// A response can be of VISAM type defined by the enum <see cref="ResponseType"/>.
     /// </summary>
-    public abstract class CommandResponse : CommandResponse<object>
+    public abstract class Response : Response<object>
     {
         /// <summary>
         /// Creates a CommandResponse
         /// </summary>
         /// <param name="responseType">The type of a response.</param>
-        /// <param name="commandId"></param>
-        protected CommandResponse( CommandResponseType responseType, Guid commandId ) : base( responseType, commandId )
+        /// <param name="requestId"></param>
+        protected Response( ResponseType responseType, Guid requestId ) : base( responseType, requestId )
         {
         }
     }

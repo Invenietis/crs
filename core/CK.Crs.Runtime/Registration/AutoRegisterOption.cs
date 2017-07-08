@@ -27,7 +27,7 @@ namespace CK.Crs
         public AutoRegisterOption( string[] assemblies )
         {
             Assemblies = assemblies;
-            CommandNameProvider = CommandDescription.GetDefaultName;
+            CommandNameProvider = t => t.Name;
             CommandDescriptionProvider = t => null;
             CommandTraitsProvider = t => null;
         }

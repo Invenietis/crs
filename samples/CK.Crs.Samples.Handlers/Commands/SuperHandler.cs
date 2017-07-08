@@ -9,15 +9,15 @@ namespace CK.Crs.Samples.Handlers
 {
     public class SuperHandler : CommandHandlerAsync<SuperCommand>
     {
-        ICommandDispatcher _dispatcher;
-        public SuperHandler( ICommandDispatcher dispatcher )
+        IBus _dispatcher;
+        public SuperHandler( IBus dispatcher )
         {
             _dispatcher = dispatcher;
         }
 
-        protected override async Task<object> HandleCommandAsync(SuperCommand command, ICommandContext context )
+        protected override async Task HandleCommandAsync(SuperCommand command, ICommandContext context )
         {
-            var evt = new SuperCommandHandledEvent(command.Id, command.ActorId, command.AuthenticatedActorId)
+            var evt = new SuperEvent(command.Id, command.ActorId, command.AuthenticatedActorId)
             {
                 Message = "Super - I'm Actor=" + command.ActorId + " on behalf of Actor=" + command.AuthenticatedActorId
             };
@@ -25,8 +25,6 @@ namespace CK.Crs.Samples.Handlers
             context.Monitor.Trace().Send( evt.Message );
 
             await _dispatcher.PublishAsync( evt, context );
-
-            return null;
         }
     }
 }

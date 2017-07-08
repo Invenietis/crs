@@ -4,7 +4,7 @@ using System;
 
 namespace CK.Crs
 {
-    public class BrighterCommandDispatcher : ICommandDispatcher
+    public class BrighterCommandDispatcher : IBus
     {
         readonly IAmACommandProcessor _processor;
 
@@ -13,15 +13,14 @@ namespace CK.Crs
             _processor = processor;
         }
 
-        Task ICommandDispatcher.PublishAsync<T>(T evt, ICommandContext context)
+        Task IEventPublisher.PublishAsync<T>(T evt, ICommandContext context)
         {
-            return _processor.PublishAsync( (dynamic)evt, false, context.CommandAborted );
+            return _processor.PublishAsync( (dynamic)evt, false, context.Aborted );
         }
 
-        async Task<object> ICommandDispatcher.SendAsync<T>(T command, ICommandContext context)
+        Task ICommandDispatcher.SendAsync<T>(T command, ICommandContext context)
         {
-            await _processor.SendAsync((dynamic)command, false, context.CommandAborted).ConfigureAwait( false );
-            return Task.FromResult<object>( null );
+            return _processor.SendAsync((dynamic)command, false, context.Aborted).ConfigureAwait( false );
         }
     }
 }

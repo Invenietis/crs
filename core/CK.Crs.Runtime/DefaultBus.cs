@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace CK.Crs
 {
-    public class DefaultCommandDispatcher : ICommandDispatcher
+    public class DefaultBus : IBus
     {
         readonly IServiceProvider _services;
-        readonly ICommandRegistry _registry;
+        readonly IRequestRegistry _registry;
 
-        public DefaultCommandDispatcher( IServiceProvider services, ICommandRegistry registry )
+        public DefaultBus( IServiceProvider services, IRequestRegistry registry )
         {
             _services = services;
             _registry = registry;
@@ -22,30 +22,30 @@ namespace CK.Crs
 
         public async Task PublishAsync<T>(T evt, ICommandContext context) where T : class
         {
-            var all = _registry.Registration.Where( c => c.CommandType == typeof(T) );
+            var all = _registry.Registration.Where( c => c.Type == typeof(T) );
             foreach( var desc in all) await DoSendAsync(evt, context, desc);
         }
 
-        public Task<object> SendAsync<T>(T command, ICommandContext context) where T : class
+        public Task SendAsync<T>(T command, ICommandContext context) where T : class
         {
-            var desc = _registry.Registration.SingleOrDefault(c => c.CommandType == typeof(T));
+            var desc = _registry.Registration.SingleOrDefault(c => c.Type == typeof(T));
             return DoSendAsync(command, context, desc);
         }
 
-        private Task<object> DoSendAsync<T>(T command, ICommandContext context, CommandDescription desc) where T : class
+        private Task DoSendAsync<T>(T command, ICommandContext context, RequestDescription desc) where T : class
         {
             if (desc == null) throw new ArgumentException(String.Format("Command {0} not registered", typeof(T).Name));
 
-            var handler = CreateInstanceOrDefault<ICommandHandler<T>>(context, desc.HandlerType);
+            var handler = CreateInstanceOrDefault<IRequestHandler<T>>(context, desc.HandlerType);
             if (handler == null) throw new ArgumentException(String.Format("Handler {0} for {1} impossible to created", desc.HandlerType));
             try
             {
-                return handler.HandleAsync(context, command);
+                return handler.HandleAsync( command, context );
             }
             catch (Exception ex)
             {
                 context.Monitor.Error().Send(ex);
-                return Task.FromResult<object>(null);
+                return Task.CompletedTask;
             }
         }
 

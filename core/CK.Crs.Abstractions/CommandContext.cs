@@ -11,7 +11,7 @@ namespace CK.Crs
             Id = guid;
             Monitor = activityMonitor;
             CallerId = callbackId;
-            CommandAborted = token;
+            Aborted = token;
         }
 
         public Guid Id { get; }
@@ -20,6 +20,6 @@ namespace CK.Crs
 
         public string CallerId { get; }
 
-        public CancellationToken CommandAborted { get; }
+        public CancellationToken Aborted { get; }
     }
 }
