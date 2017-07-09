@@ -1,0 +1,22 @@
+# Invenietis custom .editorconfig
+# See also: https://github.com/dotnet/roslyn/blob/master/src/Workspaces/CSharp/Portable/Formatting/CSharpFormattingOptions.cs
+# 20170522
+
+root = true
+
+[*]
+charset = utf-8
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.json]
+indent_size = 2
+
+[*.cs]
+end_of_line = crlf
+csharp_space_between_method_call_parameter_list_parentheses = true
+csharp_space_between_method_declaration_parameter_list_parentheses = true
+csharp_space_after_keywords_in_control_flow_statements = false
+csharp_space_between_parentheses = control_flow_statements
