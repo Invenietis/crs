@@ -11,24 +11,54 @@ namespace CK.Crs.Infrastructure
 {
     class CrsActionConvention : IActionModelConvention
     {
+        private ICrsModel _model;
+
+        public CrsActionConvention( ICrsModel model )
+        {
+            _model = model;
+        }
+
         public void Apply( ActionModel action )
         {
+            // Only applies on ReceiveCommand action of the Crs Endpoint
+            if( action.ActionName != nameof( ICrsEndpoint<object>.ReceiveCommand ) ) return;
+
             if( action.Controller.ControllerType.IsGenericType &&
                 ReflectionUtil.IsAssignableToGenericType(
                     action.Controller.ControllerType.GetGenericTypeDefinition(),
                     typeof( ICrsEndpoint<> ) ) )
             {
-                action.ActionName = action.Controller.ControllerType.GetGenericArguments()[0].Name;
-                action.Parameters[0].BindingInfo = new BindingInfo
+                ICrsEndpointModel endpointModel = _model.GetEndpoint( action.Controller.ControllerType );
+                if( endpointModel != null )
                 {
-                    BindingSource = new FromBodyAttribute().BindingSource
-                };
-                action.Parameters[1].BindingInfo = new ActivityMonitorBindingInfo();
-                action.Filters.Add( new CrsActionFilter() );
-                action.Filters.Add( new MetaProviderAttribute() );
-                action.Filters.Add( new ValidateAmbientValuesAttribute() );
-                action.Filters.Add( new ValidateModelAttribute() );
+                    var requestType = action.Controller.ControllerType.GetGenericArguments()[0];
+                    var request = endpointModel.GetRequestDescription( requestType );
+                    if( request != null )
+                    {
+                        BasicCrsActionConfiguration( action, request.Name );
+
+                        if( endpointModel.ValidateAmbientValues ) action.Filters.Add( new ValidateAmbientValuesAttribute() );
+                        if( endpointModel.ValidateModel ) action.Filters.Add( new ValidateModelAttribute() );
+                    }
+                    else if ( requestType == typeof( MetaCommand ) )
+                    {
+                        BasicCrsActionConfiguration( action, "__meta" );
+                        action.RouteValues["Action"] = "__meta";
+                        action.Filters.Add( new MetaProviderAttribute() );
+                    }
+                }
             }
+        }
+
+        private static void BasicCrsActionConfiguration( ActionModel action, string actionName )
+        {
+            action.ActionName = actionName;
+            action.Parameters[0].BindingInfo = new BindingInfo
+            {
+                BindingSource = new FromBodyAttribute().BindingSource
+            };
+            action.Parameters[1].BindingInfo = new ActivityMonitorBindingInfo();
+            action.Filters.Add( new CrsActionFilter() );
         }
 
         private class ActivityMonitorModelBinder : IModelBinder

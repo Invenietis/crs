@@ -14,7 +14,13 @@ namespace CK.Crs
         /// </summary>
         bool ValidateAmbientValues { get; }
 
+        /// <summary>
+        ///  Gets wether we should apply model validation or not.
+        /// </summary>
+        bool ValidateModel { get; }
 
         IReadOnlyList<RequestDescription> Requests { get; }
+
+        RequestDescription GetRequestDescription( Type requestType );
     }
 }

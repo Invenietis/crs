@@ -10,17 +10,17 @@ namespace CK.Crs
     {
         readonly ICommandDispatcher _dispatcher;
 
-        public DefaultCrsEndpoint(ICommandDispatcher dispatcher)
+        public DefaultCrsEndpoint( ICommandDispatcher dispatcher )
         {
             _dispatcher = dispatcher;
         }
 
-        public virtual async Task<Response> ReceiveCommand( T command, IActivityMonitor monitor, string callerId)
+        public virtual async Task<Response> ReceiveCommand( T command, IActivityMonitor monitor, string callerId )
         {
-            var context = new CommandContext(Guid.NewGuid(), monitor, callerId);
-            await _dispatcher.SendAsync(command, context);
+            var context = new CommandContext( Guid.NewGuid(), monitor, callerId );
+            await _dispatcher.SendAsync( command, context );
 
-            return new DeferredResponse(context.Id, context.CallerId);
+            return new DeferredResponse( context.Id, context.CallerId );
         }
     }
 }

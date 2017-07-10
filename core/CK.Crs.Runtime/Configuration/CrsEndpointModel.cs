@@ -15,8 +15,15 @@ namespace CK.Crs.Infrastructure
         /// <summary>
         /// Gets wether we should validate ambient values or not.
         /// </summary>
-        public bool ValidateAmbientValues { get; internal set; }
+        public bool ValidateAmbientValues { get; internal set; } = true;
+        public bool ValidateModel { get; internal set; } = true;
 
         public IReadOnlyList<RequestDescription> Requests { get; internal set; }
+
+        public RequestDescription GetRequestDescription( Type requestType )
+        {
+            // TODO: lookup in a dictionary ?
+            return Requests.SingleOrDefault( t => t.Type == requestType );
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace CK.Crs.Infrastructure
 {
@@ -12,6 +13,12 @@ namespace CK.Crs.Infrastructure
             _models = new List<ICrsEndpointModel>();
         }
         public IReadOnlyList<ICrsEndpointModel> Endpoints => _models;
+
+        public ICrsEndpointModel GetEndpoint( TypeInfo type )
+        {
+            // TODO: lookup in a dictionary ?
+            return _models.SingleOrDefault( t => t.EndpointType == type.GetGenericTypeDefinition() );
+        }
 
         internal void AddEndpoint( CrsEndpointModel endpoint )
         {

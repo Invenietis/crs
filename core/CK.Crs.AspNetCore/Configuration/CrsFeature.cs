@@ -23,6 +23,9 @@ namespace CK.Crs.Infrastructure
                     var crsEndpointControllerType = endpoint.EndpointType.MakeGenericType( command.Type ).GetTypeInfo();
                     feature.Controllers.Add( crsEndpointControllerType );
                 }
+
+                var metaControllerType = endpoint.EndpointType.MakeGenericType( typeof( MetaCommand ) ).GetTypeInfo();
+                feature.Controllers.Add( metaControllerType );
             }
         }
 

@@ -69,7 +69,7 @@ namespace CK.Crs
                 if( command.ShowCommands )
                 {
                     result.Commands = new Dictionary<string, MetaCommand.MetaResult.MetaCommandDescription>();
-                    var endpointModel = _model.Endpoints.SingleOrDefault( m => m.EndpointType == context.Controller.GetType() );
+                    var endpointModel = _model.GetEndpoint( context.Controller.GetType().GetTypeInfo() );
                     foreach( var c in endpointModel.Requests )
                     {
                         MetaCommand.MetaResult.MetaCommandDescription desc = new MetaCommand.MetaResult.MetaCommandDescription
@@ -77,7 +77,7 @@ namespace CK.Crs
                             CommandName = c.Name,
                             CommandType = c.Type.AssemblyQualifiedName,
                             Parameters = c.Type.GetTypeInfo().DeclaredProperties.Select( e => new RequestPropertyInfo( e, _registration ) ).ToArray(),
-                            Traits = c.Traits.ToString(),
+                            Traits = c.Traits?.ToString(),
                             Description = c.Description
                         };
                         result.Commands.Add( desc.CommandName, desc );

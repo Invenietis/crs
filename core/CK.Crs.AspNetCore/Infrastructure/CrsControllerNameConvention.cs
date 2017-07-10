@@ -10,6 +10,13 @@ namespace CK.Crs.Infrastructure
     [AttributeUsage( AttributeTargets.Class, AllowMultiple = false, Inherited = true )]
     class CrsControllerNameConvention : Attribute, IControllerModelConvention
     {
+        private ICrsModel _model;
+
+        public CrsControllerNameConvention( ICrsModel model )
+        {
+            _model = model;
+        }
+
         public void Apply( ControllerModel controller )
         {
             if( controller.ControllerType.IsGenericType &&
@@ -17,8 +24,11 @@ namespace CK.Crs.Infrastructure
                     controller.ControllerType.GetGenericTypeDefinition(),
                     typeof( ICrsEndpoint<> ) ) )
             {
-                var entityType = controller.ControllerType.GenericTypeArguments[0];
-                controller.ControllerName = entityType.Name;
+                ICrsEndpointModel endpointModel = _model.GetEndpoint( controller.ControllerType );
+                if( endpointModel != null )
+                {
+                    controller.ControllerName = endpointModel.Name;
+                }
             }
         }
     }

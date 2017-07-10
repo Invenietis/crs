@@ -15,20 +15,20 @@ namespace CK.Crs
             services.AddSingleton<ICommandDispatcher>( s => s.GetRequiredService<IBus>() );
             services.AddSingleton<IEventPublisher>( s => s.GetRequiredService<IBus>() );
 
+            configuration( builder );
+            ICrsModel model = builder.BuildModel();
+            if( model == null ) throw new ArgumentException( "CrsConfigurationBuilder must returns a valid ICrsModel." );
+
+            services.AddSingleton( model );
+
             services.AddMvcCore( o =>
              {
-                 o.Conventions.Add( new CrsControllerNameConvention() );
-                 o.Conventions.Add( new CrsActionConvention() );
+                 o.Conventions.Add( new CrsControllerNameConvention( model ) );
+                 o.Conventions.Add( new CrsActionConvention( model ) );
              } )
             .AddJsonFormatters()
             .ConfigureApplicationPartManager( p =>
              {
-                 configuration( builder );
-                 ICrsModel model = builder.BuildModel();
-                 if( model == null ) throw new ArgumentException( "CrsConfigurationBuilder must returns a valid ICrsModel." );
-
-                 services.AddSingleton( model );
-
                  CrsFeature feature = new CrsFeature( model );
                  p.FeatureProviders.Add( feature );
              } );
