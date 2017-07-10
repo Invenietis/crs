@@ -15,12 +15,12 @@ namespace CK.Crs
 
         Task IEventPublisher.PublishAsync<T>(T evt, ICommandContext context)
         {
-            return _processor.PublishAsync( (dynamic)evt, false, context.Aborted );
+            return _processor.PublishAsync( (dynamic)evt, continueOnCapturedContext: false, cancellationToken: context.Aborted );
         }
 
         Task ICommandDispatcher.SendAsync<T>(T command, ICommandContext context)
         {
-            return _processor.SendAsync((dynamic)command, false, context.Aborted).ConfigureAwait( false );
+            return _processor.SendAsync( (dynamic)command, continueOnCapturedContext: false, cancellationToken: context.Aborted);
         }
     }
 }
