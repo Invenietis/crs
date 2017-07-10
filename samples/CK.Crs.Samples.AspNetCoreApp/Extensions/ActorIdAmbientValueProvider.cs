@@ -20,7 +20,7 @@ namespace CK.Core
 
         public const int Default = 0;
 
-        public async Task<object> GetValueAsync( IAmbientValues values )
+        public async Task<IComparable> GetValueAsync( IAmbientValues values )
         {
             var userName = await _userNameProvider.GetAuthenticatedUserNameAsync();
             if( String.IsNullOrEmpty( userName ) ) return Default;

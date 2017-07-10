@@ -21,7 +21,7 @@ namespace CK.Core
             return _registration.GetByName( name ) != null;
         }
 
-        public async Task<T> GetValueAsync<T>( string name )
+        public async Task<IComparable> GetValueAsync( string name )
         {
             var ambientValueDescriptor = _registration.GetByName( name );
             if( ambientValueDescriptor == null )
@@ -32,11 +32,10 @@ namespace CK.Core
                 throw new InvalidOperationException( $"Unable to create an instance of {ambientValueDescriptor.Name}." );
 
             var value = await provider.GetValueAsync( this );
-            var disposable = ambientValueDescriptor as IDisposable;
-            if( disposable != null ) disposable.Dispose();
+            if( ambientValueDescriptor is IDisposable disposable ) disposable.Dispose();
 
-            if( value != null ) return (T)value;
-            return default( T );
+            if( value != null ) return value;
+            return default( IComparable );
         }
 
 

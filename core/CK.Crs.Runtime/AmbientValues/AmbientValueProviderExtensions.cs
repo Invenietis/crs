@@ -8,7 +8,7 @@ namespace CK.Core
 {
     public interface IAmbientValuesRegistrationFrom<T>
     {
-        IAmbientValuesProviderConfiguration<T> Select<TProperty>(Expression<Func<T, TProperty>> propertyAccessor);
+        IAmbientValuesProviderConfiguration<T> Select<TProperty>( Expression<Func<T, TProperty>> propertyAccessor ) where TProperty : IComparable;
     }
 
     public interface IAmbientValuesProviderConfiguration<T>
@@ -20,30 +20,30 @@ namespace CK.Core
     public static class AmbientValueProviderExtensions
     {
 
-        public static IAmbientValuesRegistrationFrom<T> AddAmbientValueProviderFrom<T>(this IAmbientValuesRegistration @this)
+        public static IAmbientValuesRegistrationFrom<T> AddAmbientValueProviderFrom<T>( this IAmbientValuesRegistration @this )
         {
-            return new AmbientValuesRegistrationFrom<T>(@this);
+            return new AmbientValuesRegistrationFrom<T>( @this );
         }
 
-        public static IAmbientValuesRegistration RegisterValue(this IAmbientValuesRegistration @this, string name, object value)
+        public static IAmbientValuesRegistration RegisterValue( this IAmbientValuesRegistration @this, string name, IComparable value )
         {
-            var directProvider = new DirectProvider(value);
-            @this.AddLazyAmbientValueProvider(name, (services) => directProvider);
+            var directProvider = new DirectProvider( value );
+            @this.AddLazyAmbientValueProvider( name, ( services ) => directProvider );
             return @this;
         }
 
         class DirectProvider : IAmbientValueProvider
         {
-            public DirectProvider(object value)
+            public DirectProvider( IComparable value )
             {
                 Value = value;
             }
 
-            private object Value { get; }
+            private IComparable Value { get; }
 
-            public Task<object> GetValueAsync(IAmbientValues values)
+            public Task<IComparable> GetValueAsync( IAmbientValues values )
             {
-                return Task.FromResult(Value);
+                return Task.FromResult( Value );
             }
         }
     }

@@ -13,6 +13,6 @@ namespace CK.Core
         /// </summary>
         /// <param name="values">A reference to the all <see cref="IAmbientValues"/></param>
         /// <returns></returns>
-        Task<object> GetValueAsync( IAmbientValues values );
+        Task<IComparable> GetValueAsync( IAmbientValues values );
     }
 }

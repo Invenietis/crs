@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CK.Crs
 {
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage( AttributeTargets.Method, AllowMultiple = false, Inherited = true )]
     public class NoAmbientValuesValidationAttribute : Attribute, IFilterMetadata
     {
     }

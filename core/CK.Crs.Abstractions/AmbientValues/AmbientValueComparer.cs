@@ -5,5 +5,5 @@ using System.Threading.Tasks;
 
 namespace CK.Core
 {
-    public delegate bool AmbientValueComparer<T>( string valueName, T commandValue, T ambientValue );
+    public delegate bool AmbientValueComparer( string valueName, IComparable commandValue, IComparable ambientValue );
 }

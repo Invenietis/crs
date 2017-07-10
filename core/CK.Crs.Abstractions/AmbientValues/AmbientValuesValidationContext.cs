@@ -37,9 +37,9 @@ namespace CK.Core
         /// <typeparam name="T"></typeparam>
         /// <param name="valueName"></param>
         /// <returns></returns>
-        public Task<bool> ValidateValue<T>( string valueName )
+        public Task<bool> ValidateValue( string valueName )
         {
-            return ValidateValue<T>( valueName, DefaultAmbientValueComparer );
+            return ValidateValue( valueName, DefaultAmbientValueComparer );
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace CK.Core
         /// <param name="valueName"></param>
         /// <param name="comparer"></param>
         /// <returns>Returns true if validation success, false if failed.</returns>
-        public abstract Task<bool> ValidateValue<T>( string valueName, AmbientValueComparer<T> comparer );
+        public abstract Task<bool> ValidateValue( string valueName, AmbientValueComparer comparer );
 
         /// <summary>
         /// Compares the value of the given value name from the <see cref="IAmbientValues"/> and the command using the given comparer and immediatly set the validation on error.
@@ -57,20 +57,20 @@ namespace CK.Core
         /// <typeparam name="T"></typeparam>
         /// <param name="valueName"></param>
         /// <returns></returns>
-        public virtual Task ValidateValueAndRejectOnError<T>( string valueName )
+        public virtual Task ValidateValueAndRejectOnError( string valueName )
         {
-            return ValidateValueAndRejectOnError<T>( valueName, DefaultAmbientValueComparer );
+            return ValidateValueAndRejectOnError( valueName, DefaultAmbientValueComparer );
         }
 
-        public virtual async Task ValidateValueAndRejectOnError<T>( string valueName, AmbientValueComparer<T> comparer )
+        public virtual async Task ValidateValueAndRejectOnError( string valueName, AmbientValueComparer comparer )
         {
             Monitor.Trace().Send( "Validating {0}...", valueName );
-            var result = await ValidateValue<T>( valueName);
+            var result = await ValidateValue( valueName, comparer );
             if( !result ) Reject( $"{valueName} mismatch." );
 
             Monitor.Trace().Send( result ? "Validation Sucess" : "Validation failed..." );
         }
 
-        public static bool DefaultAmbientValueComparer<T>( string valueName, T value, T ambientValue ) => ambientValue.Equals( value );
+        public static bool DefaultAmbientValueComparer( string valueName, IComparable value, IComparable ambientValue ) => ambientValue.CompareTo( value ) == 0;
     }
 }
