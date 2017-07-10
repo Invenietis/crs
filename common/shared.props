@@ -45,10 +45,10 @@
 
     <!-- Properties that are solution depdendents. -->
     <ProductName>CK-Framework</ProductName>
-    <PackageReleaseNotes>https://github.com/Invenietis/CK-Auth-Abstractions/releases</PackageReleaseNotes>
+    <PackageReleaseNotes>https://github.com/Invenietis/crs/releases</PackageReleaseNotes>
     <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/Invenietis/CK-Auth-Abstractions</RepositoryUrl>
+    <RepositoryUrl>https://github.com/Invenietis/crs</RepositoryUrl>
 
   </PropertyGroup>
 </Project>

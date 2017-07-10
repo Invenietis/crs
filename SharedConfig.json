@@ -1,9 +1,0 @@
-{
-  "Crs": {
-    "Scalability": {
-      "FileSystem": {
-        "SharedPath": "D:\\Dev\\vNext\\ck-crs\\FileSystemBus\\"
-      }
-    }
-  }
-}

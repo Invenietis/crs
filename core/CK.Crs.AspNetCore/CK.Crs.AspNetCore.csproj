@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="1.1.3" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Json" Version="1.1.3" />
-    <PackageReference Include="SimpleGitVersionTask" Version="0.28.0" />
+    
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CK.Crs.Runtime\CK.Crs.Runtime.csproj" />
