@@ -1,4 +1,4 @@
-﻿namespace CK.Crs
+﻿namespace CK.Crs.Infrastructure
 {
     struct CrsCommandArgumentName
     {
@@ -16,7 +16,7 @@
 
         public static implicit operator CrsCommandArgumentName( string value )
         {
-            return new CrsCommandArgumentName(value);
+            return new CrsCommandArgumentName( value );
         }
     }
 

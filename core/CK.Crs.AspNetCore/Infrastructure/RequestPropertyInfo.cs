@@ -2,7 +2,7 @@
 using System.Linq;
 using CK.Core;
 
-namespace CK.Crs
+namespace CK.Crs.Infrastructure
 {
     class RequestPropertyInfo
     {

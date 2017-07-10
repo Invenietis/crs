@@ -6,17 +6,17 @@ using System.Text;
 
 namespace CK.Crs
 {
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage( AttributeTargets.Method, AllowMultiple = false, Inherited = true )]
     public class ValidateModelAttribute : Attribute, IActionFilter
     {
-        public void OnActionExecuting(ActionExecutingContext context)
+        public void OnActionExecuting( ActionExecutingContext context )
         {
-            if (!context.ModelState.IsValid)
+            if( !context.ModelState.IsValid )
             {
-                context.Result = new BadRequestObjectResult(context.ModelState);
+                context.Result = new BadRequestObjectResult( context.ModelState );
             }
         }
-        public void OnActionExecuted(ActionExecutedContext context)
+        public void OnActionExecuted( ActionExecutedContext context )
         {
         }
 

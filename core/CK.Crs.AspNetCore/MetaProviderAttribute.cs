@@ -11,36 +11,37 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using System;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc;
+using CK.Crs.Infrastructure;
 
 namespace CK.Crs
 {
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage( AttributeTargets.Method, AllowMultiple = false, Inherited = true )]
     public class MetaProviderAttribute : TypeFilterAttribute
     {
-        public MetaProviderAttribute() : base(typeof(CrsMetaProviderImpl)) { }
+        public MetaProviderAttribute() : base( typeof( CrsMetaProviderImpl ) ) { }
 
         class CrsMetaProviderImpl : IAsyncActionFilter
         {
             readonly IAmbientValues _ambientValues;
             readonly IAmbientValuesRegistration _registration;
-            readonly IMemoryCache _cache;
+            readonly ICrsModel _model;
 
-            public CrsMetaProviderImpl(IAmbientValues ambientValues, IAmbientValuesRegistration registration, IMemoryCache cache )
+            public CrsMetaProviderImpl( IAmbientValues ambientValues, IAmbientValuesRegistration registration, ICrsModel model )
             {
                 _ambientValues = ambientValues;
                 _registration = registration;
-                _cache = cache;
+                _model = model;
             }
 
-            public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+            public async Task OnActionExecutionAsync( ActionExecutingContext context, ActionExecutionDelegate next )
             {
-                if (!context.RouteData.Values.TryGetValue("action", out object actionTokenValue))
+                if( !context.RouteData.Values.TryGetValue( "action", out object actionTokenValue ) )
                 {
                     await next();
                     return;
                 }
 
-                if (actionTokenValue == null || actionTokenValue.ToString() != "__meta")
+                if( actionTokenValue == null || actionTokenValue.ToString() != "__meta" )
                 {
                     await next();
                     return;
@@ -53,40 +54,36 @@ namespace CK.Crs
                     ShowAmbientValues = true,
                     ShowCommands = true
                 };
-                if (command.ShowAmbientValues)
+                if( command.ShowAmbientValues )
                 {
                     result.AmbientValues = new Dictionary<string, object>();
-                    foreach (var a in _registration.AmbientValues)
+                    foreach( var a in _registration.AmbientValues )
                     {
-                        if (_ambientValues.IsDefined(a.Name))
+                        if( _ambientValues.IsDefined( a.Name ) )
                         {
-                            var o = await _ambientValues.GetValueAsync<object>(a.Name);
-                            result.AmbientValues.Add(a.Name, o);
+                            var o = await _ambientValues.GetValueAsync( a.Name );
+                            result.AmbientValues.Add( a.Name, o );
                         }
                     }
                 }
-                if (command.ShowCommands)
+                if( command.ShowCommands )
                 {
                     result.Commands = new Dictionary<string, MetaCommand.MetaResult.MetaCommandDescription>();
-                    //foreach (var c in _routes.All)
-                    //{
-                    //    MetaCommand.MetaResult.MetaCommandDescription desc;
-                    //    if (!_cache.TryGetValue(c.Route.FullPath, out desc))
-                    //    {
-                    //        desc = new MetaCommand.MetaResult.MetaCommandDescription
-                    //        {
-                    //            Route = c.Route,
-                    //            CommandType = c.Descriptor.CommandType.AssemblyQualifiedName,
-                    //            Parameters = c.Descriptor.CommandType.GetTypeInfo().DeclaredProperties.Select(e => new CommandPropertyInfo(e, _registration)).ToArray(),
-                    //            Traits = c.Descriptor.Traits.ToString(),
-                    //            Description = c.Descriptor.Description
-                    //        };
-                    //        _cache.Set(c.Route.FullPath, desc);
-                    //    }
-                    //    result.Commands.Add(c.Route.CommandName, desc);
-                    //}
+                    var endpointModel = _model.Endpoints.SingleOrDefault( m => m.EndpointType == context.Controller.GetType() );
+                    foreach( var c in endpointModel.Requests )
+                    {
+                        MetaCommand.MetaResult.MetaCommandDescription desc = new MetaCommand.MetaResult.MetaCommandDescription
+                        {
+                            CommandName = c.Name,
+                            CommandType = c.Type.AssemblyQualifiedName,
+                            Parameters = c.Type.GetTypeInfo().DeclaredProperties.Select( e => new RequestPropertyInfo( e, _registration ) ).ToArray(),
+                            Traits = c.Traits.ToString(),
+                            Description = c.Description
+                        };
+                        result.Commands.Add( desc.CommandName, desc );
+                    }
                 }
-                context.Result = new OkObjectResult(new MetaCommandResponse(result));
+                context.Result = new OkObjectResult( new MetaCommandResponse( result ) );
             }
         }
     }

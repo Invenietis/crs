@@ -5,17 +5,17 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace CK.Crs
+namespace CK.Crs.Infrastructure
 {
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage( AttributeTargets.Class, AllowMultiple = false, Inherited = true )]
     class CrsControllerNameConvention : Attribute, IControllerModelConvention
     {
-        public void Apply(ControllerModel controller)
+        public void Apply( ControllerModel controller )
         {
-            if (controller.ControllerType.IsGenericType &&
+            if( controller.ControllerType.IsGenericType &&
                 ReflectionUtil.IsAssignableToGenericType(
-                    controller.ControllerType.GetGenericTypeDefinition(), 
-                    typeof(ICrsEndpoint<>)))
+                    controller.ControllerType.GetGenericTypeDefinition(),
+                    typeof( ICrsEndpoint<> ) ) )
             {
                 var entityType = controller.ControllerType.GenericTypeArguments[0];
                 controller.ControllerName = entityType.Name;

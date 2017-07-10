@@ -3,15 +3,15 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CK.Crs
 {
-    internal class CrsCoreBuilder : ICrsCoreBuilder
+    public class CrsCoreBuilder : ICrsCoreBuilder
     {
         private IServiceCollection _services;
         private CrsConfigurationBuilder _feature;
 
-        public CrsCoreBuilder(IServiceCollection services, CrsConfigurationBuilder feature)
+        public CrsCoreBuilder( IServiceCollection services, CrsConfigurationBuilder builder )
         {
             _services = services;
-            _feature = feature;
+            _feature = builder;
         }
 
         public IServiceCollection Services => _services;

@@ -22,14 +22,6 @@ namespace CK.Crs
         ICommandConfiguration<TConfig> CommandName( string commandName );
 
         /// <summary>
-        /// Adds extra data to the command description
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        ICommandConfiguration<TConfig> AddExtraData( string key, object data );
-
-        /// <summary>
         /// This command should be handled by an asynchronous executor and supports by the way deferred execution.
         /// </summary>
         /// <returns></returns>

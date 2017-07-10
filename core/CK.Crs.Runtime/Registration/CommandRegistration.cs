@@ -37,12 +37,6 @@ namespace CK.Crs
             return this;
         }
 
-        CommandRegistration AddExtraData( string key, object value )
-        {
-            _commandDescription.ExtraData.Add( key, value );
-            return this;
-        }
-
         CommandRegistration CommandName( string commandName )
         {
             _commandDescription.Name = commandName;
@@ -56,11 +50,6 @@ namespace CK.Crs
             else _commandDescription.Traits = _commandDescription.Traits.Union(t);
 
             return this;
-        }
-
-        ICommandConfiguration<ICommandRegistration> ICommandConfiguration<ICommandRegistration>.AddExtraData( string key, object value )
-        {
-            return AddExtraData( key, value );
         }
 
         ICommandConfiguration<ICommandRegistration> ICommandConfiguration<ICommandRegistration>.CommandName( string commandName )

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using CK.Crs.Infrastructure;
+using System.Collections.Generic;
 
 namespace CK.Crs
 {
