@@ -23,10 +23,7 @@ namespace CK.Crs.Infrastructure
                 {
                     BindingSource = new FromBodyAttribute().BindingSource
                 };
-                action.Parameters[1].BindingInfo = new BindingInfo
-                {
-                    BinderType = typeof( ActivityMonitorModelBinder )
-                };
+                action.Parameters[1].BindingInfo = new ActivityMonitorBindingInfo();
                 action.Filters.Add( new CrsActionFilter() );
                 action.Filters.Add( new MetaProviderAttribute() );
                 action.Filters.Add( new ValidateAmbientValuesAttribute() );
@@ -40,8 +37,9 @@ namespace CK.Crs.Infrastructure
             {
                 var actioName = bindingContext.ActionContext.ActionDescriptor.DisplayName;
                 var monitor = new ActivityMonitor( actioName );
-                bindingContext.Model = monitor;
                 bindingContext.ActionContext.ActionDescriptor.SetProperty<IActivityMonitor>( monitor );
+                bindingContext.IsTopLevelObject = true;
+                bindingContext.Result = ModelBindingResult.Success( monitor );
                 return Task.CompletedTask;
             }
         }
@@ -63,6 +61,15 @@ namespace CK.Crs.Infrastructure
             private static IActivityMonitor EnsureActivityMonitor( ActionExecutingContext context )
             {
                 return context.ActionDescriptor.GetProperty<IActivityMonitor>() ?? new ActivityMonitor();
+            }
+        }
+
+        private class ActivityMonitorBindingInfo : BindingInfo
+        {
+            public ActivityMonitorBindingInfo()
+            {
+                BinderType = typeof( ActivityMonitorModelBinder );
+                BindingSource = new BindingSource( "ActivityMonitor", "ActivityMonitor", true, false );
             }
         }
     }
