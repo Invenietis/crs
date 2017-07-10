@@ -64,11 +64,11 @@ namespace CK.Core
 
         public virtual async Task ValidateValueAndRejectOnError( string valueName, AmbientValueComparer comparer )
         {
-            Monitor.Trace().Send( "Validating {0}...", valueName );
+            Monitor.Trace( $"Validating {valueName}..." );
             var result = await ValidateValue( valueName, comparer );
             if( !result ) Reject( $"{valueName} mismatch." );
 
-            Monitor.Trace().Send( result ? "Validation Sucess" : "Validation failed..." );
+            Monitor.Trace( result ? "Validation Sucess" : "Validation failed..." );
         }
 
         public static bool DefaultAmbientValueComparer( string valueName, IComparable value, IComparable ambientValue ) => ambientValue.CompareTo( value ) == 0;

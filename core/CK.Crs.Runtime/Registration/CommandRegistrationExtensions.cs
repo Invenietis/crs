@@ -53,23 +53,23 @@ namespace CK.Crs
 
         //    foreach (var a in option.Assemblies)
         //    {
-        //        using (monitor.OpenTrace().Send("Discovering types in assembly {0}", a))
+        //        using (monitor.OpenTrace("Discovering types in assembly {0}", a))
         //        {
         //            try
         //            {
-        //                monitor.Trace().Send("Loading assembly {0}", a);
+        //                monitor.Trace("Loading assembly {0}", a);
         //                var assembly = AssemblyLoadContext.Default.LoadFromAssemblyName(new AssemblyName(a));
-        //                monitor.Trace().Send("Assembly {0} loaded successfuly", assembly.FullName);
+        //                monitor.Trace("Assembly {0} loaded successfuly", assembly.FullName);
         //                var handlers = assembly.GetTypes().Where(t => typeof(ICommandHandler).IsAssignableFrom(t)).Where(option.CommandHandlerFilter).ToArray();
         //                if (handlers.Length == 0)
         //                {
-        //                    monitor.Warn().Send("No handler found...");
+        //                    monitor.Warn("No handler found...");
         //                }
         //                else
         //                {
         //                    foreach (var h in handlers)
         //                    {
-        //                        using (monitor.OpenTrace().Send("Registering handler {0}", h.AssemblyQualifiedName))
+        //                        using (monitor.OpenTrace("Registering handler {0}", h.AssemblyQualifiedName))
         //                        {
         //                            foreach (var commandType in h.GetInterfaces()
         //                                .Where(interfaceType => interfaceType != typeof(ICommandHandler))
@@ -93,7 +93,7 @@ namespace CK.Crs
         //            }
         //            catch (Exception ex)
         //            {
-        //                monitor.Error().Send(ex, "An error occured...");
+        //                monitor.Error(ex, "An error occured...");
         //            }
         //        }
         //    }

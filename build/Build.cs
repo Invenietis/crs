@@ -34,7 +34,7 @@ namespace CodeCake
     {
         public Build()
         {
-            var coreBuildFile = Cake.File("CoreBuild.proj");
+            var coreBuildFile = Cake.File( "CoreBuild.proj" );
             var releasesDir = Cake.Directory( "Releases" );
             SimpleRepositoryInfo gitInfo = null;
             string configuration = null;
@@ -63,17 +63,17 @@ namespace CodeCake
                         string.Join( ", ", projectsToPublish.Select( p => p.Name ) ) );
                 } );
 
-            Task("Restore-NuGet-Packages")
-                .IsDependentOn("Check-Repository")
-                .Does(() =>
-                {
-                    Cake.DotNetCoreRestore(coreBuildFile,
-                        new DotNetCoreRestoreSettings().AddVersionArguments(gitInfo, c =>
-                        {
+            Task( "Restore-NuGet-Packages" )
+                .IsDependentOn( "Check-Repository" )
+                .Does( () =>
+                 {
+                     Cake.DotNetCoreRestore( coreBuildFile,
+                         new DotNetCoreRestoreSettings().AddVersionArguments( gitInfo, c =>
+                         {
                             // No impact see: https://github.com/NuGet/Home/issues/3772
                             // c.Verbosity = DotNetCoreRestoreVerbosity.Minimal;
-                        }));
-                });
+                        } ) );
+                 } );
             Task( "Clean" )
                 .IsDependentOn( "Check-Repository" )
                 .Does( () =>
@@ -81,9 +81,9 @@ namespace CodeCake
                     Cake.CleanDirectories( "../**/bin/" + configuration, d => !d.Path.Segments.Contains( "build" ) );
                     try
                     {
-                        Cake.CleanDirectories("../**/obj/" + configuration, d => !d.Path.Segments.Contains("build"));
+                        Cake.CleanDirectories( "../**/obj/" + configuration, d => !d.Path.Segments.Contains( "build" ) );
                     }
-                    catch ( Exception )
+                    catch( Exception )
                     {
 
                     }
@@ -97,12 +97,12 @@ namespace CodeCake
                 .IsDependentOn( "Check-Repository" )
                 .Does( () =>
                 {
-                    Cake.DotNetCoreBuild(coreBuildFile,
-                      new DotNetCoreBuildSettings().AddVersionArguments(gitInfo, s =>
-                      {
-                          s.Configuration = configuration;
-                      }));
-                    
+                    Cake.DotNetCoreBuild( coreBuildFile,
+                      new DotNetCoreBuildSettings().AddVersionArguments( gitInfo, s =>
+                       {
+                           s.Configuration = configuration;
+                       } ) );
+
                 } );
 
             //Task( "Unit-Testing" )
@@ -124,18 +124,18 @@ namespace CodeCake
                 .Does( () =>
                 {
                     Cake.CreateDirectory( releasesDir );
-                    foreach (SolutionProject p in projectsToPublish)
+                    foreach( SolutionProject p in projectsToPublish )
                     {
-                        Cake.Warning(p.Path.GetDirectory().FullPath);
+                        Cake.Warning( p.Path.GetDirectory().FullPath );
                         var s = new DotNetCorePackSettings()
                         {
-                            ArgumentCustomization = args => args.Append("--include-symbols"),
+                            ArgumentCustomization = args => args.Append( "--include-symbols" ),
                             NoBuild = true,
                             Configuration = configuration,
                             OutputDirectory = releasesDir
                         };
-                        s.AddVersionArguments(gitInfo);
-                        Cake.DotNetCorePack(p.Path.GetDirectory().FullPath, s);
+                        s.AddVersionArguments( gitInfo );
+                        Cake.DotNetCorePack( p.Path.GetDirectory().FullPath, s );
                     }
                 } );
 

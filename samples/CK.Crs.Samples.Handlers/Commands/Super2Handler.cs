@@ -11,7 +11,7 @@ namespace CK.Crs.Samples.Handlers
     {
         protected override Task HandleCommandAsync(Super2Command command, ICommandContext context )
         {
-            context.Monitor.Trace().Send( "Super 2 - I'm Actor=" + command.ActorId + " on behalf of Actor=" + command.AuthenticatedActorId);
+            context.Monitor.Trace( $"Super 2 - I'm Actor={ command.ActorId} on behalf of Actor={ command.AuthenticatedActorId}");
 
             return Task.CompletedTask;
         }

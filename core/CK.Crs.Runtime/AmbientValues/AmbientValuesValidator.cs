@@ -13,12 +13,12 @@ namespace CK.Core
     //    if (context.Rejected)
     //    {
     //        string msg = $"Invalid ambient values detected: {context.RejectReason}";
-    //        pipeline.Monitor.Warn().Send(msg);
+    //        pipeline.Monitor.Warn(msg);
     //        pipeline.Response.Set(new CommandErrorResponse(msg, pipeline.Action.CommandId));
     //    }
     //    else
     //    {
-    //        pipeline.Monitor.Info().Send("Ambient values validator invalidate ambient values, but the last hook from Pipeline.Events.AmbientValuesInvalidated cancel the rejection.");
+    //        pipeline.Monitor.Info("Ambient values validator invalidate ambient values, but the last hook from Pipeline.Events.AmbientValuesInvalidated cancel the rejection.");
     //    }
     //}
 }

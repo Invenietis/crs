@@ -14,67 +14,67 @@ namespace CK.Crs
         readonly IWebSocketConnectedClients _connectedClients;
         readonly BlockingCollection<WebSocketMessage> _messages;
 
-        public WebSocketWebClientDispatcher(IWebSocketSender sender, IWebSocketConnectedClients connectedClients)
+        public WebSocketWebClientDispatcher( IWebSocketSender sender, IWebSocketConnectedClients connectedClients )
         {
             _sender = sender;
             _connectedClients = connectedClients;
             _messages = new BlockingCollection<WebSocketMessage>();
 
-            Task.Run(async () =>
-            {
-                var monitor = new ActivityMonitor("WebSocketWebClientDispatcher");
+            Task.Run( async () =>
+             {
+                 var monitor = new ActivityMonitor( "WebSocketWebClientDispatcher" );
 
-                while (!_messages.IsCompleted)
-                {
-                    var msg = _messages.Take();
-                    if (msg == null) continue;
-                    using (monitor.StartDependentActivity(msg.Token))
-                    {
-                        try
-                        {
-                            if (String.IsNullOrEmpty(msg.CallerId))
-                            {
-                                monitor.Trace().Send("Broadcasting message to all connected clients.");
-                                await _sender.Send(msg.ToString());
-                            }
-                            else
-                            {
-                                var client = _connectedClients.Connections.SingleOrDefault(c => c.Equals(msg.CallerId, StringComparison.OrdinalIgnoreCase));
-                                if (!String.IsNullOrEmpty(client))
-                                {
-                                    monitor.Trace().Send("Sending message to client {0}.", msg.CallerId );
-                                    await _sender.Send(client, msg.ToString());
-                                }
-                                else
-                                {
-                                    monitor.Warn().Send("Client {0} not actualy found.", msg.CallerId);
-                                }
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            monitor.Error().Send(ex);
-                        }
-                    }
-                }
-            });
+                 while( !_messages.IsCompleted )
+                 {
+                     var msg = _messages.Take();
+                     if( msg == null ) continue;
+                     using( monitor.StartDependentActivity( msg.Token ) )
+                     {
+                         try
+                         {
+                             if( String.IsNullOrEmpty( msg.CallerId ) )
+                             {
+                                 monitor.Trace( "Broadcasting message to all connected clients." );
+                                 await _sender.Send( msg.ToString() );
+                             }
+                             else
+                             {
+                                 var client = _connectedClients.Connections.SingleOrDefault( c => c.Equals( msg.CallerId, StringComparison.OrdinalIgnoreCase ) );
+                                 if( !String.IsNullOrEmpty( client ) )
+                                 {
+                                     monitor.Trace( $"Sending message to client {msg.CallerId}." );
+                                     await _sender.Send( client, msg.ToString() );
+                                 }
+                                 else
+                                 {
+                                     monitor.Warn( $"Client  {msg.CallerId} not actualy found." );
+                                 }
+                             }
+                         }
+                         catch( Exception ex )
+                         {
+                             monitor.Error( ex );
+                         }
+                     }
+                 }
+             } );
         }
 
-        public void Send<T>( T message, ICommandContext context)
+        public void Send<T>( T message, ICommandContext context )
         {
-            var msg = Serialize(message, context);
-            _messages.Add(new WebSocketMessage(msg, context, false));
+            var msg = Serialize( message, context );
+            _messages.Add( new WebSocketMessage( msg, context, false ) );
         }
 
-        public void Broadcast<T>( T message, ICommandContext context)
+        public void Broadcast<T>( T message, ICommandContext context )
         {
-            var msg = Serialize(message, context);
-            _messages.Add(new WebSocketMessage(msg, context, true));
+            var msg = Serialize( message, context );
+            _messages.Add( new WebSocketMessage( msg, context, true ) );
         }
 
         string Serialize<T>( T message, ICommandContext context )
         {
-            var response = new WebSocketCommandResponse<T>(message, ResponseType.Synchronous, context.Id);
+            var response = new WebSocketCommandResponse<T>( message, ResponseType.Synchronous, context.Id );
             return Newtonsoft.Json.JsonConvert.SerializeObject( response );
         }
 
@@ -95,7 +95,7 @@ namespace CK.Crs
 
             public ActivityMonitor.DependentToken Token { get; }
 
-            public WebSocketMessage(string message, ICommandContext context, bool broadcast = false)
+            public WebSocketMessage( string message, ICommandContext context, bool broadcast = false )
             {
                 CommandId = context.Id;
                 CallerId = broadcast ? null : context.CallerId;
@@ -106,7 +106,7 @@ namespace CK.Crs
 
         class WebSocketCommandResponse<T> : Response<T>
         {
-            public WebSocketCommandResponse( T message, ResponseType responseType, Guid commandId) : base(responseType, commandId)
+            public WebSocketCommandResponse( T message, ResponseType responseType, Guid commandId ) : base( responseType, commandId )
             {
                 Payload = message;
             }

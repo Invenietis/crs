@@ -54,7 +54,7 @@ namespace CK.Crs.Infrastructure
                 var commandArgumentName = context.ActionDescriptor.Parameters[0].Name;
                 context.ActionDescriptor.SetProperty( new CrsCommandArgumentName( commandArgumentName ) );
 
-                using (monitor.OpenTrace().Send("Executing command {0}", context.RouteData.Values["action"]))
+                using( monitor.OpenTrace( $"Executing command {context.RouteData.Values["action"]}" ) )
                 {
                     await next();
                 }

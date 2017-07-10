@@ -14,52 +14,52 @@ namespace CK.Crs.Tests.Handlers
         public decimal Amount { get; internal set; }
     }
 
-    public class TransferAlwaysSuccessHandler : CommandHandler<TransferAmountCommand, TransferAmountCommand.Result>
+    public class TransferAlwaysSuccessHandler : IRequestHandler<TransferAmountCommand>
     {
-        protected override Task<TransferAmountCommand.Result> DoHandleAsync( ICommandExecutionContext context, TransferAmountCommand command )
+        IEventPublisher _eventPublisher;
+        ICommandDispatcher _commandDispatcher;
+        public TransferAlwaysSuccessHandler( IEventPublisher eventPublisher, ICommandDispatcher commandDispatcher )
         {
-            using( context.Monitor.OpenInfo().Send( $"Transferring {command.Amount} from {command.SourceAccountId} to {command.DestinationAccountId} " ) )
+            _eventPublisher = eventPublisher;
+            _commandDispatcher = commandDispatcher;
+        }
+        public async Task HandleAsync( TransferAmountCommand command, ICommandContext context )
+        {
+            using( context.Monitor.OpenInfo( $"Transferring {command.Amount} from {command.SourceAccountId} to {command.DestinationAccountId} " ) )
             {
                 var result = new TransferAmountCommand.Result
                 {
                     EffectiveDate = DateTime.UtcNow.Date.AddDays( 2 ),
                     CancellableDate = DateTime.UtcNow.AddHours( 1 )
                 };
-                context.Monitor.Info().Send( $"Transfer will be effective at {result.EffectiveDate.ToString()}." );
-                context.Monitor.Info().Send( $"You have one hour to cancel it." );
+                context.Monitor.Info( $"Transfer will be effective at {result.EffectiveDate.ToString()}." );
+                context.Monitor.Info( $"You have one hour to cancel it." );
 
-                context.ExternalEvents.Push( new AmountTransferredEvent
+                await _eventPublisher.PublishAsync( new AmountTransferredEvent
                 {
                     AccountId = command.DestinationAccountId,
                     Amount = command.Amount
-                } );
+                }, context );
 
-                context.ExternalEvents.ForcePush( new AmountTransferredEvent
+                await _eventPublisher.PublishAsync( new AmountTransferredEvent
                 {
                     AccountId = command.DestinationAccountId,
                     Amount = command.Amount
-                } );
+                }, context );
 
-                result.OperationId = context.Scheduler.Schedule( new PerformTransferAmountCommand
+                await _commandDispatcher.SendAsync( new PerformTransferAmountCommand
                 {
                     Amount = command.Amount,
                     DestinationAccountId = command.DestinationAccountId,
                     SourceAccountId = command.SourceAccountId
-                }, new CommandSchedulingOption( result.CancellableDate, true ) );
-
-                return Task.FromResult( result );
+                }, context );
             }
         }
     }
 
-
-    public class TransferAlwaysSuccessHandlerWithDecoration : TransferAlwaysSuccessHandler
+    public class WithDrawyMoneyHandler : IRequestHandler<WithdrawMoneyCommand>
     {
-    }
-
-    public class WithDrawyMoneyHandler : CommandHandler<WithdrawMoneyCommand, WithdrawMoneyCommand.Result>
-    {
-        protected override Task<WithdrawMoneyCommand.Result> DoHandleAsync( ICommandExecutionContext commandContext, WithdrawMoneyCommand command )
+        public Task HandleAsync( WithdrawMoneyCommand command, ICommandContext commandContext )
         {
             var result =  new WithdrawMoneyCommand.Result
             {

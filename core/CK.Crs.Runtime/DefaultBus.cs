@@ -44,7 +44,7 @@ namespace CK.Crs
             }
             catch (Exception ex)
             {
-                context.Monitor.Error().Send(ex);
+                context.Monitor.Error(ex);
                 return Task.CompletedTask;
             }
         }
@@ -60,7 +60,7 @@ namespace CK.Crs
             }
             catch (Exception ex)
             {
-                context.Monitor.Error().Send(ex);
+                context.Monitor.Error(ex);
                 return null;
             }
         }

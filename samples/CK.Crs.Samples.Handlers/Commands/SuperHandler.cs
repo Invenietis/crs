@@ -19,10 +19,10 @@ namespace CK.Crs.Samples.Handlers
         {
             var evt = new SuperEvent(command.Id, command.ActorId, command.AuthenticatedActorId)
             {
-                Message = "Super - I'm Actor=" + command.ActorId + " on behalf of Actor=" + command.AuthenticatedActorId
+                Message = $"Super - I'm Actor={ command.ActorId} on behalf of Actor={ command.AuthenticatedActorId}"
             };
 
-            context.Monitor.Trace().Send( evt.Message );
+            context.Monitor.Trace( evt.Message );
 
             await _dispatcher.PublishAsync( evt, context );
         }

@@ -34,7 +34,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{F15FAD1E-E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeCakeBuilder", "build\CodeCakeBuilder.csproj", "{C7E8DC3E-8D5D-4556-BF35-3B1A3E536280}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CK.Crs.Samples.ExecutorApp", "samples\CK.Crs.Samples.ExecutorApp\CK.Crs.Samples.ExecutorApp.csproj", "{15E4DDA5-07A8-4A56-97AA-328E75EBFD78}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Samples.ExecutorApp", "samples\CK.Crs.Samples.ExecutorApp\CK.Crs.Samples.ExecutorApp.csproj", "{15E4DDA5-07A8-4A56-97AA-328E75EBFD78}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{0FF89577-82E3-496D-853F-B34BABCC03D8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Tests", "tests\CK.Crs.Tests\CK.Crs.Tests.csproj", "{6D7BCE30-0C4A-49D8-82D8-361A8410228E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -124,6 +128,14 @@ Global
 		{15E4DDA5-07A8-4A56-97AA-328E75EBFD78}.Release|Any CPU.Build.0 = Release|Any CPU
 		{15E4DDA5-07A8-4A56-97AA-328E75EBFD78}.Release|x86.ActiveCfg = Release|Any CPU
 		{15E4DDA5-07A8-4A56-97AA-328E75EBFD78}.Release|x86.Build.0 = Release|Any CPU
+		{6D7BCE30-0C4A-49D8-82D8-361A8410228E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D7BCE30-0C4A-49D8-82D8-361A8410228E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D7BCE30-0C4A-49D8-82D8-361A8410228E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6D7BCE30-0C4A-49D8-82D8-361A8410228E}.Debug|x86.Build.0 = Debug|Any CPU
+		{6D7BCE30-0C4A-49D8-82D8-361A8410228E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D7BCE30-0C4A-49D8-82D8-361A8410228E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D7BCE30-0C4A-49D8-82D8-361A8410228E}.Release|x86.ActiveCfg = Release|Any CPU
+		{6D7BCE30-0C4A-49D8-82D8-361A8410228E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -138,5 +150,6 @@ Global
 		{90D9E014-5A4F-4F48-A828-630A74493694} = {9DDCC6E6-2DBA-4F14-9FB3-2C8A7E37F722}
 		{001B2947-6681-4B83-93C3-4B4C9132DE60} = {9DDCC6E6-2DBA-4F14-9FB3-2C8A7E37F722}
 		{15E4DDA5-07A8-4A56-97AA-328E75EBFD78} = {7D57BE6C-724C-462F-878C-4F89FC56CC1B}
+		{6D7BCE30-0C4A-49D8-82D8-361A8410228E} = {0FF89577-82E3-496D-853F-B34BABCC03D8}
 	EndGlobalSection
 EndGlobal
