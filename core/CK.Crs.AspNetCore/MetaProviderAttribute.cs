@@ -69,7 +69,7 @@ namespace CK.Crs
                 if( command.ShowCommands )
                 {
                     result.Commands = new Dictionary<string, MetaCommand.MetaResult.MetaCommandDescription>();
-                    var endpointModel = _model.GetEndpoint( context.Controller.GetType().GetTypeInfo() );
+                    var endpointModel = _model.GetReceiver( context.Controller.GetType() );
                     foreach( var c in endpointModel.Requests )
                     {
                         MetaCommand.MetaResult.MetaCommandDescription desc = new MetaCommand.MetaResult.MetaCommandDescription

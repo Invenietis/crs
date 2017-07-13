@@ -6,5 +6,6 @@ namespace CK.Crs
     {
         IServiceCollection Services { get; }
         IRequestRegistry Registry { get; }
+        ICrsModel Model { get; }
     }
 }

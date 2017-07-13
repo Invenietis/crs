@@ -1,39 +1,51 @@
 ﻿using CK.Core;
+using CK.Crs;
 using CK.Crs.Infrastructure;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 
-namespace CK.Crs
+namespace Microsoft.Extensions.DependencyInjection
 {
+    public sealed class CrsMvcCoreBuilder : ICrsCoreBuilder
+    {
+        public ICrsCoreBuilder CrsBuilder { get; internal set; }
+
+        public IMvcCoreBuilder MvcBuilder { get; internal set; }
+
+        public IServiceCollection Services => CrsBuilder.Services;
+
+        public IRequestRegistry Registry => CrsBuilder.Registry;
+
+        public ICrsModel Model => CrsBuilder.Model;
+    }
+
     public static class CrsCoreBuilderExtension
     {
-        public static ICrsCoreBuilder AddCrs( this IServiceCollection services, Action<ICrsConfiguration> configuration )
+        public static CrsMvcCoreBuilder AddCrs( this IServiceCollection services, Action<ICrsConfiguration> configuration )
         {
-            CrsConfigurationBuilder builder = new CrsConfigurationBuilder( services );
-
-            services.AddSingleton<IBus, DefaultBus>();
-            services.AddSingleton<ICommandDispatcher>( s => s.GetRequiredService<IBus>() );
-            services.AddSingleton<IEventPublisher>( s => s.GetRequiredService<IBus>() );
-
-            configuration( builder );
-            ICrsModel model = builder.BuildModel();
-            if( model == null ) throw new ArgumentException( "CrsConfigurationBuilder must returns a valid ICrsModel." );
-
-            services.AddSingleton( model );
-
-            services.AddMvcCore( o =>
-             {
-                 o.Conventions.Add( new CrsControllerNameConvention( model ) );
-                 o.Conventions.Add( new CrsActionConvention( model ) );
-             } )
-            .AddJsonFormatters()
-            .ConfigureApplicationPartManager( p =>
-             {
-                 CrsFeature feature = new CrsFeature( model );
-                 p.FeatureProviders.Add( feature );
-             } );
-
-            return new CrsCoreBuilder( services, builder );
+            var builder = services.AddCrsCore( configuration );
+            var mvcBuilder = builder.AddCrsMvcCoreReceiver();
+            return new CrsMvcCoreBuilder
+            {
+                CrsBuilder = builder,
+                MvcBuilder = mvcBuilder
+            };
+        }
+        
+        public static IMvcCoreBuilder AddCrsMvcCoreReceiver( this ICrsCoreBuilder builder  )
+        {
+            var model = builder.Model;
+            return builder.Services
+                .AddMvcCore( o =>
+                {
+                    o.Conventions.Add( new CrsControllerNameConvention( model ) );
+                    o.Conventions.Add( new CrsActionConvention( model ) );
+                } )
+                .AddJsonFormatters()
+                .ConfigureApplicationPartManager( p =>
+                {
+                    CrsFeature feature = new CrsFeature( model );
+                    p.FeatureProviders.Add( feature );
+                } );
         }
     }
 }

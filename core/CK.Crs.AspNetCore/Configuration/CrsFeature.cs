@@ -16,15 +16,15 @@ namespace CK.Crs.Infrastructure
         }
         public void PopulateFeature( IEnumerable<ApplicationPart> parts, ControllerFeature feature )
         {
-            foreach( var endpoint in _model.Endpoints )
+            foreach( var endpoint in _model.Receivers )
             {
                 foreach( var command in endpoint.Requests )
                 {
-                    var crsEndpointControllerType = endpoint.EndpointType.MakeGenericType( command.Type ).GetTypeInfo();
+                    var crsEndpointControllerType = endpoint.ReceiverType.MakeGenericType( command.Type ).GetTypeInfo();
                     feature.Controllers.Add( crsEndpointControllerType );
                 }
 
-                var metaControllerType = endpoint.EndpointType.MakeGenericType( typeof( MetaCommand ) ).GetTypeInfo();
+                var metaControllerType = endpoint.ReceiverType.MakeGenericType( typeof( MetaCommand ) ).GetTypeInfo();
                 feature.Controllers.Add( metaControllerType );
             }
         }

@@ -13,9 +13,11 @@ namespace CK.Crs
         readonly IWebSocketSender _sender;
         readonly IWebSocketConnectedClients _connectedClients;
         readonly BlockingCollection<WebSocketMessage> _messages;
+        readonly ILiveEventStore _liveEventStore;
 
-        public WebSocketWebClientDispatcher( IWebSocketSender sender, IWebSocketConnectedClients connectedClients )
+        public WebSocketWebClientDispatcher( ILiveEventStore liveEventStore, IWebSocketSender sender, IWebSocketConnectedClients connectedClients )
         {
+            _liveEventStore = liveEventStore;
             _sender = sender;
             _connectedClients = connectedClients;
             _messages = new BlockingCollection<WebSocketMessage>();
@@ -32,24 +34,8 @@ namespace CK.Crs
                      {
                          try
                          {
-                             if( String.IsNullOrEmpty( msg.CallerId ) )
-                             {
-                                 monitor.Trace( "Broadcasting message to all connected clients." );
-                                 await _sender.Send( msg.ToString() );
-                             }
-                             else
-                             {
-                                 var client = _connectedClients.Connections.SingleOrDefault( c => c.Equals( msg.CallerId, StringComparison.OrdinalIgnoreCase ) );
-                                 if( !String.IsNullOrEmpty( client ) )
-                                 {
-                                     monitor.Trace( $"Sending message to client {msg.CallerId}." );
-                                     await _sender.Send( client, msg.ToString() );
-                                 }
-                                 else
-                                 {
-                                     monitor.Warn( $"Client  {msg.CallerId} not actualy found." );
-                                 }
-                             }
+                             monitor.Trace( $"Sending message to client {msg.ClientId}." );
+                             await _sender.Send( msg.ClientId, msg.ToString() );
                          }
                          catch( Exception ex )
                          {
@@ -60,21 +46,30 @@ namespace CK.Crs
              } );
         }
 
-        public void Send<T>( T message, ICommandContext context )
+        public async Task Send<T>( string eventName, T message, ICommandContext context )
         {
-            var msg = Serialize( message, context );
-            _messages.Add( new WebSocketMessage( msg, context, false ) );
+            await DoSendToClient( context.CallerId, eventName, message, context );
         }
 
-        public void Broadcast<T>( T message, ICommandContext context )
+        public async Task Broadcast<T>( string eventName, T message, ICommandContext context )
         {
-            var msg = Serialize( message, context );
-            _messages.Add( new WebSocketMessage( msg, context, true ) );
+            foreach( var client in _connectedClients.Connections )
+            {
+                await DoSendToClient( client, eventName, message, context );
+            }
+        }
+        private async Task DoSendToClient<T>( string clientId, string eventName, T message, ICommandContext context )
+        {
+            if( !context.Receiver.SupportsClientEventsFiltering || await _liveEventStore.IsRegistered( context.CallerId, eventName ) )
+            {
+                var msg = Serialize( message, context );
+                _messages.Add( new WebSocketMessage( msg, context.CallerId, context ) );
+            }
         }
 
         string Serialize<T>( T message, ICommandContext context )
         {
-            var response = new WebSocketCommandResponse<T>( message, ResponseType.Synchronous, context.Id );
+            var response = new WebSocketCommandResponse<T>( message, ResponseType.Synchronous, context.CommandId );
             return Newtonsoft.Json.JsonConvert.SerializeObject( response );
         }
 
@@ -87,7 +82,7 @@ namespace CK.Crs
 
         class WebSocketMessage
         {
-            public string CallerId { get; }
+            public string ClientId { get; }
 
             public string Message { get; }
 
@@ -95,10 +90,10 @@ namespace CK.Crs
 
             public ActivityMonitor.DependentToken Token { get; }
 
-            public WebSocketMessage( string message, ICommandContext context, bool broadcast = false )
+            public WebSocketMessage( string message, string clientId, ICommandContext context )
             {
-                CommandId = context.Id;
-                CallerId = broadcast ? null : context.CallerId;
+                CommandId = context.CommandId;
+                ClientId = context.CallerId;
                 Message = message;
                 Token = context.Monitor.DependentActivity().CreateToken();
             }

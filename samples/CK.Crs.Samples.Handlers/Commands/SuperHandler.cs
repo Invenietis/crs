@@ -1,5 +1,4 @@
 ﻿using CK.Crs.Samples.Messages;
-using Paramore.Brighter;
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -7,7 +6,7 @@ using CK.Core;
 
 namespace CK.Crs.Samples.Handlers
 {
-    public class SuperHandler : CommandHandlerAsync<SuperCommand>
+    public class SuperHandler : ICommandHandler<SuperCommand, SuperCommand.Result>
     {
         IBus _dispatcher;
         public SuperHandler( IBus dispatcher )
@@ -15,9 +14,9 @@ namespace CK.Crs.Samples.Handlers
             _dispatcher = dispatcher;
         }
 
-        protected override async Task HandleCommandAsync(SuperCommand command, ICommandContext context )
+        public async Task<SuperCommand.Result> HandleAsync( SuperCommand command, ICommandContext context )
         {
-            var evt = new SuperEvent(command.Id, command.ActorId, command.AuthenticatedActorId)
+            var evt = new SuperEvent( context.CommandId, command.ActorId, command.AuthenticatedActorId )
             {
                 Message = $"Super - I'm Actor={ command.ActorId} on behalf of Actor={ command.AuthenticatedActorId}"
             };
@@ -25,6 +24,8 @@ namespace CK.Crs.Samples.Handlers
             context.Monitor.Trace( evt.Message );
 
             await _dispatcher.PublishAsync( evt, context );
+
+            return new SuperCommand.Result( "Bouyah" );
         }
     }
 }

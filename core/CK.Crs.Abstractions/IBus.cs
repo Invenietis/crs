@@ -7,5 +7,5 @@ using System.Threading;
 namespace CK.Crs
 {
 
-    public interface IBus : ICommandDispatcher, IEventPublisher { }
+    public interface IBus : ICommandSender, IEventPublisher, ICommandDispatcher { }
 }

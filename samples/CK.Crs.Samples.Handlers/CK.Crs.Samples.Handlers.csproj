@@ -11,7 +11,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\core\CK.Crs.Abstractions\CK.Crs.Abstractions.csproj" />
-    <ProjectReference Include="..\..\plugins\CK.Crs.Brighter\CK.Crs.Brighter.csproj" />
     <ProjectReference Include="..\CK.Crs.Samples.Messages\CK.Crs.Samples.Messages.csproj" />
   </ItemGroup>
 

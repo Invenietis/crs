@@ -1,18 +1,11 @@
-﻿using Paramore.Brighter;
-using System;
+﻿using System;
 
 namespace CK.Crs.Samples.Messages
 {
-    public abstract class MessageBase : IRequest
+    public abstract class MessageBase
     {
-        public MessageBase()
-        {
-            Id = Guid.NewGuid();
-        }
-
         public int ActorId { get; set; }
         public int AuthenticatedActorId { get; set; }
-        public Guid Id { get; set; }
     }
 
 }

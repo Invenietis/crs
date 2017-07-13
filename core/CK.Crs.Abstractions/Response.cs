@@ -33,21 +33,21 @@ namespace CK.Crs
         /// <summary>
         /// The raw response of the command. Can be null.
         /// </summary>
-        public T Payload { get; protected set; }
+        public T Payload { get; set; }
     }
 
     /// <summary>
     /// Defines a response of a command.
     /// A response can be of VISAM type defined by the enum <see cref="ResponseType"/>.
     /// </summary>
-    public abstract class Response : Response<object>
+    public class Response : Response<object>
     {
         /// <summary>
         /// Creates a CommandResponse
         /// </summary>
         /// <param name="responseType">The type of a response.</param>
         /// <param name="requestId"></param>
-        protected Response( ResponseType responseType, Guid requestId ) : base( responseType, requestId )
+        public Response( ResponseType responseType, Guid requestId ) : base( responseType, requestId )
         {
         }
     }

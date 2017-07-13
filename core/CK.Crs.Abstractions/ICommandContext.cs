@@ -5,12 +5,15 @@ using System;
 
 namespace CK.Crs
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public interface ICommandContext
     {
         /// <summary>
         /// Command identifier
         /// </summary>
-        Guid Id { get; }
+        Guid CommandId { get; }
 
         /// <summary>
         /// Gets the <see cref="IActivityMonitor"/> that goes with the command throughout its lifetime.
@@ -26,5 +29,10 @@ namespace CK.Crs
         /// Gets the identifier of the caller of this command context.
         /// </summary>
         string CallerId { get; }
+
+        /// <summary>
+        /// Gets the related <see cref="ICrsReceiverModel"/>
+        /// </summary>
+        ICrsReceiverModel Receiver { get; }
     }
 }

@@ -15,20 +15,22 @@ namespace CK.Crs
         public CrsConfigurationBuilder( IServiceCollection services )
         {
             _services = services;
+            _services.AddSingleton<IBus, DefaultBus>();
+            _services.AddSingleton<IRequestHandlerFactory, DefaultRequestHandlerFactory>();
+            _services.AddSingleton<ICommandDispatcher>( s => s.GetRequiredService<IBus>() );
+            _services.AddSingleton<ICommandSender>( s => s.GetRequiredService<IBus>() );
+            _services.AddSingleton<IEventPublisher>( s => s.GetRequiredService<IBus>() );
+            
+            // TODO: this should be added only if configured.
+            _services.AddSingleton<ILiveEventStore, InMemoryLiveEventStore>();
+
             _model = new CrsModel();
         }
 
+        internal IServiceCollection Services => _services;
         internal IRequestRegistry Registry => _commands;
         internal CrsEndpointConfiguration Endpoints => _endpoints;
 
-        public ICrsConfiguration AddAmbientValues( Action<IAmbientValuesRegistration> ambientValuesConfiguration )
-        {
-            var config = new CrsAmbientValuesConfiguration( this, _services );
-            var registration = config.Configure();
-            ambientValuesConfiguration( registration );
-            return this;
-        }
-      
         public ICrsConfiguration AddCommands( Action<IRequestRegistry> registryConfiguration )
         {
             _commands = new DefaultRequestRegistry( new CKTraitContext( "Crs" ) );
@@ -40,7 +42,7 @@ namespace CK.Crs
             return this;
         }
 
-        public ICrsConfiguration AddEndpoints( Action<ICrsEndpointConfigurationRoot> endpointConfiguration )
+        public ICrsConfiguration AddReceivers( Action<ICrsEndpointConfigurationRoot> endpointConfiguration )
         {
             _endpoints = new CrsEndpointConfiguration( Registry, _model );
             endpointConfiguration( _endpoints );

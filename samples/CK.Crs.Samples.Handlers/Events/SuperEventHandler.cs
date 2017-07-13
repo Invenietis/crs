@@ -6,19 +6,17 @@ using System.Threading.Tasks;
 
 namespace CK.Crs.Samples.Handlers
 {
-    public class SuperEventHandler : EventHandlerAsync<SuperEvent>
+    public class SuperEventHandler : IEventHandler<SuperEvent>
     {
         readonly IWebClientDispatcher _dispatcher;
-        public SuperEventHandler(IWebClientDispatcher dispatcher)
+        public SuperEventHandler( IWebClientDispatcher dispatcher )
         {
             _dispatcher = dispatcher;
         }
 
-        protected override Task HandleEventAsync(SuperEvent evt, ICommandContext context)
+        public Task HandleAsync( SuperEvent evt, ICommandContext context )
         {
-            _dispatcher.Send(evt.Message, context);
-
-            return Task.CompletedTask;
+            return _dispatcher.Send( "SuperWebClientEvent", evt.Message, context );
         }
     }
 }

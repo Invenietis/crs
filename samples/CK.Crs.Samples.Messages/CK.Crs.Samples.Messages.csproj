@@ -6,7 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Paramore.Brighter" Version="7.1.5" />
-    
+    <ProjectReference Include="..\..\core\CK.Crs.Abstractions\CK.Crs.Abstractions.csproj" />
   </ItemGroup>
 </Project>

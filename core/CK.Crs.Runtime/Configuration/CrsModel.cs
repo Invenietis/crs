@@ -7,20 +7,20 @@ namespace CK.Crs.Infrastructure
 {
     class CrsModel : ICrsModel
     {
-        List<ICrsEndpointModel> _models;
+        List<ICrsReceiverModel> _models;
         public CrsModel()
         {
-            _models = new List<ICrsEndpointModel>();
+            _models = new List<ICrsReceiverModel>();
         }
-        public IReadOnlyList<ICrsEndpointModel> Endpoints => _models;
+        public IReadOnlyList<ICrsReceiverModel> Receivers => _models;
 
-        public ICrsEndpointModel GetEndpoint( TypeInfo type )
+        public ICrsReceiverModel GetReceiver( Type type )
         {
             // TODO: lookup in a dictionary ?
-            return _models.SingleOrDefault( t => t.EndpointType == type.GetGenericTypeDefinition() );
+            return _models.SingleOrDefault( t => t.ReceiverType == type.GetGenericTypeDefinition() );
         }
 
-        internal void AddEndpoint( CrsEndpointModel endpoint )
+        internal void AddEndpoint( CrsReceiverModel endpoint )
         {
             if( endpoint == null ) throw new ArgumentNullException( nameof( endpoint ) );
             if( _models.Any( x => x.Name.Equals( endpoint.Name, StringComparison.OrdinalIgnoreCase )) )

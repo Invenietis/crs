@@ -7,12 +7,8 @@ namespace CK.Crs
 {
     public interface ICrsConfiguration
     {
-        ICrsConfiguration AddAmbientValues(Action<IAmbientValuesRegistration> ambientValuesConfiguration);
-
         ICrsConfiguration AddCommands(Action<IRequestRegistry> registryConfiguration);
 
-        ICrsConfiguration AddEndpoints(Action<ICrsEndpointConfigurationRoot> endpointConfiguration);
-
+        ICrsConfiguration AddReceivers(Action<ICrsEndpointConfigurationRoot> endpointConfiguration);
     }
-
 }

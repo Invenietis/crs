@@ -14,16 +14,16 @@ namespace CK.Crs.Tests.Handlers
         public decimal Amount { get; internal set; }
     }
 
-    public class TransferAlwaysSuccessHandler : IRequestHandler<TransferAmountCommand>
+    public class TransferAlwaysSuccessHandler : ICommandHandler<TransferAmountCommand, TransferAmountCommand.Result>
     {
         IEventPublisher _eventPublisher;
-        ICommandDispatcher _commandDispatcher;
-        public TransferAlwaysSuccessHandler( IEventPublisher eventPublisher, ICommandDispatcher commandDispatcher )
+        ICommandSender _commandDispatcher;
+        public TransferAlwaysSuccessHandler( IEventPublisher eventPublisher, ICommandSender commandDispatcher )
         {
             _eventPublisher = eventPublisher;
             _commandDispatcher = commandDispatcher;
         }
-        public async Task HandleAsync( TransferAmountCommand command, ICommandContext context )
+        public async Task<TransferAmountCommand.Result> HandleAsync( TransferAmountCommand command, ICommandContext context )
         {
             using( context.Monitor.OpenInfo( $"Transferring {command.Amount} from {command.SourceAccountId} to {command.DestinationAccountId} " ) )
             {
@@ -53,15 +53,17 @@ namespace CK.Crs.Tests.Handlers
                     DestinationAccountId = command.DestinationAccountId,
                     SourceAccountId = command.SourceAccountId
                 }, context );
+
+                return result;
             }
         }
     }
 
-    public class WithDrawyMoneyHandler : IRequestHandler<WithdrawMoneyCommand>
+    public class WithDrawyMoneyHandler : ICommandHandler<WithdrawMoneyCommand, WithdrawMoneyCommand.Result>
     {
-        public Task HandleAsync( WithdrawMoneyCommand command, ICommandContext commandContext )
+        public Task<WithdrawMoneyCommand.Result> HandleAsync( WithdrawMoneyCommand command, ICommandContext commandContext )
         {
-            var result =  new WithdrawMoneyCommand.Result
+            var result = new WithdrawMoneyCommand.Result
             {
                 Success = true
             };

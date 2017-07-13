@@ -25,7 +25,7 @@ namespace CK.Crs.Infrastructure
 
         public ICrsEndpointConfiguration For( Type endpoint )
         {
-            if( !ReflectionUtil.IsAssignableToGenericType( endpoint.GetGenericTypeDefinition(), typeof( ICrsEndpoint<> ) ) )
+            if( !ReflectionUtil.IsAssignableToGenericType( endpoint.GetGenericTypeDefinition(), typeof( ICrsReceiver<> ) ) )
                 throw new ArgumentException( "The endpoint must implement ICrsEndpoint", nameof( endpoint ) );
 
             _currentConfiguredEndpoint = endpoint;
@@ -41,9 +41,9 @@ namespace CK.Crs.Infrastructure
             ISet<RequestDescription> commands = new HashSet<RequestDescription>( _registry.Registration.Where( filter ) );
             _endpoints.Add( _currentConfiguredEndpoint, commands );
 
-            _model.AddEndpoint( new CrsEndpointModel
+            _model.AddEndpoint( new CrsReceiverModel
             {
-                EndpointType = _currentConfiguredEndpoint,
+                ReceiverType = _currentConfiguredEndpoint,
                 Requests = commands.ToArray()
             } );
             return this;

@@ -1,26 +1,42 @@
-﻿using CK.Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CK.Crs
 {
-    public abstract class DefaultCrsEndpoint<T> : ICrsEndpoint<T> where T : class
+    public abstract class DefaultCrsEndpoint<T> : ICrsReceiver<T>, ICrsListener where T : class
     {
-        readonly ICommandDispatcher _dispatcher;
+        readonly ICommandSender _sender;
+        readonly ILiveEventStore _liveEventStore;
 
-        public DefaultCrsEndpoint( ICommandDispatcher dispatcher )
+        public DefaultCrsEndpoint( ICommandSender sender, ILiveEventStore liveEventStore )
         {
-            _dispatcher = dispatcher;
+            _sender = sender;
+            _liveEventStore = liveEventStore;
         }
 
-        public virtual async Task<Response> ReceiveCommand( T command, IActivityMonitor monitor, string callerId )
+        public virtual async Task<Response> ReceiveCommand( T command, ICommandContext context )
         {
-            var context = new CommandContext( Guid.NewGuid(), monitor, callerId );
-            await _dispatcher.SendAsync( command, context );
+            var result = await _sender.SendAsync( command, context );
 
-            return new DeferredResponse( context.Id, context.CallerId );
+            return new Response( ResponseType.Synchronous, context.CommandId )
+            {
+                Payload = result
+            };
+        }
+
+        public virtual Task AddListener( string eventName, IListenerContext context )
+        {
+            return _liveEventStore.RegisterListener( eventName, context.ClientId );
+        }
+
+        public virtual Task RemoveListener( string eventName, IListenerContext context )
+        {
+            return _liveEventStore.RemoveListener( eventName, context.ClientId );
+        }
+
+        public virtual Task<IEnumerable<ILiveEventModel>> Listeners( string callerId )
+        {
+            return _liveEventStore.GetListeners( callerId );
         }
     }
 }

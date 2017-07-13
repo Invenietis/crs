@@ -1,11 +1,10 @@
-﻿using Paramore.Brighter;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace CK.Crs.Samples.Messages
 {
-    public class SuperEvent : MessageBase, IEvent
+    public class SuperEvent : MessageBase
     {
         public SuperEvent(Guid id, int actorId, int authenticatedActorId)
         {
@@ -15,5 +14,6 @@ namespace CK.Crs.Samples.Messages
         }
 
         public string Message { get; set; }
+        public Guid Id { get; private set; }
     }
 }
