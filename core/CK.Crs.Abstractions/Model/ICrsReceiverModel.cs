@@ -26,8 +26,7 @@ namespace CK.Crs
         /// </summary>
         bool SupportsClientEventsFiltering { get; }
 
-
-        IReadOnlyList<RequestDescription> Requests { get; }
+        IEnumerable<RequestDescription> Requests { get; }
 
         RequestDescription GetRequestDescription( Type requestType );
     }

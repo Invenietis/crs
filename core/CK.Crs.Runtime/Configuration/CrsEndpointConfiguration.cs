@@ -41,11 +41,7 @@ namespace CK.Crs.Infrastructure
             ISet<RequestDescription> commands = new HashSet<RequestDescription>( _registry.Registration.Where( filter ) );
             _endpoints.Add( _currentConfiguredEndpoint, commands );
 
-            _model.AddEndpoint( new CrsReceiverModel
-            {
-                ReceiverType = _currentConfiguredEndpoint,
-                Requests = commands.ToArray()
-            } );
+            _model.AddEndpoint( new CrsReceiverModel( _currentConfiguredEndpoint, commands ) );
             return this;
         }
 

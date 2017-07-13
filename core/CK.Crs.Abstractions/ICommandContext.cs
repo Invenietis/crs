@@ -33,6 +33,11 @@ namespace CK.Crs
         /// <summary>
         /// Gets the related <see cref="ICrsReceiverModel"/>
         /// </summary>
-        ICrsReceiverModel Receiver { get; }
+        ICrsReceiverModel ReceiverModel { get; }
+
+        /// <summary>
+        /// Gets the related <see cref="RequestDescription"/> for the given executing command.
+        /// </summary>
+        RequestDescription Model { get; }
     }
 }

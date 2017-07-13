@@ -1,14 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using CK.Core;
+using System.Linq;
+using System;
 
 namespace CK.Crs
 {
-    public abstract class DefaultCrsEndpoint<T> : ICrsReceiver<T>, ICrsListener where T : class
+    public abstract class DefaultCrsReceiver<T> : ICrsReceiver<T>, ICrsListener where T : class
     {
         readonly ICommandSender _sender;
         readonly ILiveEventStore _liveEventStore;
 
-        public DefaultCrsEndpoint( ICommandSender sender, ILiveEventStore liveEventStore )
+        public DefaultCrsReceiver( ICommandSender sender, ILiveEventStore liveEventStore )
         {
             _sender = sender;
             _liveEventStore = liveEventStore;
@@ -16,12 +19,26 @@ namespace CK.Crs
 
         public virtual async Task<Response> ReceiveCommand( T command, ICommandContext context )
         {
-            var result = await _sender.SendAsync( command, context );
+            object result = null;
+            Response response = null;
 
-            return new Response( ResponseType.Synchronous, context.CommandId )
+            using( context.Monitor.CollectEntries( ( errors ) =>
             {
-                Payload = result
-            };
+                if( result == null )
+                {
+                    response = new ErrorResponse( string.Join( Environment.NewLine, errors.Select( e => e.ToString() ) ), context.CommandId );
+                }
+            } ) )
+            {
+                result = await _sender.SendAsync( command, context );
+
+                response = new Response( ResponseType.Synchronous, context.CommandId )
+                {
+                    Payload = result
+                };
+            }
+
+            return response;
         }
 
         public virtual Task AddListener( string eventName, IListenerContext context )

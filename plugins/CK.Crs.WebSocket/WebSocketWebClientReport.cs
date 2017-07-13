@@ -60,7 +60,7 @@ namespace CK.Crs
         }
         private async Task DoSendToClient<T>( string clientId, string eventName, T message, ICommandContext context )
         {
-            if( !context.Receiver.SupportsClientEventsFiltering || await _liveEventStore.IsRegistered( context.CallerId, eventName ) )
+            if( !context.ReceiverModel.SupportsClientEventsFiltering || await _liveEventStore.IsRegistered( context.CallerId, eventName ) )
             {
                 var msg = Serialize( message, context );
                 _messages.Add( new WebSocketMessage( msg, context.CallerId, context ) );

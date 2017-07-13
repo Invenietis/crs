@@ -8,9 +8,18 @@ namespace CK.Crs.Infrastructure
 
     class CrsReceiverModel : ICrsReceiverModel
     {
-        public string Name => ReceiverType.Name;
+        private Type _currentConfiguredEndpoint;
+        private IEnumerable<RequestDescription> _requests;
 
-        public Type ReceiverType { get; internal set; }
+        public CrsReceiverModel( Type currentConfiguredEndpoint, IEnumerable<RequestDescription> requests )
+        {
+            _currentConfiguredEndpoint = currentConfiguredEndpoint;
+            _requests = requests;
+        }
+
+        public string Name => _currentConfiguredEndpoint.Name;
+
+        public Type ReceiverType => _currentConfiguredEndpoint;
 
         public string CallerIdName { get; set; } = "CallerId";
 
@@ -23,7 +32,7 @@ namespace CK.Crs.Infrastructure
 
         public bool SupportsClientEventsFiltering => ReflectionUtil.IsAssignableToGenericType( ReceiverType, typeof( ICrsListener ) );
 
-        public IReadOnlyList<RequestDescription> Requests { get; internal set; }
+        public IEnumerable<RequestDescription> Requests => _requests;
 
         public RequestDescription GetRequestDescription( Type requestType )
         {

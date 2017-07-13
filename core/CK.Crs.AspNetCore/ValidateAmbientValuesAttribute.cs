@@ -28,14 +28,14 @@ namespace CK.Crs
 
             public async Task OnActionExecutionAsync( ActionExecutingContext context, ActionExecutionDelegate next )
             {
-                var monitor = context.ActionDescriptor.GetProperty<IActivityMonitor>();
+                var commandContext = context.ActionDescriptor.GetProperty<ICommandContext>();
                 var commandArgumentName = context.ActionDescriptor.GetProperty<CrsCommandArgumentName>();
                 var commandArgument = context.ActionArguments[commandArgumentName];
 
                 var obj = context.Filters.SingleOrDefault( t => t.GetType() == typeof( NoAmbientValuesValidationAttribute ) );
                 if( obj == null )
                 {
-                    var vContext = new ReflectionAmbientValueValidationContext( commandArgument, monitor, _ambientValues );
+                    var vContext = new ReflectionAmbientValueValidationContext( commandArgument, commandContext.Monitor, _ambientValues );
 
                     foreach( var v in _registration.AmbientValues )
                     {
@@ -44,7 +44,7 @@ namespace CK.Crs
 
                     if( vContext.Rejected )
                     {
-                        context.Result = new BadRequestObjectResult( vContext.RejectReason );
+                        context.Result = new OkObjectResult( new InvalidResponse( commandContext.CommandId, vContext.RejectReason ) );
                         return;
                     }
                 }

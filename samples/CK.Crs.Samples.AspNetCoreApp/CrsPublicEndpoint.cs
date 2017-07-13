@@ -10,7 +10,7 @@ using System.Collections.Generic;
 namespace CK.Crs.Samples.AspNetCoreApp
 {
     [Route( "my-crs-public" )]
-    public class CrsPublicEndpoint<T> : DefaultCrsEndpoint<T> where T : class
+    public class CrsPublicEndpoint<T> : DefaultCrsReceiver<T> where T : class
     {
         public CrsPublicEndpoint( ICommandSender sender, ILiveEventStore eventStore ) : base( sender, eventStore ) { }
 

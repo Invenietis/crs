@@ -93,14 +93,15 @@ namespace CK.Crs.Infrastructure
                 // Gets the ControllerType or EndpointName from somehere...
                 var endpointModel = _model.GetEndpointFromContext( bindingContext.ActionContext );
 
-                var actioName = bindingContext.ActionContext.ActionDescriptor.DisplayName;
-                var monitor = new ActivityMonitor( actioName );
-                bindingContext.ActionContext.ActionDescriptor.SetProperty<IActivityMonitor>( monitor );
+                var actionName = bindingContext.ActionContext.ActionDescriptor.DisplayName;
+                var monitor = new ActivityMonitor( actionName );
 
                 // CallerId or ConnectionId provider.
                 var callerId = bindingContext.ValueProvider.GetValue( endpointModel.CallerIdName ).FirstValue;
 
-                var model = new CommandContext( commandId, endpointModel, monitor, callerId, bindingContext.HttpContext.RequestAborted );
+                var commandType = bindingContext.ActionContext.ActionDescriptor.Parameters[0].ParameterType;
+                var model = new CommandContext( commandId, commandType, endpointModel, monitor, callerId, bindingContext.HttpContext.RequestAborted );
+                bindingContext.ActionContext.ActionDescriptor.SetProperty<ICommandContext>( model );
                 bindingContext.Result = ModelBindingResult.Success( model );
 
                 return Task.CompletedTask;
@@ -111,21 +112,15 @@ namespace CK.Crs.Infrastructure
         {
             public async Task OnActionExecutionAsync( ActionExecutingContext context, ActionExecutionDelegate next )
             {
-                var monitor = EnsureActivityMonitor( context );
+                var commandContext = context.ActionDescriptor.GetProperty<ICommandContext>();
                 var commandArgumentName = context.ActionDescriptor.Parameters[0].Name;
                 context.ActionDescriptor.SetProperty( new CrsCommandArgumentName( commandArgumentName ) );
 
-                using( monitor.OpenTrace( $"Executing command {context.RouteData.Values["action"]}" ) )
+                using( commandContext.Monitor.OpenTrace( $"Executing command {commandContext.Model.Name}" ) )
                 {
                     await next();
                 }
             }
-
-            private static IActivityMonitor EnsureActivityMonitor( ActionExecutingContext context )
-            {
-                return context.ActionDescriptor.GetProperty<IActivityMonitor>() ?? new ActivityMonitor();
-            }
         }
     }
-
 }
