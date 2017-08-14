@@ -79,6 +79,7 @@ namespace CK.Crs
                                         .Where( interfaceType => interfaceType.GetTypeInfo().IsGenericType && interfaceType.GenericTypeArguments.Length > 0 )
                                         .Select( interfaceType => interfaceType.GenericTypeArguments[0] ) )
                                     {
+                                        if( registry.Registration.Any( r => r.HandlerType == h ) ) continue;
                                         RequestDescription description = new RequestDescription( commandType )
                                         {
                                             Name = option.CommandNameProvider( commandType ),

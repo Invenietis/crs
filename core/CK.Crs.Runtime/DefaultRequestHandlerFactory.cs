@@ -15,7 +15,8 @@ namespace CK.Crs
 
         IRequestHandler IRequestHandlerFactory.CreateHandler( Type handlerType )
         {
-            return CreateInstanceOrDefault<IRequestHandler>( handlerType );
+            var result = CreateInstanceOrDefault<IRequestHandler>( handlerType );
+            return result;
         }
 
         void IRequestHandlerFactory.ReleaseHandler( IRequestHandler handler )

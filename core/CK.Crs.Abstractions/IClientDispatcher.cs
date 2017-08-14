@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CK.Crs
 {
-    public interface IWebClientDispatcher : IDisposable
+    public interface IClientDispatcher : IDisposable
     {
         /// <summary>
         /// Sends a message to the caller identified in the <see cref="ICommandContext"/>.

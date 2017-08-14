@@ -5,9 +5,7 @@
     <TargetFramework>netcoreapp1.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CK.Monitoring" Version="7.0.0-r01" />
-    <PackageReference Include="xunit" Version="2.2.0" />
-    <PackageReference Include="xunit" Version="2.2.0" />
+    <PackageReference Include="CK.Monitoring" Version="7.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\core\CK.Crs.Runtime\CK.Crs.Runtime.csproj" />

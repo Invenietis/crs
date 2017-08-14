@@ -100,7 +100,7 @@ namespace CK.Crs.Infrastructure
                 var callerId = bindingContext.ValueProvider.GetValue( endpointModel.CallerIdName ).FirstValue;
 
                 var commandType = bindingContext.ActionContext.ActionDescriptor.Parameters[0].ParameterType;
-                var model = new CommandContext( commandId, commandType, endpointModel, monitor, callerId, bindingContext.HttpContext.RequestAborted );
+                var model = new CommandContext( commandId, commandType, monitor, callerId, endpointModel, bindingContext.HttpContext.RequestAborted );
                 bindingContext.ActionContext.ActionDescriptor.SetProperty<ICommandContext>( model );
                 bindingContext.Result = ModelBindingResult.Success( model );
 

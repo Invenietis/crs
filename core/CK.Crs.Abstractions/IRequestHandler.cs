@@ -8,9 +8,6 @@
     {
     }
 
-    public interface ICommandHandlerWithResult : ICommandHandler
-    {
-    }
 
     public interface IEventHandler : IRequestHandler
     {

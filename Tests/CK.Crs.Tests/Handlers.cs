@@ -14,7 +14,7 @@ namespace CK.Crs.Tests.Handlers
         public decimal Amount { get; internal set; }
     }
 
-    public class TransferAlwaysSuccessHandler : ICommandHandler<TransferAmountCommand, TransferAmountCommand.Result>
+    public class TransferAlwaysSuccessHandler : CommandHandlerBase<TransferAmountCommand, TransferAmountCommand.Result>
     {
         IEventPublisher _eventPublisher;
         ICommandSender _commandDispatcher;
@@ -23,7 +23,7 @@ namespace CK.Crs.Tests.Handlers
             _eventPublisher = eventPublisher;
             _commandDispatcher = commandDispatcher;
         }
-        public async Task<TransferAmountCommand.Result> HandleAsync( TransferAmountCommand command, ICommandContext context )
+        public override async Task<TransferAmountCommand.Result> HandleAsync( TransferAmountCommand command, ICommandContext context )
         {
             using( context.Monitor.OpenInfo( $"Transferring {command.Amount} from {command.SourceAccountId} to {command.DestinationAccountId} " ) )
             {
@@ -59,9 +59,9 @@ namespace CK.Crs.Tests.Handlers
         }
     }
 
-    public class WithDrawyMoneyHandler : ICommandHandler<WithdrawMoneyCommand, WithdrawMoneyCommand.Result>
+    public class WithDrawyMoneyHandler : CommandHandlerBase<WithdrawMoneyCommand, WithdrawMoneyCommand.Result>
     {
-        public Task<WithdrawMoneyCommand.Result> HandleAsync( WithdrawMoneyCommand command, ICommandContext commandContext )
+        public override Task<WithdrawMoneyCommand.Result> HandleAsync( WithdrawMoneyCommand command, ICommandContext commandContext )
         {
             var result = new WithdrawMoneyCommand.Result
             {

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CK.Crs
 {
-    class InMemoryLiveEventStore : ILiveEventStore
+    class InMemoryLiveEventStore : IClientEventStore
     {
         readonly ConcurrentDictionary<string, ISet<string>> _store;
         readonly StringComparer _comparer;
@@ -18,17 +18,17 @@ namespace CK.Crs
             _comparer = StringComparer.OrdinalIgnoreCase;
         }
 
-        Task<IEnumerable<ILiveEventModel>> ILiveEventStore.GetListeners( string clientId )
+        Task<IEnumerable<IEventFilter>> IClientEventStore.GetEventFilters( string clientId )
         {
             if( _store.TryGetValue( clientId, out ISet<string> liveEvents ) )
             {
-                return Task.FromResult( liveEvents.Select( s => new LiveEventModel( clientId, s ) ).Cast<ILiveEventModel>() );
+                return Task.FromResult( liveEvents.Select( s => new LiveEventModel( clientId, s ) ).Cast<IEventFilter>() );
             }
 
-            return Task.FromResult( Enumerable.Empty<ILiveEventModel>() );
+            return Task.FromResult( Enumerable.Empty<IEventFilter>() );
         }
 
-        Task<bool> ILiveEventStore.IsRegistered( string clientId, string name )
+        Task<bool> IClientEventStore.HasFilter( string clientId, string name )
         {
             if( _store.TryGetValue( clientId, out ISet<string> liveEvents ) )
             {
@@ -37,7 +37,7 @@ namespace CK.Crs
             return Task.FromResult( false );
         }
 
-        Task ILiveEventStore.RegisterListener( string clientId, string name )
+        Task IClientEventStore.AddEventFilter( string clientId, string name )
         {
             _store.AddOrUpdate(
                 clientId,
@@ -54,7 +54,7 @@ namespace CK.Crs
             return Task.CompletedTask;
         }
 
-        Task ILiveEventStore.RemoveListener( string clientId, string name )
+        Task IClientEventStore.RemoveEventFilter( string clientId, string name )
         {
             if( _store.TryGetValue( clientId, out ISet<string> events ) )
             {
@@ -68,29 +68,29 @@ namespace CK.Crs
         }
 
 
-        struct LiveEventModel : ILiveEventModel
+        struct LiveEventModel : IEventFilter
         {
             public LiveEventModel( string callerId, string name )
             {
-                CallerId = callerId;
+                ClientId = callerId;
                 Name = name;
             }
 
             public string Name { get; set; }
 
-            public string CallerId { get; set; }
+            public string ClientId { get; set; }
         }
 
-        class LiveEventModelComparer : IEqualityComparer<ILiveEventModel>
+        class LiveEventModelComparer : IEqualityComparer<IEventFilter>
         {
-            public bool Equals( ILiveEventModel x, ILiveEventModel y )
+            public bool Equals( IEventFilter x, IEventFilter y )
             {
-                return x.CallerId == y.CallerId && x.Name == y.Name;
+                return x.ClientId == y.ClientId && x.Name == y.Name;
             }
 
-            public int GetHashCode( ILiveEventModel obj )
+            public int GetHashCode( IEventFilter obj )
             {
-                return obj.CallerId.GetHashCode() ^ obj.Name.GetHashCode();
+                return obj.ClientId.GetHashCode() ^ obj.Name.GetHashCode();
             }
         }
 

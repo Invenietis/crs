@@ -37,7 +37,12 @@ namespace CK.Crs.Infrastructure
         public RequestDescription GetRequestDescription( Type requestType )
         {
             // TODO: lookup in a dictionary ?
-            return Requests.SingleOrDefault( t => t.Type == requestType );
+            // TODO: why first or default? We must ensure that we get the good one.
+            // Maybe by adding a CKTrait during configuration to each RequestDescription. This 
+            // traits will identityf the Receiver (which is unique)
+            // BTW, We should decouple which request are handle by which receiver...
+            // The request registry and the requests by receivers which is a subset of the registry.
+            return Requests.FirstOrDefault( t => t.Type == requestType );
         }
     }
 }

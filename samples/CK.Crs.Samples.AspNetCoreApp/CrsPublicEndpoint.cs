@@ -9,16 +9,35 @@ using System.Collections.Generic;
 
 namespace CK.Crs.Samples.AspNetCoreApp
 {
-    [Route( "my-crs-public" )]
+
+    [Route( "crs-dispatcher" )]
+    public class SimpleCrsEndpoint<T> : ICrsReceiver<T> where T : class
+    {
+        ICommandDispatcher _dispatcher;
+        public SimpleCrsEndpoint( ICommandDispatcher dispatcher )
+        {
+            _dispatcher = dispatcher;
+        }
+
+        [HttpPost( "[Action]" ), NoAmbientValuesValidation]
+        public async Task<Response> ReceiveCommand( T command, ICommandContext context )
+        {
+            await _dispatcher.PostAsync( command, context );
+
+            return new Response( ResponseType.Asynchronous, context.CommandId );
+        }
+    }
+
+    [Route( "crs-sender" )]
     public class CrsPublicEndpoint<T> : DefaultCrsReceiver<T> where T : class
     {
-        public CrsPublicEndpoint( ICommandSender sender, ILiveEventStore eventStore ) : base( sender, eventStore ) { }
+        public CrsPublicEndpoint( ICommandSender sender, IClientEventStore eventStore ) : base( sender, eventStore ) { }
 
         [HttpPost( "[Action]" ), NoAmbientValuesValidation]
         public override Task<Response> ReceiveCommand( T command, ICommandContext context ) => base.ReceiveCommand( command, context );
 
         [HttpGet]
-        public override Task<IEnumerable<ILiveEventModel>> Listeners( string callerId ) => base.Listeners( callerId );
+        public override Task<IEnumerable<IEventFilter>> Listeners( string callerId ) => base.Listeners( callerId );
 
         [HttpPut( "{eventName}" )]
         public override Task AddListener( string eventName, IListenerContext context ) => base.AddListener( eventName, context );

@@ -24,7 +24,7 @@ namespace CK.Crs
         /// </summary>
         /// <param name="callerId"></param>
         /// <returns></returns>
-        Task<IEnumerable<ILiveEventModel>> Listeners( string callerId );
+        Task<IEnumerable<IEventFilter>> Listeners( string callerId );
 
         /// <summary>
         /// Registers an event listener for the given caller.

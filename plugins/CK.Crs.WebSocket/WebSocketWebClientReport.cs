@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 namespace CK.Crs
 {
 
-    public class WebSocketWebClientDispatcher : IWebClientDispatcher, IDisposable
+    public class WebSocketWebClientDispatcher : IClientDispatcher, IDisposable
     {
         readonly IWebSocketSender _sender;
         readonly IWebSocketConnectedClients _connectedClients;
         readonly BlockingCollection<WebSocketMessage> _messages;
-        readonly ILiveEventStore _liveEventStore;
+        readonly IClientEventStore _liveEventStore;
 
-        public WebSocketWebClientDispatcher( ILiveEventStore liveEventStore, IWebSocketSender sender, IWebSocketConnectedClients connectedClients )
+        public WebSocketWebClientDispatcher( IClientEventStore liveEventStore, IWebSocketSender sender, IWebSocketConnectedClients connectedClients )
         {
             _liveEventStore = liveEventStore;
             _sender = sender;
@@ -60,7 +60,7 @@ namespace CK.Crs
         }
         private async Task DoSendToClient<T>( string clientId, string eventName, T message, ICommandContext context )
         {
-            if( !context.ReceiverModel.SupportsClientEventsFiltering || await _liveEventStore.IsRegistered( context.CallerId, eventName ) )
+            if( !context.ReceiverModel.SupportsClientEventsFiltering || await _liveEventStore.HasFilter( context.CallerId, eventName ) )
             {
                 var msg = Serialize( message, context );
                 _messages.Add( new WebSocketMessage( msg, context.CallerId, context ) );

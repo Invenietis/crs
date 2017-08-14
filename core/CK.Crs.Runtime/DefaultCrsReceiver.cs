@@ -9,9 +9,9 @@ namespace CK.Crs
     public abstract class DefaultCrsReceiver<T> : ICrsReceiver<T>, ICrsListener where T : class
     {
         readonly ICommandSender _sender;
-        readonly ILiveEventStore _liveEventStore;
+        readonly IClientEventStore _liveEventStore;
 
-        public DefaultCrsReceiver( ICommandSender sender, ILiveEventStore liveEventStore )
+        public DefaultCrsReceiver( ICommandSender sender, IClientEventStore liveEventStore )
         {
             _sender = sender;
             _liveEventStore = liveEventStore;
@@ -31,7 +31,6 @@ namespace CK.Crs
             } ) )
             {
                 result = await _sender.SendAsync( command, context );
-
                 response = new Response( ResponseType.Synchronous, context.CommandId )
                 {
                     Payload = result
@@ -43,17 +42,17 @@ namespace CK.Crs
 
         public virtual Task AddListener( string eventName, IListenerContext context )
         {
-            return _liveEventStore.RegisterListener( eventName, context.ClientId );
+            return _liveEventStore.AddEventFilter( eventName, context.ClientId );
         }
 
         public virtual Task RemoveListener( string eventName, IListenerContext context )
         {
-            return _liveEventStore.RemoveListener( eventName, context.ClientId );
+            return _liveEventStore.RemoveEventFilter( eventName, context.ClientId );
         }
 
-        public virtual Task<IEnumerable<ILiveEventModel>> Listeners( string callerId )
+        public virtual Task<IEnumerable<IEventFilter>> Listeners( string clientId )
         {
-            return _liveEventStore.GetListeners( callerId );
+            return _liveEventStore.GetEventFilters( clientId );
         }
     }
 }

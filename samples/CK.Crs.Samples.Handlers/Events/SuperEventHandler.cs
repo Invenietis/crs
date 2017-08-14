@@ -8,8 +8,8 @@ namespace CK.Crs.Samples.Handlers
 {
     public class SuperEventHandler : IEventHandler<SuperEvent>
     {
-        readonly IWebClientDispatcher _dispatcher;
-        public SuperEventHandler( IWebClientDispatcher dispatcher )
+        readonly IClientDispatcher _dispatcher;
+        public SuperEventHandler( IClientDispatcher dispatcher )
         {
             _dispatcher = dispatcher;
         }

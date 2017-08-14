@@ -15,14 +15,13 @@ namespace CK.Crs
         public CrsConfigurationBuilder( IServiceCollection services )
         {
             _services = services;
-            _services.AddSingleton<IBus, DefaultBus>();
             _services.AddSingleton<IRequestHandlerFactory, DefaultRequestHandlerFactory>();
-            _services.AddSingleton<ICommandDispatcher>( s => s.GetRequiredService<IBus>() );
-            _services.AddSingleton<ICommandSender>( s => s.GetRequiredService<IBus>() );
-            _services.AddSingleton<IEventPublisher>( s => s.GetRequiredService<IBus>() );
+            _services.AddSingleton<ICommandSender, DefaultCommandSender>();
+            _services.AddSingleton<IEventPublisher, DefaultEventPublisher>();
+            _services.AddSingleton<IBus, DefaultBus>();
             
             // TODO: this should be added only if configured.
-            _services.AddSingleton<ILiveEventStore, InMemoryLiveEventStore>();
+            _services.AddSingleton<IClientEventStore, InMemoryLiveEventStore>();
 
             _model = new CrsModel();
         }

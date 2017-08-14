@@ -11,7 +11,7 @@ namespace CK.Crs
         public static ICrsCoreBuilder AddWebSockets( this ICrsCoreBuilder builder )
         {
             builder.Services.AddWebSockets();
-            builder.Services.AddSingleton<IWebClientDispatcher, WebSocketWebClientDispatcher>();
+            builder.Services.AddSingleton<IClientDispatcher, WebSocketWebClientDispatcher>();
 
             return builder;
         }

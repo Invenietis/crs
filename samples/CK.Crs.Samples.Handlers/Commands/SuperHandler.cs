@@ -6,7 +6,7 @@ using CK.Core;
 
 namespace CK.Crs.Samples.Handlers
 {
-    public class SuperHandler : ICommandHandler<SuperCommand, SuperCommand.Result>
+    public class SuperHandler : CommandHandlerBase<SuperCommand, SuperCommand.Result>
     {
         IBus _dispatcher;
         public SuperHandler( IBus dispatcher )
@@ -14,7 +14,7 @@ namespace CK.Crs.Samples.Handlers
             _dispatcher = dispatcher;
         }
 
-        public async Task<SuperCommand.Result> HandleAsync( SuperCommand command, ICommandContext context )
+        public override async Task<SuperCommand.Result> HandleAsync( SuperCommand command, ICommandContext context )
         {
             var evt = new SuperEvent( context.CommandId, command.ActorId, command.AuthenticatedActorId )
             {

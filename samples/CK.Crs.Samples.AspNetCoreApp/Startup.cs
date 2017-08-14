@@ -8,6 +8,9 @@ using CK.Communication.WebSockets;
 using System.IO;
 using CK.Monitoring.Handlers;
 using CK.Monitoring;
+using Rebus.Transport.InMem;
+using Rebus.Routing.TypeBased;
+using Rebus.Persistence.InMem;
 
 namespace CK.Crs.Samples.AspNetCoreApp
 {
@@ -23,7 +26,7 @@ namespace CK.Crs.Samples.AspNetCoreApp
             {
                 Handlers = { new TextFileConfiguration { Path = "Logs" } }
             } );
-
+            
             services
                 .AddCrsCore( config => config
                     .AddCommands( registry => registry.RegisterAssemblies( "CK.Crs.Samples.Handlers" ) )
@@ -33,6 +36,10 @@ namespace CK.Crs.Samples.AspNetCoreApp
                         .Select( t => t.ActorId ).ProvidedBy<ActorIdAmbientValueProvider>()
                         .Select( t => t.AuthenticatedActorId ).ProvidedBy<ActorIdAmbientValueProvider>() )
                 //.AddBrighter( c => c.DefaultPolicy().NoTaskQueues() )
+                .AddRebus( c => c
+                        .Transport( t => t.UseInMemoryTransport( new InMemNetwork( true ), "command_executor" ) )
+                        .Subscriptions( s => s.StoreInMemory() )
+                        .Routing( r => r.TypeBased().MapAssemblyOf<MessageBase>( "command_executor" ) ) )
                 .AddWebSockets()
                 .AddCrsMvcCoreReceiver();
         }

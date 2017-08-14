@@ -6,14 +6,23 @@ namespace CK.Crs
 {
     public class CommandContext : ICommandContext
     {
-        public CommandContext( Guid guid, Type commandType, ICrsReceiverModel endpointModel, IActivityMonitor activityMonitor, string callbackId, CancellationToken token = default( CancellationToken ) )
+        public CommandContext( Guid guid, Type commandType, IActivityMonitor activityMonitor, string callbackId, CancellationToken token = default( CancellationToken ) )
         {
             CommandId = guid;
-            ReceiverModel = endpointModel;
-            Monitor = activityMonitor;
-            CallerId = callbackId;
+            Monitor = activityMonitor ?? throw new ArgumentNullException( nameof( activityMonitor ) );
+            CallerId = callbackId ?? throw new ArgumentNullException( nameof( callbackId ) );
             Aborted = token;
-            Model = ReceiverModel.GetRequestDescription( commandType );
+        }
+
+        public CommandContext( Guid guid, Type commandType,  IActivityMonitor activityMonitor, string callbackId, ICrsReceiverModel endpointModel, CancellationToken token = default( CancellationToken ) )
+        {
+            CommandId = guid;
+            Monitor = activityMonitor ?? throw new ArgumentNullException( nameof( activityMonitor ) );
+            CallerId = callbackId ?? throw new ArgumentNullException( nameof( callbackId ) );
+            Aborted = token;
+
+            ReceiverModel = endpointModel ?? throw new ArgumentNullException( nameof( endpointModel ) );
+            Model = ReceiverModel.GetRequestDescription( commandType ?? throw new ArgumentNullException( nameof( commandType ) ) );
         }
 
         public Guid CommandId { get; }
