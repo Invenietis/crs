@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\core\CK.Crs.Abstractions\CK.Crs.Abstractions.csproj" />
+    <ProjectReference Include="..\..\core\CK.Crs.Runtime\CK.Crs.Runtime.csproj" />
+    <ProjectReference Include="..\..\plugins\CK.Crs.Rebus\CK.Crs.Rebus.csproj" />
+    <ProjectReference Include="..\CK.Crs.Samples.Handlers\CK.Crs.Samples.Handlers.csproj" />
+    <ProjectReference Include="..\CK.Crs.Samples.Messages\CK.Crs.Samples.Messages.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Rebus.SqlServer" Version="4.0.0-b08" />
+  </ItemGroup>
+</Project>

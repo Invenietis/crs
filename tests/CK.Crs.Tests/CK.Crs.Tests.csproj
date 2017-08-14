@@ -2,7 +2,7 @@
   <Import Project="../../common/shared.props" />
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CK.Monitoring" Version="7.0.0" />

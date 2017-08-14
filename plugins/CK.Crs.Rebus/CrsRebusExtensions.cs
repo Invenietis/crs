@@ -1,4 +1,4 @@
-﻿using Rebus.Config;
+using Rebus.Config;
 using System;
 using CK.Crs;
 using CK.Crs.Rebus;
@@ -20,8 +20,9 @@ namespace Microsoft.Extensions.DependencyInjection
 
             var bus = configurer.Start();
             var resbusAdapter = new RebusAdapter( bus );
-            builder.Services.AddSingleton<ICommandDispatcher>( resbusAdapter );
-            builder.Services.AddSingleton<IEventPublisher>( resbusAdapter );
+            builder.Services.AddSingleton( resbusAdapter );
+            builder.Services.AddSingleton<ICommandDispatcher>( s => resbusAdapter );
+            builder.Services.AddSingleton<IEventPublisher>( s => resbusAdapter );
 
             return builder;
         }

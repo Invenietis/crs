@@ -11,6 +11,7 @@ using CK.Monitoring;
 using Rebus.Transport.InMem;
 using Rebus.Routing.TypeBased;
 using Rebus.Persistence.InMem;
+using Rebus.Config;
 
 namespace CK.Crs.Samples.AspNetCoreApp
 {
@@ -26,20 +27,25 @@ namespace CK.Crs.Samples.AspNetCoreApp
             {
                 Handlers = { new TextFileConfiguration { Path = "Logs" } }
             } );
-            
+
+            var conString = @"Server=.\SQLSERVER2016;Database=RebusQueue;Integrated Security=SSPI";
+
             services
                 .AddCrsCore( config => config
                     .AddCommands( registry => registry.RegisterAssemblies( "CK.Crs.Samples.Handlers" ) )
-                    .AddReceivers( endpoints => endpoints.For( typeof( CrsPublicEndpoint<> ) ).AcceptAll() ) )
+                    .AddReceivers( endpoints => endpoints
+                        .For( typeof( CrsPublicEndpoint<> ) ).AcceptAll()
+                        .For( typeof( SimpleCrsEndpoint<> ) ).AcceptAll() ) )
                 .AddAmbientValues( ambientValues => ambientValues
                     .AddAmbientValueProviderFrom<MessageBase>()
                         .Select( t => t.ActorId ).ProvidedBy<ActorIdAmbientValueProvider>()
                         .Select( t => t.AuthenticatedActorId ).ProvidedBy<ActorIdAmbientValueProvider>() )
                 //.AddBrighter( c => c.DefaultPolicy().NoTaskQueues() )
                 .AddRebus( c => c
-                        .Transport( t => t.UseInMemoryTransport( new InMemNetwork( true ), "command_executor" ) )
-                        .Subscriptions( s => s.StoreInMemory() )
-                        .Routing( r => r.TypeBased().MapAssemblyOf<MessageBase>( "command_executor" ) ) )
+                        .Transport( t => t.UseSqlServerAsOneWayClient( conString, "tMessages" ) )
+                        .Subscriptions( s => s.StoreInSqlServer( conString, "tSubscriptions" ) )
+                        .Routing( r => r.TypeBased().MapAssemblyOf<MessageBase>( "command_executor" ) )
+                        )
                 .AddWebSockets()
                 .AddCrsMvcCoreReceiver();
         }

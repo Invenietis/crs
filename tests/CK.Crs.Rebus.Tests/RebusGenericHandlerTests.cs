@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 using Rebus.Activation;
 using Rebus.Config;
 using Rebus.Routing.TypeBased;
@@ -52,19 +52,20 @@ namespace CK.Crs.Rebus.Tests
                         .Transport( t => t.UseInMemoryTransport( new InMemNetwork( true ), "command_executor" ) )
                         .Routing( r => r.TypeBased().MapAssemblyOf<SimpleCommand>( "command_executor" ) ) );
 
-                var services = serviceCollection.BuildServiceProvider();
+                using( var services = serviceCollection.BuildServiceProvider() )
+                {
 
-                var bus = services.GetRequiredService<IBus>();
+                    var dispatcher = services.GetRequiredService<ICommandDispatcher>();
 
-                // Request context
-                var monitor = new ActivityMonitor();
-                var context = new CommandContext( Guid.NewGuid(), typeof( SimpleCommand ), monitor, "123456" );
+                    // Request context
+                    var monitor = new ActivityMonitor();
+                    var context = new CommandContext( Guid.NewGuid(), typeof( SimpleCommand ), monitor, "123456" );
 
-                await bus.SendAsync( new SimpleCommand { ActorId = 421 }, context );
+                    await dispatcher.PostAsync( new SimpleCommand { ActorId = 421 }, context );
 
-                await Task.Delay( 500 );
+                    await Task.Delay( 500 );
 
-                ((IDisposable)bus)?.Dispose();
+                }
             }
         }
     }
