@@ -1,12 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace CK.Crs
 {
     public interface ICrsModel
     {
-        IReadOnlyList<ICrsReceiverModel> Receivers { get; }
+        IReadOnlyList<IEndpointModel> Endpoints { get; }
 
-        ICrsReceiverModel GetReceiver( Type type );
+        IEndpointModel GetEndpoint( Type type );
     }
 }

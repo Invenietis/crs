@@ -1,8 +1,6 @@
-﻿using CK.Crs.Samples.Messages;
+using CK.Core;
 using CK.Monitoring;
 using Microsoft.Extensions.DependencyInjection;
-using Rebus.Config;
-using Rebus.Routing.TypeBased;
 using System;
 using System.Threading;
 
@@ -10,49 +8,44 @@ namespace CK.Crs.Samples.ExecutorApp.Rebus
 {
     class Program
     {
+
         static void Main( string[] args )
         {
-            Console.WriteLine( "Hello World!" );
-
-            ServiceCollection collection = new ServiceCollection();
-            GrandOutput.EnsureActiveDefault( new GrandOutputConfiguration() );
-
-            using( Startup s = new Startup() )
+            using( CancellationTokenSource cancellationTokenSource = new CancellationTokenSource() )
             {
-                s.Configure( collection );
-                s.ConfigureApplication( collection.BuildServiceProvider() );
+                Console.CancelKeyPress += ( sender, e ) => cancellationTokenSource.Cancel();
+
+                using( GrandOutput.EnsureActiveDefault( new GrandOutputConfiguration
+                {
+                    Handlers = { new CK.Monitoring.Handlers.TextFileConfiguration { Path = "logs/", MaxCountPerFile = 100 } }
+                } ) )
+                {
+                    ActivityMonitor.AutoConfiguration = ( m ) => m.Output.RegisterClient( new ActivityMonitorConsoleClient() );
+
+                    RunService<RebusCommandService>( cancellationTokenSource.Token );
+                    RunService<RebusEventService>( cancellationTokenSource.Token );
+                }
             }
         }
-    }
 
-    class Startup : IDisposable
-    {
-        public void Configure( IServiceCollection services )
+        private static void RunService<T>( CancellationToken token ) where T : IRebusService
         {
-            var conString = @"Server=.\SQLSERVER2016;Database=RebusQueue;Integrated Security=SSPI";
+            ServiceCollection collection = new ServiceCollection();
+            T s = Activator.CreateInstance<T>();
 
-            services
-                .AddCrsCore( c => c
-                    .AddCommands( r => r.RegisterAssemblies( "CK.Crs.Samples.Handlers" ) ) )
-                .AddRebus( c => c
-                    .Transport( t => t.UseSqlServer( conString, "tMessages", "command_executor" ) )
-                    .Routing( r => r.TypeBased().MapAssemblyOf<MessageBase>( "command_executor" ) ) );
-
-        }
-
-        public void ConfigureApplication( IServiceProvider services )
-        {
-        }
-
-        ManualResetEvent _e = new ManualResetEvent( false );
-        public void Dispose()
-        {
-            Console.CancelKeyPress += ( sender, e ) =>
+            using( var services = collection.BuildServiceProvider() )
             {
-                _e.Set();
-            };
-            _e.WaitOne();
-            _e.Dispose();
+                try
+                {
+                    s.Init( collection );
+                    s.Start( services );
+                    token.WaitHandle.WaitOne();
+                }
+                finally
+                {
+                    s.Stop( services );
+                }
+            }
         }
     }
 }

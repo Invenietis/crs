@@ -1,4 +1,4 @@
-﻿using CK.Communication.WebSockets;
+using CK.Communication.WebSockets;
 using CK.Core;
 using System;
 using System.Collections.Concurrent;
@@ -11,16 +11,22 @@ namespace CK.Crs
     public class WebSocketWebClientDispatcher : IClientDispatcher, IDisposable
     {
         readonly IWebSocketSender _sender;
+        readonly IClientEventStore _liveEventStore;
         readonly IWebSocketConnectedClients _connectedClients;
         readonly BlockingCollection<WebSocketMessage> _messages;
-        readonly IClientEventStore _liveEventStore;
+        readonly ClientDispatcherOptions _dispatcherOptions;
 
-        public WebSocketWebClientDispatcher( IClientEventStore liveEventStore, IWebSocketSender sender, IWebSocketConnectedClients connectedClients )
+        public WebSocketWebClientDispatcher(
+            IClientEventStore liveEventStore,
+            IWebSocketSender sender,
+            IWebSocketConnectedClients connectedClients,
+            ClientDispatcherOptions dispatcherOptions )
         {
             _liveEventStore = liveEventStore;
             _sender = sender;
             _connectedClients = connectedClients;
             _messages = new BlockingCollection<WebSocketMessage>();
+            _dispatcherOptions = dispatcherOptions;
 
             Task.Run( async () =>
              {
@@ -60,7 +66,7 @@ namespace CK.Crs
         }
         private async Task DoSendToClient<T>( string clientId, string eventName, T message, ICommandContext context )
         {
-            if( !context.ReceiverModel.SupportsClientEventsFiltering || await _liveEventStore.HasFilter( context.CallerId, eventName ) )
+            if( !_dispatcherOptions.SupportsServerSideEventsFiltering || await _liveEventStore.HasFilter( context.CallerId, eventName ) )
             {
                 var msg = Serialize( message, context );
                 _messages.Add( new WebSocketMessage( msg, context.CallerId, context ) );

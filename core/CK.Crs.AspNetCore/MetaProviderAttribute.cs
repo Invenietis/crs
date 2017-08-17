@@ -69,15 +69,15 @@ namespace CK.Crs
                 if( command.ShowCommands )
                 {
                     result.Commands = new Dictionary<string, MetaCommand.MetaResult.MetaCommandDescription>();
-                    var endpointModel = _model.GetReceiver( context.Controller.GetType() );
-                    foreach( var c in endpointModel.Requests )
+                    var endpointModel = _model.GetEndpoint( context.Controller.GetType() );
+                    foreach( var c in endpointModel.Commands )
                     {
                         MetaCommand.MetaResult.MetaCommandDescription desc = new MetaCommand.MetaResult.MetaCommandDescription
                         {
                             CommandName = c.Name,
-                            CommandType = c.Type.AssemblyQualifiedName,
-                            Parameters = c.Type.GetTypeInfo().DeclaredProperties.Select( e => new RequestPropertyInfo( e, _registration ) ).ToArray(),
-                            Traits = c.Traits?.ToString(),
+                            CommandType = c.CommandType.AssemblyQualifiedName,
+                            Parameters = c.CommandType.GetTypeInfo().DeclaredProperties.Select( e => new RequestPropertyInfo( e, _registration ) ).ToArray(),
+                            Traits = c.Tags?.ToString(),
                             Description = c.Description
                         };
                         result.Commands.Add( desc.CommandName, desc );

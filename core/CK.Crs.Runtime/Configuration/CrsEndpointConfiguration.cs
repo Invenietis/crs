@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -8,25 +8,25 @@ namespace CK.Crs.Infrastructure
 {
     class CrsEndpointConfiguration : ICrsEndpointConfigurationRoot, ICrsEndpointConfiguration
     {
-        readonly IRequestRegistry _registry;
-        readonly Dictionary<Type, ISet<RequestDescription>> _endpoints;
+        readonly ICommandRegistry _registry;
+        readonly Dictionary<Type, ISet<CommandModel>> _endpoints;
 
         Type _currentConfiguredEndpoint;
         private CrsModel _model;
 
-        internal Dictionary<Type, ISet<RequestDescription>> ConfiguredEndpoints => _endpoints;
+        internal Dictionary<Type, ISet<CommandModel>> ConfiguredEndpoints => _endpoints;
 
-        internal CrsEndpointConfiguration( IRequestRegistry registry, CrsModel model )
+        internal CrsEndpointConfiguration( ICommandRegistry registry, CrsModel model )
         {
             _registry = registry ?? throw new ArgumentNullException( nameof( registry ), "You must first AddCommands before AddEndpoint." );
-            _endpoints = new Dictionary<Type, ISet<RequestDescription>>();
+            _endpoints = new Dictionary<Type, ISet<CommandModel>>();
             _model = model;
         }
 
         public ICrsEndpointConfiguration For( Type endpoint )
         {
-            if( !ReflectionUtil.IsAssignableToGenericType( endpoint.GetGenericTypeDefinition(), typeof( ICrsReceiver<> ) ) )
-                throw new ArgumentException( "The endpoint must implement ICrsEndpoint", nameof( endpoint ) );
+            //if( !ReflectionUtil.IsAssignableToGenericType( endpoint.GetGenericTypeDefinition(), typeof( IHttpCommandReceiver<> ) ) )
+            //    throw new ArgumentException( "The endpoint must implement IHttpCommandReceiver", nameof( endpoint ) );
 
             _currentConfiguredEndpoint = endpoint;
 
@@ -34,11 +34,11 @@ namespace CK.Crs.Infrastructure
         }
 
 
-        public ICrsEndpointConfigurationRoot Apply( Func<RequestDescription, bool> filter )
+        public ICrsEndpointConfigurationRoot Apply( Func<CommandModel, bool> filter )
         {
             Debug.Assert( _currentConfiguredEndpoint != null );
 
-            ISet<RequestDescription> commands = new HashSet<RequestDescription>( _registry.Registration.Where( filter ) );
+            ISet<CommandModel> commands = new HashSet<CommandModel>( _registry.Registration.Where( filter ), new RequestDescriptionComparer() );
             _endpoints.Add( _currentConfiguredEndpoint, commands );
 
             _model.AddEndpoint( new CrsReceiverModel( _currentConfiguredEndpoint, commands ) );

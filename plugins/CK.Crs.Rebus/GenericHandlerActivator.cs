@@ -1,20 +1,21 @@
-﻿using Rebus.Activation;
+using Rebus.Activation;
 using Rebus.Handlers;
 using Rebus.Transport;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Rebus.Bus;
 
 namespace CK.Crs.Rebus
 {
-    sealed class GenericHandlerActivator : IHandlerActivator
+    sealed class GenericHandlerActivator : IHandlerActivator, IContainerAdapter
     {
-        readonly IRequestRegistry _registry;
-        readonly Lazy<IRequestHandlerFactory> _factory;
-        public GenericHandlerActivator( Lazy<IRequestHandlerFactory> factory, IRequestRegistry registry )
+        readonly ICommandRegistry _registry;
+        readonly Lazy<ICommandHandlerInvoker> _invoker;
+        public GenericHandlerActivator( Lazy<ICommandHandlerInvoker> invoker, ICommandRegistry registry )
         {
-            _factory = factory ?? throw new ArgumentNullException( nameof( factory ) );
+            _invoker = invoker ?? throw new ArgumentNullException( nameof( invoker ) );
             _registry = registry ?? throw new ArgumentNullException( nameof( registry ) );
         }
 
@@ -22,8 +23,15 @@ namespace CK.Crs.Rebus
             TMessage message,
             ITransactionContext transactionContext )
         {
-            var res = new GenericRebusHandler<TMessage>( _factory.Value, _registry );
+            var res = new GenericRebusHandler<TMessage>( _invoker.Value, _registry, _bus );
             return Task.FromResult<IEnumerable<IHandleMessages<TMessage>>>( new[] { res } );
+        }
+
+        global::Rebus.Bus.IBus _bus;
+
+        public void SetBus( global::Rebus.Bus.IBus bus )
+        {
+            _bus = bus;
         }
     }
 }

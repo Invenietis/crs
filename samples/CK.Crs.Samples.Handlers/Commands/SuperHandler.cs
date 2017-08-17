@@ -1,4 +1,4 @@
-﻿using CK.Crs.Samples.Messages;
+using CK.Crs.Samples.Messages;
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -6,15 +6,9 @@ using CK.Core;
 
 namespace CK.Crs.Samples.Handlers
 {
-    public class SuperHandler : CommandHandlerBase<SuperCommand, SuperCommand.Result>
+    public class SuperHandler : ICommandHandler<SuperCommand, SuperCommand.Result>
     {
-        IBus _dispatcher;
-        public SuperHandler( IBus dispatcher )
-        {
-            _dispatcher = dispatcher;
-        }
-
-        public override async Task<SuperCommand.Result> HandleAsync( SuperCommand command, ICommandContext context )
+        public Task<SuperCommand.Result> HandleAsync( SuperCommand command, ICommandContext context )
         {
             var evt = new SuperEvent( context.CommandId, command.ActorId, command.AuthenticatedActorId )
             {
@@ -23,9 +17,7 @@ namespace CK.Crs.Samples.Handlers
 
             context.Monitor.Trace( evt.Message );
 
-            await _dispatcher.PublishAsync( evt, context );
-
-            return new SuperCommand.Result( "Bouyah" );
+            return Task.FromResult( new SuperCommand.Result( "Bouyah" ) );
         }
     }
 }

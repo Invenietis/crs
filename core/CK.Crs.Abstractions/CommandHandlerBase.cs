@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+//using System;
+//using System.Collections.Generic;
+//using System.Text;
+//using System.Threading.Tasks;
 
-namespace CK.Crs
-{
+//namespace CK.Crs
+//{
+//    public abstract class CommandHandlerBase<T, TResult> : ICommandHandlerWithResult<T>
+//    {
+//        public abstract Task<TResult> HandleAsync( T command, ICommandContext context );
 
-    public abstract class CommandHandlerBase<T, TResult> : ICommandHandler<T, TResult>
-    {
-        public abstract Task<TResult> HandleAsync( T request, ICommandContext context );
-
-        async Task<object> ICommandHandlerWithResult<T>.HandleAsync( T request, ICommandContext context )
-        {
-            var res = await HandleAsync( request, context );
-            return res;
-        }
-    }
-}
+//        Task<object> ICommandHandlerWithResult<T>.HandleAsync( T command, ICommandContext context )
+//        {
+//            return (Task<object>)(object)HandleAsync( command, context );
+//        }
+//    }
+//}

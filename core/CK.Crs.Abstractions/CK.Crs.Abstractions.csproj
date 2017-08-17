@@ -6,8 +6,6 @@
   <ItemGroup>
     <PackageReference Include="CK.ActivityMonitor.SimpleSender" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.0.0" />
-    
-    <PackageReference Include="System.Security.Claims" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

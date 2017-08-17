@@ -1,4 +1,4 @@
-﻿using System.Threading;
+using System.Threading;
 using System.Threading.Tasks;
 using CK.Core;
 using System;
@@ -29,15 +29,10 @@ namespace CK.Crs
         /// Gets the identifier of the caller of this command context.
         /// </summary>
         string CallerId { get; }
-
+        
         /// <summary>
-        /// Gets the related <see cref="ICrsReceiverModel"/>
+        /// Gets the related <see cref="CommandModel"/> for the given executing command.
         /// </summary>
-        ICrsReceiverModel ReceiverModel { get; }
-
-        /// <summary>
-        /// Gets the related <see cref="RequestDescription"/> for the given executing command.
-        /// </summary>
-        RequestDescription Model { get; }
+        CommandModel Model { get; }
     }
 }

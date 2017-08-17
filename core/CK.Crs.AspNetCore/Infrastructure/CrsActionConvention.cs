@@ -1,4 +1,4 @@
-﻿using CK.Core;
+using CK.Core;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
@@ -21,24 +21,24 @@ namespace CK.Crs.Infrastructure
         public void Apply( ActionModel action )
         {
             // Only applies on ReceiveCommand action of the Crs Endpoint
-            if( action.ActionName != nameof( ICrsReceiver<object>.ReceiveCommand ) ) return;
+            if( action.ActionName != nameof( IHttpCommandReceiver<object>.ReceiveCommand ) ) return;
 
             if( action.Controller.ControllerType.IsGenericType &&
                 ReflectionUtil.IsAssignableToGenericType(
                     action.Controller.ControllerType.GetGenericTypeDefinition(),
-                    typeof( ICrsReceiver<> ) ) )
+                    typeof( IHttpCommandReceiver<> ) ) )
             {
-                ICrsReceiverModel endpointModel = _model.GetReceiver( action.Controller.ControllerType.AsType() );
+                IEndpointModel endpointModel = _model.GetEndpoint( action.Controller.ControllerType.AsType() );
                 if( endpointModel != null )
                 {
                     var requestType = action.Controller.ControllerType.GetGenericArguments()[0];
-                    var request = endpointModel.GetRequestDescription( requestType );
+                    var request = endpointModel.GetCommandModel( requestType );
                     if( request != null )
                     {
                         BasicCrsActionConfiguration( action, request.Name );
 
-                        if( endpointModel.ValidateAmbientValues ) action.Filters.Add( new ValidateAmbientValuesAttribute() );
-                        if( endpointModel.ValidateModel ) action.Filters.Add( new ValidateModelAttribute() );
+                        if( endpointModel.ApplyAmbientValuesValidation ) action.Filters.Add( new ValidateAmbientValuesAttribute() );
+                        if( endpointModel.ApplyModelValidation ) action.Filters.Add( new ValidateModelAttribute() );
                     }
                     else if( requestType == typeof( MetaCommand ) )
                     {
@@ -87,20 +87,34 @@ namespace CK.Crs.Infrastructure
 
             public Task BindModelAsync( ModelBindingContext bindingContext )
             {
-                // TODO: CommandId provider ?
-                var commandId = Guid.NewGuid();
-
                 // Gets the ControllerType or EndpointName from somehere...
                 var endpointModel = _model.GetEndpointFromContext( bindingContext.ActionContext );
+                if( endpointModel == null ) throw new InvalidOperationException( "There is no endpoint available for this request..." );
+
+                var commandType = bindingContext.ActionContext.ActionDescriptor.Parameters[0].ParameterType;
+                var commandModel = endpointModel.GetCommandModel( commandType );
+                if( commandModel == null ) throw new InvalidOperationException( "There is no command available for this request..." );
 
                 var actionName = bindingContext.ActionContext.ActionDescriptor.DisplayName;
                 var monitor = new ActivityMonitor( actionName );
 
                 // CallerId or ConnectionId provider.
-                var callerId = bindingContext.ValueProvider.GetValue( endpointModel.CallerIdName ).FirstValue;
+                var callerValues = bindingContext.ValueProvider.GetValue( endpointModel.CallerIdName );
+                var callerValue = callerValues.FirstValue;
+                if( callerValues.Length > 1 )
+                {
+                    monitor.Warn( $"Multiple values found for CallerId={endpointModel.CallerIdName}. Using the first value in the order of ValueProvider registrations: {callerValue}." );
+                }
+                
+                var commandId = Guid.NewGuid(); // TODO: CommandId provider ?
 
-                var commandType = bindingContext.ActionContext.ActionDescriptor.Parameters[0].ParameterType;
-                var model = new CommandContext( commandId, commandType, monitor, callerId, endpointModel, bindingContext.HttpContext.RequestAborted );
+                var model = new CommandContext(
+                    commandId,
+                    monitor,
+                    commandModel,
+                    callerValue,
+                    bindingContext.HttpContext.RequestAborted );
+
                 bindingContext.ActionContext.ActionDescriptor.SetProperty<ICommandContext>( model );
                 bindingContext.Result = ModelBindingResult.Success( model );
 

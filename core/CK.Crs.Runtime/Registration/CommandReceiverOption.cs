@@ -8,7 +8,7 @@ namespace CK.Crs
     /// </summary>
     public class CommandReceiverOption
     {
-        public CommandReceiverOption( IServiceCollection services, IRequestRegistry r, IAmbientValuesRegistration a, CKTraitContext traits )
+        public CommandReceiverOption( IServiceCollection services, ICommandRegistry r, IAmbientValuesRegistration a, CKTraitContext traits )
         {
             Services = services;
             Commands = r;
@@ -18,7 +18,7 @@ namespace CK.Crs
 
         public CKTraitContext Traits { get; }
 
-        public IRequestRegistry Commands { get; }
+        public ICommandRegistry Commands { get; }
 
         public IServiceCollection Services { get; }
 

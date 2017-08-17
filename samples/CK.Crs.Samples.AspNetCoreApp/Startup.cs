@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -32,22 +32,23 @@ namespace CK.Crs.Samples.AspNetCoreApp
 
             services
                 .AddCrsCore( config => config
-                    .AddCommands( registry => registry.RegisterAssemblies( "CK.Crs.Samples.Handlers" ) )
-                    .AddReceivers( endpoints => endpoints
-                        .For( typeof( CrsPublicEndpoint<> ) ).AcceptAll()
-                        .For( typeof( SimpleCrsEndpoint<> ) ).AcceptAll() ) )
+                    .Commands( registry => registry.RegisterAssemblies( "CK.Crs.Samples.Handlers.dll" ) )
+                    .Endpoints( endpoints => endpoints
+                        .For( typeof( CrsSenderEndpoint<> ) ).AcceptAll()
+                        .For( typeof( CrsDispatcherEndpoint<> ) ).AcceptAll() ) )
                 .AddAmbientValues( ambientValues => ambientValues
-                    .AddAmbientValueProviderFrom<MessageBase>()
-                        .Select( t => t.ActorId ).ProvidedBy<ActorIdAmbientValueProvider>()
-                        .Select( t => t.AuthenticatedActorId ).ProvidedBy<ActorIdAmbientValueProvider>() )
-                //.AddBrighter( c => c.DefaultPolicy().NoTaskQueues() )
-                .AddRebus( c => c
-                        .Transport( t => t.UseSqlServerAsOneWayClient( conString, "tMessages" ) )
-                        .Subscriptions( s => s.StoreInSqlServer( conString, "tSubscriptions" ) )
-                        .Routing( r => r.TypeBased().MapAssemblyOf<MessageBase>( "command_executor" ) )
-                        )
-                .AddWebSockets()
-                .AddCrsMvcCoreReceiver();
+                    .AddAmbientValueProvider<ActorIdAmbientValueProvider>( nameof( MessageBase.ActorId ) ) );
+
+                //.AddRebus( "commands", t => t.HasQueue("") )
+                //.AddRebus( "commands2" )
+                //.AddRebus( "commands3" )
+                //, c => c
+                //        .Routing( r => r.TypeBased().MapAssemblyOf<SuperCommand>( "commands" ) )
+                //        .Transport( t => t.UseSqlServer( conString, "tMessages", "commands" ) ) )
+                //.AddClientDispatcher()
+                //.AddCrsMvcCoreReceiver();
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

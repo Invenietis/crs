@@ -1,9 +1,11 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 
 namespace CK.Crs
 {
-
-    public interface ICommandDispatcher
+    /// <summary>
+    /// Dispatch a command on a local channel.
+    /// </summary>
+    public interface ICommandReceiver
     {
         /// <summary>
         /// Sends the command
@@ -12,6 +14,6 @@ namespace CK.Crs
         /// <param name="command">The command to send.</param>
         /// <param name="context">The related <see cref="ICommandContext"/>.</param>
         /// <returns></returns>
-        Task PostAsync<T>( T command, ICommandContext context ) where T : class;
+        Task<Response> ReceiveCommand<T>( T command, ICommandContext context ) where T : class;
     }
 }

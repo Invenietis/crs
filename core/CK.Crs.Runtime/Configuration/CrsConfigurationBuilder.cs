@@ -1,47 +1,45 @@
-﻿using CK.Core;
+using CK.Core;
 using CK.Crs.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CK.Crs
 {
     public class CrsConfigurationBuilder : ICrsConfiguration
     {
-        IRequestRegistry _commands;
+        ICommandRegistry _commands;
         IServiceCollection _services;
         CrsEndpointConfiguration _endpoints;
         CrsModel _model;
-
+        
         public CrsConfigurationBuilder( IServiceCollection services )
         {
             _services = services;
-            _services.AddSingleton<IRequestHandlerFactory, DefaultRequestHandlerFactory>();
-            _services.AddSingleton<ICommandSender, DefaultCommandSender>();
-            _services.AddSingleton<IEventPublisher, DefaultEventPublisher>();
-            _services.AddSingleton<IBus, DefaultBus>();
-            
-            // TODO: this should be added only if configured.
-            _services.AddSingleton<IClientEventStore, InMemoryLiveEventStore>();
+            _services.AddSingleton<ICommandHandlerFactory, DefaultCommandHandlerFactory>();
+            _services.AddSingleton<ICommandHandlerInvoker, DefaultCommandInvoker>();
 
+            //_services.AddSingleton<IEventPublisher, DefaultEventPublisher>();
             _model = new CrsModel();
         }
 
         internal IServiceCollection Services => _services;
-        internal IRequestRegistry Registry => _commands;
+        internal ICommandRegistry Registry => _commands;
         internal CrsEndpointConfiguration Endpoints => _endpoints;
 
-        public ICrsConfiguration AddCommands( Action<IRequestRegistry> registryConfiguration )
+        ICrsConfiguration ICrsConfiguration.Commands( Action<ICommandRegistry> registryConfiguration )
         {
             _commands = new DefaultRequestRegistry( new CKTraitContext( "Crs" ) );
 
             registryConfiguration( Registry );
 
-            _services.AddSingleton<IRequestRegistry>( Registry );
+            _services.AddSingleton<ICommandRegistry>( Registry );
             
             return this;
         }
 
-        public ICrsConfiguration AddReceivers( Action<ICrsEndpointConfigurationRoot> endpointConfiguration )
+        ICrsConfiguration ICrsConfiguration.Endpoints( Action<ICrsEndpointConfigurationRoot> endpointConfiguration )
         {
             _endpoints = new CrsEndpointConfiguration( Registry, _model );
             endpointConfiguration( _endpoints );

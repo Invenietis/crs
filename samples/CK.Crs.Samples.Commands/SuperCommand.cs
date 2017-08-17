@@ -1,7 +1,12 @@
-﻿namespace CK.Crs.Samples.Messages
+using System;
+
+namespace CK.Crs.Samples.Messages
 {
-    public class SuperCommand : MessageBase
+    public class SuperCommand
     {
+        public int ActorId { get; set; }
+        public int AuthenticatedActorId { get; set; }
+
         public class Result
         {
             public string Message { get; set; }

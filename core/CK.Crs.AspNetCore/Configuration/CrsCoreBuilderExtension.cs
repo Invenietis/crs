@@ -1,4 +1,4 @@
-﻿using CK.Core;
+using CK.Core;
 using CK.Crs;
 using CK.Crs.Infrastructure;
 using System;
@@ -13,9 +13,12 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public IServiceCollection Services => CrsBuilder.Services;
 
-        public IRequestRegistry Registry => CrsBuilder.Registry;
+        public ICommandRegistry Registry => CrsBuilder.Registry;
 
         public ICrsModel Model => CrsBuilder.Model;
+
+        public void AddReceiver<T>( Func<IServiceProvider, T> factoryFunction ) where T : class, ICommandReceiver
+            => CrsBuilder.AddReceiver( factoryFunction );
     }
 
     public static class CrsCoreBuilderExtension

@@ -29,7 +29,7 @@ namespace CK.Crs
 
         public IServiceCollection Services => _builder.Services;
 
-        public IRequestRegistry Registry => _builder.Registry;
+        public ICommandRegistry Registry => _builder.Registry;
 
         public ICrsModel Model => _builder.Model;
     }
@@ -108,19 +108,19 @@ namespace CK.Crs
 
         class RegistryAdapter : IAmASubscriberRegistry
         {
-            IRequestRegistry _registry;
-            public RegistryAdapter(IRequestRegistry registry)
+            ICommandRegistry _registry;
+            public RegistryAdapter(ICommandRegistry registry)
             {
                 _registry = registry;
             }
             IEnumerable<Type> IAmASubscriberRegistry.Get<T>()
             {
-                return _registry.Registration.Where(t => t.Type == typeof(T)).Select(t => t.HandlerType);
+                return _registry.Registration.Where(t => t.CommandType == typeof(T)).Select(t => t.HandlerType);
             }
 
             void IAmASubscriberRegistry.Register<TRequest, TImplementation>()
             {
-                _registry.Register( new RequestDescription(typeof(TRequest)) { HandlerType = typeof(TImplementation) } );
+                _registry.Register( new CommandModel(typeof(TRequest)) { HandlerType = typeof(TImplementation) } );
             }
         }
     }

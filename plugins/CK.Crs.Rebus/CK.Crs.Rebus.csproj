@@ -7,7 +7,7 @@
   <ItemGroup>
     <PackageReference Include="CK.Monitoring" Version="7.0.0" />
     <PackageReference Include="MessageTemplates" Version="1.0.0-rc-00260" />
-    <PackageReference Include="Rebus" Version="4.0.0-b19" />
+    <PackageReference Include="Rebus" Version="4.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.0.0" />
   </ItemGroup>
 

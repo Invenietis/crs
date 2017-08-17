@@ -1,14 +1,27 @@
-﻿using CK.Core;
+using CK.Core;
 using Rebus.Pipeline;
 using Rebus.Transport;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace CK.Crs.Rebus
+namespace CK.Crs
 {
     public static class RebusExtensions
     {
+        public static bool HasAsyncTag( this CommandModel commandModel )
+        {
+            CKTrait asyncTrait = commandModel.Tags.Context.FindOrCreate( "Async" );
+            return commandModel.Tags.Overlaps( asyncTrait );
+        }
+
+        public static ICommandRegistration IsAsync( this ICommandRegistration commandRegistration )
+        {
+            CKTrait asyncTrait = commandRegistration.Model.Tags.Context.FindOrCreate( "Async" );
+            commandRegistration.Model.Tags = commandRegistration.Model.Tags.Apply( asyncTrait, SetOperation.Union );
+            return commandRegistration;
+        }
+
         /// <summary>
         /// Gets an <see cref="IActivityMonitor"/> from <see cref="IMessageContext"/>.
         /// </summary>

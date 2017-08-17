@@ -22,9 +22,9 @@ namespace CK.Crs.Infrastructure
             if( controller.ControllerType.IsGenericType &&
                 ReflectionUtil.IsAssignableToGenericType(
                     controller.ControllerType.GetGenericTypeDefinition(),
-                    typeof( ICrsReceiver<> ) ) )
+                    typeof( IHttpCommandReceiver<> ) ) )
             {
-                ICrsReceiverModel endpointModel = _model.GetReceiver( controller.ControllerType.AsType() );
+                IEndpointModel endpointModel = _model.GetEndpoint( controller.ControllerType.AsType() );
                 if( endpointModel != null )
                 {
                     controller.ControllerName = endpointModel.Name;

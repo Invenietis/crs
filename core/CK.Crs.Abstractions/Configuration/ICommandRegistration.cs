@@ -1,4 +1,4 @@
-﻿using CK.Core;
+using CK.Core;
 
 namespace CK.Crs
 {
@@ -10,22 +10,11 @@ namespace CK.Crs
         where TConfig : ICommandConfiguration<TConfig>
     {
         /// <summary>
-        /// Gets the <see cref="CKTraitContext"/>
-        /// </summary>
-        CKTraitContext Traits { get; }
-
-        /// <summary>
         /// Overrides the name of the command.
         /// </summary>
         /// <param name="commandName"></param>
         /// <returns></returns>
         ICommandConfiguration<TConfig> CommandName( string commandName );
-
-        /// <summary>
-        /// This command should be handled by an asynchronous executor and supports by the way deferred execution.
-        /// </summary>
-        /// <returns></returns>
-        ICommandConfiguration<TConfig> IsAsync();
 
         /// <summary>
         /// Register a new command
@@ -56,8 +45,8 @@ namespace CK.Crs
     public interface ICommandRegistration : ICommandConfiguration<ICommandRegistration>, ICommandConfigurationWithHandling<ICommandRegistration>
     {
         /// <summary>
-        /// Gets the <see cref="RequestDescription"/>.
+        /// Gets the <see cref="CommandModel"/>.
         /// </summary>
-        RequestDescription Description { get; }
+        CommandModel Model { get; }
     }
 }

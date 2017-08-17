@@ -23,7 +23,7 @@ namespace CK.Crs
             return _processor.PublishAsync( (dynamic)evt, continueOnCapturedContext: false, cancellationToken: context.Aborted );
         }
 
-        async Task<object> ICommandSender.SendAsync<T>( T command, ICommandContext context )
+        async Task<object> ICommandReceiver.ReceiveCommand<T>( T command, ICommandContext context )
         {
             await _processor.SendAsync( (dynamic)command, continueOnCapturedContext: false, cancellationToken: context.Aborted );
             return Task.FromResult<object>( null );

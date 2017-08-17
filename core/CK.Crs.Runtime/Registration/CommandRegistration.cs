@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,44 +11,31 @@ namespace CK.Crs
     /// </summary>
     public class CommandRegistration : ICommandRegistration
     {
-        RequestDescription _commandDescription;
-        IRequestRegistry _registry;
-        CKTraitContext _traits;
+        CommandModel _model;
+        ICommandRegistry _registry;
 
-        public RequestDescription Description  => _commandDescription;
+        public CommandModel Model  => _model;
 
         /// <summary>
-        /// Creates a <see cref="CommandRegistration"/> from a <see cref="RequestDescription"/>
+        /// Creates a <see cref="CommandRegistration"/> from a <see cref="CommandModel"/>
         /// </summary>
-        /// <param name="description"></param>
-        public CommandRegistration(IRequestRegistry registry, RequestDescription description, CKTraitContext traits)
+        /// <param name="model"></param>
+        public CommandRegistration( ICommandRegistry registry, CommandModel model )
         {
             _registry = registry;
-            _commandDescription = description;
-            _traits = traits;
+            _model = model;
         }
-
-        public CKTraitContext Traits => _traits;
 
         CommandRegistration HandledBy<THandler>()
         {
-            _commandDescription.HandlerType = typeof( THandler );
+            _model.HandlerType = typeof( THandler );
 
             return this;
         }
 
         CommandRegistration CommandName( string commandName )
         {
-            _commandDescription.Name = commandName;
-            return this;
-        }
-
-        CommandRegistration IsAsync()
-        {
-            var t = _traits.FindOrCreate("Async");
-            if (_commandDescription.Traits == null) _commandDescription.Traits = t;
-            else _commandDescription.Traits = _commandDescription.Traits.Union(t);
-
+            _model.Name = commandName;
             return this;
         }
 
@@ -56,12 +43,6 @@ namespace CK.Crs
         {
             return CommandName( commandName );
         }
-
-        ICommandConfiguration<ICommandRegistration> ICommandConfiguration<ICommandRegistration>.IsAsync()
-        {
-            return IsAsync();
-        }
-
 
         ICommandConfiguration<ICommandRegistration> ICommandConfigurationWithHandling<ICommandRegistration>.HandledBy<THandler>()
         {

@@ -1,25 +1,25 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Reflection;
 
 namespace CK.Crs
 {
-    public class DefaultRequestHandlerFactory : IRequestHandlerFactory
+    class DefaultCommandHandlerFactory : ICommandHandlerFactory
     {
         readonly IServiceProvider _services;
 
-        public DefaultRequestHandlerFactory( IServiceProvider services )
+        public DefaultCommandHandlerFactory( IServiceProvider services )
         {
             _services = services;
         }
 
-        IRequestHandler IRequestHandlerFactory.CreateHandler( Type handlerType )
+        ICommandHandler ICommandHandlerFactory.CreateHandler( Type handlerType )
         {
-            var result = CreateInstanceOrDefault<IRequestHandler>( handlerType );
+            var result = CreateInstanceOrDefault<ICommandHandler>( handlerType );
             return result;
         }
 
-        void IRequestHandlerFactory.ReleaseHandler( IRequestHandler handler )
+        void ICommandHandlerFactory.ReleaseHandler( ICommandHandler handler )
         {
             if( handler is IDisposable d ) d.Dispose();
         }

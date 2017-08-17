@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -35,7 +35,7 @@ namespace CK.Crs
         /// <param name="registry"></param>
         /// <param name="monitor">An optional <see cref="IActivityMonitor"/></param>
         /// <param name="assemblies">A list of assembly name.</param>
-        public static IRequestRegistry RegisterAssemblies( this IRequestRegistry registry, params string[] assemblies )
+        public static ICommandRegistry RegisterAssemblies( this ICommandRegistry registry, params string[] assemblies )
             => registry.AutoRegisterSimple( new AutoRegisterOption( assemblies ) );
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace CK.Crs
         /// <param name="registry">The registry holding registered commands.</param>
         /// <param name="option">Auto registration option.</param>
         /// <param name="monitor">An optional <see cref="IActivityMonitor"/></param>
-        public static IRequestRegistry AutoRegisterSimple( this IRequestRegistry registry, AutoRegisterOption option, IActivityMonitor monitor = null )
+        public static ICommandRegistry AutoRegisterSimple( this ICommandRegistry registry, AutoRegisterOption option, IActivityMonitor monitor = null )
         {
             if( monitor == null ) monitor = new ActivityMonitor();
 
@@ -62,7 +62,7 @@ namespace CK.Crs
                         monitor.Trace( $"Assembly {assembly.FullName} loaded successfuly" );
 
                         var handlers = assembly.GetTypes()
-                            .Where( t => typeof( IRequestHandler ).IsAssignableFrom( t ) )
+                            .Where( t => typeof( ICommandHandler ).IsAssignableFrom( t ) )
                             .ToArray();
                         if( handlers.Length == 0 )
                         {
@@ -75,18 +75,18 @@ namespace CK.Crs
                                 using( monitor.OpenTrace( $"Registering handler {h.AssemblyQualifiedName}" ) )
                                 {
                                     foreach( var commandType in h.GetInterfaces()
-                                        .Where( t => typeof( IRequestHandler ).IsAssignableFrom( t ) )
+                                        .Where( t => typeof( ICommandHandler ).IsAssignableFrom( t ) )
                                         .Where( interfaceType => interfaceType.GetTypeInfo().IsGenericType && interfaceType.GenericTypeArguments.Length > 0 )
                                         .Select( interfaceType => interfaceType.GenericTypeArguments[0] ) )
                                     {
                                         if( registry.Registration.Any( r => r.HandlerType == h ) ) continue;
-                                        RequestDescription description = new RequestDescription( commandType )
+                                        CommandModel description = new CommandModel( commandType, registry.TraitContext )
                                         {
                                             Name = option.CommandNameProvider( commandType ),
                                             HandlerType = h
                                         };
-                                        description.Description = option.CommandDescriptionProvider( description.Type );
-                                        description.Traits = option.CommandTraitsProvider( description.Type );
+                                        description.Description = option.CommandDescriptionProvider( description.CommandType );
+                                        description.Tags = option.CommandTraitsProvider( description.CommandType );
                                         registry.Register( description );
                                     }
                                 }
@@ -110,12 +110,12 @@ namespace CK.Crs
         /// <typeparam name="THandler"></typeparam>
         /// <param name="registry"></param>
         /// <returns></returns>
-        public static ICommandRegistration Register<TCommand>( this IRequestRegistry registry )
+        public static ICommandRegistration Register<TCommand>( this ICommandRegistry registry )
             where TCommand : class
         {
-            var d = new RequestDescription( typeof( TCommand ) );
-            var registration = new CommandRegistration( registry, d, registry.TraitContext );
-            registry.Register( d );
+            var model = new CommandModel( typeof( TCommand ), registry.TraitContext );
+            var registration = new CommandRegistration( registry, model );
+            registry.Register( model );
             return registration;
         }
 
