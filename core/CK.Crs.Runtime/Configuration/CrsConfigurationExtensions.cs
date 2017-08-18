@@ -1,4 +1,4 @@
-﻿using CK.Core;
+using CK.Core;
 using CK.Crs;
 using System;
 using System.Collections.Generic;
@@ -12,6 +12,10 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             CrsConfigurationBuilder builder = new CrsConfigurationBuilder( services );
             configuration( builder );
+
+            services.AddSingleton<ICommandHandlerFactory, DefaultCommandHandlerFactory>();
+            services.AddSingleton<ICommandHandlerInvoker, DefaultCommandInvoker>();
+            services.AddSingleton<DefaultCommandReceiver>();
 
             return new CrsCoreBuilder( builder );
         }

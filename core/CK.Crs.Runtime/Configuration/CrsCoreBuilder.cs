@@ -33,11 +33,9 @@ namespace CK.Crs
                 return new CompositeCommandReceiver(
                     Receivers
                         .Select( r => s.GetRequiredService( r ) )
-                        .OfType<ICommandReceiver>()
-                        .Reverse() );
+                        .Union( new[] { s.GetRequiredService<DefaultCommandReceiver>() } )
+                        .OfType<ICommandReceiver>() );
             } );
-
-            AddReceiver<DefaultCommandReceiver>();
         }
 
         public IList<Type> Receivers => _receivers;

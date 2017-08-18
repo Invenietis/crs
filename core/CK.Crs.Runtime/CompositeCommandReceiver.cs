@@ -7,7 +7,8 @@ namespace CK.Crs
 {
     class CompositeCommandReceiver : ICommandReceiver
     {
-        IEnumerable<ICommandReceiver> _receivers;
+        readonly IEnumerable<ICommandReceiver> _receivers;
+
         public CompositeCommandReceiver( IEnumerable<ICommandReceiver> receivers )
         {
             _receivers = receivers;

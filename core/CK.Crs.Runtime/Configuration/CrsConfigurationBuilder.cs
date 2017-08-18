@@ -17,10 +17,6 @@ namespace CK.Crs
         public CrsConfigurationBuilder( IServiceCollection services )
         {
             _services = services;
-            _services.AddSingleton<ICommandHandlerFactory, DefaultCommandHandlerFactory>();
-            _services.AddSingleton<ICommandHandlerInvoker, DefaultCommandInvoker>();
-
-            //_services.AddSingleton<IEventPublisher, DefaultEventPublisher>();
             _model = new CrsModel();
         }
 

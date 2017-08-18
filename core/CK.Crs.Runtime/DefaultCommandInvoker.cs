@@ -13,9 +13,8 @@ namespace CK.Crs
 
         public DefaultCommandInvoker( ICommandHandlerFactory factory )
         {
-            _factory = factory;
+            _factory = factory ?? throw new ArgumentNullException( nameof( factory ) );
         }
-
 
         public async Task<object> Invoke<T>( T command, ICommandContext context, CommandModel desc )
         {
@@ -25,16 +24,13 @@ namespace CK.Crs
             if( handler == null ) throw new ArgumentException( String.Format( "Handler {0} for {1} impossible to created", desc.HandlerType ) );
             try
             {
-                MethodInfo methodInfo = desc.HandlerType
-                    .GetMethod( nameof( ICommandHandler<object>.HandleAsync ), new[] { desc.CommandType, typeof( ICommandContext ) } );
-
                 if( desc.ResultType == null )
                 {
-                    await TaskInvokerVoid( methodInfo, handler, command, context, desc );
+                    await TaskInvokerVoid( handler, command, context, desc );
                     return null;
                 }
 
-                return await TaskInvoker( methodInfo, handler, command, context, desc );
+                return await TaskInvoker( handler, command, context, desc );
             }
             catch( Exception ex )
             {
@@ -47,23 +43,42 @@ namespace CK.Crs
             }
         }
 
-        static Task TaskInvokerVoid<T>( MethodInfo methodInfo, ICommandHandler handler, T command, ICommandContext context, CommandModel desc )
+        static Task TaskInvokerVoid<T>( ICommandHandler handler, T command, ICommandContext context, CommandModel desc )
         {
-            object result = methodInfo.Invoke( handler, new object[] { command, context } );
+            MethodInfo method = desc.HandlerType
+              .GetMethod( nameof( ICommandHandler<object>.HandleAsync ), new[] { desc.CommandType, typeof( ICommandContext ) } );
+
+            object result = method.Invoke( handler, new object[] { command, context } );
 
             return (Task)result;
         }
 
-        async static Task<object> TaskInvoker<T>( MethodInfo methodInfo, ICommandHandler handler, T command, ICommandContext context, CommandModel desc )
+        async static Task<object> TaskInvokerDynamic<T>( ICommandHandler handler, T command, ICommandContext context, CommandModel desc )
         {
+            MethodInfo method = desc.HandlerType
+                .GetMethod( nameof( ICommandHandler<object>.HandleAsync ), new[] { desc.CommandType, typeof( ICommandContext ) } );
+
             //Change dynamic to var and cast to Task
-            dynamic task = methodInfo.Invoke( handler, new object[] { command, context } );
+            dynamic task = method.Invoke( handler, new object[] { command, context } );
             await task;
 
             //var resultProperty = task.GetType().GetProperty( "Result" );
             //return resultProperty.GetValue( task );
             return task.GetAwaiter().GetResult();
 
+        }
+
+        private static async Task<object> TaskInvoker<T>( ICommandHandler handler, T command, ICommandContext context, CommandModel desc )
+        {
+            MethodInfo method = desc.HandlerType
+                .GetMethod( nameof( ICommandHandler<object>.HandleAsync ), new[] { desc.CommandType, typeof( ICommandContext ) } );
+
+            var task = (Task)method.Invoke( handler, new object[] { command, context } );
+
+            await task.ConfigureAwait( false );
+
+            var resultProperty = task.GetType().GetProperty( "Result" );
+            return resultProperty.GetValue( task );
         }
     }
 }
