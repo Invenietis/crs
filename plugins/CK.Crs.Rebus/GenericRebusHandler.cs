@@ -30,6 +30,9 @@ namespace CK.Crs.Rebus
             var model = _registry.Registration.FirstOrDefault( r => r.CommandType == typeof( T ) );
             if( model != null )
             {
+                if( model.HandlerType == null )
+                    throw new InvalidOperationException( $"There is no handler configured for the command {model.CommandType}" );
+
                 var msgContext = MessageContext.Current;
                 using( var token = new CancellationTokenSource() )
                 {
@@ -50,7 +53,8 @@ namespace CK.Crs.Rebus
                         msgContext.AbortDispatch();
                     } );
 
-                    context.Monitor.Info( $"Executing handler {typeof( T )}" );
+                    context.Monitor.Info( $"Executing handler {model.HandlerType} for {model.CommandType}" );
+
                     var result = await _invoker.Invoke( command, context, model );
                     if( result != null)
                     {

@@ -15,7 +15,7 @@ namespace CK.Crs.Samples.ExecutorApp.Rebus
             services
                 .AddCrsCore( c => c
                     .Commands( r => r.RegisterAssemblies( "CK.Crs.Samples.Handlers" ) ) )
-                .AddRebus( c => c
+                .AddRebusOneWay( c => c
                     .Transport( t => t.UseSqlServer( conString, "tMessages", "events" ) ) );
 
         }

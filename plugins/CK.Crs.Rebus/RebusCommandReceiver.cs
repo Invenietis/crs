@@ -17,7 +17,7 @@ namespace CK.Crs
 
         public async Task<Response> ReceiveCommand<T>( T command, ICommandContext context ) where T : class
         {
-            if( context.Model.HasAsyncTag() )
+            if( context.Model.HasRebusQueueTag() )
             {
                 var h = ToHeaders( context );
                 await _bus.Send( command, h );
@@ -36,7 +36,7 @@ namespace CK.Crs
                 { nameof( ICommandContext.CommandId ), context.CommandId.ToString() },
                 { nameof( ICommandContext.Monitor ), context.Monitor.DependentActivity().CreateToken().ToString() },
                 // Rebus Headers
-                { R.Messages.Headers.ReturnAddress, "" },
+                //{ R.Messages.Headers.ReturnAddress, "" },
                 { R.Messages.Headers.MessageId, context.CommandId.ToString() }
             };
         }

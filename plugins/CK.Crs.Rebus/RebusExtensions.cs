@@ -9,16 +9,20 @@ namespace CK.Crs
 {
     public static class RebusExtensions
     {
-        public static bool HasAsyncTag( this CommandModel commandModel )
+        public static readonly string RebusTag = "Rebus";
+
+        public static bool HasRebusQueueTag( this CommandModel commandModel )
         {
-            CKTrait asyncTrait = commandModel.Tags.Context.FindOrCreate( "Async" );
-            return commandModel.Tags.Overlaps( asyncTrait );
+            string traits = RebusTag + commandModel.Tags.Context.Separator + CrsTraits.Queue;
+            CKTrait rebusTrait = commandModel.Tags.Context.FindOrCreate( traits );
+            return commandModel.Tags.Overlaps( rebusTrait );
         }
 
-        public static ICommandRegistration IsAsync( this ICommandRegistration commandRegistration )
+        public static ICommandRegistration IsRebusQueue( this ICommandRegistration commandRegistration )
         {
-            CKTrait asyncTrait = commandRegistration.Model.Tags.Context.FindOrCreate( "Async" );
-            commandRegistration.Model.Tags = commandRegistration.Model.Tags.Apply( asyncTrait, SetOperation.Union );
+            string traits = RebusTag + commandRegistration.Model.Tags.Context.Separator + CrsTraits.Queue;
+            CKTrait rebusTrait = commandRegistration.Model.Tags.Context.FindOrCreate( traits );
+            commandRegistration.Model.Tags = commandRegistration.Model.Tags.Apply( rebusTrait, SetOperation.Union );
             return commandRegistration;
         }
 

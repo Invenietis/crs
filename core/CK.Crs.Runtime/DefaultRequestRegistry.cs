@@ -8,7 +8,7 @@ namespace CK.Crs
     {
         List<CommandModel> Map { get; } = new List<CommandModel>();
 
-        public DefaultRequestRegistry(CKTraitContext traitContext)
+        public DefaultRequestRegistry( CKTraitContext traitContext )
         {
             TraitContext = traitContext;
         }
