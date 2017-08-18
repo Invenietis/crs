@@ -8,10 +8,8 @@ using CK.Communication.WebSockets;
 using System.IO;
 using CK.Monitoring.Handlers;
 using CK.Monitoring;
-using Rebus.Transport.InMem;
-using Rebus.Routing.TypeBased;
-using Rebus.Persistence.InMem;
 using Rebus.Config;
+using CK.Crs.Samples.Handlers;
 
 namespace CK.Crs.Samples.AspNetCoreApp
 {
@@ -30,23 +28,17 @@ namespace CK.Crs.Samples.AspNetCoreApp
 
             var conString = @"Server=.\SQLSERVER2016;Database=RebusQueue;Integrated Security=SSPI";
 
-            services
-                .AddCrsCore( config => config
-                    .Commands( registry => registry.RegisterAssemblies( "CK.Crs.Samples.Handlers.dll" ) )
-                    .Endpoints( endpoints => endpoints
-                        .For( typeof( CrsSenderEndpoint<> ) ).AcceptAll()
-                        .For( typeof( CrsDispatcherEndpoint<> ) ).AcceptAll() ) )
-                .AddAmbientValues( ambientValues => ambientValues
-                    .AddAmbientValueProvider<ActorIdAmbientValueProvider>( nameof( MessageBase.ActorId ) ) );
-
-                //.AddRebus( "commands", t => t.HasQueue("") )
-                //.AddRebus( "commands2" )
-                //.AddRebus( "commands3" )
-                //, c => c
-                //        .Routing( r => r.TypeBased().MapAssemblyOf<SuperCommand>( "commands" ) )
-                //        .Transport( t => t.UseSqlServer( conString, "tMessages", "commands" ) ) )
-                //.AddClientDispatcher()
-                //.AddCrsMvcCoreReceiver();
+            services.AddCrsCore(
+                    c => c.Commands( registry => registry
+                        .Register<SuperCommand>().IsRebusQueue()
+                        .Register<Super2Command>().IsRebusQueue()
+                        .Register<SuperCommand.Result>().HandledBy<SuperHandler>() )
+                   .Endpoints( e => e.For( typeof( CrsDispatcherEndpoint<> ) ).AcceptAll() ) )
+                .AddAmbientValues( a => a.AddAmbientValueProvider<ActorIdAmbientValueProvider>( nameof( MessageBase.ActorId ) ) )
+                .AddRebusOneWay(
+                    c => c.Transport( t => t.UseSqlServer( conString, "tMessages", "commands_result" ) ),
+                    c => c( "commands" )( m => m.HasRebusQueueTag() ) )
+                .AddCrsMvcCoreReceiver();
 
 
         }
@@ -55,8 +47,8 @@ namespace CK.Crs.Samples.AspNetCoreApp
         public void Configure( IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory )
         {
             app.UseDeveloperExceptionPage();
-            app.UseWebSockets();
-            app.MapWebSockets();
+            //app.UseWebSockets();
+            //app.MapWebSockets();
             app.UseMvc();
         }
     }

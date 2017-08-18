@@ -10,28 +10,10 @@ using System.Linq;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
+    public delegate Action<Func<CommandModel, bool>> ConfigureQueue( string queueName );
+
     public static class CrsRebusExtensions
     {
-        //public static ICrsCoreBuilder AddRebusSimpleSqlServer<TCommandAssembly, TEventAssembly>( this ICrsCoreBuilder builder, string conString )
-        //{
-        //    string crsDefaultQueueName = "crs-commands-queue";
-        //    string crsDefaultSubscription = "crs-subscription-queue";
-
-        //        //QueueName = "crs-commands-queue";
-
-        //    return builder.AddRebus( c => c
-        //               .Routing( r => r.TypeBased().MapAssemblyOf<TCommandAssembly>( crsDefaultQueueName ) )
-        //               .Transport( t => t.UseSqlServer( conString, "tMessages", "commands" ) )
-        //               .Subscriptions( s => s.StoreInSqlServer( conString, "tSubscriptions" ) ) )
-        //}
-
-        public class RebusOptions
-        {
-            public string CommandQueueName { get; set; }
-        }
-
-        public delegate Action<Func<CommandModel, bool>> ConfigureQueue( string queueName );
-
         public static ICrsCoreBuilder AddRebusOneWay(
             this ICrsCoreBuilder builder,
             Action<RebusConfigurer> rebusConfigurer,
@@ -56,10 +38,6 @@ namespace Microsoft.Extensions.DependencyInjection
                                 foreach( var commandRegistration in builder.Registry.Registration.Where( filter ) )
                                 {
                                     typeBasedRouting.Map( commandRegistration.CommandType, queueName );
-                                    //if( commandRegistration.ResultType != null )
-                                    //{
-                                    //    typeBasedRouting.Map( commandRegistration.ResultType, queueName );
-                                    //}
                                 }
                             }
                         ) );
@@ -68,12 +46,8 @@ namespace Microsoft.Extensions.DependencyInjection
 
             rebusConfigurer( configurer );
 
-            builder.AddReceiver<RebusCommandReceiver>( s =>
-            {
-                var bus = configurer.Start();
-                activator.SetBus( bus );
-                return new RebusCommandReceiver( bus );
-            } );
+            var receiver = new RebusCommandReceiver( configurer, activator );
+            builder.AddReceiver( s => receiver );
 
             return builder;
         }

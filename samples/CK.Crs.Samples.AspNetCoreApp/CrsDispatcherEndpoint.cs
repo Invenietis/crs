@@ -15,7 +15,7 @@ namespace CK.Crs.Samples.AspNetCoreApp
         }
 
         [HttpPost( "[Action]" ), NoAmbientValuesValidation]
-        public Task<Response> ReceiveCommand( T command, ICommandContext context, HttpContext httpContext )
+        public Task<Response> ReceiveCommand( T command, ICommandContext context  )
         {
             return _receiver.ReceiveCommand( command, context );
         }

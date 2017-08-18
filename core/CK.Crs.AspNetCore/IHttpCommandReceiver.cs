@@ -18,6 +18,6 @@ namespace CK.Crs
         /// <param name="context"></param>
         /// <param name="httpContext"></param>
         /// <returns></returns>
-        Task<Response> ReceiveCommand( T command, ICommandContext context, HttpContext httpContext );
+        Task<Response> ReceiveCommand( T command, ICommandContext context);
     }
 }

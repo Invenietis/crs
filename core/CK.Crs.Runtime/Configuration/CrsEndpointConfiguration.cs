@@ -35,10 +35,10 @@ namespace CK.Crs.Infrastructure
 
 
         public ICrsEndpointConfigurationRoot Apply( Func<CommandModel, bool> filter )
-        {
+        { 
             Debug.Assert( _currentConfiguredEndpoint != null );
 
-            ISet<CommandModel> commands = new HashSet<CommandModel>( _registry.Registration.Where( filter ), new RequestDescriptionComparer() );
+            ISet<CommandModel> commands = new HashSet<CommandModel>( _registry.Registration.Where( filter ), new CommandModelComparer() );
             _endpoints.Add( _currentConfiguredEndpoint, commands );
 
             _model.AddEndpoint( new CrsReceiverModel( _currentConfiguredEndpoint, commands ) );

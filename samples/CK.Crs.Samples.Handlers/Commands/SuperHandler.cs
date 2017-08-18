@@ -6,7 +6,7 @@ using CK.Core;
 
 namespace CK.Crs.Samples.Handlers
 {
-    public class SuperHandler : ICommandHandler<SuperCommand, SuperCommand.Result>
+    public class SuperHandler : ICommandHandler<SuperCommand, SuperCommand.Result>, ICommandHandler<SuperCommand.Result>
     {
         public Task<SuperCommand.Result> HandleAsync( SuperCommand command, ICommandContext context )
         {
@@ -18,6 +18,13 @@ namespace CK.Crs.Samples.Handlers
             context.Monitor.Trace( evt.Message );
 
             return Task.FromResult( new SuperCommand.Result( "Bouyah" ) );
+        }
+
+        public Task HandleAsync( SuperCommand.Result command, ICommandContext context )
+        {
+            context.Monitor.Trace( command.Message );
+
+            return Task.CompletedTask;
         }
     }
 }

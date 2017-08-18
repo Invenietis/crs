@@ -83,8 +83,9 @@ namespace CK.Crs.Rebus.Tests
                             .Register<SimpleCommandWithResult>().IsRebusQueue().HandledBy<SimpleCommandHandler>()
                             .Register<SimpleCommandWithResult.Result>().IsRebusQueue().HandledBy<SimpleCommandHandler>() ) )
                     .AddRebusOneWay(
-                        c => c.Transport( t => t.UseInMemoryTransport( new InMemNetwork( true ), "command_executor" ) ),
-                        c => c("command_executor")( r => r.HasRebusQueueTag() ) );
+                        c => c.Transport( t => t.UseInMemoryTransport( new InMemNetwork( true ), "commands_result" ) ),
+                        c => c( "commands" )( r => r.HasRebusQueueTag() && r.HandlerType == null ),
+                        c => c( "commands_result" )( r => r.HasRebusQueueTag() && r.HandlerType != null ) );
 
                 using( var services = serviceCollection.BuildServiceProvider() )
                 {
@@ -112,13 +113,96 @@ namespace CK.Crs.Rebus.Tests
             }
         }
 
-        private CommandContext EnsureContext<T>( IServiceProvider services, IActivityMonitor monitor )
+
+        [Test]
+        public async Task Test_DifferentProcess()
         {
-            return new CommandContext(
-                Guid.NewGuid(),
-                monitor,
-                services.GetRequiredService<ICommandRegistry>().Registration.SingleOrDefault( r => r.CommandType == typeof( T ) ),
-                "123456" );
-        }
+            using( GrandOutput.EnsureActiveDefault( new GrandOutputConfiguration
+            {
+                Handlers = { new TextWriterHandlerConfiguration { Out = TestContext.Out } }
+            } ) )
+            {
+                var sharedNetwork = new InMemNetwork( true );
+                sharedNetwork.CreateQueue( "commands" );
+                sharedNetwork.CreateQueue( "commands_result" );
+
+                // CONSUMER OF COMMANDS AND PRODUCER OF RESULTS
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+
+                Task.Run( async () =>
+                {
+                    var serviceCollection = new ServiceCollection();
+                    serviceCollection
+                    .AddCrsCore(
+                        c => c.Commands( registry => registry
+                            .Register<SimpleCommand>().HandledBy<SimpleCommandHandler>()
+                            .Register<SimpleCommandWithDirectResult>().HandledBy<SimpleCommandHandler>()
+                            .Register<SimpleCommandWithResult>().HandledBy<SimpleCommandHandler>()
+                            .Register<SimpleCommandWithResult.Result>().IsRebusQueue() ) )
+                    .AddRebusOneWay(
+                        c => c.Transport( t => t.UseInMemoryTransport( sharedNetwork, "commands" ) ),
+                        c => c( "commands" )( r => r.HandlerType != null ),
+                        c => c( "commands_result" )( r => r.HasRebusQueueTag() ) );
+
+                    using( var services = serviceCollection.BuildServiceProvider() )
+                    {
+                        // Wait for incoming commands...
+                        await Task.Delay( 800 );
+                    }
+                } );
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+
+                // PRODUCER OF COMMANDS AND CONSUMER OF RESULTS
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                Task.Run( async () =>
+                {
+                    var serviceCollection = new ServiceCollection();
+                    serviceCollection
+                        .AddCrsCore(
+                            c => c.Commands( registry => registry
+                                .Register<SimpleCommand>().IsRebusQueue()
+                                .Register<SimpleCommandWithDirectResult>().IsRebusQueue()
+                                .Register<SimpleCommandWithResult>().IsRebusQueue()
+                                .Register<SimpleCommandWithResult.Result>().IsRebusQueue().HandledBy<SimpleCommandHandler>() ) )
+                        .AddRebusOneWay(
+                            c => c.Transport( t => t.UseInMemoryTransport( sharedNetwork, "commands_result" ) ),
+                            c => c( "commands" )( r => r.HasRebusQueueTag() && r.HandlerType == null ),
+                            c => c( "commands_result" )( r => r.HasRebusQueueTag() && r.HandlerType != null ) );
+
+                    using( var services = serviceCollection.BuildServiceProvider() )
+                    {
+                        var monitor = new ActivityMonitor(); // Request context
+                        var dispatcher = services.GetRequiredService<ICommandReceiver>();
+
+                        var context = EnsureContext<SimpleCommand>( services, monitor );
+                        var response = await dispatcher.ReceiveCommand( new SimpleCommand { ActorId = 421 }, context );
+                        Assert.That( response.ResponseType, Is.EqualTo( (char)ResponseType.Asynchronous ) );
+
+                        context = EnsureContext<SimpleCommandWithDirectResult>( services, monitor );
+                        response = await dispatcher.ReceiveCommand( new SimpleCommandWithDirectResult { ActorId = 421 }, context );
+                        Assert.That( response.ResponseType, Is.EqualTo( (char)ResponseType.Asynchronous ) );
+
+                        context = EnsureContext<SimpleCommandWithResult>( services, monitor );
+                        response = await dispatcher.ReceiveCommand( new SimpleCommandWithResult { ActorId = 421 }, context );
+                        Assert.That( response.ResponseType, Is.EqualTo( (char)ResponseType.Asynchronous ) );
+
+                        // Wait for incoming results...
+                        await Task.Delay( 800 );
+                    }
+                } );
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+
+                await Task.Delay( 2000 );
+            }
     }
+
+    private CommandContext EnsureContext<T>( IServiceProvider services, IActivityMonitor monitor )
+    {
+        return new CommandContext(
+            Guid.NewGuid(),
+            monitor,
+            services.GetRequiredService<ICommandRegistry>().Registration.SingleOrDefault( r => r.CommandType == typeof( T ) ),
+            "123456" );
+    }
+}
 }

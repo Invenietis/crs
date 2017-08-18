@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using System;
 using System.Threading.Tasks;
 
@@ -57,7 +58,26 @@ namespace CK.Crs.Infrastructure
             action.ActionName = actionName;
             action.Parameters[0].BindingInfo = new CommandBindingInfo();
             action.Parameters[1].BindingInfo = new CommandContextBindingInfo();
+            //action.Parameters[2].BindingInfo = new HttpContextBindingInfo();
             action.Filters.Add( new CrsActionFilter() );
+        }
+
+        private class HttpContextBindingInfo : BindingInfo
+        {
+            public HttpContextBindingInfo()
+            {
+                BindingSource = new BindingSource( "HttpContext", "HttpContext", false, false );
+                BinderType = typeof( HttpContextModelBinder );
+            }
+
+            class HttpContextModelBinder : IModelBinder
+            {
+                public Task BindModelAsync( ModelBindingContext bindingContext )
+                {
+                    bindingContext.Result = ModelBindingResult.Success( bindingContext.HttpContext );
+                    return Task.CompletedTask;
+                }
+            }
         }
 
         private class CommandBindingInfo : BindingInfo
@@ -75,50 +95,50 @@ namespace CK.Crs.Infrastructure
                 BinderType = typeof( CommandContextModelBinder );
                 BindingSource = new BindingSource( "CommandContext", "CommandContext", true, false );
             }
-        }
 
-        private class CommandContextModelBinder : IModelBinder
-        {
-            ICrsModel _model;
-            public CommandContextModelBinder( ICrsModel model )
+            private class CommandContextModelBinder : IModelBinder
             {
-                _model = model;
-            }
-
-            public Task BindModelAsync( ModelBindingContext bindingContext )
-            {
-                // Gets the ControllerType or EndpointName from somehere...
-                var endpointModel = _model.GetEndpointFromContext( bindingContext.ActionContext );
-                if( endpointModel == null ) throw new InvalidOperationException( "There is no endpoint available for this request..." );
-
-                var commandType = bindingContext.ActionContext.ActionDescriptor.Parameters[0].ParameterType;
-                var commandModel = endpointModel.GetCommandModel( commandType );
-                if( commandModel == null ) throw new InvalidOperationException( "There is no command available for this request..." );
-
-                var actionName = bindingContext.ActionContext.ActionDescriptor.DisplayName;
-                var monitor = new ActivityMonitor( actionName );
-
-                // CallerId or ConnectionId provider.
-                var callerValues = bindingContext.ValueProvider.GetValue( endpointModel.CallerIdName );
-                var callerValue = callerValues.FirstValue;
-                if( callerValues.Length > 1 )
+                ICrsModel _model;
+                public CommandContextModelBinder( ICrsModel model )
                 {
-                    monitor.Warn( $"Multiple values found for CallerId={endpointModel.CallerIdName}. Using the first value in the order of ValueProvider registrations: {callerValue}." );
+                    _model = model;
                 }
-                
-                var commandId = Guid.NewGuid(); // TODO: CommandId provider ?
 
-                var model = new CommandContext(
-                    commandId,
-                    monitor,
-                    commandModel,
-                    callerValue,
-                    bindingContext.HttpContext.RequestAborted );
+                public Task BindModelAsync( ModelBindingContext bindingContext )
+                {
+                    // Gets the ControllerType or EndpointName from somehere...
+                    var endpointModel = _model.GetEndpointFromContext( bindingContext.ActionContext );
+                    if( endpointModel == null ) throw new InvalidOperationException( "There is no endpoint available for this request..." );
 
-                bindingContext.ActionContext.ActionDescriptor.SetProperty<ICommandContext>( model );
-                bindingContext.Result = ModelBindingResult.Success( model );
+                    var commandType = bindingContext.ActionContext.ActionDescriptor.Parameters[0].ParameterType;
+                    var commandModel = endpointModel.GetCommandModel( commandType );
+                    if( commandModel == null ) throw new InvalidOperationException( "There is no command available for this request..." );
 
-                return Task.CompletedTask;
+                    var actionName = bindingContext.ActionContext.ActionDescriptor.DisplayName;
+                    var monitor = new ActivityMonitor( actionName );
+
+                    // CallerId or ConnectionId provider.
+                    var callerValues = bindingContext.ValueProvider.GetValue( endpointModel.CallerIdName );
+                    var callerValue = callerValues.FirstValue;
+                    if( callerValues.Length > 1 )
+                    {
+                        monitor.Warn( $"Multiple values found for CallerId={endpointModel.CallerIdName}. Using the first value in the order of ValueProvider registrations: {callerValue}." );
+                    }
+
+                    var commandId = Guid.NewGuid(); // TODO: CommandId provider ?
+
+                    var model = new CommandContext(
+                        commandId,
+                        monitor,
+                        commandModel,
+                        callerValue,
+                        bindingContext.HttpContext.RequestAborted );
+
+                    bindingContext.ActionContext.ActionDescriptor.SetProperty<ICommandContext>( model );
+                    bindingContext.Result = ModelBindingResult.Success( model );
+
+                    return Task.CompletedTask;
+                }
             }
         }
 

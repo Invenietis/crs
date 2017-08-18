@@ -23,7 +23,7 @@ namespace CK.Crs.Samples.ExecutorApp.Rebus
                     ActivityMonitor.AutoConfiguration = ( m ) => m.Output.RegisterClient( new ActivityMonitorConsoleClient() );
 
                     RunService<RebusCommandService>( cancellationTokenSource.Token );
-                    RunService<RebusEventService>( cancellationTokenSource.Token );
+                    //RunService<RebusEventService>( cancellationTokenSource.Token );
                 }
             }
         }
