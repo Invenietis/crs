@@ -1,5 +1,6 @@
 using CK.Core;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -16,8 +17,12 @@ namespace CK.Crs
         /// </summary>
         /// <param name="command">The received command.</param>
         /// <param name="context"></param>
-        /// <param name="httpContext"></param>
         /// <returns></returns>
-        Task<Response> ReceiveCommand( T command, ICommandContext context);
+        Task<Response> ReceiveCommand( T command, IHttpCommandContext context );
+    }
+
+    public interface IHttpCommandContext : ICommandContext
+    {
+        HttpContext GetHttpContext();
     }
 }

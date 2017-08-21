@@ -1,4 +1,4 @@
-﻿using CK.Core;
+using CK.Core;
 using CK.Crs.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
@@ -28,7 +28,7 @@ namespace CK.Crs
 
             public async Task OnActionExecutionAsync( ActionExecutingContext context, ActionExecutionDelegate next )
             {
-                var commandContext = context.ActionDescriptor.GetProperty<ICommandContext>();
+                var commandContext = context.ActionDescriptor.GetProperty<IHttpCommandContext>();
                 var commandArgumentName = context.ActionDescriptor.GetProperty<CrsCommandArgumentName>();
                 var commandArgument = context.ActionArguments[commandArgumentName];
 

@@ -2,6 +2,7 @@ using CK.Core;
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CK.Crs
@@ -25,8 +26,7 @@ namespace CK.Crs
                 if( errors.Count > 0 ) response = new ErrorResponse( string.Join( Environment.NewLine, errors.Select( e => e.ToString() ) ), context.CommandId );
             } ) )
             {
-                var desc = _registry.Registration.SingleOrDefault( c => c.CommandType == typeof( T ) );
-                var result = await _invoker.Invoke( command, context, desc );
+                var result = await _invoker.Invoke( command, context );
 
                 response = new Response( ResponseType.Synchronous, context.CommandId )
                 {

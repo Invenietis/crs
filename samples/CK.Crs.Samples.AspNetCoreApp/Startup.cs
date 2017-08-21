@@ -10,11 +10,26 @@ using CK.Monitoring.Handlers;
 using CK.Monitoring;
 using Rebus.Config;
 using CK.Crs.Samples.Handlers;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace CK.Crs.Samples.AspNetCoreApp
 {
     public class Startup
     {
+        public IConfiguration Config { get; }
+
+        public Startup( IHostingEnvironment environment )
+        {
+            var builder = new ConfigurationBuilder()
+                        .SetBasePath( environment.ContentRootPath )
+                        .AddEnvironmentVariables()
+                        .AddJsonFile( "appsettings.json", optional: true, reloadOnChange: true )
+                        .AddJsonFile( $"appsettings.{environment.EnvironmentName}.json", reloadOnChange: true, optional: true );
+
+            Config = builder.Build();
+        }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices( IServiceCollection services )
@@ -26,21 +41,31 @@ namespace CK.Crs.Samples.AspNetCoreApp
                 Handlers = { new TextFileConfiguration { Path = "Logs" } }
             } );
 
-            var conString = @"Server=.\SQLSERVER2016;Database=RebusQueue;Integrated Security=SSPI";
+            var conString = Config.GetConnectionString( "Messaging" );
 
-            services.AddCrsCore(
+            services
+                .AddCrs(
                     c => c.Commands( registry => registry
-                        .Register<SuperCommand>().IsRebusQueue()
-                        .Register<Super2Command>().IsRebusQueue()
-                        .Register<SuperCommand.Result>().HandledBy<SuperHandler>() )
+                        // This command is sent to a rebus queue configured below
+                        .Register<RemotelyQueuedCommand>().IsRebusQueue()
+                        // This result is sent to the rebus reply queue configured below and handled as a pure result by CRS
+                        .Register<RemotelyQueuedCommand.Result>().IsResultTag()
+                        // This command is sent to an in-memory queue executed in webapp process
+                        .Register<QueuedCommand>().IsInProcessQueue().HandledBy<InProcessHandler>()
+                        // This command is processed synchronously and the result is returned to the caller.
+                        // We doesn't need to specify a result tag etc for this command 
+                        .Register<SyncCommand>().HandledBy<InProcessHandler>()
+                   )
                    .Endpoints( e => e.For( typeof( CrsDispatcherEndpoint<> ) ).AcceptAll() ) )
                 .AddAmbientValues( a => a.AddAmbientValueProvider<ActorIdAmbientValueProvider>( nameof( MessageBase.ActorId ) ) )
-                .AddRebusOneWay(
+                .AddRebus(
                     c => c.Transport( t => t.UseSqlServer( conString, "tMessages", "commands_result" ) ),
                     c => c( "commands" )( m => m.HasRebusQueueTag() ) )
-                .AddCrsMvcCoreReceiver();
-
-
+                .AddInMemoryQueue();
+                //.AddClientDispatcher( new ClientDispatcherOptions
+                //{
+                //    SupportsServerSideEventsFiltering = false
+                //} );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,7 +73,7 @@ namespace CK.Crs.Samples.AspNetCoreApp
         {
             app.UseDeveloperExceptionPage();
             //app.UseWebSockets();
-            //app.MapWebSockets();
+            //app.MapWebSockets( app.ApplicationServices.GetRequiredService<IOptions<ClientDispatcherOptions>>().Value.WebSocketPath );
             app.UseMvc();
         }
     }

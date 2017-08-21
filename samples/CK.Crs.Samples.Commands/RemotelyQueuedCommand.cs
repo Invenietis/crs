@@ -2,7 +2,7 @@ using System;
 
 namespace CK.Crs.Samples.Messages
 {
-    public class SuperCommand
+    public class RemotelyQueuedCommand
     {
         public int ActorId { get; set; }
         public int AuthenticatedActorId { get; set; }

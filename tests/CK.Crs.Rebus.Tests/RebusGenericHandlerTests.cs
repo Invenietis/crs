@@ -82,7 +82,7 @@ namespace CK.Crs.Rebus.Tests
                             .Register<SimpleCommandWithDirectResult>().HandledBy<SimpleCommandHandler>()
                             .Register<SimpleCommandWithResult>().IsRebusQueue().HandledBy<SimpleCommandHandler>()
                             .Register<SimpleCommandWithResult.Result>().IsRebusQueue().HandledBy<SimpleCommandHandler>() ) )
-                    .AddRebusOneWay(
+                    .AddRebus(
                         c => c.Transport( t => t.UseInMemoryTransport( new InMemNetwork( true ), "commands_result" ) ),
                         c => c( "commands" )( r => r.HasRebusQueueTag() && r.HandlerType == null ),
                         c => c( "commands_result" )( r => r.HasRebusQueueTag() && r.HandlerType != null ) );
@@ -139,7 +139,7 @@ namespace CK.Crs.Rebus.Tests
                             .Register<SimpleCommandWithDirectResult>().HandledBy<SimpleCommandHandler>()
                             .Register<SimpleCommandWithResult>().HandledBy<SimpleCommandHandler>()
                             .Register<SimpleCommandWithResult.Result>().IsRebusQueue() ) )
-                    .AddRebusOneWay(
+                    .AddRebus(
                         c => c.Transport( t => t.UseInMemoryTransport( sharedNetwork, "commands" ) ),
                         c => c( "commands" )( r => r.HandlerType != null ),
                         c => c( "commands_result" )( r => r.HasRebusQueueTag() ) );
@@ -164,7 +164,7 @@ namespace CK.Crs.Rebus.Tests
                                 .Register<SimpleCommandWithDirectResult>().IsRebusQueue()
                                 .Register<SimpleCommandWithResult>().IsRebusQueue()
                                 .Register<SimpleCommandWithResult.Result>().IsRebusQueue().HandledBy<SimpleCommandHandler>() ) )
-                        .AddRebusOneWay(
+                        .AddRebus(
                             c => c.Transport( t => t.UseInMemoryTransport( sharedNetwork, "commands_result" ) ),
                             c => c( "commands" )( r => r.HasRebusQueueTag() && r.HandlerType == null ),
                             c => c( "commands_result" )( r => r.HasRebusQueueTag() && r.HandlerType != null ) );

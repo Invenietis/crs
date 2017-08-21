@@ -13,17 +13,12 @@ namespace CK.Crs
 
         public static bool HasRebusQueueTag( this CommandModel commandModel )
         {
-            string traits = RebusTag + commandModel.Tags.Context.Separator + CrsTraits.Queue;
-            CKTrait rebusTrait = commandModel.Tags.Context.FindOrCreate( traits );
-            return commandModel.Tags.Overlaps( rebusTrait );
+            return commandModel.HasTags( RebusTag, CrsTraits.Queue );
         }
 
         public static ICommandRegistration IsRebusQueue( this ICommandRegistration commandRegistration )
         {
-            string traits = RebusTag + commandRegistration.Model.Tags.Context.Separator + CrsTraits.Queue;
-            CKTrait rebusTrait = commandRegistration.Model.Tags.Context.FindOrCreate( traits );
-            commandRegistration.Model.Tags = commandRegistration.Model.Tags.Apply( rebusTrait, SetOperation.Union );
-            return commandRegistration;
+            return commandRegistration.SetTag( RebusTag, CrsTraits.Queue );
         }
 
         /// <summary>

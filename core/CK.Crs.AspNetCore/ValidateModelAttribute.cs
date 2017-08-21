@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System;
@@ -14,7 +14,7 @@ namespace CK.Crs
         {
             if( !context.ModelState.IsValid )
             {
-                var commandContext = context.ActionDescriptor.GetProperty<ICommandContext>();
+                var commandContext = context.ActionDescriptor.GetProperty<IHttpCommandContext>();
                 context.Result = new OkObjectResult( new InvalidResponse( commandContext.CommandId, context.ModelState ) );
             }
         }

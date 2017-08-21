@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -47,7 +47,7 @@ namespace CK.Crs
                     return;
                 }
 
-                var result = new MetaCommand.MetaResult();
+                var result = new MetaCommand.Result();
                 var commandArgumentName = context.ActionDescriptor.GetProperty<CrsCommandArgumentName>();
                 var command = context.ActionArguments[commandArgumentName] as MetaCommand ?? new MetaCommand
                 {
@@ -68,14 +68,15 @@ namespace CK.Crs
                 }
                 if( command.ShowCommands )
                 {
-                    result.Commands = new Dictionary<string, MetaCommand.MetaResult.MetaCommandDescription>();
+                    result.Commands = new Dictionary<string, MetaCommand.Result.MetaCommandDescription>();
                     var endpointModel = _model.GetEndpoint( context.Controller.GetType() );
                     foreach( var c in endpointModel.Commands )
                     {
-                        MetaCommand.MetaResult.MetaCommandDescription desc = new MetaCommand.MetaResult.MetaCommandDescription
+                        MetaCommand.Result.MetaCommandDescription desc = new MetaCommand.Result.MetaCommandDescription
                         {
                             CommandName = c.Name,
-                            CommandType = c.CommandType.AssemblyQualifiedName,
+                            CommandType = c.CommandType.FullName,
+                            ResultType = c.ResultType?.FullName,
                             Parameters = c.CommandType.GetTypeInfo().DeclaredProperties.Select( e => new RequestPropertyInfo( e, _registration ) ).ToArray(),
                             Traits = c.Tags?.ToString(),
                             Description = c.Description

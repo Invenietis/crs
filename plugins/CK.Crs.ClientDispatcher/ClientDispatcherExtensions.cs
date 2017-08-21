@@ -4,10 +4,11 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
-    public static class LiveEventsExtensions
+    public static class ClientDispatcherConfigurationExtensions
     {
         public static ICrsCoreBuilder AddClientDispatcher( this ICrsCoreBuilder builder )
         {
@@ -19,7 +20,8 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.AddWebSockets();
             builder.Services.AddSingleton<IClientEventStore, InMemoryLiveEventStore>();
             builder.Services.AddSingleton<IClientDispatcher, WebSocketWebClientDispatcher>();
-            builder.Services.AddSingleton( options );
+            builder.Services.AddOptions();
+            builder.Services.AddSingleton( Microsoft.Extensions.Options.Options.Create( options ) );
 
             return builder;
         }

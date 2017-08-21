@@ -8,20 +8,49 @@ namespace CK.Crs
     public static class CrsTraits
     {
         public static readonly string Queue = "Queue";
+        public static readonly string Result = "Result";
+        public static readonly string Broadcast = "Result|Broadcast";
 
-        public static bool HasQueueTag( this CommandModel commandModel )
+        public static bool HasResultBroadcastTag( this CommandModel commandModel )
         {
-            string traits = CrsTraits.Queue;
-            CKTrait rebusTrait = commandModel.Tags.Context.FindOrCreate( traits );
-            return commandModel.Tags.Overlaps( rebusTrait );
+            return HasTag( commandModel, CrsTraits.Broadcast );
         }
 
-        public static ICommandRegistration IsQueue( this ICommandRegistration commandRegistration )
+        public static ICommandRegistration IsResultBroadcastTag( this ICommandRegistration commandRegistration )
         {
-            string traits = CrsTraits.Queue;
-            CKTrait rebusTrait = commandRegistration.Model.Tags.Context.FindOrCreate( traits );
-            commandRegistration.Model.Tags = commandRegistration.Model.Tags.Apply( rebusTrait, SetOperation.Union );
+            return SetTag( commandRegistration, CrsTraits.Broadcast );
+        }
+        public static bool HasResultTag( this CommandModel commandModel )
+        {
+            return HasTag( commandModel, CrsTraits.Result );
+        }
+
+        public static ICommandRegistration IsResultTag( this ICommandRegistration commandRegistration )
+        {
+            return SetTag( commandRegistration, CrsTraits.Result );
+        }
+
+        public static bool HasTag( this CommandModel commandModel, string trait )
+        {
+            return commandModel.Tags.Overlaps( commandModel.Tags.Context.FindOrCreate( trait ) );
+        }
+        public static bool HasTags( this CommandModel commandModel, params string[] traits )
+        {
+            var combinedTraits = String.Join( commandModel.Tags.Context.Separator.ToString(), traits );
+            CKTrait trait = commandModel.Tags.Context.FindOrCreate( combinedTraits );
+            return commandModel.Tags.IsSupersetOf( trait );
+        }
+
+        public static ICommandRegistration SetTag( this ICommandRegistration commandRegistration, string traits )
+        {
+            CKTrait trait = commandRegistration.Model.Tags.Context.FindOrCreate( traits );
+            commandRegistration.Model.Tags = commandRegistration.Model.Tags.Apply( trait, SetOperation.Union );
             return commandRegistration;
+        }
+
+        public static ICommandRegistration SetTag( this ICommandRegistration commandRegistration, params string[] traits )
+        {
+            return commandRegistration.SetTag( String.Join( commandRegistration.Model.Tags.Context.Separator.ToString(), traits ) );
         }
     }
 }

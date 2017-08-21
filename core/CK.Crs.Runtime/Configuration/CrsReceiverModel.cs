@@ -10,12 +10,15 @@ namespace CK.Crs.Infrastructure
     {
         private Type _currentConfiguredEndpoint;
         private IEnumerable<CommandModel> _requests;
+        private readonly ICrsModel _model;
 
-        public CrsReceiverModel( Type currentConfiguredEndpoint, IEnumerable<CommandModel> requests )
+        public CrsReceiverModel( ICrsModel model, Type currentConfiguredEndpoint, IEnumerable<CommandModel> requests )
         {
-            _currentConfiguredEndpoint = currentConfiguredEndpoint;
+            _model = model ?? throw new ArgumentNullException( nameof( model ) );
+            _currentConfiguredEndpoint = currentConfiguredEndpoint ?? throw new ArgumentNullException( nameof( currentConfiguredEndpoint ) );
             _requests = requests;
         }
+        public ICrsModel CrsModel => _model;
 
         public string Name => _currentConfiguredEndpoint.Name;
 
@@ -31,6 +34,7 @@ namespace CK.Crs.Infrastructure
         public bool ApplyModelValidation { get; internal set; } = true;
 
         public IEnumerable<CommandModel> Commands => _requests;
+
 
         public CommandModel GetCommandModel( Type requestType )
         {

@@ -13,11 +13,12 @@ namespace CK.Crs
         IServiceCollection _services;
         CrsEndpointConfiguration _endpoints;
         CrsModel _model;
-        
-        public CrsConfigurationBuilder( IServiceCollection services )
+        CKTraitContext _traitContext;
+        public CrsConfigurationBuilder( IServiceCollection services, string traitContextName = "Crs" )
         {
             _services = services;
-            _model = new CrsModel();
+            _traitContext = new CKTraitContext( traitContextName );
+            _model = new CrsModel( _traitContext );
         }
 
         internal IServiceCollection Services => _services;
@@ -26,11 +27,9 @@ namespace CK.Crs
 
         ICrsConfiguration ICrsConfiguration.Commands( Action<ICommandRegistry> registryConfiguration )
         {
-            _commands = new DefaultRequestRegistry( new CKTraitContext( "Crs" ) );
+            _commands = new DefaultRequestRegistry( _traitContext );
 
             registryConfiguration( Registry );
-
-            _services.AddSingleton<ICommandRegistry>( Registry );
             
             return this;
         }

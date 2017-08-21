@@ -10,6 +10,11 @@ namespace CK.Crs
         Type EndpointType { get; }
 
         /// <summary>
+        /// Gets the gloabl <see cref="ICrsModel"/> this endpoint belongs to.
+        /// </summary>
+        ICrsModel CrsModel { get; }
+
+        /// <summary>
         /// Defaults to CallerId
         /// </summary>
         string CallerIdName { get; set; }

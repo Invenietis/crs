@@ -41,7 +41,7 @@ namespace CK.Crs.Infrastructure
             ISet<CommandModel> commands = new HashSet<CommandModel>( _registry.Registration.Where( filter ), new CommandModelComparer() );
             _endpoints.Add( _currentConfiguredEndpoint, commands );
 
-            _model.AddEndpoint( new CrsReceiverModel( _currentConfiguredEndpoint, commands ) );
+            _model.AddEndpoint( new CrsReceiverModel( _model, _currentConfiguredEndpoint, commands ) );
             return this;
         }
 

@@ -35,7 +35,7 @@ namespace CK.Crs
         public CommandModel( Type type, CKTraitContext context )
         {
             CommandType = type ?? throw new ArgumentNullException( nameof( type ) );
-            Name = type.Name;
+            Name = type.FullName;
             Tags = context.EmptyTrait;
             ResultType = FindResultType( type ); 
         }

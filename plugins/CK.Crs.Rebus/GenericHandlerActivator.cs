@@ -13,9 +13,12 @@ namespace CK.Crs.Rebus
     {
         readonly ICommandRegistry _registry;
         readonly Lazy<ICommandHandlerInvoker> _invoker;
-        public GenericHandlerActivator( Lazy<ICommandHandlerInvoker> invoker, ICommandRegistry registry )
+        readonly Lazy<IResultStrategy> _resultStrategy;
+
+        public GenericHandlerActivator( Lazy<ICommandHandlerInvoker> invoker, Lazy<IResultStrategy> resultStrategy, ICommandRegistry registry )
         {
             _invoker = invoker ?? throw new ArgumentNullException( nameof( invoker ) );
+            _resultStrategy = resultStrategy ?? throw new ArgumentNullException( nameof( resultStrategy ) );
             _registry = registry ?? throw new ArgumentNullException( nameof( registry ) );
         }
 
@@ -23,7 +26,7 @@ namespace CK.Crs.Rebus
             TMessage message,
             ITransactionContext transactionContext )
         {
-            var res = new GenericRebusHandler<TMessage>( _invoker.Value, _registry, _bus );
+            var res = new GenericRebusHandler<TMessage>( _invoker.Value, _registry, _resultStrategy.Value, _bus );
             return Task.FromResult<IEnumerable<IHandleMessages<TMessage>>>( new[] { res } );
         }
 

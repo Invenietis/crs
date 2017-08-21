@@ -1,18 +1,23 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using CK.Core;
 
 namespace CK.Crs.Infrastructure
 {
     class CrsModel : ICrsModel
     {
         List<IEndpointModel> _models;
-        public CrsModel()
+        CKTraitContext _traitContext;
+        public CrsModel( CKTraitContext traitContext )
         {
+            _traitContext = traitContext;
             _models = new List<IEndpointModel>();
         }
         public IReadOnlyList<IEndpointModel> Endpoints => _models;
+
+        public CKTraitContext TraitContext => _traitContext;
 
         public IEndpointModel GetEndpoint( Type type )
         {

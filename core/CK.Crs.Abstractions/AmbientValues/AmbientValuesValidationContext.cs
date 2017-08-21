@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,7 +11,7 @@ namespace CK.Core
         public IActivityMonitor Monitor { get; }
         public IAmbientValues AmbientValues { get; }
 
-        public AmbientValueValidationContext( IActivityMonitor monitor,IAmbientValues _ambientValues )
+        public AmbientValueValidationContext( IActivityMonitor monitor, IAmbientValues _ambientValues )
         {
             Monitor = monitor;
             AmbientValues = _ambientValues;

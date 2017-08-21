@@ -17,11 +17,13 @@ namespace CK.Crs.Rebus
         ICommandHandlerInvoker _invoker;
         ICommandRegistry _registry;
         global::Rebus.Bus.IBus _bus;
+        IResultStrategy _resultStrategy;
 
-        public GenericRebusHandler( ICommandHandlerInvoker invoker, ICommandRegistry registry, global::Rebus.Bus.IBus bus )
+        public GenericRebusHandler( ICommandHandlerInvoker invoker, ICommandRegistry registry, IResultStrategy resultStrategy, global::Rebus.Bus.IBus bus )
         {
             _invoker = invoker;
             _registry = registry;
+            _resultStrategy = resultStrategy;
             _bus = bus;
         }
 
@@ -30,9 +32,6 @@ namespace CK.Crs.Rebus
             var model = _registry.Registration.FirstOrDefault( r => r.CommandType == typeof( T ) );
             if( model != null )
             {
-                if( model.HandlerType == null )
-                    throw new InvalidOperationException( $"There is no handler configured for the command {model.CommandType}" );
-
                 var msgContext = MessageContext.Current;
                 using( var token = new CancellationTokenSource() )
                 {
@@ -42,6 +41,16 @@ namespace CK.Crs.Rebus
                         model,
                         msgContext.GetCallerId(),
                         token.Token );
+
+                    var resultReceiver = _resultStrategy.GetResultReceiver( model );
+                    if( resultReceiver  != null )
+                    {
+                        await resultReceiver.ReceiveResult( command, context );
+                        return;
+                    }
+
+                    if( model.HandlerType == null )
+                        throw new InvalidOperationException( $"There is no handler configured for the command {model.CommandType}" );
 
                     context.Monitor.Trace( "Registering cancellations" );
 
@@ -55,8 +64,8 @@ namespace CK.Crs.Rebus
 
                     context.Monitor.Info( $"Executing handler {model.HandlerType} for {model.CommandType}" );
 
-                    var result = await _invoker.Invoke( command, context, model );
-                    if( result != null)
+                    var result = await _invoker.Invoke( command, context );
+                    if( result != null )
                     {
                         await _bus.Reply( result, new Dictionary<string, string>
                         {

@@ -26,7 +26,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static CrsMvcCoreBuilder AddCrs( this IServiceCollection services, Action<ICrsConfiguration> configuration )
         {
             var builder = services.AddCrsCore( configuration );
-            var mvcBuilder = builder.AddCrsMvcCoreReceiver();
+            var mvcBuilder = builder.AddMvcCoreEndpoint();
             return new CrsMvcCoreBuilder
             {
                 CrsBuilder = builder,
@@ -34,7 +34,7 @@ namespace Microsoft.Extensions.DependencyInjection
             };
         }
         
-        public static IMvcCoreBuilder AddCrsMvcCoreReceiver( this ICrsCoreBuilder builder  )
+        public static IMvcCoreBuilder AddMvcCoreEndpoint( this ICrsCoreBuilder builder  )
         {
             var model = builder.Model;
             return builder.Services

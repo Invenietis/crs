@@ -11,15 +11,13 @@
   <ItemGroup>
     <PackageReference Include="CK.Monitoring" Version="7.0.0" />
     <PackageReference Include="CK.StObj.Model" Version="5.0.0-b01" />
-    <PackageReference Include="Microsoft.AspNetCore" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Json" Version="2.0.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
     <PackageReference Include="Rebus.SqlServer" Version="4.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\core\CK.Crs.AspNetCore\CK.Crs.AspNetCore.csproj" />
     <ProjectReference Include="..\..\plugins\CK.Crs.ClientDispatcher\CK.Crs.ClientDispatcher.csproj" />
+    <ProjectReference Include="..\..\plugins\CK.Crs.Queue\CK.Crs.Queue.csproj" />
     <ProjectReference Include="..\..\plugins\CK.Crs.Rebus\CK.Crs.Rebus.csproj" />
     <ProjectReference Include="..\CK.Crs.Samples.Commands\CK.Crs.Samples.Commands.csproj" />
     <ProjectReference Include="..\CK.Crs.Samples.Events\CK.Crs.Samples.Events.csproj" />

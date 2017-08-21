@@ -1,6 +1,5 @@
 using CK.Core;
 using CK.Monitoring;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading;
 
@@ -22,28 +21,7 @@ namespace CK.Crs.Samples.ExecutorApp.Rebus
                 {
                     ActivityMonitor.AutoConfiguration = ( m ) => m.Output.RegisterClient( new ActivityMonitorConsoleClient() );
 
-                    RunService<RebusCommandService>( cancellationTokenSource.Token );
-                    //RunService<RebusEventService>( cancellationTokenSource.Token );
-                }
-            }
-        }
-
-        private static void RunService<T>( CancellationToken token ) where T : IRebusService
-        {
-            ServiceCollection collection = new ServiceCollection();
-            T s = Activator.CreateInstance<T>();
-
-            using( var services = collection.BuildServiceProvider() )
-            {
-                try
-                {
-                    s.Init( collection );
-                    s.Start( services );
-                    token.WaitHandle.WaitOne();
-                }
-                finally
-                {
-                    s.Stop( services );
+                    DefaultCommandHost.Run<RebusCommandHost>( cancellationTokenSource.Token );
                 }
             }
         }

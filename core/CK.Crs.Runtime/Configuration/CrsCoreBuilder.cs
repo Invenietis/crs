@@ -24,16 +24,10 @@ namespace CK.Crs
             _services.AddSingleton( _model );
             _services.AddSingleton<ICommandReceiver, CompositeCommandReceiver>( s =>
             {
-                //var receivers = s.GetServices<ICommandReceiver>();
-                //if( receivers.Count() > 1 )
-                //{
-                //    throw new InvalidOperationException( "We found multiple ICommandReceiver implementations. If you want to register another ICommandReceiver in the Crs Pipeline, please uses AddReceiver<T> on ICrsCoreBuilder." );
-                //}
-
                 return new CompositeCommandReceiver(
                     Receivers
                         .Select( r => s.GetRequiredService( r ) )
-                        .Union( new[] { s.GetRequiredService<DefaultCommandReceiver>() } )
+                        .Union( new[] { ActivatorUtilities.CreateInstance<DefaultCommandReceiver>( s ) } )
                         .OfType<ICommandReceiver>() );
             } );
         }
