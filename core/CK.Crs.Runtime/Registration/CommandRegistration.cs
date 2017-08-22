@@ -11,8 +11,8 @@ namespace CK.Crs
     /// </summary>
     public class CommandRegistration : ICommandRegistration
     {
-        CommandModel _model;
-        ICommandRegistry _registry;
+        readonly CommandModel _model;
+        readonly ICommandRegistry _registry;
 
         public CommandModel Model  => _model;
 

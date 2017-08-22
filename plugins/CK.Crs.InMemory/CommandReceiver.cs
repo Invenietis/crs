@@ -3,22 +3,22 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CK.Crs.Queue
+namespace CK.Crs.InMemory
 {
-    class QueueCommandReceiver : ICommandReceiver
+    class CommandReceiver : ICommandReceiver
     {
-        private readonly InMemoryQueue _inMemoryQueue;
+        private readonly CommandJobQueue _queue;
 
-        public QueueCommandReceiver( InMemoryQueue inMemoryQueue )
+        public CommandReceiver( CommandJobQueue queue )
         {
-            _inMemoryQueue = inMemoryQueue;
+            _queue = queue;
         }
 
         public Task<Response> ReceiveCommand<T>( T command, ICommandContext context ) where T : class
         {
-            if( context.Model.HasInProcessQueueTag() )
+            if( context.Model.HasFireAndForgetTag() )
             {
-                _inMemoryQueue.Push( command, context );
+                _queue.Push( command, context );
                 return Task.FromResult<Response>( new DeferredResponse( context.CommandId, context.CallerId ) );
             }
             return Task.FromResult<Response>( null );

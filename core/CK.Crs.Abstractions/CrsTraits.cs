@@ -7,7 +7,7 @@ namespace CK.Crs
 {
     public static class CrsTraits
     {
-        public static readonly string Queue = "Queue";
+        public static readonly string FireForget = "FireForget";
         public static readonly string Result = "Result";
         public static readonly string Broadcast = "Result|Broadcast";
 
@@ -16,10 +16,11 @@ namespace CK.Crs
             return HasTag( commandModel, CrsTraits.Broadcast );
         }
 
-        public static ICommandRegistration IsResultBroadcastTag( this ICommandRegistration commandRegistration )
+        public static ICommandRegistration BroadcastResult( this ICommandRegistration commandRegistration )
         {
             return SetTag( commandRegistration, CrsTraits.Broadcast );
         }
+
         public static bool HasResultTag( this CommandModel commandModel )
         {
             return HasTag( commandModel, CrsTraits.Result );
@@ -34,6 +35,7 @@ namespace CK.Crs
         {
             return commandModel.Tags.Overlaps( commandModel.Tags.Context.FindOrCreate( trait ) );
         }
+
         public static bool HasTags( this CommandModel commandModel, params string[] traits )
         {
             var combinedTraits = String.Join( commandModel.Tags.Context.Separator.ToString(), traits );

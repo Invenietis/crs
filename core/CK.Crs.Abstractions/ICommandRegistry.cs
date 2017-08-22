@@ -17,5 +17,7 @@ namespace CK.Crs
         void Register( CommandModel command );
 
         IEnumerable<CommandModel> Registration { get; }
+
+        CommandModel GetCommandByName( CommandName name );
     }
 }

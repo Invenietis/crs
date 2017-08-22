@@ -6,23 +6,14 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CK.Crs.Queue
+namespace CK.Crs.InMemory
 {
-    class InMemoryCommandJob
+    class CommandJobQueue : IDisposable
     {
-        public object Command { get; set; }
-
-        public ICommandContext CommandContext { get; set; }
-
-        public ActivityMonitor.DependentToken Token { get; set; }
-    }
-
-    class InMemoryQueue : IDisposable
-    {
-        BlockingCollection<InMemoryCommandJob> _queue;
-        public InMemoryQueue( ICommandHandlerInvoker invoker, IResultStrategy resultStrategy )
+        readonly BlockingCollection<CommandJob> _queue;
+        public CommandJobQueue( ICommandHandlerInvoker invoker, IResultStrategy resultStrategy )
         {
-            _queue = new BlockingCollection<InMemoryCommandJob>();
+            _queue = new BlockingCollection<CommandJob>();
             Task.Run( async () =>
             {
                 var monitor = new ActivityMonitor();
@@ -60,7 +51,7 @@ namespace CK.Crs.Queue
         public void Push<T>( T comand, ICommandContext context )
         {
             var depToken = context.Monitor.DependentActivity().CreateToken();
-            _queue.Add( new InMemoryCommandJob
+            _queue.Add( new CommandJob
             {
                 Command = comand,
                 CommandContext = context,

@@ -4,21 +4,56 @@ using Rebus.Transport;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using R = Rebus;
 
 namespace CK.Crs
 {
     public static class RebusExtensions
     {
+        public static readonly string CrsPrefix = "CRS_";
         public static readonly string RebusTag = "Rebus";
 
-        public static bool HasRebusQueueTag( this CommandModel commandModel )
+        public static bool HasRebusTag( this CommandModel commandModel )
         {
-            return commandModel.HasTags( RebusTag, CrsTraits.Queue );
+            return commandModel.HasTags( RebusTag, CrsTraits.FireForget );
         }
 
-        public static ICommandRegistration IsRebusQueue( this ICommandRegistration commandRegistration )
+        public static ICommandRegistration IsRebus( this ICommandRegistration commandRegistration )
         {
-            return commandRegistration.SetTag( RebusTag, CrsTraits.Queue );
+            return commandRegistration.SetTag( RebusTag, CrsTraits.FireForget );
+        }
+
+        public static Dictionary<string, string> CreateHeaders( this ICommandContext context )
+        {
+            return new Dictionary<string, string>
+            {
+                // CRS Headers
+                { CrsPrefix + "CommandName", context.Model.Name },
+                { CrsPrefix + nameof( ICommandContext.CallerId ), context.CallerId },
+                { CrsPrefix + nameof( ICommandContext.CommandId ), context.CommandId.ToString() },
+                { CrsPrefix + nameof( ICommandContext.Monitor ), context.Monitor.DependentActivity().CreateToken().ToString() },
+
+                // Rebus Headers
+                //{ R.Messages.Headers.ReturnAddress, "" },
+                { R.Messages.Headers.MessageId, context.CommandId.ToString() }
+            };
+        }
+
+        public static Dictionary<string, string> CreateResultHeaders( this ICommandContext context )
+        {
+            return new Dictionary<string, string>
+            {
+                // CRS Headers
+                { CrsPrefix + "CommandName", context.Model.Name },
+                { CrsPrefix + "IsResult", "true" },
+                { CrsPrefix + nameof( ICommandContext.CallerId ), context.CallerId },
+                { CrsPrefix + nameof( ICommandContext.CommandId ), context.CommandId.ToString() },
+                { CrsPrefix + nameof( ICommandContext.Monitor ), context.Monitor.DependentActivity().CreateToken().ToString() },
+
+                // Rebus Headers
+                //{ R.Messages.Headers.ReturnAddress, "" },
+                { R.Messages.Headers.MessageId, context.CommandId.ToString() }
+            };
         }
 
         /// <summary>
@@ -28,10 +63,11 @@ namespace CK.Crs
         /// <returns></returns>
         public static IActivityMonitor GetActivityMonitor( this IMessageContext context )
         {
-            return context.TransactionContext.GetOrAdd( nameof( ICommandContext.Monitor ), () =>
+            var key = CrsPrefix + nameof( ICommandContext.Monitor );
+            return context.TransactionContext.GetOrAdd( key, () =>
             {
                 var monitor = new ActivityMonitor();
-                var monitorToken = context.Headers[nameof( ICommandContext.Monitor )];
+                var monitorToken = context.Headers[key];
                 if( monitorToken != null )
                 {
                     var monitorDisposable = monitor.StartDependentActivity( ActivityMonitor.DependentToken.Parse( monitorToken ) );
@@ -41,27 +77,30 @@ namespace CK.Crs
             } );
         }
 
-
         public static Guid GetCommandId( this IMessageContext context )
         {
-            return context.TransactionContext.GetOrAdd( nameof( ICommandContext.CommandId ), () =>
+            var key = CrsPrefix + nameof( ICommandContext.CommandId );
+            return context.TransactionContext.GetOrAdd( key, () =>
             {
-                var commandId = context.Headers[nameof( ICommandContext.CommandId )];
+                var commandId = context.Headers[key];
                 if( commandId != null )
                 {
                     return Guid.Parse( commandId );
                 }
                 return Guid.Empty;
             } );
-
         }
 
         public static string GetCallerId( this IMessageContext context )
         {
-            return context.TransactionContext.GetOrAdd( nameof( ICommandContext.CallerId ), () =>
-            {
-                return context.Headers[nameof( ICommandContext.CallerId )];
-            } );
+            var key = CrsPrefix + nameof( ICommandContext.CallerId );
+            return context.TransactionContext.GetOrAdd( key, () => context.Headers[key] );
+        }
+
+        public static string GetCommandName( this IMessageContext context )
+        {
+            var key = CrsPrefix + "CommandName";
+            return context.TransactionContext.GetOrAdd( key, () => context.Headers[key] );
         }
     }
 }

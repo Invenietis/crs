@@ -80,12 +80,12 @@ namespace CK.Crs.Rebus.Tests
                         c => c.Commands( registry => registry
                             .Register<SimpleCommand>().HandledBy<SimpleCommandHandler>()
                             .Register<SimpleCommandWithDirectResult>().HandledBy<SimpleCommandHandler>()
-                            .Register<SimpleCommandWithResult>().IsRebusQueue().HandledBy<SimpleCommandHandler>()
-                            .Register<SimpleCommandWithResult.Result>().IsRebusQueue().HandledBy<SimpleCommandHandler>() ) )
+                            .Register<SimpleCommandWithResult>().IsRebus().HandledBy<SimpleCommandHandler>()
+                            .Register<SimpleCommandWithResult.Result>().IsRebus().HandledBy<SimpleCommandHandler>() ) )
                     .AddRebus(
                         c => c.Transport( t => t.UseInMemoryTransport( new InMemNetwork( true ), "commands_result" ) ),
-                        c => c( "commands" )( r => r.HasRebusQueueTag() && r.HandlerType == null ),
-                        c => c( "commands_result" )( r => r.HasRebusQueueTag() && r.HandlerType != null ) );
+                        c => c( "commands" )( r => r.HasRebusTag() && r.HandlerType == null ),
+                        c => c( "commands_result" )( r => r.HasRebusTag() && r.HandlerType != null ) );
 
                 using( var services = serviceCollection.BuildServiceProvider() )
                 {
@@ -138,11 +138,11 @@ namespace CK.Crs.Rebus.Tests
                             .Register<SimpleCommand>().HandledBy<SimpleCommandHandler>()
                             .Register<SimpleCommandWithDirectResult>().HandledBy<SimpleCommandHandler>()
                             .Register<SimpleCommandWithResult>().HandledBy<SimpleCommandHandler>()
-                            .Register<SimpleCommandWithResult.Result>().IsRebusQueue() ) )
+                            .Register<SimpleCommandWithResult.Result>().IsRebus() ) )
                     .AddRebus(
                         c => c.Transport( t => t.UseInMemoryTransport( sharedNetwork, "commands" ) ),
                         c => c( "commands" )( r => r.HandlerType != null ),
-                        c => c( "commands_result" )( r => r.HasRebusQueueTag() ) );
+                        c => c( "commands_result" )( r => r.HasRebusTag() ) );
 
                     using( var services = serviceCollection.BuildServiceProvider() )
                     {
@@ -160,14 +160,14 @@ namespace CK.Crs.Rebus.Tests
                     serviceCollection
                         .AddCrsCore(
                             c => c.Commands( registry => registry
-                                .Register<SimpleCommand>().IsRebusQueue()
-                                .Register<SimpleCommandWithDirectResult>().IsRebusQueue()
-                                .Register<SimpleCommandWithResult>().IsRebusQueue()
-                                .Register<SimpleCommandWithResult.Result>().IsRebusQueue().HandledBy<SimpleCommandHandler>() ) )
+                                .Register<SimpleCommand>().IsRebus()
+                                .Register<SimpleCommandWithDirectResult>().IsRebus()
+                                .Register<SimpleCommandWithResult>().IsRebus()
+                                .Register<SimpleCommandWithResult.Result>().IsRebus().HandledBy<SimpleCommandHandler>() ) )
                         .AddRebus(
                             c => c.Transport( t => t.UseInMemoryTransport( sharedNetwork, "commands_result" ) ),
-                            c => c( "commands" )( r => r.HasRebusQueueTag() && r.HandlerType == null ),
-                            c => c( "commands_result" )( r => r.HasRebusQueueTag() && r.HandlerType != null ) );
+                            c => c( "commands" )( r => r.HasRebusTag() && r.HandlerType == null ),
+                            c => c( "commands_result" )( r => r.HasRebusTag() && r.HandlerType != null ) );
 
                     using( var services = serviceCollection.BuildServiceProvider() )
                     {

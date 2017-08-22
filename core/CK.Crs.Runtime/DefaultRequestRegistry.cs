@@ -6,7 +6,7 @@ namespace CK.Crs
 {
     public class DefaultRequestRegistry : ICommandRegistry
     {
-        List<CommandModel> Map { get; } = new List<CommandModel>();
+        Dictionary<CommandName,CommandModel> Map { get; } = new Dictionary<CommandName,CommandModel>();
 
         public DefaultRequestRegistry( CKTraitContext traitContext )
         {
@@ -15,14 +15,19 @@ namespace CK.Crs
 
         public IEnumerable<CommandModel> Registration
         {
-            get { return Map; }
+            get { return Map.Values; }
         }
 
         public CKTraitContext TraitContext { get; }
 
         public void Register( CommandModel descriptor )
         {
-            Map.Add( descriptor );
+            Map.Add( descriptor.Name, descriptor );
+        }
+
+        public CommandModel GetCommandByName( CommandName name )
+        {
+            return Map.GetValueWithDefault( name, null );
         }
     }
 }

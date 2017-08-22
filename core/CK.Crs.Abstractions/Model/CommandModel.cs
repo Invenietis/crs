@@ -35,9 +35,9 @@ namespace CK.Crs
         public CommandModel( Type type, CKTraitContext context )
         {
             CommandType = type ?? throw new ArgumentNullException( nameof( type ) );
-            Name = type.FullName;
+            Name = new CommandName( type );
             Tags = context.EmptyTrait;
-            ResultType = FindResultType( type ); 
+            ResultType = FindResultType( type );
         }
 
         public static Type FindResultType( Type type )
@@ -62,7 +62,7 @@ namespace CK.Crs
         /// <summary>
         /// The name of the command
         /// </summary>
-        public string Name { get; set; }
+        public CommandName Name { get; set; }
 
         /// <summary>
         /// The <see cref="System.Type"/> of the command to process.

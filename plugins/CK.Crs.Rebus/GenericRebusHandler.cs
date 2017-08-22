@@ -29,10 +29,12 @@ namespace CK.Crs.Rebus
 
         public async Task Handle( T command )
         {
-            var model = _registry.Registration.FirstOrDefault( r => r.CommandType == typeof( T ) );
+            var msgContext = MessageContext.Current;
+
+            CommandName commandName = msgContext.GetCommandName();
+            CommandModel model = _registry.GetCommandByName( commandName );
             if( model != null )
             {
-                var msgContext = MessageContext.Current;
                 using( var token = new CancellationTokenSource() )
                 {
                     var context = new CommandContext(
@@ -42,10 +44,13 @@ namespace CK.Crs.Rebus
                         msgContext.GetCallerId(),
                         token.Token );
 
-                    var resultReceiver = _resultStrategy.GetResultReceiver( model );
-                    if( resultReceiver  != null )
+                    if( model.ResultType == typeof( T ) )
                     {
-                        await resultReceiver.ReceiveResult( command, context );
+                        var resultReceiver = _resultStrategy.GetResultReceiver( model );
+                        if( resultReceiver != null )
+                        {
+                            await resultReceiver.ReceiveResult( command, context );
+                        }
                         return;
                     }
 
@@ -67,12 +72,8 @@ namespace CK.Crs.Rebus
                     var result = await _invoker.Invoke( command, context );
                     if( result != null )
                     {
-                        await _bus.Reply( result, new Dictionary<string, string>
-                        {
-                            { nameof( ICommandContext.Monitor ), context.Monitor.DependentActivity().CreateToken().ToString() },
-                            { nameof( ICommandContext.CommandId ), context.CommandId.ToString() },
-                            { nameof( ICommandContext.CallerId ), context.CallerId }
-                        } );
+                        var resultHeaders = context.CreateResultHeaders();
+                        await _bus.Reply( result, resultHeaders );
                     }
                 }
             }

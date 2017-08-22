@@ -47,11 +47,9 @@ namespace CK.Crs.Samples.AspNetCoreApp
                 .AddCrs(
                     c => c.Commands( registry => registry
                         // This command is sent to a rebus queue configured below
-                        .Register<RemotelyQueuedCommand>().IsRebusQueue()
-                        // This result is sent to the rebus reply queue configured below and handled as a pure result by CRS
-                        .Register<RemotelyQueuedCommand.Result>().IsResultTag()
+                        .Register<RemotelyQueuedCommand>().IsRebus().BroadcastResult()
                         // This command is sent to an in-memory queue executed in webapp process
-                        .Register<QueuedCommand>().IsInProcessQueue().HandledBy<InProcessHandler>()
+                        .Register<QueuedCommand>().FireAndForget().HandledBy<InProcessHandler>()
                         // This command is processed synchronously and the result is returned to the caller.
                         // We doesn't need to specify a result tag etc for this command 
                         .Register<SyncCommand>().HandledBy<InProcessHandler>()
@@ -60,8 +58,8 @@ namespace CK.Crs.Samples.AspNetCoreApp
                 .AddAmbientValues( a => a.AddAmbientValueProvider<ActorIdAmbientValueProvider>( nameof( MessageBase.ActorId ) ) )
                 .AddRebus(
                     c => c.Transport( t => t.UseSqlServer( conString, "tMessages", "commands_result" ) ),
-                    c => c( "commands" )( m => m.HasRebusQueueTag() ) )
-                .AddInMemoryQueue();
+                    c => c( "commands" )( m => m.HasRebusTag() ) )
+                .AddInMemoryReceiver();
                 //.AddClientDispatcher( new ClientDispatcherOptions
                 //{
                 //    SupportsServerSideEventsFiltering = false

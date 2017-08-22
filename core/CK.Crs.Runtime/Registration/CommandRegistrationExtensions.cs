@@ -155,6 +155,10 @@ namespace CK.Crs
             var model = new CommandModel( typeof( TCommand ), registry.TraitContext );
             var registration = new CommandRegistration( registry, model );
             registry.Register( model );
+            if( model.ResultType != null )
+            {
+                registration.IsResultTag();
+            }
             return registration;
         }
 
