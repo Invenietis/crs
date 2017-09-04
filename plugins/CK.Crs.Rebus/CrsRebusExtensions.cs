@@ -3,10 +3,8 @@ using System;
 using CK.Crs;
 using CK.Crs.Rebus;
 using Rebus.Routing.TypeBased;
-using CK.Core;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 using System.Linq;
+using CK.Monitoring;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -28,7 +26,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 builder.Registry );
 
             var configurer = Configure.With( activator );
-            configurer = configurer.Logging( l => l.Use( new GrandOutputRebusLoggerFactory() ) );
+            configurer = configurer.Logging( l => l.Use( new GrandOutputRebusLoggerFactory( GrandOutput.Default ) ) );
 
             configurer
                 .Routing( l =>

@@ -43,6 +43,8 @@ namespace CK.Crs.Samples.AspNetCoreApp
 
             var conString = Config.GetConnectionString( "Messaging" );
 
+            services.AddAmbientValues( a => a.AddAmbientValueProvider<ActorIdAmbientValueProvider>( nameof( MessageBase.ActorId ) ) );
+
             services
                 .AddCrs(
                     c => c.Commands( registry => registry
@@ -55,7 +57,6 @@ namespace CK.Crs.Samples.AspNetCoreApp
                         .Register<SyncCommand>().HandledBy<InProcessHandler>()
                    )
                    .Endpoints( e => e.For( typeof( CrsDispatcherEndpoint<> ) ).AcceptAll() ) )
-                .AddAmbientValues( a => a.AddAmbientValueProvider<ActorIdAmbientValueProvider>( nameof( MessageBase.ActorId ) ) )
                 .AddRebus(
                     c => c.Transport( t => t.UseSqlServer( conString, "tMessages", "commands_result" ) ),
                     c => c( "commands" )( m => m.HasRebusTag() ) )

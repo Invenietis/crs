@@ -18,16 +18,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<IResultStrategy, DefaultResultStrategy>();
             services.AddSingleton<IClientDispatcher, NoOpClientDispatcher>();
             services.AddSingleton( builder.Registry );
-            
-            return new CrsCoreBuilder( builder );
-        }
 
-        public static ICrsCoreBuilder AddAmbientValues( this ICrsCoreBuilder builder, Action<IAmbientValuesRegistration> ambientValuesConfiguration )
-        {
-            var config = new CrsAmbientValuesConfiguration( builder.Services );
-            var registration = config.Configure();
-            ambientValuesConfiguration( registration );
-            return builder;
+            return new CrsCoreBuilder( builder );
         }
     }
 }

@@ -39,7 +39,7 @@ namespace CK.Core
         /// <returns></returns>
         public Task<bool> ValidateValue( string valueName )
         {
-            return ValidateValue( valueName, DefaultAmbientValueComparer );
+            return ValidateValue( valueName, EqualityComparer<object>.Default );
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace CK.Core
         /// <param name="valueName"></param>
         /// <param name="comparer"></param>
         /// <returns>Returns true if validation success, false if failed.</returns>
-        public abstract Task<bool> ValidateValue( string valueName, AmbientValueComparer comparer );
+        public abstract Task<bool> ValidateValue( string valueName, IEqualityComparer<object> comparer );
 
         /// <summary>
         /// Compares the value of the given value name from the <see cref="IAmbientValues"/> and the command using the given comparer and immediatly set the validation on error.
@@ -59,10 +59,10 @@ namespace CK.Core
         /// <returns></returns>
         public virtual Task ValidateValueAndRejectOnError( string valueName )
         {
-            return ValidateValueAndRejectOnError( valueName, DefaultAmbientValueComparer );
+            return ValidateValueAndRejectOnError( valueName, EqualityComparer<object>.Default );
         }
 
-        public virtual async Task ValidateValueAndRejectOnError( string valueName, AmbientValueComparer comparer )
+        public virtual async Task ValidateValueAndRejectOnError( string valueName, IEqualityComparer<object> comparer )
         {
             Monitor.Trace( $"Validating {valueName}..." );
             var result = await ValidateValue( valueName, comparer );
@@ -70,7 +70,5 @@ namespace CK.Core
 
             Monitor.Trace( result ? "Validation Sucess" : "Validation failed..." );
         }
-
-        public static bool DefaultAmbientValueComparer( string valueName, IComparable value, IComparable ambientValue ) => ambientValue.CompareTo( value ) == 0;
     }
 }

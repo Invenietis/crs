@@ -1,7 +1,9 @@
-﻿using CK.Core;
+using CK.Core;
 using System;
 using Rebus.Logging;
 using MessageTemplates.Parsing;
+using CK.Monitoring;
+using System.Globalization;
 
 namespace CK.Crs.Rebus
 {
@@ -9,20 +11,17 @@ namespace CK.Crs.Rebus
     public class GrandOutputRebusLoggerFactory : AbstractRebusLoggerFactory
     {
         MessageTemplateParser _parser;
-        GrandOutputExternalLogger _logger;
+        GrandOutput _logger;
 
-        public GrandOutputRebusLoggerFactory( Guid? monitorId = null, CKTraitContext context = null )
+        public GrandOutputRebusLoggerFactory( GrandOutput grandOutput )
         {
-            if( monitorId == null ) monitorId = Guid.NewGuid();
-            if( context == null ) context = new CKTraitContext( "GrandOutput" );
-
             _parser = new MessageTemplateParser();
-            _logger = new GrandOutputExternalLogger( monitorId.Value, _parser, context.FindOrCreate( "External" ) );
+            _logger = grandOutput;// new GrandOutputExternalLogger( monitorId.Value, _parser, context.FindOrCreate( "External" ) );
         }
 
         protected override ILog GetLogger( Type type )
         {
-            return new RebusLoggerAdapter( GetTopicFor( type ), _logger );
+            return new RebusLoggerAdapter( _logger, _parser );
         }
 
         private string GetTopicFor( Type type )
@@ -32,42 +31,53 @@ namespace CK.Crs.Rebus
 
         class RebusLoggerAdapter : ILog
         {
-            GrandOutputExternalLogger _logger;
-            string _topic;
-            public RebusLoggerAdapter( string topic, GrandOutputExternalLogger logger )
+            MessageTemplateParser _parser;
+            GrandOutput _logger;
+       
+            public RebusLoggerAdapter( GrandOutput logger, MessageTemplateParser parser )
             {
-                _topic = topic;
                 _logger = logger;
+                _parser = parser;
+            }
+            private string Format( string message, params object[] objs )
+            {
+                return _parser.Parse( message ).Format( CultureInfo.CurrentCulture, objs );
             }
 
             public void Debug( string message, params object[] objs )
             {
-                _logger.Log( Core.LogLevel.Debug, _topic, message, null, objs );
+                string parsedMessage = Format( message, objs );
+                _logger.ExternalLog( Core.LogLevel.Debug,  parsedMessage );
             }
 
             public void Error( string message, params object[] objs )
             {
-                _logger.Log( Core.LogLevel.Error, _topic, message, null, objs );
+                string parsedMessage = Format( message, objs );
+                _logger.ExternalLog( Core.LogLevel.Error, parsedMessage );
             }
 
             public void Error( Exception exception, string message, params object[] objs )
             {
-                _logger.Log( Core.LogLevel.Error, _topic, message, exception, objs );
+                string parsedMessage = Format( message, objs );
+                _logger.ExternalLog( Core.LogLevel.Error, parsedMessage, exception );
             }
 
             public void Info( string message, params object[] objs )
             {
-                _logger.Log( Core.LogLevel.Info, _topic, message, null, objs );
+                string parsedMessage = Format( message, objs );
+                _logger.ExternalLog( Core.LogLevel.Info, parsedMessage );
             }
 
             public void Warn( string message, params object[] objs )
             {
-                _logger.Log( Core.LogLevel.Warn, _topic, message, null, objs );
+                string parsedMessage = Format( message, objs );
+                _logger.ExternalLog( Core.LogLevel.Warn, parsedMessage );
             }
 
             public void Warn( Exception exception, string message, params object[] objs )
             {
-                _logger.Log( Core.LogLevel.Warn, _topic, message, exception, objs );
+                string parsedMessage = Format( message, objs );
+                _logger.ExternalLog( Core.LogLevel.Warn, parsedMessage, exception );
             }
         }
     }

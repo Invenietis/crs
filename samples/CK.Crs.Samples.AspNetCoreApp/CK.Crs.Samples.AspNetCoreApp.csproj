@@ -9,7 +9,7 @@
     <Folder Include="wwwroot\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CK.Monitoring" Version="7.0.0" />
+    <PackageReference Include="CK.Monitoring" Version="7.1.0" />
     <PackageReference Include="CK.StObj.Model" Version="5.0.0-b01" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
     <PackageReference Include="Rebus.SqlServer" Version="4.0.0" />

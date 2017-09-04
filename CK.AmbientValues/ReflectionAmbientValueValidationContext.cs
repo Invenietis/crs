@@ -1,10 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Reflection;
 using CK.Core;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace CK.Core
 {
@@ -18,7 +17,7 @@ namespace CK.Core
             Action = command;
         }
 
-        public sealed override async Task<bool> ValidateValue( string valueName, AmbientValueComparer comparer )
+        public sealed override async Task<bool> ValidateValue( string valueName, IEqualityComparer<object> comparer )
         {
             var actionType = Action.GetType();
             var properties = actionType.GetProperties().ToDictionary( k => k.Name );
@@ -29,11 +28,11 @@ namespace CK.Core
                 return true;
             }
 
-            IComparable value = (IComparable)property.GetMethod.Invoke( Action, null );
+            var value = property.GetMethod.Invoke( Action, null );
             Monitor.Trace( $"Getting {property.Name} by reflection on the command and obtained {value?.ToString()}." );
             IComparable ambientValue = await AmbientValues.GetValueAsync( valueName );
             Monitor.Trace( $"Getting {valueName} in the ambient values and obtained {ambientValue?.ToString()}." );
-            return comparer( valueName, value, ambientValue );
+            return comparer.Equals( value, ambientValue );
         }
     }
 }
