@@ -17,26 +17,35 @@ namespace CK.Crs.InMemory
             Task.Run( async () =>
             {
                 var monitor = new ActivityMonitor();
-
+                monitor.Trace( "CommandJobQueue running..." );
                 while( !_queue.IsCompleted )
                 {
+                    monitor.Trace( "Waiting for the next command to take..." );
                     var job = _queue.Take();
-                    try
+                    using( monitor.OpenTrace( $" Command {job.CommandContext.Model.Name} - {job.CommandContext.CommandId} taken" ) )
                     {
-                        using( monitor.StartDependentActivity( job.Token ) )
+                        try
                         {
-                            var context2 = new CommandContext( job.CommandContext.CommandId, monitor, job.CommandContext.Model, job.CommandContext.CallerId, default( CancellationToken ) );
-                            var deferredResult = await invoker.Invoke( job.Command, context2 );
-                            if( deferredResult != null )
+                            using( job.Token != null ? monitor.StartDependentActivity( job.Token ) : Util.EmptyDisposable )
                             {
+                                var context2 = new CommandContext( job.CommandContext.CommandId, monitor, job.CommandContext.Model, job.CommandContext.CallerId, default( CancellationToken ) );
+                                monitor.Trace( "Invoking the command..." );
+                                var deferredResult = await invoker.Invoke( job.Command, context2 );
+
+                                monitor.Trace( "Obtaining the result receiver for dispatching result to the client." );
                                 var resultReceiver = resultStrategy.GetResultReceiver( context2.Model );
-                                await resultReceiver.ReceiveResult( deferredResult, context2 );
+                                if( resultReceiver == null ) monitor.Warn( "No result receiver available for this command. Unable to communicate the result..." );
+                                else
+                                {
+                                    monitor.Trace( "Sending the result." );
+                                    await resultReceiver.ReceiveResult( deferredResult, context2 );
+                                }
                             }
                         }
-                    }
-                    catch( Exception ex )
-                    {
-                        monitor.Error( ex );
+                        catch( Exception ex )
+                        {
+                            monitor.Error( ex );
+                        }
                     }
                 }
             } );

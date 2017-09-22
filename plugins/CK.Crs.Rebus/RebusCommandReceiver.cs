@@ -18,6 +18,13 @@ namespace CK.Crs
             adapter.SetBus( _bus );
         }
 
+        public string Name => "Rebus";
+
+        public bool AcceptCommand( ICommandContext context )
+        {
+            return context.Model.HasRebusTag();
+        }
+
         public void Dispose()
         {
             _bus.Dispose();
@@ -25,13 +32,9 @@ namespace CK.Crs
 
         public async Task<Response> ReceiveCommand<T>( T command, ICommandContext context ) where T : class
         {
-            if( context.Model.HasRebusTag() )
-            {
-                await _bus.Send( command, context.CreateHeaders() );
+            await _bus.Send( command, context.CreateHeaders() );
 
-                return new Response( ResponseType.Asynchronous, context.CommandId );
-            }
-            return null;
+            return new Response( ResponseType.Asynchronous, context.CommandId );
         }
     }
 }

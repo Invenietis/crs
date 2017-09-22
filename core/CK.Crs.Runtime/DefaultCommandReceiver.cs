@@ -18,6 +18,13 @@ namespace CK.Crs
             _invoker = invoker;
         }
 
+        public string Name => "DefaultReceiver";
+
+        public bool AcceptCommand( ICommandContext context )
+        {
+            return true;
+        }
+
         public async Task<Response> ReceiveCommand<T>( T command, ICommandContext context ) where T : class
         {
             Response response = null;

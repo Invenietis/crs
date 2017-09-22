@@ -1,23 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CK.Crs
 {
-    class DefaultResultReceiver : IResultReceiver
+    class BroadcastResultReceiver : IResultReceiver
     {
         private readonly IClientDispatcher _dispatcher;
 
-        public DefaultResultReceiver( IClientDispatcher dispatcher )
+        public BroadcastResultReceiver( IClientDispatcher dispatcher )
         {
             _dispatcher = dispatcher;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public string Name => "Peer2PeerResultDispatcher";
+        public string Name => "BroadcastReceiver";
 
         public Task ReceiveResult( object result, ICommandContext context )
         {
@@ -25,7 +19,7 @@ namespace CK.Crs
             {
                 Payload = result
             };
-            _dispatcher.Send( context.CallerId, response );
+            _dispatcher.Broadcast( response );
             return Task.FromResult( response );
         }
     }

@@ -4,14 +4,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using CK.Crs.Samples.Messages;
 using CK.Core;
-using CK.Communication.WebSockets;
 using System.IO;
 using CK.Monitoring.Handlers;
 using CK.Monitoring;
 using Rebus.Config;
 using CK.Crs.Samples.Handlers;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 
 namespace CK.Crs.Samples.AspNetCoreApp
 {
@@ -35,7 +33,7 @@ namespace CK.Crs.Samples.AspNetCoreApp
         public void ConfigureServices( IServiceCollection services )
         {
             ActivityMonitor.AutoConfiguration = m => m.Output.RegisterUniqueClient<ActivityMonitorConsoleClient>();
-            SystemActivityMonitor.RootLogPath = Path.Combine( Directory.GetCurrentDirectory(), "Monitoring" );
+            LogFile.RootLogPath = Path.Combine( Directory.GetCurrentDirectory(), "Monitoring" );
             GrandOutput.EnsureActiveDefault( new GrandOutputConfiguration
             {
                 Handlers = { new TextFileConfiguration { Path = "Logs" } }
@@ -60,7 +58,8 @@ namespace CK.Crs.Samples.AspNetCoreApp
                 .AddRebus(
                     c => c.Transport( t => t.UseSqlServer( conString, "tMessages", "commands_result" ) ),
                     c => c( "commands" )( m => m.HasRebusTag() ) )
-                .AddInMemoryReceiver();
+                .AddInMemoryReceiver()
+                .AddSignalR();
                 //.AddClientDispatcher( new ClientDispatcherOptions
                 //{
                 //    SupportsServerSideEventsFiltering = false

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CK.Crs
 {
-    class NoOpClientDispatcher : IClientDispatcher
+    class NoopClientDispatcher : IClientDispatcher
     {
         public void Send( string callerId, Response response )
         {

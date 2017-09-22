@@ -14,14 +14,22 @@ namespace CK.Crs.InMemory
             _queue = queue;
         }
 
+        public string Name => "InMemoryReceiver";
+
+        public bool AcceptCommand( ICommandContext context )
+        {
+            bool res = context.Model.HasFireAndForgetTag();
+            if( res == false )
+                context.Monitor.Trace( "Command does not have the FireAndForget trait." );
+
+            return res;
+        }
+
         public Task<Response> ReceiveCommand<T>( T command, ICommandContext context ) where T : class
         {
-            if( context.Model.HasFireAndForgetTag() )
-            {
-                _queue.Push( command, context );
-                return Task.FromResult<Response>( new DeferredResponse( context.CommandId, context.CallerId ) );
-            }
-            return Task.FromResult<Response>( null );
+            context.Monitor.Trace( "Enqueuinq the command for asynchronous processing." );
+            _queue.Push( command, context );
+            return Task.FromResult<Response>( new DeferredResponse( context.CommandId, context.CallerId ) );
         }
     }
 }

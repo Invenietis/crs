@@ -9,8 +9,7 @@
     <Folder Include="wwwroot\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CK.Monitoring" Version="7.1.0" />
-    <PackageReference Include="CK.StObj.Model" Version="5.0.0-b01" />
+    <PackageReference Include="CK.Monitoring" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
     <PackageReference Include="Rebus.SqlServer" Version="4.0.0" />
   </ItemGroup>
@@ -19,6 +18,7 @@
     <ProjectReference Include="..\..\plugins\CK.Crs.ClientDispatcher\CK.Crs.ClientDispatcher.csproj" />
     <ProjectReference Include="..\..\plugins\CK.Crs.InMemory\CK.Crs.InMemory.csproj" />
     <ProjectReference Include="..\..\plugins\CK.Crs.Rebus\CK.Crs.Rebus.csproj" />
+    <ProjectReference Include="..\..\plugins\CK.Crs.SignalR\CK.Crs.SignalR.csproj" />
     <ProjectReference Include="..\CK.Crs.Samples.Commands\CK.Crs.Samples.Commands.csproj" />
     <ProjectReference Include="..\CK.Crs.Samples.Events\CK.Crs.Samples.Events.csproj" />
     <ProjectReference Include="..\CK.Crs.Samples.Handlers\CK.Crs.Samples.Handlers.csproj" />

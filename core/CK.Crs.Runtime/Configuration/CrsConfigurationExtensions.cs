@@ -16,7 +16,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<ICommandHandlerFactory, DefaultCommandHandlerFactory>();
             services.AddSingleton<ICommandHandlerInvoker, DefaultCommandInvoker>();
             services.AddSingleton<IResultStrategy, DefaultResultStrategy>();
-            services.AddSingleton<IClientDispatcher, NoOpClientDispatcher>();
+            services.AddSingleton<IClientDispatcher, NoopClientDispatcher>();
             services.AddSingleton( builder.Registry );
 
             return new CrsCoreBuilder( builder );

@@ -1,4 +1,4 @@
-﻿using CK.Monitoring;
+using CK.Monitoring;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -44,12 +44,12 @@ namespace CK.Crs.Rebus.Tests
         {
         }
 
-        public void Handle( GrandOutputEventInfo logEvent )
+        public void Handle( IActivityMonitor m, GrandOutputEventInfo logEvent )
         {
             _conf.Out.WriteLine( logEvent.Entry.Text );
         }
 
-        public void OnTimer( TimeSpan timerSpan )
+        public void OnTimer( IActivityMonitor m, TimeSpan timerSpan )
         {
         }
     }

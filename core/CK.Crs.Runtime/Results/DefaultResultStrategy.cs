@@ -2,13 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace CK.Crs
 {
     public class DefaultResultStrategy : IResultStrategy
     {
-        public DefaultResultStrategy( IClientDispatcher clientDispatcher)
+        BroadcastResultReceiver _broadcastResultReceiver;
+        DefaultResultReceiver _defaultResultReceiver;
+
+        public DefaultResultStrategy( IClientDispatcher clientDispatcher )
         {
             ClientDispatcher = clientDispatcher;
         }
@@ -19,33 +21,13 @@ namespace CK.Crs
         {
             if( model.HasResultBroadcastTag() )
             {
-                return new BroadcastResultReceiver( ClientDispatcher );
+                return _broadcastResultReceiver ?? (_broadcastResultReceiver = new BroadcastResultReceiver( ClientDispatcher ));
             }
             if( model.HasResultTag() )
             {
-                return new DefaultResultReceiver( ClientDispatcher );
+                return _defaultResultReceiver ?? (_defaultResultReceiver = new DefaultResultReceiver( ClientDispatcher ));
             }
             return null;
-        }
-    }
-
-    class BroadcastResultReceiver : IResultReceiver
-    {
-        private readonly IClientDispatcher _dispatcher;
-
-        public BroadcastResultReceiver( IClientDispatcher dispatcher )
-        {
-            _dispatcher = dispatcher;
-        }
-
-        public Task ReceiveResult( object result, ICommandContext context )
-        {
-            var response = new Response( ResponseType.Synchronous, context.CommandId )
-            {
-                Payload = result
-            };
-            _dispatcher.Broadcast( response );
-            return Task.FromResult( response );
         }
     }
 }
