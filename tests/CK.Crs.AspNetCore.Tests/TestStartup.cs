@@ -26,7 +26,10 @@ namespace CK.Crs.AspNetCore.Tests
         public void ConfigureServices( IServiceCollection services )
         {
             services.AddAmbientValues( MapFromBaseCommandType );
-            services.AddCrs( c => c.Commands( Commands ).Endpoints( Endpoints ) );
+            services
+                .AddCrs( c => c.Commands( Commands ).Endpoints( Endpoints ) )
+                .AddInMemoryReceiver()
+                .AddSignalR();
         }
 
         public void Configure( IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory )
@@ -40,19 +43,19 @@ namespace CK.Crs.AspNetCore.Tests
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="ambientValuesRegistration"></param>
-        private void MapFromBaseCommandType( IAmbientValuesRegistration ambientValuesRegistration)
+        private void MapFromBaseCommandType( IAmbientValuesRegistration ambientValuesRegistration )
         {
             ambientValuesRegistration
                 .AddAmbientValueProviderFrom<CommandBase>()
-                    .Select( t => t.ActorId ).ProvidedBy<AlwaysTrusted>() ;
+                    .Select( t => t.ActorId ).ProvidedBy<AlwaysTrusted>();
         }
 
         private void Endpoints( ICrsEndpointConfigurationRoot e ) => e.For( typeof( TestEndpoint<> ) ).AcceptAll();
 
         private void Commands( ICommandRegistry registry ) =>
             registry
-                .Register<TransferAmountCommand, TransferAlwaysSuccessHandler>()
-                .Register<WithdrawMoneyCommand, WithDrawyMoneyHandler>();
+                .Register<WithdrawMoneyCommand, WithDrawyMoneyHandler>()
+                .Register<TransferAmountCommand>().FireAndForget().HandledBy<TransferAlwaysSuccessHandler>();
 
         class AlwaysTrusted : IAmbientValueProvider
         {

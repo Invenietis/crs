@@ -21,6 +21,6 @@ namespace CK.Crs
         /// <param name="result"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        Task ReceiveResult( object result, ICommandContext context );
+        Task ReceiveResult<T>( T result, ICommandContext context );
     }
 }

@@ -34,7 +34,7 @@ namespace CK.Crs
         {
             await _bus.Send( command, context.CreateHeaders() );
 
-            return new Response( ResponseType.Asynchronous, context.CommandId );
+            return new DeferredResponse( context.CommandId, context.CallerId );
         }
     }
 }

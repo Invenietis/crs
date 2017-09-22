@@ -13,9 +13,9 @@ namespace CK.Crs
 
         public string Name => "BroadcastReceiver";
 
-        public Task ReceiveResult( object result, ICommandContext context )
+        public Task ReceiveResult<T>( T result, ICommandContext context )
         {
-            var response = new Response( ResponseType.Synchronous, context.CommandId )
+            var response = new Response<T>( context.CommandId )
             {
                 Payload = result
             };

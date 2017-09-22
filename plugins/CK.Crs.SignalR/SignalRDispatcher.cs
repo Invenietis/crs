@@ -13,11 +13,11 @@ namespace CK.Crs.SignalR
             _hubContext = hubContext;
         }
 
-        public void Broadcast( Response response ) => InvokeAsync( _hubContext.Clients.All, response );
+        public void Broadcast<T>( Response<T> response ) => InvokeAsync( _hubContext.Clients.All, response );
 
-        public void Send( string callerId, Response response ) => InvokeAsync( _hubContext.Clients.User( callerId ), response );
+        public void Send<T>( string callerId, Response<T> response ) => InvokeAsync( _hubContext.Clients.User( callerId ), response );
 
-        private Task InvokeAsync( IClientProxy clientProxy, Response response )
+        private Task InvokeAsync<T>( IClientProxy clientProxy, Response<T> response )
             => clientProxy.InvokeAsync( "ReceiveResult", response.RequestId, response.ResponseType, response.Payload );
 
         public void Dispose() { }

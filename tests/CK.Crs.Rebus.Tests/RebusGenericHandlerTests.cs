@@ -96,17 +96,15 @@ namespace CK.Crs.Rebus.Tests
                     var context = EnsureContext<SimpleCommand>( services, monitor );
                     var response = await dispatcher.ReceiveCommand( new SimpleCommand { ActorId = 421 }, context );
                     Assert.That( response.ResponseType, Is.EqualTo( (char)ResponseType.Synchronous ) );
-                    Assert.That( response.Payload, Is.Null );
 
                     context = EnsureContext<SimpleCommandWithDirectResult>( services, monitor );
-                    response = await dispatcher.ReceiveCommand( new SimpleCommandWithDirectResult { ActorId = 421 }, context );
-                    Assert.That( response.ResponseType, Is.EqualTo( (char)ResponseType.Synchronous ) );
-                    Assert.That( response.Payload, Is.Not.Null.And.AssignableFrom<DateTime>() );
+                    var response2 = (Response<object>) await dispatcher.ReceiveCommand( new SimpleCommandWithDirectResult { ActorId = 421 }, context );
+                    Assert.That( response2.ResponseType, Is.EqualTo( (char)ResponseType.Synchronous ) );
+                    Assert.That( response2.Payload, Is.Not.Null.And.AssignableFrom<DateTime>() );
 
                     context = EnsureContext<SimpleCommandWithResult>( services, monitor );
                     response = await dispatcher.ReceiveCommand( new SimpleCommandWithResult { ActorId = 421 }, context );
                     Assert.That( response.ResponseType, Is.EqualTo( (char)ResponseType.Asynchronous ) );
-                    Assert.That( response.Payload, Is.Null );
 
                     await Task.Delay( 500 );
                 }

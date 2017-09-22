@@ -50,19 +50,19 @@ namespace CK.Crs
              } );
         }
 
-        public void Send( string callerId, Response response )
+        public void Send<T>( string callerId, Response<T> response )
         {
             DoSendToClient( callerId, response );
         }
 
-        public void Broadcast( Response response )
+        public void Broadcast<T>( Response<T> response )
         {
             foreach( var client in _connectedClients.Connections )
             {
                 DoSendToClient( client, response );
             }
         }
-        private void DoSendToClient( string clientId, Response response )
+        private void DoSendToClient<T>( string clientId, Response<T> response )
         {
             if( !_dispatcherOptions.Value.SupportsServerSideEventsFiltering )
             {

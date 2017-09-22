@@ -24,18 +24,9 @@ namespace CK.Crs.Samples.AspNetCoreApp
         }
 
         [HttpPost( "[Action]" ), NoAmbientValuesValidation]
-        public async Task<Response> ReceiveCommand( T command, IHttpCommandContext context )
+        public Task<Response> ReceiveCommand( T command, IHttpCommandContext context )
         {
-            object result = null;
-            Response response = null;
-
-            result = await _sender.ReceiveCommand( command, context );
-            response = new Response( ResponseType.Synchronous, context.CommandId )
-            {
-                Payload = result
-            };
-
-            return response;
+            return _sender.ReceiveCommand( command, context );
         }
 
         [HttpGet]

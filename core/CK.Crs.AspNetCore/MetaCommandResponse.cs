@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 
 namespace CK.Crs
 {
-    class MetaCommandResponse : Response
+    class MetaCommandResponse : Response<MetaCommand.Result>
     {
         public MetaCommandResponse( MetaCommand.Result result ) : base( Crs.ResponseType.Meta, Guid.Empty )
         {

@@ -6,13 +6,13 @@ namespace CK.Crs
 {
     class NoopClientDispatcher : IClientDispatcher
     {
-        public void Send( string callerId, Response response )
+        public void Send<T>( string callerId, Response<T> response )
         {
             Console.WriteLine( "=== CLIENT DISPATCHER ===" );
             Console.WriteLine( response.RequestId.ToString() );
         }
 
-        public void Broadcast( Response response )
+        public void Broadcast<T>( Response<T> response )
         {
             Console.WriteLine( "=== CLIENT DISPATCHER ===" );
             Console.WriteLine( response.RequestId.ToString() );

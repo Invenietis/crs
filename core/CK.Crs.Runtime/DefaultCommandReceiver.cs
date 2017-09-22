@@ -35,7 +35,7 @@ namespace CK.Crs
             {
                 var result = await _invoker.Invoke( command, context );
 
-                response = new Response( ResponseType.Synchronous, context.CommandId )
+                response = new Response<object>( context.CommandId )
                 {
                     Payload = result
                 };
