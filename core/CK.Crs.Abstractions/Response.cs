@@ -7,8 +7,12 @@ namespace CK.Crs
     /// Defines a response of a command.
     /// A response can be of VISAM type defined by the enum <see cref="Crs.ResponseType"/>.
     /// </summary>
-    public abstract class Response<T>
+    public class Response<T>
     {
+        public Response()
+        {
+        }
+
         /// <summary>
         /// Creates a CommandResponse
         /// </summary>
@@ -23,12 +27,12 @@ namespace CK.Crs
         /// <summary>
         /// A unique id for the command
         /// </summary>
-        public Guid RequestId { get; private set; }
+        public Guid RequestId { get; set; }
 
         /// <summary>
         /// The VISAM response type. See <see cref="Crs.ResponseType"/>
         /// </summary>
-        public char ResponseType { get; protected set; }
+        public char ResponseType { get; set; }
 
         /// <summary>
         /// The raw response of the command. Can be null.

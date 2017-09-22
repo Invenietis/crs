@@ -38,7 +38,7 @@ namespace CK.Crs
         }
     }
 
-    class MetaCommand
+    public class MetaCommand
     {
         public bool ShowCommands { get; set; }
         public bool ShowAmbientValues { get; set; }
@@ -49,12 +49,12 @@ namespace CK.Crs
             public Dictionary<string, MetaCommandDescription> Commands { get; set; }
             public class MetaCommandDescription
             {
-                public string CommandType { get; internal set; }
-                public string CommandName { get; internal set; }
-                public string ResultType { get; internal set; }
-                public string Traits { get; internal set; }
-                public string Description { get; internal set; }
-                public RequestPropertyInfo[] Parameters { get; internal set; }
+                public string CommandType { get; set; }
+                public string CommandName { get; set; }
+                public string ResultType { get; set; }
+                public string Traits { get; set; }
+                public string Description { get; set; }
+                public RequestPropertyInfo[] Parameters { get; set; }
             }
         }
     }

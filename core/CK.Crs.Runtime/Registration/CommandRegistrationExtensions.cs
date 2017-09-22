@@ -93,7 +93,7 @@ namespace CK.Crs
         //                monitor.Trace( $"Loading assembly {0}" );
         //                var assembly = Assembly.Load( new AssemblyName( a ) );
         //                monitor.Trace( $"Assembly {assembly.FullName} loaded successfuly" );
-                        
+
         //                var handlers = assembly.GetTypes()
         //                    .Where( t => typeof( ICommandHandler ).IsAssignableFrom( t ) )
         //                    .ToArray();
@@ -160,6 +160,13 @@ namespace CK.Crs
                 registration.IsResultTag();
             }
             return registration;
+        }
+
+        public static ICommandRegistry Register<TCommand, THandler>( this ICommandRegistry registry )
+            where TCommand : class
+        {
+            registry.Register<TCommand>().HandledBy<THandler>();
+            return registry;
         }
 
     }

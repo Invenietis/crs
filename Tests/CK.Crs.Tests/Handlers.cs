@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CK.Core;
 
-namespace CK.Crs.Tests.Handlers
+namespace CK.Crs.Tests
 {
     public class AmountTransferredEvent
     {
