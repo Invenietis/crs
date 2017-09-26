@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="CK.AspNet.Tester" Version="1.0.0-a02" />
     <PackageReference Include="FluentAssertions" Version="5.0.0-beta0002" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0-preview-20170628-02" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />
     <PackageReference Include="xunit" Version="2.2.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="1.0.0-alpha1-final" />

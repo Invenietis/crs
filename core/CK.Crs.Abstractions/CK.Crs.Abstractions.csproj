@@ -11,7 +11,4 @@
   <ItemGroup>
     <Folder Include="Properties\" /> 
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\CK.AmbientValues\CK.AmbientValues.csproj" />
-  </ItemGroup>
 </Project>
