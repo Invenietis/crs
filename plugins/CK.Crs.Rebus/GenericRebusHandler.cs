@@ -17,9 +17,9 @@ namespace CK.Crs.Rebus
         ICommandHandlerInvoker _invoker;
         ICommandRegistry _registry;
         global::Rebus.Bus.IBus _bus;
-        IResultStrategy _resultStrategy;
+        IResultReceiverProvider _resultStrategy;
 
-        public GenericRebusHandler( ICommandHandlerInvoker invoker, ICommandRegistry registry, IResultStrategy resultStrategy, global::Rebus.Bus.IBus bus )
+        public GenericRebusHandler( ICommandHandlerInvoker invoker, ICommandRegistry registry, IResultReceiverProvider resultStrategy, global::Rebus.Bus.IBus bus )
         {
             _invoker = invoker;
             _registry = registry;
@@ -46,7 +46,7 @@ namespace CK.Crs.Rebus
 
                     if( model.ResultType == typeof( T ) )
                     {
-                        var resultReceiver = _resultStrategy.GetResultReceiver( model );
+                        var resultReceiver = _resultStrategy.GetResultReceiver( context );
                         if( resultReceiver != null )
                         {
                             await resultReceiver.ReceiveResult( command, context );

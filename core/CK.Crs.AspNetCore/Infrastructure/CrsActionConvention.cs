@@ -79,10 +79,13 @@ namespace CK.Crs.Infrastructure
 
             private class CommandContextModelBinder : IModelBinder
             {
-                ICrsModel _model;
-                public CommandContextModelBinder( ICrsModel model )
+                readonly ICrsModel _model;
+                readonly ICrsConnectionManager _connectionManager;
+
+                public CommandContextModelBinder( ICrsModel model, ICrsConnectionManager connectionManager )
                 {
                     _model = model;
+                    _connectionManager = connectionManager;
                 }
 
                 public Task BindModelAsync( ModelBindingContext bindingContext )
@@ -122,14 +125,15 @@ namespace CK.Crs.Infrastructure
                             monitor.Warn( $"Multiple values found for CallerId={endpointModel.CallerIdName}. Using the first value in the order of ValueProvider registrations: {callerValue}." );
                         }
 
+                        //_connectionManager.AddConnection()
                         var commandId = Guid.NewGuid(); // TODO: CommandId provider ?
 
                         return new HttpCommandContext(
                             bindingContext.HttpContext,
-                            commandId,
+                            commandId.ToString( "N" ),
                             monitor,
                             commandModel,
-                            callerValue,
+                            CallerId.Parse( callerValues.FirstValue ),
                             bindingContext.HttpContext.RequestAborted );
                     }
                 }

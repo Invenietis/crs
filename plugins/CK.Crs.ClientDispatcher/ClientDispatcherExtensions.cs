@@ -19,7 +19,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             builder.Services.AddWebSockets();
             builder.Services.AddSingleton<IClientEventStore, InMemoryLiveEventStore>();
-            builder.Services.AddSingleton<IClientDispatcher, WebSocketWebClientDispatcher>();
+            builder.Services.AddSingleton<IResultDispatcher, WebSocketWebClientDispatcher>();
             builder.Services.AddOptions();
             builder.Services.AddSingleton( Microsoft.Extensions.Options.Options.Create( options ) );
 

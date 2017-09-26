@@ -13,9 +13,9 @@ namespace CK.Crs.Rebus
     {
         readonly ICommandRegistry _registry;
         readonly Lazy<ICommandHandlerInvoker> _invoker;
-        readonly Lazy<IResultStrategy> _resultStrategy;
+        readonly Lazy<IResultReceiverProvider> _resultStrategy;
 
-        public GenericHandlerActivator( Lazy<ICommandHandlerInvoker> invoker, Lazy<IResultStrategy> resultStrategy, ICommandRegistry registry )
+        public GenericHandlerActivator( Lazy<ICommandHandlerInvoker> invoker, Lazy<IResultReceiverProvider> resultStrategy, ICommandRegistry registry )
         {
             _invoker = invoker ?? throw new ArgumentNullException( nameof( invoker ) );
             _resultStrategy = resultStrategy ?? throw new ArgumentNullException( nameof( resultStrategy ) );

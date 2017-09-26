@@ -19,6 +19,9 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public void AddReceiver<T>( Func<IServiceProvider, T> factoryFunction ) where T : class, ICommandReceiver
             => CrsBuilder.AddReceiver( factoryFunction );
+
+        public void AddDispatcher<T>( string protocol ) where T : class, IResultDispatcher
+            => CrsBuilder.AddDispatcher<T>( protocol );
     }
 
     public static class CrsCoreBuilderExtension
@@ -33,8 +36,8 @@ namespace Microsoft.Extensions.DependencyInjection
                 MvcBuilder = mvcBuilder
             };
         }
-        
-        public static IMvcCoreBuilder AddMvcCoreEndpoint( this ICrsCoreBuilder builder  )
+
+        public static IMvcCoreBuilder AddMvcCoreEndpoint( this ICrsCoreBuilder builder )
         {
             var model = builder.Model;
             return builder.Services

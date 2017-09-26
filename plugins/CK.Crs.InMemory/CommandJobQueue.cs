@@ -11,7 +11,7 @@ namespace CK.Crs.InMemory
     class CommandJobQueue : IDisposable
     {
         readonly BlockingCollection<CommandJob> _queue;
-        public CommandJobQueue( ICommandHandlerInvoker invoker, IResultStrategy resultStrategy )
+        public CommandJobQueue( ICommandHandlerInvoker invoker, IResultReceiverProvider resultStrategy )
         {
             _queue = new BlockingCollection<CommandJob>();
             Task.Run( async () =>
@@ -32,8 +32,7 @@ namespace CK.Crs.InMemory
                                 monitor.Trace( "Invoking the command..." );
                                 var deferredResult = await invoker.Invoke( job.Command, context2 );
 
-                                monitor.Trace( "Obtaining the result receiver for dispatching result to the client." );
-                                var resultReceiver = resultStrategy.GetResultReceiver( context2.Model );
+                                var resultReceiver = resultStrategy.GetResultReceiver( context2 );
                                 if( resultReceiver == null ) monitor.Warn( "No result receiver available for this command. Unable to communicate the result..." );
                                 else
                                 {

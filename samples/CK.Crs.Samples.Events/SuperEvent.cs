@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,7 +6,7 @@ namespace CK.Crs.Samples.Messages
 {
     public class SuperEvent : MessageBase
     {
-        public SuperEvent(Guid id, int actorId, int authenticatedActorId)
+        public SuperEvent( string id, int actorId, int authenticatedActorId )
         {
             Id = id;
             ActorId = actorId;
@@ -14,6 +14,6 @@ namespace CK.Crs.Samples.Messages
         }
 
         public string Message { get; set; }
-        public Guid Id { get; private set; }
+        public string Id { get; private set; }
     }
 }

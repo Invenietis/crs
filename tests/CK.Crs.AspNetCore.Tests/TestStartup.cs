@@ -11,6 +11,7 @@ using CK.Crs.Tests;
 using System;
 using System.Threading.Tasks;
 using Xunit.Sdk;
+using CK.Crs.SignalR;
 
 namespace CK.Crs.AspNetCore.Tests
 {
@@ -36,6 +37,7 @@ namespace CK.Crs.AspNetCore.Tests
         {
             app.UseDeveloperExceptionPage();
             app.UseMvc();
+            app.UseSignalR( r => r.MapHub<CrsHub>( "crs" ) );
         }
 
         /// <summary>

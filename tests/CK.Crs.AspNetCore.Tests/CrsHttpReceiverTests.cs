@@ -37,8 +37,8 @@ namespace CK.Crs.AspNetCore.Tests
         {
             using( var crs = await CrsEndpoint.Create( "/crs" ) )
             {
-                var commandResult = await crs.InvokeCommand<WithdrawMoneyCommand, WithdrawMoneyCommand.Result>(
-                    new WithdrawMoneyCommand { AccountId = Guid.NewGuid(), Amount = 3500M } );
+                var command = new WithdrawMoneyCommand { AccountId = Guid.NewGuid(), Amount = 3500M };
+                var commandResult = await crs.InvokeCommand<WithdrawMoneyCommand, WithdrawMoneyCommand.Result>( command );
 
                 commandResult.Should().NotBe( null );
                 commandResult.Success.Should().BeTrue();
@@ -50,13 +50,27 @@ namespace CK.Crs.AspNetCore.Tests
         {
             using( var crs = await CrsEndpoint.Create( "/crs" ) )
             {
-                var commandResult = await crs.InvokeFireAndForgetCommand<TransferAmountCommand, TransferAmountCommand.Result>(
+                var commandResult = await crs.InvokeFireAndForgetCommand(
                     new TransferAmountCommand { DestinationAccountId = Guid.NewGuid(), SourceAccountId = Guid.NewGuid(), Amount = 3500M } );
 
-                crs.LastResponse.Should().BeOfType<DeferredResponse>();
                 commandResult.Should().NotBe( null );
+
                 //commandResult.EffectiveDate.Should().NotBeBefore( DateTime.UtcNow );
                 //commandResult.CancellableDate.Should().NotBeAfter( DateTime.UtcNow.AddHours( 2 ) );
+            }
+        }
+
+        [Fact]
+        public async Task Invoke_FireAndForget_Command_And_AutoListen_To_Callback()
+        {
+            using( var crs = await CrsEndpoint.Create( "/crs" ) )
+            {
+                var commandResult = await crs.InvokeCommand<TransferAmountCommand, TransferAmountCommand.Result>(
+                    new TransferAmountCommand { DestinationAccountId = Guid.NewGuid(), SourceAccountId = Guid.NewGuid(), Amount = 3500M } );
+
+                commandResult.Should().NotBe( null );
+                commandResult.EffectiveDate.Should().NotBeBefore( DateTime.UtcNow );
+                commandResult.CancellableDate.Should().NotBeAfter( DateTime.UtcNow.AddHours( 2 ) );
             }
         }
     }

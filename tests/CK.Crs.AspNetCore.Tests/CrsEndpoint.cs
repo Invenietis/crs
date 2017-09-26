@@ -1,11 +1,20 @@
 using CK.AspNet.Tester;
+using CK.Core;
+using CK.Crs.SignalR;
 using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.AspNetCore.SignalR.Internal.Protocol;
+using Microsoft.AspNetCore.Sockets.Client;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Xunit;
 
 namespace CK.Crs.AspNetCore.Tests
 {
@@ -15,24 +24,55 @@ namespace CK.Crs.AspNetCore.Tests
         {
             CrsEndpoint endpoint = new CrsEndpoint( path );
             await endpoint.LoadMeta( "/crs" );
+            await endpoint.Connection.StartAsync().OrTimeout();
             return endpoint;
         }
+        Task _endpointTask;
 
         readonly TestServerClient _client;
 
+        CrsEndpoint( PathString path )
+        {
+            Path = path;
+
+            var builder = new WebHostBuilder().UseStartup<Startup>();
+            var server = new TestServer( builder );
+            _client = new TestServerClient( server, true );
+
+            var connectionBuilder = new HubConnectionBuilder()
+                .WithUrl( _client.BaseAddress + path )
+                .WithTransport( Microsoft.AspNetCore.Sockets.TransportType.All )
+                .WithHubProtocol( new JsonHubProtocol( new JsonSerializer() ) );
+
+            Connection = connectionBuilder.Build();
+            Connection.Connected += OnConnected;
+            Services = server.Host.Services;
+            Hub = Services.GetRequiredService<HubEndPoint<CrsHub>>();
+            //Hub.OnConnectedAsync( new HubConnectionContext() )
+        }
+
+        protected virtual Task OnConnected()
+        {
+            return Task.CompletedTask;
+        }
+
+        public void Dispose()
+        {
+            _endpointTask.OrTimeout().Wait( 2000 );
+            _client.Dispose();
+        }
+
+        public HubConnection Connection { get; private set; }
+
         public MetaCommand.Result Meta { get; private set; }
 
-        CrsEndpoint( PathString path, string clientId = null )
-        {
-            var builder = new WebHostBuilder().UseStartup<Startup>();
-            _client = new TestServerClient( new TestServer( builder ), true );
-            ClientId = clientId ?? Guid.NewGuid().ToString( "N" );
-            Path = path;
-        }
+        public IServiceProvider Services { get; }
 
         public PathString Path { get; }
 
         public TestServerClient Client => _client;
+
+        public HubEndPoint<CrsHub> Hub { get; private set; }
 
         public async Task LoadMeta( PathString crsEndpointPath )
         {
@@ -40,7 +80,7 @@ namespace CK.Crs.AspNetCore.Tests
                    new Uri( crsEndpointPath.Add( "/__meta" ), UriKind.Relative ),
                    new MetaCommand { ShowAmbientValues = true, ShowCommands = true } );
 
-            result.RequestId.Should().Be( Guid.Empty );
+            result.CommandId.Should().Be( Guid.Empty.ToString( "N" ) );
             result.ResponseType.Should().Be( (char)ResponseType.Meta );
             result.Payload.AmbientValues.Should().NotBeEmpty();
             result.Payload.Commands.Should().NotBeEmpty();
@@ -48,48 +88,77 @@ namespace CK.Crs.AspNetCore.Tests
             Meta = result.Payload;
         }
 
-        public string ClientId { get; }
-
-        public Response LastResponse { get; private set; }
-
-        public async Task<TResult> InvokeCommand<T, TResult>( T command )
+        public Task<TResult> InvokeCommand<T, TResult>( T command )
         {
+            var context = new CKTraitContext( "Crs" );
+            var tcs = new TaskCompletionSource<TResult>();
             var commandDescription = Meta.Commands.Where( x => x.Key == new CommandName( typeof( T ) ) ).Select( t => t.Value ).SingleOrDefault();
+
             var url = Path.Add( "/" + commandDescription.CommandName );
             var uri = new UriBuilder()
             {
-                Path = Path.Add( "/" + commandDescription.CommandName ),
-                Query = "CallerId=" + ClientId
+                Path = Path.Add( "/" + commandDescription.CommandName )
             };
-            var result = await Client.PostJSON<T, Response<TResult>>( uri.Uri, command );
-            result.RequestId.Should().NotBe( Guid.Empty );
-            result.ResponseType.Should().Be( (char)ResponseType.Synchronous );
-            result.Payload.Should().BeOfType<TResult>();
 
-            LastResponse = result;
+            var ffTag = context.FindOrCreate( CrsTraits.FireForget );
+            if( ffTag.Overlaps( context.FindOrCreate( commandDescription.Traits ) ) )
+            {
 
-            return result.Payload;
+                var task = Client.PostJSON<T, DeferredResponse>( uri.Uri, command );
+                task.ContinueWith( new Action<Task<DeferredResponse>, object>( ( t, state ) =>
+                {
+                    if( t.Exception != null ) tcs.SetException( t.Exception );
+                    else
+                    {
+                        try
+                        {
+                            t.Result.CommandId.Should().NotBe( null );
+                            t.Result.ResponseType.Should().Be( (char)ResponseType.Asynchronous );
+                            t.Result.Payload.Should().BeOfType<string>();
+                        }
+                        catch( Exception ex )
+                        {
+                            tcs.SetException( ex );
+                        }
+                    }
+
+                } ), TaskContinuationOptions.None );
+
+                Connection.On<string>( nameof( ICrsHub.ReceiveResult ), h =>
+                {
+                    var result = JsonConvert.DeserializeObject<TResult>( h );
+                    tcs.SetResult( result );
+                } );
+                //task.Start();
+            }
+            else
+            {
+
+                Client.PostJSON<T, Response<TResult>>( uri.Uri, command ).ContinueWith( new Action<Task<Response<TResult>>, object>( ( t, state ) =>
+                {
+                    t.Result.CommandId.Should().NotBe( null );
+                    t.Result.ResponseType.Should().Be( (char)ResponseType.Synchronous );
+                    t.Result.Payload.Should().BeOfType<TResult>();
+                    tcs.SetResult( t.Result.Payload );
+                } ), TaskContinuationOptions.None );
+
+            }
+            return tcs.Task;
+            //return result.Payload;
         }
-        public async Task<string> InvokeFireAndForgetCommand<T, TResult>( T command )
+        public async Task<string> InvokeFireAndForgetCommand<T>( T command )
         {
             var commandDescription = Meta.Commands.Where( x => x.Key == new CommandName( typeof( T ) ) ).Select( t => t.Value ).SingleOrDefault();
             var uri = new UriBuilder()
             {
-                Path = Path.Add( "/" + commandDescription.CommandName ),
-                Query = "CallerId=" + ClientId
+                Path = Path.Add( "/" + commandDescription.CommandName )
             };
             var result = await Client.PostJSON<T, DeferredResponse>( uri.Uri, command );
-            result.RequestId.Should().NotBe( Guid.Empty );
+            result.CommandId.Should().NotBe( null );
             result.ResponseType.Should().Be( (char)ResponseType.Asynchronous );
             result.Payload.Should().BeOfType<string>();
 
-            LastResponse = result;
-
             return result.Payload;
-        }
-        public void Dispose()
-        {
-            _client.Dispose();
         }
     }
 }

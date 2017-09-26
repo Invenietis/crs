@@ -1,5 +1,6 @@
 using CK.Crs;
 using CK.Crs.SignalR;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -7,9 +8,9 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static ICrsCoreBuilder AddSignalR( this ICrsCoreBuilder builder )
         {
-            // The CommandJobQueue is added to the services: it will be disposed when the underlying container is disposed.
+            builder.AddDispatcher<SignalRDispatcher>( CrsSignalRContextExtensions.CallerIdProtocol );
             builder.Services.AddSignalR();
-            builder.Services.AddSingleton<IClientDispatcher, SignalRDispatcher>();
+            builder.Services.AddSingleton<SignalRDispatcher>();
             return builder;
         }
     }

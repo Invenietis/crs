@@ -5,6 +5,12 @@ using System.Linq;
 
 namespace CK.Crs
 {
+    public class ResultDispatcherOptions
+    {
+        public Dictionary<string, Type> Dispatchers { get; set; }
+
+    }
+
     public class CrsCoreBuilder : ICrsCoreBuilder
     {
         private readonly IServiceCollection _services;
@@ -12,7 +18,9 @@ namespace CK.Crs
         private readonly ICrsModel _model;
         private readonly IList<Type> _receivers;
 
-        public CrsCoreBuilder( CrsConfigurationBuilder builder  )
+        private readonly Dictionary<string, Type> _dispatchers;
+
+        public CrsCoreBuilder( CrsConfigurationBuilder builder )
         {
             _model = builder.BuildModel();
             if( _model == null ) throw new ArgumentException( "CrsConfigurationBuilder must returns a valid ICrsModel." );
@@ -20,7 +28,7 @@ namespace CK.Crs
             _services = builder.Services;
             _registry = builder.Registry;
             _receivers = new List<Type>();
-            
+
             _services.AddSingleton( _model );
             _services.AddSingleton<ICommandReceiver, CompositeCommandReceiver>( s =>
             {
@@ -29,6 +37,10 @@ namespace CK.Crs
                         .Select( r => s.GetRequiredService( r ) )
                         .Union( new[] { ActivatorUtilities.CreateInstance<DefaultCommandReceiver>( s ) } )
                         .OfType<ICommandReceiver>() );
+            } );
+            _services.Configure<ResultDispatcherOptions>( o =>
+            {
+                o.Dispatchers = _dispatchers;
             } );
         }
 
@@ -47,6 +59,12 @@ namespace CK.Crs
 
             if( factoryFunction != null ) _services.AddSingleton( factoryFunction );
             else _services.AddSingleton<T>();
+        }
+
+        public void AddDispatcher<T>( string protocol ) where T : class, IResultDispatcher
+        {
+            if( String.IsNullOrEmpty( protocol ) ) throw new ArgumentNullException( nameof( protocol ) );
+            _dispatchers.Add( protocol, typeof( T ) );
         }
     }
 }

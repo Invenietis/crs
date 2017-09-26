@@ -21,8 +21,8 @@ namespace Microsoft.Extensions.DependencyInjection
             var activator = new GenericHandlerActivator(
                 new Lazy<ICommandHandlerInvoker>(
                     () => builder.Services.BuildServiceProvider().GetRequiredService<ICommandHandlerInvoker>() ),
-                new Lazy<IResultStrategy>(
-                    () => builder.Services.BuildServiceProvider().GetRequiredService<IResultStrategy>() ),
+                new Lazy<IResultReceiverProvider>(
+                    () => builder.Services.BuildServiceProvider().GetRequiredService<IResultReceiverProvider>() ),
                 builder.Registry );
 
             var configurer = Configure.With( activator );

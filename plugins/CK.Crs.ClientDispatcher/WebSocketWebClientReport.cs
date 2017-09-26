@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace CK.Crs
 {
 
-    public class WebSocketWebClientDispatcher : IClientDispatcher, IDisposable
+    public class WebSocketWebClientDispatcher : IResultDispatcher, IDisposable
     {
         readonly IWebSocketSender _sender;
         readonly IClientEventStore _liveEventStore;
@@ -50,12 +50,12 @@ namespace CK.Crs
              } );
         }
 
-        public void Send<T>( string callerId, Response<T> response )
+        public void Send<T>( ICommandContext context, Response<T> response )
         {
-            DoSendToClient( callerId, response );
+            DoSendToClient( null, response );
         }
 
-        public void Broadcast<T>( Response<T> response )
+        public void Broadcast<T>( ICommandContext context, Response<T> response )
         {
             foreach( var client in _connectedClients.Connections )
             {
@@ -97,7 +97,7 @@ namespace CK.Crs
 
         class WebSocketCommandResponse<T> : Response<T>
         {
-            public WebSocketCommandResponse( T message, ResponseType responseType, Guid commandId ) : base( responseType, commandId )
+            public WebSocketCommandResponse( T message, ResponseType responseType, string commandId ) : base( responseType, commandId )
             {
                 Payload = message;
             }

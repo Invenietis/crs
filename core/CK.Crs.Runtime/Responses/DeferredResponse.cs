@@ -12,9 +12,9 @@ namespace CK.Crs
     /// </summary>
     public class DeferredResponse : Response<string>
     {
-        public DeferredResponse( Guid id, string callbackId ) : base( Crs.ResponseType.Asynchronous, id )
+        public DeferredResponse( string commandId, CallerId callerId ) : base( Crs.ResponseType.Asynchronous, commandId )
         {
-            Payload = callbackId;
+            Payload = callerId.ToString();
         }
     }
 

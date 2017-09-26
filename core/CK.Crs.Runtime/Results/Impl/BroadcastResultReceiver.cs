@@ -4,9 +4,9 @@ namespace CK.Crs
 {
     class BroadcastResultReceiver : IResultReceiver
     {
-        private readonly IClientDispatcher _dispatcher;
+        private readonly IResultDispatcherSelector _dispatcher;
 
-        public BroadcastResultReceiver( IClientDispatcher dispatcher )
+        public BroadcastResultReceiver( IResultDispatcherSelector dispatcher )
         {
             _dispatcher = dispatcher;
         }
@@ -19,7 +19,7 @@ namespace CK.Crs
             {
                 Payload = result
             };
-            _dispatcher.Broadcast( response );
+            _dispatcher.SelectDispatcher( context ).Broadcast( context, response );
             return Task.FromResult( response );
         }
     }

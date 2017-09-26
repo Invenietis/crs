@@ -17,26 +17,26 @@ namespace CK.Crs
         /// Creates a CommandResponse
         /// </summary>
         /// <param name="responseType">The type of a response.</param>
-        /// <param name="requestId"></param>
-        protected Response( char responseType, Guid requestId )
+        /// <param name="commandId"></param>
+        protected Response( char responseType, string commandId )
         {
             ResponseType = responseType;
-            RequestId = requestId;
+            CommandId = commandId;
         }
 
         /// <summary>
         /// Creates a CommandResponse
         /// </summary>
         /// <param name="responseType">The type of a response.</param>
-        /// <param name="requestId"></param>
-        protected Response( ResponseType responseType, Guid requestId ) : this( (char)responseType, requestId )
+        /// <param name="commandId"></param>
+        protected Response( ResponseType responseType, string commandId ) : this( (char)responseType, commandId )
         {
         }
 
         /// <summary>
         /// A unique id for the command
         /// </summary>
-        public Guid RequestId { get; set; }
+        public string CommandId { get; set; }
 
         /// <summary>
         /// The VISAM response type. See <see cref="Crs.ResponseType"/>
@@ -59,8 +59,8 @@ namespace CK.Crs
         /// Creates a CommandResponse
         /// </summary>
         /// <param name="responseType">The type of a response.</param>
-        /// <param name="requestId"></param>
-        public Response( Guid requestId ) : base( CK.Crs.ResponseType.Synchronous, requestId )
+        /// <param name="commandId"></param>
+        public Response( string commandId ) : base( CK.Crs.ResponseType.Synchronous, commandId )
         {
         }
 
@@ -68,8 +68,8 @@ namespace CK.Crs
         /// Creates a CommandResponse
         /// </summary>
         /// <param name="responseType">The type of a response.</param>
-        /// <param name="requestId"></param>
-        public Response( char responseType, Guid requestId ) : base( responseType, requestId )
+        /// <param name="commandId"></param>
+        public Response( char responseType, string commandId ) : base( responseType, commandId )
         {
         }
 
@@ -77,8 +77,8 @@ namespace CK.Crs
         /// Creates a CommandResponse
         /// </summary>
         /// <param name="responseType">The type of a response.</param>
-        /// <param name="requestId"></param>
-        protected Response( ResponseType responseType, Guid requestId ) : base( responseType, requestId )
+        /// <param name="commandId"></param>
+        protected Response( ResponseType responseType, string commandId ) : base( responseType, commandId )
         {
         }
 

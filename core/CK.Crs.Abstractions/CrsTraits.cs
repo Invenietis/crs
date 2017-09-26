@@ -38,9 +38,13 @@ namespace CK.Crs
 
         public static bool HasTags( this CommandModel commandModel, params string[] traits )
         {
-            var combinedTraits = String.Join( commandModel.Tags.Context.Separator.ToString(), traits );
-            CKTrait trait = commandModel.Tags.Context.FindOrCreate( combinedTraits );
-            return commandModel.Tags.IsSupersetOf( trait );
+            return commandModel.Tags.HasTags( traits );
+        }
+        public static bool HasTags( this CKTrait tags, params string[] traits )
+        {
+            var combinedTraits = String.Join( tags.Context.Separator.ToString(), traits );
+            CKTrait trait = tags.Context.FindOrCreate( combinedTraits );
+            return tags.IsSupersetOf( trait );
         }
 
         public static ICommandRegistration SetTag( this ICommandRegistration commandRegistration, string traits )

@@ -5,19 +5,19 @@ using System.Threading.Tasks;
 
 namespace CK.Crs
 {
-    class DefaultResultReceiver : IResultReceiver
+    class SendResultReceiver : IResultReceiver
     {
-        private readonly IClientDispatcher _dispatcher;
+        private readonly IResultDispatcherSelector _dispatcherSelector;
 
-        public DefaultResultReceiver( IClientDispatcher dispatcher )
+        public SendResultReceiver( IResultDispatcherSelector dispatcherSelector )
         {
-            _dispatcher = dispatcher;
+            _dispatcherSelector = dispatcherSelector;
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public string Name => "Peer2PeerResultDispatcher";
+        public string Name => "SendResultReceiver";
 
         public Task ReceiveResult<T>( T result, ICommandContext context )
         {
@@ -25,7 +25,7 @@ namespace CK.Crs
             {
                 Payload = result
             };
-            _dispatcher.Send( context.CallerId, response );
+            _dispatcherSelector.SelectDispatcher( context ).Send( context, response );
             return Task.FromResult( response );
         }
     }

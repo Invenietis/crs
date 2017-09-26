@@ -29,7 +29,7 @@ namespace CK.Crs
             {
                 // CRS Headers
                 { CrsPrefix + "CommandName", context.Model.Name },
-                { CrsPrefix + nameof( ICommandContext.CallerId ), context.CallerId },
+                { CrsPrefix + nameof( ICommandContext.CallerId ), context.CallerId.ToString() },
                 { CrsPrefix + nameof( ICommandContext.CommandId ), context.CommandId.ToString() },
                 { CrsPrefix + nameof( ICommandContext.Monitor ), context.Monitor.DependentActivity().CreateToken().ToString() },
 
@@ -46,7 +46,7 @@ namespace CK.Crs
                 // CRS Headers
                 { CrsPrefix + "CommandName", context.Model.Name },
                 { CrsPrefix + "IsResult", "true" },
-                { CrsPrefix + nameof( ICommandContext.CallerId ), context.CallerId },
+                { CrsPrefix + nameof( ICommandContext.CallerId ), context.CallerId.ToString() },
                 { CrsPrefix + nameof( ICommandContext.CommandId ), context.CommandId.ToString() },
                 { CrsPrefix + nameof( ICommandContext.Monitor ), context.Monitor.DependentActivity().CreateToken().ToString() },
 
@@ -67,8 +67,7 @@ namespace CK.Crs
             return context.TransactionContext.GetOrAdd( key, () =>
             {
                 var monitor = new ActivityMonitor();
-                var monitorToken = context.Headers[key];
-                if( monitorToken != null )
+                if( context.Headers.TryGetValue( key, out string monitorToken ) )
                 {
                     var monitorDisposable = monitor.StartDependentActivity( ActivityMonitor.DependentToken.Parse( monitorToken ) );
                     context.TransactionContext.OnDisposed( () => monitorDisposable.Dispose() );
@@ -77,24 +76,30 @@ namespace CK.Crs
             } );
         }
 
-        public static Guid GetCommandId( this IMessageContext context )
+        public static string GetCommandId( this IMessageContext context )
         {
             var key = CrsPrefix + nameof( ICommandContext.CommandId );
             return context.TransactionContext.GetOrAdd( key, () =>
             {
-                var commandId = context.Headers[key];
-                if( commandId != null )
+                if( context.Headers.TryGetValue( key, out string commandId ) )
                 {
-                    return Guid.Parse( commandId );
+                    return commandId;
                 }
-                return Guid.Empty;
+                return null;
             } );
         }
 
-        public static string GetCallerId( this IMessageContext context )
+        public static CallerId GetCallerId( this IMessageContext context )
         {
             var key = CrsPrefix + nameof( ICommandContext.CallerId );
-            return context.TransactionContext.GetOrAdd( key, () => context.Headers[key] );
+            return context.TransactionContext.GetOrAdd( key, () =>
+            {
+                if( context.Headers.TryGetValue( key, out string callerId ) )
+                {
+                    return CallerId.Parse( callerId );
+                }
+                return default( CallerId );
+            } );
         }
 
         public static string GetCommandName( this IMessageContext context )

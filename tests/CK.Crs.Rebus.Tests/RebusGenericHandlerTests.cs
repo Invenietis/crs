@@ -98,7 +98,7 @@ namespace CK.Crs.Rebus.Tests
                     Assert.That( response.ResponseType, Is.EqualTo( (char)ResponseType.Synchronous ) );
 
                     context = EnsureContext<SimpleCommandWithDirectResult>( services, monitor );
-                    var response2 = (Response<object>) await dispatcher.ReceiveCommand( new SimpleCommandWithDirectResult { ActorId = 421 }, context );
+                    var response2 = (Response<object>)await dispatcher.ReceiveCommand( new SimpleCommandWithDirectResult { ActorId = 421 }, context );
                     Assert.That( response2.ResponseType, Is.EqualTo( (char)ResponseType.Synchronous ) );
                     Assert.That( response2.Payload, Is.Not.Null.And.AssignableFrom<DateTime>() );
 
@@ -192,15 +192,15 @@ namespace CK.Crs.Rebus.Tests
 
                 await Task.Delay( 2000 );
             }
-    }
+        }
 
-    private CommandContext EnsureContext<T>( IServiceProvider services, IActivityMonitor monitor )
-    {
-        return new CommandContext(
-            Guid.NewGuid(),
-            monitor,
-            services.GetRequiredService<ICommandRegistry>().Registration.SingleOrDefault( r => r.CommandType == typeof( T ) ),
-            "123456" );
+        private CommandContext EnsureContext<T>( IServiceProvider services, IActivityMonitor monitor )
+        {
+            return new CommandContext(
+                Guid.NewGuid().ToString( "N" ),
+                monitor,
+                services.GetRequiredService<ICommandRegistry>().Registration.SingleOrDefault( r => r.CommandType == typeof( T ) ),
+                CallerId.None );
+        }
     }
-}
 }
