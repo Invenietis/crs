@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <div id="commands"></div>
+    <script src="scripts/signalr-client-1.0.0-alpha1-final.min.js" ></script>
+    <script type="text/javascript">
+        let connection = new signalR.HubConnection('/crs');
+        let callerId = '';
+
+        const buildHeader = function(){
+            var crsHeader = new Headers();
+            crsHeader.append('CallerId', callerId);
+            crsHeader.append('Content-Type', 'application/json');
+            return crsHeader;
+        }
+
+        const sendCommand = function ( cmd ) {
+            const h = buildHeader();
+            console.group('Sending command...');
+            let params = {
+                headers: buildHeader(),
+                method: 'POST',
+                body: JSON.stringify( { ActorId: 0 } )
+            };
+            return fetch('/crs-dispatcher/' + cmd + '?callerId=' + callerId , params)
+                .then(r => r.json())
+                .then(r => {
+                    console.log(r);
+                    console.groupEnd();
+                    return r;
+                })
+                .catch(err => {
+                    console.error(err);
+                    console.groupEnd();
+                });
+        }
+        const getMeta = function () {
+            console.group('Fetching MetaData...');
+            let params = {
+                headers: buildHeader(),
+                method: 'POST'
+            };
+            return fetch('/crs-dispatcher/__meta', params)
+                .then(r => r.json())
+                .then(meta => {
+                    console.log(meta);
+                    console.groupEnd();
+
+                    return meta;
+                })
+                .catch(err => {
+                    console.error(err);
+                    console.groupEnd();
+                });
+        }
+
+        connection.on('ReceiveResult', (commandId, commandType, response ) => {
+            setTimeout(function () {
+                console.group('Receiving Result');
+                const li = document.getElementById(commandId);
+                li.innerHTML = JSON.stringify(response);
+                console.groupEnd();
+            }, 500 );
+        });
+
+        connection.on('ReceiveCallerId', data => {
+            console.group('Connecting');
+            callerId = data;
+            console.log('Receiving CallerId', callerId);
+            console.groupEnd();
+
+            getMeta().then(meta => {
+                for (let commandKey in meta.payload.commands) {
+                    const command = meta.payload.commands[commandKey];
+                    const d = document.getElementById("commands");
+                    const commandDiv = document.createElement('div');
+                    const button = document.createElement('button');
+                    const list = document.createElement('ul');
+                    button.innerText = command.commandName;
+                    button.addEventListener('click', function () {
+                        sendCommand(commandKey).then(response => {
+                            const listItem = document.createElement('li');
+                            listItem.id = response.commandId;
+                            listItem.innerHTML = JSON.stringify( response.payload );
+                            list.appendChild(listItem);
+                        });
+                    })
+                    commandDiv.appendChild(button);
+                    commandDiv.appendChild(list);
+                    d.appendChild(commandDiv);
+                };
+            });
+        });
+        connection
+            .start()
+            .then(( _ ) => {
+            });
+
+    </script>
+</body>
+</html>

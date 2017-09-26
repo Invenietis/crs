@@ -23,11 +23,10 @@ namespace CK.Crs.AspNetCore.Tests
         public static async Task<CrsEndpoint> Create( PathString path )
         {
             CrsEndpoint endpoint = new CrsEndpoint( path );
-            await endpoint.LoadMeta( "/crs" );
             await endpoint.Connection.StartAsync().OrTimeout();
+            await endpoint.LoadMeta( "/crs" );
             return endpoint;
         }
-        Task _endpointTask;
 
         readonly TestServerClient _client;
 
@@ -35,7 +34,9 @@ namespace CK.Crs.AspNetCore.Tests
         {
             Path = path;
 
-            var builder = new WebHostBuilder().UseStartup<Startup>();
+            var builder = new WebHostBuilder()
+                .UseUrls( "http://localhost:5001" )
+                .UseStartup<Startup>();
             var server = new TestServer( builder );
             _client = new TestServerClient( server, true );
 
@@ -45,6 +46,11 @@ namespace CK.Crs.AspNetCore.Tests
                 .WithHubProtocol( new JsonHubProtocol( new JsonSerializer() ) );
 
             Connection = connectionBuilder.Build();
+            Connection.On<string>( nameof( ICrsHub.ReceiveCallerId ), callerId =>
+            {
+                CallerId = CallerId.Parse( callerId );
+            } );
+
             Connection.Connected += OnConnected;
             Services = server.Host.Services;
             Hub = Services.GetRequiredService<HubEndPoint<CrsHub>>();
@@ -58,9 +64,10 @@ namespace CK.Crs.AspNetCore.Tests
 
         public void Dispose()
         {
-            _endpointTask.OrTimeout().Wait( 2000 );
             _client.Dispose();
         }
+
+        public CallerId CallerId { get; private set; }
 
         public HubConnection Connection { get; private set; }
 

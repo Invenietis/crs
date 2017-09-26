@@ -25,7 +25,7 @@ namespace CK.Crs
                 context.Monitor.Trace( $"Given the provided protocol {context.CallerId.Protocol}..." );
                 if( _options.Value.Dispatchers.TryGetValue( context.CallerId.Protocol, out Type resultDispatcherType ) )
                 {
-                    if( typeof( IResultDispatcher ).IsAssignableFrom( resultDispatcherType ) )
+                    if( !typeof( IResultDispatcher ).IsAssignableFrom( resultDispatcherType ) )
                         throw new InvalidOperationException( "The result dispatcher does not match the IResultDispatcher. Something is wrong!" );
 
                     context.Monitor.Trace( $"...found a valid result dispatcher of type {resultDispatcherType.FullName}" );

@@ -9,7 +9,7 @@ namespace CK.Crs
     {
         public static readonly string FireForget = "FireForget";
         public static readonly string Result = "Result";
-        public static readonly string Broadcast = "Result|Broadcast";
+        public static readonly string Broadcast = "Broadcast";
 
         public static bool HasResultBroadcastTag( this CommandModel commandModel )
         {
@@ -18,7 +18,7 @@ namespace CK.Crs
 
         public static ICommandRegistration BroadcastResult( this ICommandRegistration commandRegistration )
         {
-            return SetTag( commandRegistration, CrsTraits.Broadcast );
+            return SetTag( commandRegistration, CrsTraits.Result, CrsTraits.Broadcast );
         }
 
         public static bool HasResultTag( this CommandModel commandModel )

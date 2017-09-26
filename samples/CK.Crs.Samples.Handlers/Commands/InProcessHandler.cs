@@ -4,13 +4,16 @@ using System.Threading.Tasks;
 
 namespace CK.Crs.Samples.Handlers
 {
-    public class InProcessHandler : ICommandHandler<QueuedCommand>, ICommandHandler<SyncCommand, SyncCommand.Result>
+    public class InProcessHandler : ICommandHandler<QueuedCommand, QueuedCommand.Result>, ICommandHandler<SyncCommand, SyncCommand.Result>
     {
-        public Task HandleAsync( QueuedCommand command, ICommandContext context )
+        public Task<QueuedCommand.Result> HandleAsync( QueuedCommand command, ICommandContext context )
         {
             context.Monitor.Trace( $"Queued Command - I'm Actor={ command.ActorId} on behalf of Actor={ command.AuthenticatedActorId}" );
 
-            return Task.CompletedTask;
+            return Task.FromResult( new QueuedCommand.Result
+            {
+                Message = "Bouyahh Async !!"
+            } );
         }
 
         public Task<SyncCommand.Result> HandleAsync( SyncCommand command, ICommandContext context )

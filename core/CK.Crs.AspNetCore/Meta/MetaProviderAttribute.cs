@@ -25,7 +25,7 @@ namespace CK.Crs
             readonly IAmbientValues _ambientValues;
             readonly IAmbientValuesRegistration _registration;
             readonly ICrsModel _model;
-   
+
             public CrsMetaProviderImpl( IAmbientValues ambientValues, IAmbientValuesRegistration registration, ICrsModel model )
             {
                 _ambientValues = ambientValues;
@@ -49,11 +49,11 @@ namespace CK.Crs
 
                 var result = new MetaCommand.Result();
                 var commandArgumentName = context.ActionDescriptor.GetProperty<CrsCommandArgumentName>();
-                var command = context.ActionArguments[commandArgumentName] as MetaCommand ?? new MetaCommand
+                var command = (MetaCommand)context.ActionArguments.GetValueWithDefaultFunc( commandArgumentName, ( k ) => new MetaCommand
                 {
                     ShowAmbientValues = true,
                     ShowCommands = true
-                };
+                } );
                 if( command.ShowAmbientValues )
                 {
                     result.AmbientValues = new Dictionary<string, object>();

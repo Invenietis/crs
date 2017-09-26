@@ -28,7 +28,7 @@ namespace CK.Crs
             _services = builder.Services;
             _registry = builder.Registry;
             _receivers = new List<Type>();
-
+            _dispatchers = new Dictionary<string, Type>();
             _services.AddSingleton( _model );
             _services.AddSingleton<ICommandReceiver, CompositeCommandReceiver>( s =>
             {

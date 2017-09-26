@@ -10,6 +10,8 @@ using CK.Monitoring;
 using Rebus.Config;
 using CK.Crs.Samples.Handlers;
 using Microsoft.Extensions.Configuration;
+using CK.Crs.SignalR;
+using CK.Crs.Samples.AspNetCoreApp.Extensions;
 
 namespace CK.Crs.Samples.AspNetCoreApp
 {
@@ -41,6 +43,8 @@ namespace CK.Crs.Samples.AspNetCoreApp
 
             var conString = Config.GetConnectionString( "Messaging" );
 
+            services.AddSingleton<IActorIdProvider, Defaults>();
+            services.AddSingleton<IUserNameProvider, Defaults>();
             services.AddAmbientValues( a => a.AddAmbientValueProvider<ActorIdAmbientValueProvider>( nameof( MessageBase.ActorId ) ) );
 
             services
@@ -70,9 +74,9 @@ namespace CK.Crs.Samples.AspNetCoreApp
         public void Configure( IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory )
         {
             app.UseDeveloperExceptionPage();
-            //app.UseWebSockets();
-            //app.MapWebSockets( app.ApplicationServices.GetRequiredService<IOptions<ClientDispatcherOptions>>().Value.WebSocketPath );
+            app.UseSignalR( r => r.MapHub<CrsHub>( "crs" ) );
             app.UseMvc();
+            app.UseFileServer();
         }
     }
 }

@@ -30,22 +30,24 @@ namespace CK.Crs
             {
                 var commandContext = context.ActionDescriptor.GetProperty<IHttpCommandContext>();
                 var commandArgumentName = context.ActionDescriptor.GetProperty<CrsCommandArgumentName>();
-                var commandArgument = context.ActionArguments[commandArgumentName];
 
                 var obj = context.Filters.SingleOrDefault( t => t.GetType() == typeof( NoAmbientValuesValidationAttribute ) );
                 if( obj == null )
                 {
-                    var vContext = new ReflectionAmbientValueValidationContext( commandArgument, commandContext.Monitor, _ambientValues );
-
-                    foreach( var v in _registration.AmbientValues )
+                    if( context.ActionArguments.TryGetValue( commandArgumentName.Value, out object commandArgument ) )
                     {
-                        await vContext.ValidateValueAndRejectOnError( v.Name );
-                    }
+                        var vContext = new ReflectionAmbientValueValidationContext( commandArgument, commandContext.Monitor, _ambientValues );
 
-                    if( vContext.Rejected )
-                    {
-                        context.Result = new OkObjectResult( new InvalidResponse( commandContext.CommandId, vContext.RejectReason ) );
-                        return;
+                        foreach( var v in _registration.AmbientValues )
+                        {
+                            await vContext.ValidateValueAndRejectOnError( v.Name );
+                        }
+
+                        if( vContext.Rejected )
+                        {
+                            context.Result = new OkObjectResult( new InvalidResponse( commandContext.CommandId, vContext.RejectReason ) );
+                            return;
+                        }
                     }
                 }
 
