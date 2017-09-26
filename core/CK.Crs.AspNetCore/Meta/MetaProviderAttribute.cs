@@ -25,7 +25,7 @@ namespace CK.Crs
             readonly IAmbientValues _ambientValues;
             readonly IAmbientValuesRegistration _registration;
             readonly ICrsModel _model;
-
+   
             public CrsMetaProviderImpl( IAmbientValues ambientValues, IAmbientValuesRegistration registration, ICrsModel model )
             {
                 _ambientValues = ambientValues;

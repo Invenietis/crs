@@ -9,12 +9,10 @@ namespace CK.Crs.SignalR
         // TODO: When typedHub will be available
         // private readonly IHubContext<CrsHub, ICrsHub> _hubContext;
         private readonly IHubContext<CrsHub> _hubContext;
-        private readonly ICrsConnectionManager _connectionManager;
 
-        public SignalRDispatcher( IHubContext<CrsHub> hubContext, ICrsConnectionManager connectionManager )
+        public SignalRDispatcher( IHubContext<CrsHub> hubContext )
         {
             _hubContext = hubContext;
-            _connectionManager = connectionManager;
         }
 
         public void Broadcast<T>( ICommandContext context, Response<T> response )

@@ -1,3 +1,6 @@
+using System;
+using System.Threading.Tasks;
+using CK.Core;
 using CK.Crs;
 using CK.Crs.SignalR;
 using Microsoft.AspNetCore.Http.Features;
@@ -11,6 +14,7 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.AddDispatcher<SignalRDispatcher>( CrsSignalRContextExtensions.CallerIdProtocol );
             builder.Services.AddSignalR();
             builder.Services.AddSingleton<SignalRDispatcher>();
+
             return builder;
         }
     }

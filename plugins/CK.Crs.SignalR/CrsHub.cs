@@ -1,25 +1,9 @@
-using CK.Core;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.AspNetCore.Sockets.Client;
-using Microsoft.AspNetCore.Sockets.Features;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Principal;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CK.Crs.SignalR
 {
-    public interface ICrsHub
-    {
-        void ReceiveResult( string message );
-    }
-
-    public interface IActivityMonitorFeature
-    {
-        IActivityMonitor Monitor { get; }
-    }
 
     public class CrsHub : Hub<ICrsHub>
     {
@@ -30,18 +14,17 @@ namespace CK.Crs.SignalR
             _connectionManager = connectionManager;
         }
 
-        public override Task OnConnectedAsync()
+        public override async Task OnConnectedAsync()
         {
-            var mon = Context.Connection.Features.Get<IActivityMonitorFeature>().Monitor;
             var callerId = Context.GetCallerId();
-            return _connectionManager.AddConnection( mon, callerId );
+            await _connectionManager.AddConnection( callerId );
+            await Clients.Client( Context.ConnectionId ).ReceiveCallerId( callerId.ToString() );
         }
 
         public override Task OnDisconnectedAsync( Exception exception )
         {
-            var mon = Context.Connection.Features.Get<IActivityMonitorFeature>().Monitor;
             var callerId = Context.GetCallerId();
-            return _connectionManager.RemoveConnection( mon, callerId );
+            return _connectionManager.RemoveConnection( callerId );
         }
     }
 }

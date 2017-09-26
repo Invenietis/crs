@@ -17,6 +17,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<ICommandHandlerInvoker, DefaultCommandInvoker>();
             services.AddSingleton<IResultDispatcherSelector, DefaultResutDispatcherSelector>();
             services.AddSingleton<IResultReceiverProvider, DefaultResultReceiverProvider>();
+            services.AddSingleton<ICrsConnectionManager, ConnectionManager>();
 
             services.AddSingleton( builder.Registry );
 
