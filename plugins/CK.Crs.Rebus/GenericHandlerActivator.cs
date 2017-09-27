@@ -12,10 +12,10 @@ namespace CK.Crs.Rebus
     sealed class GenericHandlerActivator : IHandlerActivator, IContainerAdapter
     {
         readonly ICommandRegistry _registry;
-        readonly Lazy<ICommandHandlerInvoker> _invoker;
-        readonly Lazy<IResultReceiverProvider> _resultStrategy;
+        readonly ICommandHandlerInvoker _invoker;
+        readonly IResultReceiverProvider _resultStrategy;
 
-        public GenericHandlerActivator( Lazy<ICommandHandlerInvoker> invoker, Lazy<IResultReceiverProvider> resultStrategy, ICommandRegistry registry )
+        public GenericHandlerActivator( ICommandHandlerInvoker invoker, IResultReceiverProvider resultStrategy, ICommandRegistry registry )
         {
             _invoker = invoker ?? throw new ArgumentNullException( nameof( invoker ) );
             _resultStrategy = resultStrategy ?? throw new ArgumentNullException( nameof( resultStrategy ) );
@@ -26,13 +26,13 @@ namespace CK.Crs.Rebus
             TMessage message,
             ITransactionContext transactionContext )
         {
-            var res = new GenericRebusHandler<TMessage>( _invoker.Value, _registry, _resultStrategy.Value, _bus );
+            var res = new GenericRebusHandler<TMessage>( _invoker, _registry, _resultStrategy, _bus );
             return Task.FromResult<IEnumerable<IHandleMessages<TMessage>>>( new[] { res } );
         }
 
-        global::Rebus.Bus.IBus _bus;
+        IBus _bus;
 
-        public void SetBus( global::Rebus.Bus.IBus bus )
+        public void SetBus( IBus bus )
         {
             _bus = bus;
         }

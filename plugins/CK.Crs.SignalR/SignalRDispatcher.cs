@@ -1,3 +1,4 @@
+using CK.Core;
 using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Threading.Tasks;
@@ -15,18 +16,20 @@ namespace CK.Crs.SignalR
             _hubContext = hubContext;
         }
 
-        public void Broadcast<T>( ICommandContext context, Response<T> response )
+        public Task Broadcast<T>( ICommandContext context, Response<T> response )
         {
-            InvokeAsync( _hubContext.Clients.User( context.CallerId.GetUserName() ), response );
+            context.Monitor.Trace( $"Broading response to client {context.CallerId.GetUserName()}" );
+            return InvokeAsync( _hubContext.Clients.User( context.CallerId.GetUserName() ), response );
         }
 
-        public void Send<T>( ICommandContext context, Response<T> response )
+        public Task Send<T>( ICommandContext context, Response<T> response )
         {
-            InvokeAsync( _hubContext.Clients.Client( context.CallerId.GetConnectionId() ), response );
+            context.Monitor.Trace( $"Sending response to client {context.CallerId.GetConnectionId()}" );
+            return InvokeAsync( _hubContext.Clients.Client( context.CallerId.GetConnectionId() ), response );
         }
 
         private Task InvokeAsync<T>( IClientProxy clientProxy, Response<T> response )
-            => clientProxy.InvokeAsync( "ReceiveResult", response.CommandId, response.ResponseType, response.Payload );
+            => clientProxy.InvokeAsync( nameof( ICrsHub.ReceiveResult ), response.CommandId, response.ResponseType, response.Payload );
 
         public void Dispose() { }
     }

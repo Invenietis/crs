@@ -11,8 +11,8 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static ICrsCoreBuilder AddSignalR( this ICrsCoreBuilder builder )
         {
-            builder.AddDispatcher<SignalRDispatcher>( CrsSignalRContextExtensions.CallerIdProtocol );
             builder.Services.AddSignalR();
+            builder.AddDispatcher<SignalRDispatcher>( CrsSignalRContextExtensions.CallerIdProtocol );
             builder.Services.AddSingleton<SignalRDispatcher>();
 
             return builder;

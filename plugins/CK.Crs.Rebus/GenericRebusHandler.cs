@@ -46,6 +46,8 @@ namespace CK.Crs.Rebus
 
                     if( model.ResultType == typeof( T ) )
                     {
+                        context.Monitor.Trace( "Receiving result on the Rebus reply bus" );
+
                         var resultReceiver = _resultStrategy.GetResultReceiver( context );
                         if( resultReceiver != null )
                         {

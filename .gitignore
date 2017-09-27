@@ -45,3 +45,6 @@ wrap
 FileSystemBus/
 samples/CK.Crs.Samples.AspNetCoreApp/Monitoring/
 samples/CK.Crs.Samples.ExecutorApp.Rebus/logs/
+output/
+crs-store.xml
+crs-store-slim.xml

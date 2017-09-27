@@ -51,7 +51,7 @@ namespace CK.Crs.Samples.AspNetCoreApp
                 .AddCrs(
                     c => c.Commands( registry => registry
                         // This command is sent to a rebus queue configured below
-                        .Register<RemotelyQueuedCommand>().IsRebus().BroadcastResult()
+                        .Register<RemotelyQueuedCommand>().IsRebus()
                         // This command is sent to an in-memory queue executed in webapp process
                         .Register<QueuedCommand>().FireAndForget().HandledBy<InProcessHandler>()
                         // This command is processed synchronously and the result is returned to the caller.

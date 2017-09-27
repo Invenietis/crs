@@ -19,6 +19,11 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Samples.AspNetCoreApp", "samples\CK.Crs.Samples.AspNetCoreApp\CK.Crs.Samples.AspNetCoreApp.csproj", "{C412DB42-9922-470C-B78B-21D60443EF9F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{7D57BE6C-724C-462F-878C-4F89FC56CC1B}"
+	ProjectSection(SolutionItems) = preProject
+		crs-store.xml = crs-store.xml
+		Publish.cmd = Publish.cmd
+		output\Run.sh = output\Run.sh
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Samples.Messages", "samples\CK.Crs.Samples.Messages\CK.Crs.Samples.Messages.csproj", "{7D9D758C-48FA-40ED-BE03-EEDD1078E90A}"
 EndProject
@@ -58,7 +63,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.AmbientValues", "CK.Ambi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.SignalR", "plugins\CK.Crs.SignalR\CK.Crs.SignalR.csproj", "{49D88596-D494-4380-A848-28D5DE00D230}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CK.Crs.AspNetCore.Tests", "tests\CK.Crs.AspNetCore.Tests\CK.Crs.AspNetCore.Tests.csproj", "{B30273AE-17C4-43E7-8D50-6BB3D3E967A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.AspNetCore.Tests", "tests\CK.Crs.AspNetCore.Tests\CK.Crs.AspNetCore.Tests.csproj", "{B30273AE-17C4-43E7-8D50-6BB3D3E967A5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

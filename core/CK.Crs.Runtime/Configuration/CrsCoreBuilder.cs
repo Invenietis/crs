@@ -5,11 +5,6 @@ using System.Linq;
 
 namespace CK.Crs
 {
-    public class ResultDispatcherOptions
-    {
-        public Dictionary<string, Type> Dispatchers { get; set; }
-
-    }
 
     public class CrsCoreBuilder : ICrsCoreBuilder
     {
@@ -17,7 +12,6 @@ namespace CK.Crs
         private readonly ICommandRegistry _registry;
         private readonly ICrsModel _model;
         private readonly IList<Type> _receivers;
-
         private readonly Dictionary<string, Type> _dispatchers;
 
         public CrsCoreBuilder( CrsConfigurationBuilder builder )
@@ -38,6 +32,7 @@ namespace CK.Crs
                         .Union( new[] { ActivatorUtilities.CreateInstance<DefaultCommandReceiver>( s ) } )
                         .OfType<ICommandReceiver>() );
             } );
+            _services.AddOptions();
             _services.Configure<ResultDispatcherOptions>( o =>
             {
                 o.Dispatchers = _dispatchers;

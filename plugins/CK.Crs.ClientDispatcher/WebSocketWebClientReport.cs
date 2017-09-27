@@ -50,25 +50,26 @@ namespace CK.Crs
              } );
         }
 
-        public void Send<T>( ICommandContext context, Response<T> response )
+        public Task Send<T>( ICommandContext context, Response<T> response )
         {
-            DoSendToClient( null, response );
+            return DoSendToClient( null, response );
         }
 
-        public void Broadcast<T>( ICommandContext context, Response<T> response )
+        public async Task Broadcast<T>( ICommandContext context, Response<T> response )
         {
             foreach( var client in _connectedClients.Connections )
             {
-                DoSendToClient( client, response );
+                await DoSendToClient( client, response );
             }
         }
-        private void DoSendToClient<T>( string clientId, Response<T> response )
+        private Task DoSendToClient<T>( string clientId, Response<T> response )
         {
             if( !_dispatcherOptions.Value.SupportsServerSideEventsFiltering )
             {
                 var msg = Serialize( response );
                 _messages.Add( new WebSocketMessage( msg, clientId ) );
             }
+            return Task.CompletedTask;
         }
 
         string Serialize( Response response )

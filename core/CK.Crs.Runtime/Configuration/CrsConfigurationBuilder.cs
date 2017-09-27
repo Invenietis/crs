@@ -10,10 +10,12 @@ namespace CK.Crs
     public class CrsConfigurationBuilder : ICrsConfiguration
     {
         ICommandRegistry _commands;
-        IServiceCollection _services;
         CrsEndpointConfiguration _endpoints;
-        CrsModel _model;
-        CKTraitContext _traitContext;
+
+        readonly IServiceCollection _services;
+        readonly CrsModel _model;
+        readonly CKTraitContext _traitContext;
+
         public CrsConfigurationBuilder( IServiceCollection services, string traitContextName = "Crs" )
         {
             _services = services;

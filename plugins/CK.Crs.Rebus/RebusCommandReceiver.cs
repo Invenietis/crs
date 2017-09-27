@@ -5,17 +5,17 @@ using CK.Core;
 using R = Rebus;
 using Rebus.Config;
 using Rebus.Activation;
+using Rebus.Bus;
 
 namespace CK.Crs
 {
     public class RebusCommandReceiver : ICommandReceiver, IDisposable
     {
-        readonly R.Bus.IBus _bus;
+        readonly IBus _bus;
 
-        public RebusCommandReceiver( RebusConfigurer configurer, IContainerAdapter adapter )
+        public RebusCommandReceiver( IBus bus )
         {
-            _bus = configurer.Start();
-            adapter.SetBus( _bus );
+            _bus = bus;
         }
 
         public string Name => "Rebus";
@@ -33,7 +33,7 @@ namespace CK.Crs
         public async Task<Response> ReceiveCommand<T>( T command, ICommandContext context ) where T : class
         {
             await _bus.Send( command, context.CreateHeaders() );
-
+            context.Monitor.Trace( "Command sent on the Rebus bus" );
             return new DeferredResponse( context.CommandId, context.CallerId );
         }
     }

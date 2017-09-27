@@ -7,6 +7,19 @@ using Rebus.Config;
 using Rebus.Routing.TypeBased;
 using System;
 using System.IO;
+using Rebus.SqlServer;
+using System.Threading.Tasks;
+using System.Data.SqlClient;
+using Rebus.Transport;
+using Rebus.Timeouts;
+using Rebus.Pipeline;
+using Rebus.Pipeline.Receive;
+using Rebus.Logging;
+using Rebus.SqlServer.Transport;
+using Rebus.Injection;
+using Rebus.Threading;
+using System.Collections.Generic;
+using Rebus.Messages;
 
 namespace CK.Crs.Samples.ExecutorApp.Rebus
 {
@@ -26,7 +39,6 @@ namespace CK.Crs.Samples.ExecutorApp.Rebus
                 .AddCrsCore(
                     c => c.Commands( registry => registry
                         .Register<RemotelyQueuedCommand>().HandledBy<RemoteHandler>()
-                        .Register<QueuedCommand>().HandledBy<InProcessHandler>()
                         .Register<RemotelyQueuedCommand.Result>().IsRebus() ) )
                 .AddRebus(
                     c => c.Transport( t => t.UseSqlServer( conString, "tMessages", "commands" ) ),
@@ -36,6 +48,8 @@ namespace CK.Crs.Samples.ExecutorApp.Rebus
 
         public void Start( IActivityMonitor monitor, IServiceProvider services )
         {
+            var receiver = services.GetRequiredService<ICommandReceiver>();
+            monitor.Trace( $"Rebus receiver {receiver.Name} available" );
         }
 
         public void Stop( IActivityMonitor monitor, IServiceProvider services )

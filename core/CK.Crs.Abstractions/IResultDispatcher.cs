@@ -1,4 +1,6 @@
 using System;
+using System.Threading.Tasks;
+
 namespace CK.Crs
 {
     public interface IResultDispatcher : IDisposable
@@ -8,13 +10,13 @@ namespace CK.Crs
         /// </summary>
         /// <param name="context"></param>
         /// <param name="response">The message to send.</param>
-        void Send<T>( ICommandContext context, Response<T> response );
+        Task Send<T>( ICommandContext context, Response<T> response );
 
         /// <summary>
         /// Broadcast the message to all connected clients.
         /// </summary>
         /// <param name="context"></param>
         /// <param name="response">The message to broadcast.</param>
-        void Broadcast<T>( ICommandContext context, Response<T> response );
+        Task Broadcast<T>( ICommandContext context, Response<T> response );
     }
 }
