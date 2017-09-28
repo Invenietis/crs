@@ -1,10 +1,10 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Linq;
 using CK.Core;
 
 namespace CK.Crs.Infrastructure
 {
-    class RequestPropertyInfo
+    public class RequestPropertyInfo
     {
         readonly PropertyInfo _propertyInfo;
         readonly IAmbientValuesRegistration _ambientValue;

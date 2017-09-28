@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CK.AspNet.Tester" Version="1.0.0-a02" />
+    <PackageReference Include="FluentAssertions" Version="5.0.0-beta0002" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />
+    <PackageReference Include="xunit" Version="2.2.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="1.0.0-alpha1-final" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\core\CK.Crs.AspNetCore\CK.Crs.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\plugins\CK.Crs.InMemory\CK.Crs.InMemory.csproj" />
+    <ProjectReference Include="..\..\plugins\CK.Crs.SignalR\CK.Crs.SignalR.csproj" />
+    <ProjectReference Include="..\CK.Crs.Tests\CK.Crs.Tests.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using Microsoft.AspNetCore.Hosting;
 
 namespace CK.Crs.Samples.AspNetCoreApp
@@ -10,9 +10,7 @@ namespace CK.Crs.Samples.AspNetCoreApp
             var host = new WebHostBuilder()
                 .UseKestrel()
                 .UseContentRoot( Directory.GetCurrentDirectory() )
-                .UseIISIntegration()
                 .UseStartup<Startup>()
-                .UseApplicationInsights()
                 .Build();
 
             host.Run();

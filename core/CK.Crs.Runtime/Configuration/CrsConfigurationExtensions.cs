@@ -1,4 +1,4 @@
-﻿using CK.Core;
+using CK.Core;
 using CK.Crs;
 using System;
 using System.Collections.Generic;
@@ -13,15 +13,15 @@ namespace Microsoft.Extensions.DependencyInjection
             CrsConfigurationBuilder builder = new CrsConfigurationBuilder( services );
             configuration( builder );
 
-            return new CrsCoreBuilder( builder );
-        }
+            services.AddSingleton<ICommandHandlerFactory, DefaultCommandHandlerFactory>();
+            services.AddSingleton<ICommandHandlerInvoker, DefaultCommandInvoker>();
+            services.AddSingleton<IResultDispatcherSelector, DefaultResutDispatcherSelector>();
+            services.AddSingleton<IResultReceiverProvider, DefaultResultReceiverProvider>();
+            services.AddSingleton<ICrsConnectionManager, ConnectionManager>();
 
-        public static ICrsCoreBuilder AddAmbientValues( this ICrsCoreBuilder builder, Action<IAmbientValuesRegistration> ambientValuesConfiguration )
-        {
-            var config = new CrsAmbientValuesConfiguration( builder.Services );
-            var registration = config.Configure();
-            ambientValuesConfiguration( registration );
-            return builder;
+            services.AddSingleton( builder.Registry );
+
+            return new CrsCoreBuilder( builder );
         }
     }
 }

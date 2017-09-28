@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CK.Crs.Tests.Handlers
+namespace CK.Crs.Tests
 {
 
     public class UploadVideoCommand
@@ -12,7 +12,12 @@ namespace CK.Crs.Tests.Handlers
         public string Name { get; set; }
     }
 
-    public class TransferAmountCommand
+    public abstract class CommandBase
+    {
+        public int ActorId { get; set; }
+    }
+
+    public class TransferAmountCommand : CommandBase, ICommand<TransferAmountCommand.Result>
     {
         public Guid SourceAccountId { get; set; }
 
@@ -39,7 +44,7 @@ namespace CK.Crs.Tests.Handlers
         public decimal Amount { get; set; }
     }
 
-    public class WithdrawMoneyCommand
+    public class WithdrawMoneyCommand : ICommand<WithdrawMoneyCommand.Result>
     {
         public Guid AccountId { get; set; }
         public decimal Amount { get; set; }

@@ -1,4 +1,5 @@
-﻿using CK.Core;
+using CK.Core;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,8 +8,9 @@ namespace CK.Crs
 {
     public interface ICrsConfiguration
     {
-        ICrsConfiguration AddCommands(Action<IRequestRegistry> registryConfiguration);
+        ICrsConfiguration Commands( Action<ICommandRegistry> commandsConfiguration );
 
-        ICrsConfiguration AddReceivers(Action<ICrsEndpointConfigurationRoot> endpointConfiguration);
+        ICrsConfiguration Endpoints( Action<ICrsEndpointConfigurationRoot> endpointConfiguration );
     }
+
 }

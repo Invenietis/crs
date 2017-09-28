@@ -8,10 +8,10 @@ namespace CK.Crs.Infrastructure
 {
     public static class CrsModelExtensions
     {
-        public static ICrsReceiverModel GetEndpointFromContext( this ICrsModel model, ActionContext context )
+        public static IEndpointModel GetEndpointFromContext( this ICrsModel model, ActionContext context )
         {
             string endpointName = context.RouteData.Values["Controller"].ToString();
-            return model.Receivers.SingleOrDefault( e => e.Name == endpointName );
+            return model.Endpoints.SingleOrDefault( e => e.Name == endpointName );
         }
     }
 }

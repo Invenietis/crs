@@ -1,28 +1,33 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using CK.Core;
 
 namespace CK.Crs
 {
-    public class DefaultRequestRegistry : IRequestRegistry
+    public class DefaultRequestRegistry : ICommandRegistry
     {
-        List<RequestDescription> Map { get; } = new List<RequestDescription>();
+        Dictionary<CommandName,CommandModel> Map { get; } = new Dictionary<CommandName,CommandModel>();
 
-        public DefaultRequestRegistry(CKTraitContext traitContext)
+        public DefaultRequestRegistry( CKTraitContext traitContext )
         {
             TraitContext = traitContext;
         }
 
-        public IEnumerable<RequestDescription> Registration
+        public IEnumerable<CommandModel> Registration
         {
-            get { return Map; }
+            get { return Map.Values; }
         }
 
         public CKTraitContext TraitContext { get; }
 
-        public void Register( RequestDescription descriptor )
+        public void Register( CommandModel descriptor )
         {
-            Map.Add( descriptor );
+            Map.Add( descriptor.Name, descriptor );
+        }
+
+        public CommandModel GetCommandByName( CommandName name )
+        {
+            return Map.GetValueWithDefault( name, null );
         }
     }
 }

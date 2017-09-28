@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 
 namespace CK.Crs
 {
-    public class InvalidResponse : Response
+    public class InvalidResponse : Response<object>
     {
-        public InvalidResponse( Guid requestId, object reason ) : base(Crs.ResponseType.ValidationError, requestId )
+        public InvalidResponse( string commandId, object reason ) : base( Crs.ResponseType.ValidationError, commandId )
         {
             Payload = reason;
         }

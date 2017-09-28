@@ -1,4 +1,4 @@
-﻿using CK.Core;
+using CK.Core;
 using CK.Crs;
 using CK.Crs.Infrastructure;
 using System;
@@ -13,9 +13,15 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public IServiceCollection Services => CrsBuilder.Services;
 
-        public IRequestRegistry Registry => CrsBuilder.Registry;
+        public ICommandRegistry Registry => CrsBuilder.Registry;
 
         public ICrsModel Model => CrsBuilder.Model;
+
+        public void AddReceiver<T>( Func<IServiceProvider, T> factoryFunction ) where T : class, ICommandReceiver
+            => CrsBuilder.AddReceiver( factoryFunction );
+
+        public void AddDispatcher<T>( string protocol ) where T : class, IResultDispatcher
+            => CrsBuilder.AddDispatcher<T>( protocol );
     }
 
     public static class CrsCoreBuilderExtension
@@ -23,15 +29,15 @@ namespace Microsoft.Extensions.DependencyInjection
         public static CrsMvcCoreBuilder AddCrs( this IServiceCollection services, Action<ICrsConfiguration> configuration )
         {
             var builder = services.AddCrsCore( configuration );
-            var mvcBuilder = builder.AddCrsMvcCoreReceiver();
+            var mvcBuilder = builder.AddMvcCoreEndpoint();
             return new CrsMvcCoreBuilder
             {
                 CrsBuilder = builder,
                 MvcBuilder = mvcBuilder
             };
         }
-        
-        public static IMvcCoreBuilder AddCrsMvcCoreReceiver( this ICrsCoreBuilder builder  )
+
+        public static IMvcCoreBuilder AddMvcCoreEndpoint( this ICrsCoreBuilder builder )
         {
             var model = builder.Model;
             return builder.Services

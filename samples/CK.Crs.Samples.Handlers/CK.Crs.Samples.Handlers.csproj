@@ -2,15 +2,13 @@
   <Import Project="../../common/shared.props" />
 
   <PropertyGroup>
-    <TargetFramework>netstandard1.5</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\core\CK.Crs.Abstractions\CK.Crs.Abstractions.csproj" />
+    <ProjectReference Include="..\CK.Crs.Samples.Commands\CK.Crs.Samples.Commands.csproj" />
+    <ProjectReference Include="..\CK.Crs.Samples.Events\CK.Crs.Samples.Events.csproj" />
     <ProjectReference Include="..\CK.Crs.Samples.Messages\CK.Crs.Samples.Messages.csproj" />
   </ItemGroup>
 

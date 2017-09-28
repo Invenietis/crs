@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,38 +6,45 @@ using System.Text;
 namespace CK.Crs.Infrastructure
 {
 
-    class CrsReceiverModel : ICrsReceiverModel
+    class CrsReceiverModel : IEndpointModel
     {
         private Type _currentConfiguredEndpoint;
-        private IEnumerable<RequestDescription> _requests;
+        private IEnumerable<CommandModel> _requests;
+        private readonly ICrsModel _model;
 
-        public CrsReceiverModel( Type currentConfiguredEndpoint, IEnumerable<RequestDescription> requests )
+        public CrsReceiverModel( ICrsModel model, Type currentConfiguredEndpoint, IEnumerable<CommandModel> requests )
         {
-            _currentConfiguredEndpoint = currentConfiguredEndpoint;
+            _model = model ?? throw new ArgumentNullException( nameof( model ) );
+            _currentConfiguredEndpoint = currentConfiguredEndpoint ?? throw new ArgumentNullException( nameof( currentConfiguredEndpoint ) );
             _requests = requests;
         }
+        public ICrsModel CrsModel => _model;
 
         public string Name => _currentConfiguredEndpoint.Name;
 
-        public Type ReceiverType => _currentConfiguredEndpoint;
+        public Type EndpointType => _currentConfiguredEndpoint;
 
         public string CallerIdName { get; set; } = "CallerId";
 
         /// <summary>
         /// Gets wether we should validate ambient values or not.
         /// </summary>
-        public bool ValidateAmbientValues { get; internal set; } = true;
+        public bool ApplyAmbientValuesValidation { get; internal set; } = true;
 
-        public bool ValidateModel { get; internal set; } = true;
+        public bool ApplyModelValidation { get; internal set; } = true;
 
-        public bool SupportsClientEventsFiltering => ReflectionUtil.IsAssignableToGenericType( ReceiverType, typeof( ICrsListener ) );
+        public IEnumerable<CommandModel> Commands => _requests;
 
-        public IEnumerable<RequestDescription> Requests => _requests;
 
-        public RequestDescription GetRequestDescription( Type requestType )
+        public CommandModel GetCommandModel( Type requestType )
         {
             // TODO: lookup in a dictionary ?
-            return Requests.SingleOrDefault( t => t.Type == requestType );
+            // TODO: why first or default? We must ensure that we get the good one.
+            // Maybe by adding a CKTrait during configuration to each RequestDescription. This 
+            // traits will identityf the Receiver (which is unique)
+            // BTW, We should decouple which request are handle by which receiver...
+            // The request registry and the requests by receivers which is a subset of the registry.
+            return Commands.FirstOrDefault( t => t.CommandType == requestType );
         }
     }
 }
