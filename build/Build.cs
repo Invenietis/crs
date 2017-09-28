@@ -1,4 +1,4 @@
-﻿using Cake.Common;
+using Cake.Common;
 using Cake.Common.Solution;
 using Cake.Common.IO;
 using Cake.Common.Tools.MSBuild;
@@ -70,23 +70,17 @@ namespace CodeCake
                      Cake.DotNetCoreRestore( coreBuildFile,
                          new DotNetCoreRestoreSettings().AddVersionArguments( gitInfo, c =>
                          {
-                            // No impact see: https://github.com/NuGet/Home/issues/3772
-                            // c.Verbosity = DotNetCoreRestoreVerbosity.Minimal;
-                        } ) );
+                             // No impact see: https://github.com/NuGet/Home/issues/3772
+                             // c.Verbosity = DotNetCoreRestoreVerbosity.Minimal;
+                         } ) );
                  } );
             Task( "Clean" )
                 .IsDependentOn( "Check-Repository" )
                 .Does( () =>
                 {
                     Cake.CleanDirectories( "../**/bin/" + configuration, d => !d.Path.Segments.Contains( "build" ) );
-                    try
-                    {
-                        Cake.CleanDirectories( "../**/obj/" + configuration, d => !d.Path.Segments.Contains( "build" ) );
-                    }
-                    catch( Exception )
-                    {
+                    Cake.CleanDirectories( "../**/obj/" + configuration, d => !d.Path.Segments.Contains( "build" ) );
 
-                    }
                     Cake.CleanDirectories( releasesDir );
                     Cake.DeleteFiles( "../Tests/**/TestResult.xml" );
                 } );

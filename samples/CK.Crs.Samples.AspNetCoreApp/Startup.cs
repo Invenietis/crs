@@ -12,6 +12,7 @@ using CK.Crs.Samples.Handlers;
 using Microsoft.Extensions.Configuration;
 using CK.Crs.SignalR;
 using CK.Crs.Samples.AspNetCoreApp.Extensions;
+using System;
 
 namespace CK.Crs.Samples.AspNetCoreApp
 {
@@ -48,26 +49,27 @@ namespace CK.Crs.Samples.AspNetCoreApp
             services.AddAmbientValues( a => a.AddAmbientValueProvider<ActorIdAmbientValueProvider>( nameof( MessageBase.ActorId ) ) );
 
             services
-                .AddCrs(
-                    c => c.Commands( registry => registry
-                        // This command is sent to a rebus queue configured below
-                        .Register<RemotelyQueuedCommand>().IsRebus()
-                        // This command is sent to an in-memory queue executed in webapp process
-                        .Register<QueuedCommand>().FireAndForget().HandledBy<InProcessHandler>()
-                        // This command is processed synchronously and the result is returned to the caller.
-                        // We doesn't need to specify a result tag etc for this command 
-                        .Register<SyncCommand>().HandledBy<InProcessHandler>()
-                   )
-                   .Endpoints( e => e.For( typeof( CrsDispatcherEndpoint<> ) ).AcceptAll() ) )
+                .AddCrs( c => c
+                    .Commands( RegisterCommands )
+                    .Endpoints( e => e.For( typeof( CrsDispatcherEndpoint<> ) ).AcceptAll() ) )
                 .AddRebus(
                     c => c.Transport( t => t.UseSqlServer( conString, "tMessages", "commands_result" ) ),
                     c => c( "commands" )( m => m.HasRebusTag() ) )
                 .AddInMemoryReceiver()
                 .AddSignalR();
-                //.AddClientDispatcher( new ClientDispatcherOptions
-                //{
-                //    SupportsServerSideEventsFiltering = false
-                //} );
+        }
+
+        private void RegisterCommands( ICommandRegistry registry )
+        {
+            // This command is sent to a rebus queue configured below
+            registry.Register<RemotelyQueuedCommand>().IsRebus();
+
+            // This command is sent to an in-memory queue executed in webapp process
+            registry.Register<QueuedCommand>().FireAndForget().HandledBy<InProcessHandler>();
+
+            // This command is processed synchronously and the result is returned to the caller.
+            // We doesn't need to specify a result tag etc for this command 
+            registry.Register<SyncCommand>().HandledBy<InProcessHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
