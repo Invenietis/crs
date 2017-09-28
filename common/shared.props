@@ -23,7 +23,6 @@
   -->
   <PropertyGroup Condition=" '$(CakeBuild)' == 'true' ">
     <SolutionDir>$([System.IO.Path]::GetDirectoryName($([System.IO.Path]::GetDirectoryName($(MSBuildThisFileDirectory)))))\</SolutionDir>
-    <BaseIntermediateOutputPath>$(SolutionDir)CodeCakeBuilder\Releases\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
   </PropertyGroup>
   <!-- When not building from the CI, assemblies do not have any AssemblyInfo attributes. -->
   <PropertyGroup Condition=" '$(CakeBuild)' != 'true' ">
