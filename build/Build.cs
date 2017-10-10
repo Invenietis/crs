@@ -41,7 +41,10 @@ namespace CodeCake
             var projectsToPublish = Cake.ParseSolution( "../CK-Crs.sln" )
                                         .Projects
                                         .Where( p => p.Name != "CodeCakeBuilder"
-                                                     && !p.Path.Segments.Contains( "Tests" ) );
+                                                    && p.Type == "{9A19103F-16F7-4668-BE54-9A1E7A4F7556}"
+                                                    && !p.Path.Segments.Contains( "Tests", StringComparer.OrdinalIgnoreCase )
+                                                    && !p.Path.Segments.Contains( "Samples", StringComparer.OrdinalIgnoreCase ) ) 
+                                        .ToList();
 
             Task( "Check-Repository" )
                 .Does( () =>
@@ -129,7 +132,7 @@ namespace CodeCake
                             OutputDirectory = releasesDir
                         };
                         s.AddVersionArguments( gitInfo );
-                        Cake.DotNetCorePack( p.Path.GetDirectory().FullPath, s );
+                        Cake.DotNetCorePack( p.Path.FullPath, s );
                     }
                 } );
 
