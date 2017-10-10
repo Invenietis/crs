@@ -35,7 +35,6 @@ namespace CK.Crs.AspNetCore.Tests
 
         public void Configure( IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory )
         {
-            app.UseDeveloperExceptionPage();
             app.UseMvc();
             app.UseSignalR( r => r.MapHub<CrsHub>( "crs" ) );
         }
@@ -48,11 +47,11 @@ namespace CK.Crs.AspNetCore.Tests
         private void MapFromBaseCommandType( IAmbientValuesRegistration ambientValuesRegistration )
         {
             ambientValuesRegistration
-                .AddAmbientValueProviderFrom<CommandBase>()
+                .AddProviderFrom<CommandBase>()
                     .Select( t => t.ActorId ).ProvidedBy<AlwaysTrusted>();
         }
 
-        private void Endpoints( ICrsEndpointConfigurationRoot e ) => e.For( typeof( TestEndpoint<> ) ).AcceptAll();
+        private void Endpoints( ICrsEndpointConfigurationRoot e ) => e.Map( typeof( TestEndpoint<> ) ).AcceptAll();
 
         private void Commands( ICommandRegistry registry ) =>
             registry

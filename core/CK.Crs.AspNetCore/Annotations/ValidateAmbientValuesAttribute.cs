@@ -3,12 +3,13 @@ using CK.Crs.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Caching.Memory;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace CK.Crs
 {
+    [AttributeUsage( AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = false, Inherited = true )]
     public class ValidateAmbientValuesAttribute : TypeFilterAttribute
     {
         public ValidateAmbientValuesAttribute() : base( typeof( AmbientValuesValidationImpl ) )
@@ -28,7 +29,7 @@ namespace CK.Crs
 
             public async Task OnActionExecutionAsync( ActionExecutingContext context, ActionExecutionDelegate next )
             {
-                var commandContext = context.ActionDescriptor.GetProperty<IHttpCommandContext>();
+                var commandContext = context.ActionDescriptor.GetProperty<ICommandContext>();
                 var commandArgumentName = context.ActionDescriptor.GetProperty<CrsCommandArgumentName>();
 
                 var obj = context.Filters.SingleOrDefault( t => t.GetType() == typeof( NoAmbientValuesValidationAttribute ) );

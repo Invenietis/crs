@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -20,7 +20,7 @@ namespace CK.Core
     public static class AmbientValueProviderExtensions
     {
 
-        public static IAmbientValuesRegistrationFrom<T> AddAmbientValueProviderFrom<T>( this IAmbientValuesRegistration @this )
+        public static IAmbientValuesRegistrationFrom<T> AddProviderFrom<T>( this IAmbientValuesRegistration @this )
         {
             return new AmbientValuesRegistrationFrom<T>( @this );
         }
@@ -28,7 +28,7 @@ namespace CK.Core
         public static IAmbientValuesRegistration RegisterValue( this IAmbientValuesRegistration @this, string name, IComparable value )
         {
             var directProvider = new DirectProvider( value );
-            @this.AddLazyAmbientValueProvider( name, ( services ) => directProvider );
+            @this.AddProvider( name, ( services ) => directProvider );
             return @this;
         }
 

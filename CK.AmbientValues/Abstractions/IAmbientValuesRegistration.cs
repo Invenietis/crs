@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace CK.Core
@@ -18,14 +18,14 @@ namespace CK.Core
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="name">The name of the ambient parameter managed by this <see cref="IAmbientValueProvider"/></param>
-        void AddAmbientValueProvider<T>( string name ) where T : class, IAmbientValueProvider;
+        void AddProvider<T>( string name ) where T : class, IAmbientValueProvider;
 
         /// <summary>
         /// Register a deferred pointer to an instance of <see cref="IAmbientValueProvider"/>
         /// </summary>
         /// <param name="name"></param>
         /// <param name="provider"></param>
-        void AddLazyAmbientValueProvider( string name, Func<IServiceProvider, IAmbientValueProvider> provider );
+        void AddProvider( string name, Func<IServiceProvider, IAmbientValueProvider> provider );
 
         /// <summary>
         /// Gets an <see cref="IAmbientValueProviderDescriptor"/> by its name.

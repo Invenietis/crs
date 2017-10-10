@@ -4,7 +4,7 @@ namespace CK.Crs
 {
     public interface ICrsEndpointConfigurationRoot
     {
-        ICrsEndpointConfiguration For( Type endpoint );
+        ICrsEndpointConfiguration Map( Type endpoint );
     }
 
 }

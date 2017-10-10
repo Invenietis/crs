@@ -23,7 +23,7 @@ namespace CK.Crs.AspNetCore.Tests
         public static async Task<CrsEndpoint> Create( PathString path )
         {
             CrsEndpoint endpoint = new CrsEndpoint( path );
-            await endpoint.Connection.StartAsync().OrTimeout();
+            //await endpoint.Connection.StartAsync().OrTimeout();
             await endpoint.LoadMeta( "/crs" );
             return endpoint;
         }
@@ -40,20 +40,20 @@ namespace CK.Crs.AspNetCore.Tests
             var server = new TestServer( builder );
             _client = new TestServerClient( server, true );
 
-            var connectionBuilder = new HubConnectionBuilder()
-                .WithUrl( _client.BaseAddress + path )
-                .WithTransport( Microsoft.AspNetCore.Sockets.TransportType.All )
-                .WithHubProtocol( new JsonHubProtocol( new JsonSerializer() ) );
-
-            Connection = connectionBuilder.Build();
-            Connection.On<string>( nameof( ICrsHub.ReceiveCallerId ), callerId =>
-            {
-                CallerId = CallerId.Parse( callerId );
-            } );
-
-            Connection.Connected += OnConnected;
             Services = server.Host.Services;
-            Hub = Services.GetRequiredService<HubEndPoint<CrsHub>>();
+            //var connectionBuilder = new HubConnectionBuilder()
+            //    .WithUrl( _client.BaseAddress + path )
+            //    .WithTransport( Microsoft.AspNetCore.Sockets.TransportType.All )
+            //    .WithHubProtocol( new JsonHubProtocol( new JsonSerializer() ) );
+
+            //Connection = connectionBuilder.Build();
+            //Connection.On<string>( nameof( ICrsHub.ReceiveCallerId ), callerId =>
+            //{
+            //    CallerId = CallerId.Parse( callerId );
+            //} );
+
+            //Connection.Connected += OnConnected;
+            //Hub = Services.GetRequiredService<HubEndPoint<CrsHub>>();
             //Hub.OnConnectedAsync( new HubConnectionContext() )
         }
 
@@ -69,7 +69,7 @@ namespace CK.Crs.AspNetCore.Tests
 
         public CallerId CallerId { get; private set; }
 
-        public HubConnection Connection { get; private set; }
+        //public HubConnection Connection { get; private set; }
 
         public MetaCommand.Result Meta { get; private set; }
 
@@ -78,8 +78,6 @@ namespace CK.Crs.AspNetCore.Tests
         public PathString Path { get; }
 
         public TestServerClient Client => _client;
-
-        public HubEndPoint<CrsHub> Hub { get; private set; }
 
         public async Task LoadMeta( PathString crsEndpointPath )
         {
@@ -104,7 +102,8 @@ namespace CK.Crs.AspNetCore.Tests
             var url = Path.Add( "/" + commandDescription.CommandName );
             var uri = new UriBuilder()
             {
-                Path = Path.Add( "/" + commandDescription.CommandName )
+                Path = Path.Add( "/" + commandDescription.CommandName ),
+                Query = Meta.CallerIdPropertyName + "=" + "3712"
             };
 
             var ffTag = context.FindOrCreate( CrsTraits.FireForget );
@@ -131,11 +130,11 @@ namespace CK.Crs.AspNetCore.Tests
 
                 } ), TaskContinuationOptions.None );
 
-                Connection.On<string>( nameof( ICrsHub.ReceiveResult ), h =>
-                {
-                    var result = JsonConvert.DeserializeObject<TResult>( h );
-                    tcs.SetResult( result );
-                } );
+                //Connection.On<string>( nameof( ICrsHub.ReceiveResult ), h =>
+                //{
+                //    var result = JsonConvert.DeserializeObject<TResult>( h );
+                //    tcs.SetResult( result );
+                //} );
                 //task.Start();
             }
             else

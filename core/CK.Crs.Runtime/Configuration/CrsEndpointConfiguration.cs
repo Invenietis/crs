@@ -23,7 +23,7 @@ namespace CK.Crs.Infrastructure
             _model = model;
         }
 
-        public ICrsEndpointConfiguration For( Type endpoint )
+        public ICrsEndpointConfiguration Map( Type endpoint )
         {
             //if( !ReflectionUtil.IsAssignableToGenericType( endpoint.GetGenericTypeDefinition(), typeof( IHttpCommandReceiver<> ) ) )
             //    throw new ArgumentException( "The endpoint must implement IHttpCommandReceiver", nameof( endpoint ) );

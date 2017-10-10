@@ -99,18 +99,18 @@ namespace CK.Crs.Infrastructure
 
                     var model = CreateModel( endpointModel, monitor, bindingContext );
 
-                    bindingContext.ActionContext.ActionDescriptor.SetProperty<IHttpCommandContext>( model );
+                    bindingContext.ActionContext.ActionDescriptor.SetProperty( model );
                     bindingContext.Result = ModelBindingResult.Success( model );
 
                     return Task.CompletedTask;
                 }
 
-                IHttpCommandContext CreateModel( IEndpointModel endpointModel, IActivityMonitor monitor, ModelBindingContext bindingContext )
+                ICommandContext CreateModel( IEndpointModel endpointModel, IActivityMonitor monitor, ModelBindingContext bindingContext )
                 {
                     var commandType = bindingContext.ActionContext.ActionDescriptor.Parameters[0].ParameterType;
                     if( commandType == typeof( MetaCommand ) )
                     {
-                        return new MetaCommandContext( monitor, endpointModel, bindingContext.HttpContext, bindingContext.HttpContext.RequestAborted );
+                        return new MetaCommandContext( monitor, endpointModel, bindingContext.HttpContext.RequestAborted );
                     }
                     else
                     {
@@ -129,7 +129,7 @@ namespace CK.Crs.Infrastructure
                         var commandId = Guid.NewGuid(); // TODO: CommandId provider ?
 
                         return new HttpCommandContext(
-                            bindingContext.HttpContext,
+                            bindingContext.HttpContext.RequestServices,
                             commandId.ToString( "N" ),
                             monitor,
                             commandModel,
@@ -144,7 +144,7 @@ namespace CK.Crs.Infrastructure
         {
             public async Task OnActionExecutionAsync( ActionExecutingContext context, ActionExecutionDelegate next )
             {
-                var commandContext = context.ActionDescriptor.GetProperty<IHttpCommandContext>();
+                var commandContext = context.ActionDescriptor.GetProperty<ICommandContext>();
                 var commandArgumentName = context.ActionDescriptor.Parameters[0].Name;
                 context.ActionDescriptor.SetProperty( new CrsCommandArgumentName( commandArgumentName ) );
 

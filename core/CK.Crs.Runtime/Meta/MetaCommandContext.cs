@@ -1,18 +1,15 @@
-﻿using CK.Core;
-using Microsoft.AspNetCore.Http;
+using CK.Core;
 using System;
 using System.Threading;
 
 namespace CK.Crs
 {
-    sealed class MetaCommandContext : IHttpCommandContext
+    public sealed class MetaCommandContext : ICommandContext
     {
-        readonly HttpContext _httpContext;
-        public MetaCommandContext( IActivityMonitor monitor, IEndpointModel endpointModel, HttpContext httpContext, CancellationToken cancellationToken )
+        public MetaCommandContext( IActivityMonitor monitor, IEndpointModel endpointModel, CancellationToken cancellationToken )
         {
             Monitor = monitor;
             Model = new MetaCommandModel( endpointModel.CrsModel.TraitContext );
-            _httpContext = httpContext;
             Aborted = cancellationToken;
         }
 
@@ -25,7 +22,5 @@ namespace CK.Crs
         public CallerId CallerId { get; }
 
         public CommandModel Model { get; }
-
-        public HttpContext GetHttpContext() => _httpContext;
     }
 }

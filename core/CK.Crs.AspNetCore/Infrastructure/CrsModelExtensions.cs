@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +6,7 @@ using System.Text;
 
 namespace CK.Crs.Infrastructure
 {
-    public static class CrsModelExtensions
+    internal static class CrsModelExtensions
     {
         public static IEndpointModel GetEndpointFromContext( this ICrsModel model, ActionContext context )
         {

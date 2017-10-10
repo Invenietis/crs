@@ -28,7 +28,7 @@ namespace CK.Core
             get { return _lazyBag != null ? _lazyBag.Values : CK.Core.Util.Array.Empty<IAmbientValueProviderDescriptor>(); }
         }
 
-        public void AddLazyAmbientValueProvider( string key, Func<IServiceProvider, IAmbientValueProvider> provider )
+        public void AddProvider( string key, Func<IServiceProvider, IAmbientValueProvider> provider )
         {
             if( _lazyBag == null ) _lazyBag = new Dictionary<string, IAmbientValueProviderDescriptor>();
             _lazyBag.Add( key, new DirectAmbientValueDescriptor
@@ -43,7 +43,7 @@ namespace CK.Core
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
-        public void AddAmbientValueProvider<T>( string key ) where T : class, IAmbientValueProvider
+        public void AddProvider<T>( string key ) where T : class, IAmbientValueProvider
         {
             if( _lazyBag == null ) _lazyBag = new Dictionary<string, IAmbientValueProviderDescriptor>();
             _lazyBag.Add( key, new TypeAmbientValueDescriptor()

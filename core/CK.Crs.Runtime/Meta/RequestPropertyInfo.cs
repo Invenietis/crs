@@ -2,12 +2,13 @@ using System.Reflection;
 using System.Linq;
 using CK.Core;
 
-namespace CK.Crs.Infrastructure
+namespace CK.Crs
 {
-    public class RequestPropertyInfo
+    public sealed class RequestPropertyInfo
     {
         readonly PropertyInfo _propertyInfo;
         readonly IAmbientValuesRegistration _ambientValue;
+
         public RequestPropertyInfo( PropertyInfo e, IAmbientValuesRegistration ambientValue )
         {
             _propertyInfo = e;

@@ -46,12 +46,12 @@ namespace CK.Crs.Samples.AspNetCoreApp
 
             services.AddSingleton<IActorIdProvider, Defaults>();
             services.AddSingleton<IUserNameProvider, Defaults>();
-            services.AddAmbientValues( a => a.AddAmbientValueProvider<ActorIdAmbientValueProvider>( nameof( MessageBase.ActorId ) ) );
+            services.AddAmbientValues( a => a.AddProvider<ActorIdAmbientValueProvider>( nameof( MessageBase.ActorId ) ) );
 
             services
                 .AddCrs( c => c
                     .Commands( RegisterCommands )
-                    .Endpoints( e => e.For( typeof( CrsDispatcherEndpoint<> ) ).AcceptAll() ) )
+                    .Endpoints( e => e.Map( typeof( CrsDispatcherEndpoint<> ) ).AcceptAll() ) )
                 .AddRebus(
                     c => c.Transport( t => t.UseSqlServer( conString, "tMessages", "commands_result" ) ),
                     c => c( "commands" )( m => m.HasRebusTag() ) )
@@ -68,7 +68,7 @@ namespace CK.Crs.Samples.AspNetCoreApp
             registry.Register<QueuedCommand>().FireAndForget().HandledBy<InProcessHandler>();
 
             // This command is processed synchronously and the result is returned to the caller.
-            // We doesn't need to specify a result tag etc for this command 
+            // We don't need to specify a result tag etc for this command 
             registry.Register<SyncCommand>().HandledBy<InProcessHandler>();
         }
 

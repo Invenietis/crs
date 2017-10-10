@@ -9,6 +9,7 @@
     <PackageReference Include="Microsoft.Extensions.Options" Version="2.0.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\CK.AmbientValues\CK.AmbientValues.csproj" />
     <ProjectReference Include="..\CK.Crs.Abstractions\CK.Crs.Abstractions.csproj" />
   </ItemGroup>
   <ItemGroup>

@@ -18,7 +18,7 @@ namespace CK.Core
 
         IAmbientValuesRegistrationFrom<T> IAmbientValuesProviderConfiguration<T>.ProvidedBy<TProvider>()
         {
-            _registration.AddAmbientValueProvider<TProvider>(_propInfo.Name);
+            _registration.AddProvider<TProvider>(_propInfo.Name);
             return _from;
         }
     }

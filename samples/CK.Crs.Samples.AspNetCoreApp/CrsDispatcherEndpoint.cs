@@ -5,19 +5,10 @@ using Microsoft.AspNetCore.Http;
 
 namespace CK.Crs.Samples.AspNetCoreApp
 {
+    [NoAmbientValuesValidation]
     [Route( "crs-dispatcher" )]
-    public class CrsDispatcherEndpoint<T> : IHttpCommandReceiver<T> where T : class
+    public class CrsDispatcherEndpoint<T> : HttpEndpoint<T>
     {
-        ICommandReceiver _receiver;
-        public CrsDispatcherEndpoint( ICommandReceiver receiver )
-        {
-            _receiver = receiver;
-        }
-
-        [HttpPost( "[Action]" ), NoAmbientValuesValidation]
-        public Task<Response> ReceiveCommand( [FromBody] T command, IHttpCommandContext context )
-        {
-            return _receiver.ReceiveCommand( command, context );
-        }
     }
+
 }
