@@ -10,7 +10,7 @@
     <Folder Include="wwwroot\scripts\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CK.Monitoring" Version="8.0.0" />
+    <PackageReference Include="CK.Monitoring" Version="8.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
     <PackageReference Include="Rebus.SqlServer" Version="4.0.0" />
   </ItemGroup>
