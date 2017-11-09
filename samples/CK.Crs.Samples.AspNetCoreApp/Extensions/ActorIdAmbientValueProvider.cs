@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -19,6 +19,8 @@ namespace CK.Core
         }
 
         public const int Default = 0;
+
+        public Type ValueType => typeof( int );
 
         public async Task<IComparable> GetValueAsync( IAmbientValues values )
         {

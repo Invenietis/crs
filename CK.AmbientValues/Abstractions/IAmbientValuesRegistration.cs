@@ -18,7 +18,7 @@ namespace CK.Core
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="name">The name of the ambient parameter managed by this <see cref="IAmbientValueProvider"/></param>
-        IAmbientValuesRegistration AddProvider<T>( string name, Action<IConfigurableAmbientValueProviderDescriptor> metadata = null ) where T : class, IAmbientValueProvider;
+        IAmbientValuesRegistration AddProvider<T>( string name, Action<IConfigurableAmbientValueProviderDescriptor> configure = null ) where T : class, IAmbientValueProvider;
 
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace CK.Core
         /// </summary>
         /// <param name="name"></param>
         /// <param name="provider"></param>
-        IAmbientValuesRegistration AddProvider( string name, Func<IServiceProvider, IAmbientValueProvider> provider, Action<IConfigurableAmbientValueProviderDescriptor> metadata = null );
+        IAmbientValuesRegistration AddProvider( string name, Func<IServiceProvider, IAmbientValueProvider> provider, Action<IConfigurableAmbientValueProviderDescriptor> configure = null );
 
         /// <summary>
         /// Gets an <see cref="IAmbientValueProviderDescriptor"/> by its name.

@@ -10,8 +10,6 @@ namespace CK.Core
     {
         string Name { get; }
 
-        Type ValueType { get; }
-
         object GetMetadata( Type type );
 
         IAmbientValueProvider Resolve( IServiceProvider services );
@@ -19,8 +17,6 @@ namespace CK.Core
 
     public interface IConfigurableAmbientValueProviderDescriptor
     {
-        IConfigurableAmbientValueProviderDescriptor SetValueType( Type type );
-
         IConfigurableAmbientValueProviderDescriptor AddMetadata<T>( T value ) where T : class;
     }
 }

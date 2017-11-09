@@ -60,6 +60,8 @@ namespace CK.Crs.AspNetCore.Tests
 
         class AlwaysTrusted : IAmbientValueProvider
         {
+            public Type ValueType => typeof( int );
+
             public Task<IComparable> GetValueAsync( IAmbientValues values )
             {
                 return Task.FromResult<IComparable>( 0 );

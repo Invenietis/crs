@@ -24,8 +24,6 @@ namespace CK.Core
 
         public string Name { get; set; }
 
-        public Type ValueType { get; set; }
-
         public object GetMetadata( Type type )
         {
             return _metadata.TryGetValue( type, out object val ) ? val : null;
@@ -40,12 +38,6 @@ namespace CK.Core
             var type = typeof(T);
             if( _metadata.ContainsKey( type ) ) throw new InvalidOperationException( "A metadata for this type is already registered." );
             _metadata.Add( type, value );
-            return this;
-        }
-
-        public IConfigurableAmbientValueProviderDescriptor SetValueType( Type type )
-        {
-            ValueType = type;
             return this;
         }
     }
