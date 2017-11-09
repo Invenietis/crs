@@ -48,6 +48,7 @@ namespace CK.Crs.Tests
     {
         public Guid AccountId { get; set; }
         public decimal Amount { get; set; }
+        public bool ShouldThrow { get;  set; }
 
         public class Result
         {

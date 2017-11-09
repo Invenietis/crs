@@ -142,10 +142,17 @@ namespace CK.Crs.AspNetCore.Tests
 
                 Client.PostJSON<T, Response<TResult>>( uri.Uri, command ).ContinueWith( new Action<Task<Response<TResult>>, object>( ( t, state ) =>
                 {
-                    t.Result.CommandId.Should().NotBe( null );
-                    t.Result.ResponseType.Should().Be( (char)ResponseType.Synchronous );
-                    t.Result.Payload.Should().BeOfType<TResult>();
-                    tcs.SetResult( t.Result.Payload );
+                    if( t.Exception != null )
+                    {
+                        tcs.SetException( t.Exception );
+                    }
+                    else if( t.Result is Response<TResult> res )
+                    {
+                        res.CommandId.Should().NotBe( null );
+                        res.ResponseType.Should().Be( (char)ResponseType.Synchronous );
+                        res.Payload.Should().BeOfType<TResult>();
+                        tcs.SetResult( res.Payload );
+                    }
                 } ), TaskContinuationOptions.None );
 
             }

@@ -25,23 +25,21 @@ namespace CK.Crs
             return true;
         }
 
-        public async Task<Response> ReceiveCommand<T>( T command, ICommandContext context ) 
+        public async Task<Response> ReceiveCommand<T>( T command, ICommandContext context )
         {
             Response response = null;
             using( context.Monitor.CollectEntries( ( errors ) =>
             {
-                if( errors.Count > 0 ) response = new ErrorResponse( string.Join( Environment.NewLine, errors.Select( e => e.ToString() ) ), context.CommandId );
+                if( errors.Count > 0 )
+                    response = new ErrorResponse( string.Join( Environment.NewLine, errors.Select( e => e.ToString() ) ), context.CommandId );
             } ) )
             {
-                var result = await _invoker.Invoke( command, context );
-
                 response = new Response<object>( context.CommandId )
                 {
-                    Payload = result
+                    Payload = await _invoker.Invoke( command, context )
                 };
-
-                return response;
             }
+            return response;
         }
     }
 }

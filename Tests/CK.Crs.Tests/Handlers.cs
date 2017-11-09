@@ -28,25 +28,6 @@ namespace CK.Crs.Tests
                 context.Monitor.Info( $"Transfer will be effective at {result.EffectiveDate.ToString()}." );
                 context.Monitor.Info( $"You have one hour to cancel it." );
 
-                //await _eventPublisher.PublishAsync( new AmountTransferredEvent
-                //{
-                //    AccountId = command.DestinationAccountId,
-                //    Amount = command.Amount
-                //}, context );
-
-                //await _eventPublisher.PublishAsync( new AmountTransferredEvent
-                //{
-                //    AccountId = command.DestinationAccountId,
-                //    Amount = command.Amount
-                //}, context );
-
-                //await _commandDispatcher.ReceiveCommand( new PerformTransferAmountCommand
-                //{
-                //    Amount = command.Amount,
-                //    DestinationAccountId = command.DestinationAccountId,
-                //    SourceAccountId = command.SourceAccountId
-                //}, context );
-
                 return Task.FromResult( result );
             }
         }
@@ -56,6 +37,7 @@ namespace CK.Crs.Tests
     {
         public Task<WithdrawMoneyCommand.Result> HandleAsync( WithdrawMoneyCommand command, ICommandContext commandContext )
         {
+            if( command.ShouldThrow ) throw new InvalidOperationException( "No more money guy..." );
             var result = new WithdrawMoneyCommand.Result
             {
                 Success = true
@@ -63,5 +45,6 @@ namespace CK.Crs.Tests
             return Task.FromResult( result );
         }
     }
+
 
 }

@@ -46,6 +46,24 @@ namespace CK.Crs.AspNetCore.Tests
         }
 
         [Fact]
+        public async Task Invoke_Command_WithError()
+        {
+            using( var crs = await CrsEndpoint.Create( "/crs" ) )
+            {
+                var command = new WithdrawMoneyCommand { AccountId = Guid.NewGuid(), Amount = 3500M, ShouldThrow = true };
+
+                try
+                {
+                    await crs.InvokeCommand<WithdrawMoneyCommand, WithdrawMoneyCommand.Result>( command );
+                }
+                catch( Exception ex )
+                {
+                    
+                }
+            }
+        }
+
+        [Fact]
         public async Task Invoke_FireAndForget_Command()
         {
             using( var crs = await CrsEndpoint.Create( "/crs" ) )

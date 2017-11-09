@@ -1,4 +1,5 @@
 using CK.AspNet.Tester;
+using CK.Core;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
@@ -23,8 +24,12 @@ namespace CK.Crs.AspNetCore.Tests
             var jsonResult = await response.Content.ReadAsStringAsync();
             jsonResult.Should().NotBeEmpty();
 
-            var result = JsonConvert.DeserializeObject<TResult>( jsonResult, settings );
-            return result;
+            var result = JsonConvert.DeserializeObject<Response<object>>( jsonResult, settings );
+            if( result.ResponseType == (char)ResponseType.InternalError )
+            {
+                throw new CKException( result.Payload.ToString() );
+            }
+            return JsonConvert.DeserializeObject<TResult>( jsonResult, settings );
         }
     }
 }
