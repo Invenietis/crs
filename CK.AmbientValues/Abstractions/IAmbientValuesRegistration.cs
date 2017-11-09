@@ -18,14 +18,15 @@ namespace CK.Core
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="name">The name of the ambient parameter managed by this <see cref="IAmbientValueProvider"/></param>
-        void AddProvider<T>( string name ) where T : class, IAmbientValueProvider;
+        IAmbientValuesRegistration AddProvider<T>( string name, Action<IConfigurableAmbientValueProviderDescriptor> metadata = null ) where T : class, IAmbientValueProvider;
+
 
         /// <summary>
         /// Register a deferred pointer to an instance of <see cref="IAmbientValueProvider"/>
         /// </summary>
         /// <param name="name"></param>
         /// <param name="provider"></param>
-        void AddProvider( string name, Func<IServiceProvider, IAmbientValueProvider> provider );
+        IAmbientValuesRegistration AddProvider( string name, Func<IServiceProvider, IAmbientValueProvider> provider, Action<IConfigurableAmbientValueProviderDescriptor> metadata = null );
 
         /// <summary>
         /// Gets an <see cref="IAmbientValueProviderDescriptor"/> by its name.

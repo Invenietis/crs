@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CK.Core
 {
-    enum AmbientValueProviderType
+    enum AmbientValueProviderMode
     {
         Direct,
         Lazy
@@ -15,7 +15,6 @@ namespace CK.Core
     class AmbientValuesRegistration : IAmbientValuesRegistration
     {
         readonly IServiceCollection _services;
-
         IDictionary<string, IAmbientValueProviderDescriptor> _lazyBag;
 
         public AmbientValuesRegistration( IServiceCollection services )
@@ -28,14 +27,21 @@ namespace CK.Core
             get { return _lazyBag != null ? _lazyBag.Values : CK.Core.Util.Array.Empty<IAmbientValueProviderDescriptor>(); }
         }
 
-        public void AddProvider( string key, Func<IServiceProvider, IAmbientValueProvider> provider )
+        public IAmbientValuesRegistration AddProvider( string key, Func<IServiceProvider, IAmbientValueProvider> provider, Action<IConfigurableAmbientValueProviderDescriptor> metadata = null )
         {
             if( _lazyBag == null ) _lazyBag = new Dictionary<string, IAmbientValueProviderDescriptor>();
-            _lazyBag.Add( key, new DirectAmbientValueDescriptor
+
+            var desc = new AmbientValueProviderDescriptor()
             {
                 Name = key,
+                ValueType = typeof(object),
                 Resolver = provider
-            } );
+            };
+
+            metadata?.Invoke( desc );
+            _lazyBag.Add( key, desc );
+
+            return this;
         }
 
         /// <summary>
@@ -43,15 +49,22 @@ namespace CK.Core
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
-        public void AddProvider<T>( string key ) where T : class, IAmbientValueProvider
+        public IAmbientValuesRegistration AddProvider<T>( string key, Action<IConfigurableAmbientValueProviderDescriptor> metadata = null ) where T : class, IAmbientValueProvider
         {
             if( _lazyBag == null ) _lazyBag = new Dictionary<string, IAmbientValueProviderDescriptor>();
-            _lazyBag.Add( key, new TypeAmbientValueDescriptor()
+
+            var desc = new AutoResolveAmbientValueProviderDescriptor<T>()
             {
                 Name = key,
-                AmbientValueType = typeof( T )
-            } );
+                ValueType = typeof(object)
+            };
+
+            metadata?.Invoke( desc );
+            _lazyBag.Add( key, desc );
+
             _services.AddTransient<T>();
+
+            return this;
         }
 
         public IAmbientValueProviderDescriptor GetByName( string name )
@@ -60,31 +73,6 @@ namespace CK.Core
             IAmbientValueProviderDescriptor f = null;
             _lazyBag.TryGetValue( name, out f );
             return f;
-        }
-
-        internal class TypeAmbientValueDescriptor : IAmbientValueProviderDescriptor
-        {
-            internal Type AmbientValueType { get; set; }
-
-            public string Name { get; set; }
-
-            internal AmbientValueProviderType ProviderType { get; set; }
-
-            public IAmbientValueProvider Resolve( IServiceProvider services )
-            {
-                return services.GetService( AmbientValueType ) as IAmbientValueProvider;
-            }
-        }
-
-        internal class DirectAmbientValueDescriptor : IAmbientValueProviderDescriptor
-        {
-            public string Name { get; set; }
-
-            internal AmbientValueProviderType ProviderType { get; set; }
-
-            internal Func<IServiceProvider, IAmbientValueProvider> Resolver { get; set; }
-
-            public IAmbientValueProvider Resolve( IServiceProvider services ) => Resolver( services );
         }
     }
 }

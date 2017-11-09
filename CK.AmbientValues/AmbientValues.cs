@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,6 +15,8 @@ namespace CK.Core
             _registration = registration;
             _factory = factory;
         }
+
+        public IEnumerable<IAmbientValueProviderDescriptor> Descriptors => _registration.AmbientValues;
 
         public bool IsDefined( string name )
         {
@@ -37,8 +39,5 @@ namespace CK.Core
             if( value != null ) return value;
             return default( IComparable );
         }
-
-
-
     }
 }

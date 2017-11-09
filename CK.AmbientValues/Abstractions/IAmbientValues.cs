@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -26,5 +26,10 @@ namespace CK.Core
         /// <param name="name">The name of the value to obtain.</param>
         /// <returns>A task, when resolved, the value of the ambient parameter, or null if not found.</returns>
         Task<IComparable> GetValueAsync( string name );
+
+        /// <summary>
+        /// Gets all the descriptors for the registered ambient parameters.
+        /// </summary>
+        IEnumerable<IAmbientValueProviderDescriptor> Descriptors { get; }
     }
 }
