@@ -1,5 +1,6 @@
 using CK.Core;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -28,17 +29,19 @@ namespace CK.Crs
         public async Task<Response> ReceiveCommand<T>( T command, ICommandContext context )
         {
             Response response = null;
-            using( context.Monitor.CollectEntries( ( errors ) =>
+            try
             {
-                if( errors.Count > 0 )
-                    response = new ErrorResponse( string.Join( Environment.NewLine, errors.Select( e => e.ToString() ) ), context.CommandId );
-            } ) )
-            {
+                var result = await _invoker.Invoke( command, context );
                 response = new Response<object>( context.CommandId )
                 {
-                    Payload = await _invoker.Invoke( command, context )
+                    Payload = result
                 };
             }
+            catch( Exception ex )
+            {
+                response = new ErrorResponse( ex, context.CommandId );
+            }
+            Debug.Assert( response != null );
             return response;
         }
     }

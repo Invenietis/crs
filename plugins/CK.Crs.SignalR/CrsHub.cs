@@ -4,8 +4,7 @@ using System.Threading.Tasks;
 
 namespace CK.Crs.SignalR
 {
-
-    public class CrsHub : Hub<ICrsHub>
+    class CrsHub : Hub<ICrsHub>
     {
         private readonly ICrsConnectionManager _connectionManager;
 

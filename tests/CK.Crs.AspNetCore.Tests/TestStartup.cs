@@ -36,7 +36,6 @@ namespace CK.Crs.AspNetCore.Tests
         public void Configure( IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory )
         {
             app.UseMvc();
-            app.UseSignalR( r => r.MapHub<CrsHub>( "crs" ) );
         }
 
         /// <summary>

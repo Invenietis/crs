@@ -9,7 +9,7 @@ namespace CK.Crs
 {
     class DefaultCommandInvoker : ICommandHandlerInvoker
     {
-        ICommandHandlerFactory _factory;
+        readonly ICommandHandlerFactory _factory;
 
         public DefaultCommandInvoker( ICommandHandlerFactory factory )
         {
@@ -38,7 +38,7 @@ namespace CK.Crs
             catch( Exception ex )
             {
                 context.Monitor.Error( ex );
-                return null;
+                throw;
             }
             finally
             {
@@ -55,21 +55,6 @@ namespace CK.Crs
 
             return (Task)result;
         }
-
-        //async static Task<object> TaskInvokerDynamic( ICommandHandler handler, object command, ICommandContext context )
-        //{
-        //    MethodInfo method = context.Model.HandlerType
-        //        .GetMethod( nameof( ICommandHandler<object>.HandleAsync ), new[] { context.Model.CommandType, typeof( ICommandContext ) } );
-
-        //    //Change dynamic to var and cast to Task
-        //    dynamic task = method.Invoke( handler, new object[] { command, context } );
-        //    await task;
-
-        //    //var resultProperty = task.GetType().GetProperty( "Result" );
-        //    //return resultProperty.GetValue( task );
-        //    return task.GetAwaiter().GetResult();
-
-        //}
 
         private static async Task<object> TaskInvoker( ICommandHandler handler, object command, ICommandContext context )
         {

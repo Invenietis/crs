@@ -1,11 +1,10 @@
 using CK.Core;
 using Microsoft.AspNetCore.SignalR;
-using System;
 using System.Threading.Tasks;
 
 namespace CK.Crs.SignalR
 {
-    public class SignalRDispatcher : IResultDispatcher
+    class SignalRDispatcher : IResultDispatcher
     {
         // TODO: When typedHub will be available
         // private readonly IHubContext<CrsHub, ICrsHub> _hubContext;

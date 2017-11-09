@@ -76,7 +76,6 @@ namespace CK.Crs.Samples.AspNetCoreApp
         public void Configure( IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory )
         {
             app.UseDeveloperExceptionPage();
-            app.UseSignalR( r => r.MapHub<CrsHub>( "crs" ) );
             app.UseMvc();
             app.UseFileServer();
         }

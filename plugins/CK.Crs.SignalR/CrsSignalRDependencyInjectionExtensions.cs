@@ -4,6 +4,7 @@ using CK.Core;
 using CK.Crs;
 using CK.Crs.SignalR;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -14,7 +15,7 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.AddSignalR();
             builder.AddDispatcher<SignalRDispatcher>( CrsSignalRContextExtensions.CallerIdProtocol );
             builder.Services.AddSingleton<SignalRDispatcher>();
-
+            builder.Services.AddSingleton<IStartupFilter, CrsSignalRStartupFilter>();
             return builder;
         }
     }

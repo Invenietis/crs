@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 
 namespace CK.Crs.SignalR
 {
-    public interface ICrsHub
+    interface ICrsHub
     {
         Task ReceiveResult( string message );
 
