@@ -14,7 +14,7 @@ namespace CK.Crs
         readonly CommandModel _model;
         readonly ICommandRegistry _registry;
 
-        public CommandModel Model  => _model;
+        public CommandModel Model => _model;
 
         /// <summary>
         /// Creates a <see cref="CommandRegistration"/> from a <see cref="CommandModel"/>
@@ -39,9 +39,20 @@ namespace CK.Crs
             return this;
         }
 
+        CommandRegistration CustomBinder<T>()
+        {
+            _model.Binder = typeof( T );
+            return this;
+        }
+
         ICommandConfiguration<ICommandRegistration> ICommandConfiguration<ICommandRegistration>.CommandName( string commandName )
         {
             return CommandName( commandName );
+        }
+
+        ICommandConfiguration<ICommandRegistration> ICommandConfiguration<ICommandRegistration>.CustomBinder<T>()
+        {
+            return CustomBinder<T>();
         }
 
         ICommandConfiguration<ICommandRegistration> ICommandConfigurationWithHandling<ICommandRegistration>.HandledBy<THandler>()

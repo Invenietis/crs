@@ -15,6 +15,12 @@ namespace CK.Crs
         /// <param name="commandName"></param>
         /// <returns></returns>
         ICommandConfiguration<TConfig> CommandName( string commandName );
+        /// <summary>
+        /// Overrides the name of the command.
+        /// </summary>
+        /// <param name="commandName"></param>
+        /// <returns></returns>
+        ICommandConfiguration<TConfig> CustomBinder<T>() where T : ICommandBinder;
 
         /// <summary>
         /// Register a new command

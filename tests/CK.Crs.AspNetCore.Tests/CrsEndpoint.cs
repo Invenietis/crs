@@ -1,6 +1,5 @@
 using CK.AspNet.Tester;
 using CK.Core;
-using CK.Crs.SignalR;
 using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;

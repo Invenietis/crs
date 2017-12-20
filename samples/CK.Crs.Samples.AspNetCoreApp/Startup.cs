@@ -10,7 +10,6 @@ using CK.Monitoring;
 using Rebus.Config;
 using CK.Crs.Samples.Handlers;
 using Microsoft.Extensions.Configuration;
-using CK.Crs.SignalR;
 using CK.Crs.Samples.AspNetCoreApp.Extensions;
 using System;
 
