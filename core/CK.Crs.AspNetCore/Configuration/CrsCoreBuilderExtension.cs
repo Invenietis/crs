@@ -2,6 +2,7 @@ using CK.Crs;
 using CK.Crs.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 using System;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -12,6 +13,10 @@ namespace Microsoft.Extensions.DependencyInjection
         public static ICrsCoreBuilder AddCrs( this IServiceCollection services, Action<ICommandRegistry> commandsConfigurationn )
         {
             var builder = services.AddCrsCore( commandsConfigurationn );
+            builder.Services.AddSingleton( new JsonSerializerSettings
+            {
+                ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver()
+            } );
             return builder;
         }
         /// <summary>
@@ -38,7 +43,8 @@ namespace Microsoft.Extensions.DependencyInjection
 
                 var endpointModel = config.Build( crsPath );
 
-                IResponseFormatter responseFormatter = new JsonResponseFormatter();
+                var settings = ActivatorUtilities.GetServiceOrCreateInstance<JsonSerializerSettings>( app.ApplicationServices );
+                IResponseFormatter responseFormatter = new JsonResponseFormatter( settings );
                 crsApp.UseMiddleware<CrsMiddleware>( endpointModel, responseFormatter );
             } );
         }

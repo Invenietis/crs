@@ -1,5 +1,7 @@
 using CK.Core;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -49,7 +51,12 @@ namespace CK.Crs
                     monitor.Trace( "Reading the body and tries to bind the command" );
                     using( StreamReader sr = new StreamReader( Context.Request.Body ) )
                     {
-                        return Newtonsoft.Json.JsonConvert.DeserializeObject( await sr.ReadToEndAsync(), commandContext.Model.CommandType );
+                        var settings = ActivatorUtilities.GetServiceOrCreateInstance<JsonSerializerSettings>( Context.RequestServices );
+
+                        return JsonConvert.DeserializeObject(
+                            await sr.ReadToEndAsync(),
+                            commandContext.Model.CommandType,
+                            settings );
                     }
                 }
                 catch( Exception ex )
