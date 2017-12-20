@@ -26,7 +26,7 @@ namespace CK.Crs
             return true;
         }
 
-        public async Task<Response> ReceiveCommand<T>( T command, ICommandContext context )
+        public async Task<Response> ReceiveCommand( object command, ICommandContext context )
         {
             Response response = null;
             try

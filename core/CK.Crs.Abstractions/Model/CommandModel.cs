@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace CK.Crs
 {
+
     /// <summary>
     /// Describes a command and its environment.
     /// </summary>
@@ -30,9 +31,9 @@ namespace CK.Crs
         /// Creates a command description
         /// </summary>
         /// <param name="name"></param>
-        /// <param name="type"></param>
-        /// <param name="handlerType"></param>
-        public CommandModel( Type type, CKTraitContext context )
+        /// <param name="context"></param>
+        /// <param name="binder"></param>
+        public CommandModel( Type type, CKTraitContext context, ICommandBinder binder = null )
         {
             CommandType = type ?? throw new ArgumentNullException( nameof( type ) );
             Name = new CommandName( type );
@@ -79,7 +80,10 @@ namespace CK.Crs
         /// </summary>
         public Type ResultType { get; }
 
-        //public Type HandlerSignatureType { get; }
+        /// <summary>
+        /// Gets or sets the binder type for this command. If null, a default binder is applied.
+        /// </summary>
+        public Type Binder { get; set; }
 
         /// <summary>
         /// Gets commands traits

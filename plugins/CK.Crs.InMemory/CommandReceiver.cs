@@ -25,7 +25,7 @@ namespace CK.Crs.InMemory
             return res;
         }
 
-        public Task<Response> ReceiveCommand<T>( T command, ICommandContext context )
+        public Task<Response> ReceiveCommand( object command, ICommandContext context )
         {
             context.Monitor.Trace( "Enqueuinq the command for asynchronous processing." );
             _queue.Push( command, context );

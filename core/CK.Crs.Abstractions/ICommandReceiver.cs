@@ -27,6 +27,6 @@ namespace CK.Crs
         /// <param name="command">The command to send.</param>
         /// <param name="context">The related <see cref="ICommandContext"/>.</param>
         /// <returns></returns>
-        Task<Response> ReceiveCommand<T>( T command, ICommandContext context );
+        Task<Response> ReceiveCommand( object command, ICommandContext context );
     }
 }

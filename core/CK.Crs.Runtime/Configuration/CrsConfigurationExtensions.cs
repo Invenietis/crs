@@ -8,10 +8,10 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class CrsConfigurationExtensions
     {
-        public static ICrsCoreBuilder AddCrsCore( this IServiceCollection services, Action<ICrsConfiguration> configuration )
+        public static ICrsCoreBuilder AddCrsCore( this IServiceCollection services, Action<ICommandRegistry> commandsConfigurationn )
         {
             CrsConfigurationBuilder builder = new CrsConfigurationBuilder( services );
-            configuration( builder );
+            commandsConfigurationn( builder.Registry );
 
             services.AddSingleton<ICommandHandlerFactory, DefaultCommandHandlerFactory>();
             services.AddSingleton<ICommandHandlerInvoker, DefaultCommandInvoker>();

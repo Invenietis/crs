@@ -5,9 +5,12 @@ namespace CK.Crs
 {
     public interface IEndpointModel
     {
-        string Name { get; }
+        string Path { get; }
 
-        Type EndpointType { get; }
+        /// <summary>
+        /// Gets the default <see cref="ICommandBinder"/> associates with this endpoint
+        /// </summary>
+        Type Binder { get; }
 
         /// <summary>
         /// Gets the gloabl <see cref="ICrsModel"/> this endpoint belongs to.

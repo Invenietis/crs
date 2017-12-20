@@ -14,10 +14,22 @@ namespace CK.Crs
         /// </summary>
         CKTraitContext TraitContext { get; }
 
+        /// <summary>
+        /// Adds a new <see cref="CommandModel"/> to the registry
+        /// </summary>
+        /// <param name="command"></param>
         void Register( CommandModel command );
 
+        /// <summary>
+        /// Gets all the available <see cref="CommandModel"/> in the registry
+        /// </summary>
         IEnumerable<CommandModel> Registration { get; }
 
+        /// <summary>
+        /// Gets a <see cref="CommandModel"/> from a <see cref="CommandName"/>
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         CommandModel GetCommandByName( CommandName name );
     }
 }

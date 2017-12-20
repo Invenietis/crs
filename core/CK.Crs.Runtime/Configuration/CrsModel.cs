@@ -15,22 +15,22 @@ namespace CK.Crs.Infrastructure
             _traitContext = traitContext;
             _models = new List<IEndpointModel>();
         }
+
         public IReadOnlyList<IEndpointModel> Endpoints => _models;
 
         public CKTraitContext TraitContext => _traitContext;
 
-        public IEndpointModel GetEndpoint( Type type )
+        public IEndpointModel GetEndpoint( string path )
         {
-            // TODO: lookup in a dictionary ?
-            return _models.SingleOrDefault( t => t.EndpointType == type.GetGenericTypeDefinition() );
+            return _models.SingleOrDefault( t => t.Path == path );
         }
 
-        internal void AddEndpoint( CrsReceiverModel endpoint )
+        public void AddEndpoint( IEndpointModel endpoint )
         {
             if( endpoint == null ) throw new ArgumentNullException( nameof( endpoint ) );
-            if( _models.Any( x => x.Name.Equals( endpoint.Name, StringComparison.OrdinalIgnoreCase )) )
+            if( _models.Any( x => x.Path.Equals( endpoint.Path, StringComparison.OrdinalIgnoreCase )) )
             {
-                throw new ArgumentException( $"A Crs endpoint with the name {endpoint.Name} has already been registered.");
+                throw new ArgumentException( $"A Crs endpoint with the name {endpoint.Path} has already been registered.");
             }
             _models.Add( endpoint );
         }

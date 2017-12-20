@@ -1,6 +1,7 @@
-using CK.Core;
 using CK.Crs;
 using CK.Crs.Infrastructure;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using System;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -8,32 +9,38 @@ namespace Microsoft.Extensions.DependencyInjection
 
     public static class CrsCoreBuilderExtension
     {
-        public static CrsMvcCoreBuilder AddCrs( this IServiceCollection services, Action<ICrsConfiguration> configuration )
+        public static ICrsCoreBuilder AddCrs( this IServiceCollection services, Action<ICommandRegistry> commandsConfigurationn )
         {
-            var builder = services.AddCrsCore( configuration );
-            var mvcBuilder = builder.AddMvcCoreEndpoint();
-            return new CrsMvcCoreBuilder
-            {
-                CrsBuilder = builder,
-                MvcBuilder = mvcBuilder
-            };
+            var builder = services.AddCrsCore( commandsConfigurationn );
+            return builder;
+        }
+        /// <summary>
+        /// Maps a default CRS endpoint to the given <paramref name="crsPath"/> that accepts all comamnds, validate ambient values, and valide command model.
+        /// </summary>
+        /// <param name="app"></param>
+        /// <param name="crsPath"></param>
+        /// <returns></returns>
+        public static IApplicationBuilder UseCrs( this IApplicationBuilder app, PathString crsPath )
+        {
+            return app.UseCrs( crsPath, null );
         }
 
-        public static IMvcCoreBuilder AddMvcCoreEndpoint( this ICrsCoreBuilder builder )
+        public static IApplicationBuilder UseCrs( this IApplicationBuilder app, PathString crsPath, Action<ICrsEndpointConfiguration> configuration )
         {
-            var model = builder.Model;
-            return builder.Services
-                .AddMvcCore( o =>
-                {
-                    o.Conventions.Add( new CrsControllerNameConvention( model ) );
-                    o.Conventions.Add( new CrsActionConvention( model ) );
-                } )
-                .AddJsonFormatters()
-                .ConfigureApplicationPartManager( p =>
-                {
-                    CrsFeature feature = new CrsFeature( model );
-                    p.FeatureProviders.Add( feature );
-                } );
+            return app.Map( crsPath, crsApp =>
+            {
+                ICrsModel model = app.ApplicationServices.GetRequiredService<ICrsModel>();
+                ICommandRegistry registry = app.ApplicationServices.GetRequiredService<ICommandRegistry>();
+
+                var config = new CrsEndpointConfiguration( registry, model );
+                config.ChangeDefaultBinder<JsonCommandBinder>();
+                configuration?.Invoke( config );
+
+                var endpointModel = config.Build( crsPath );
+
+                IResponseFormatter responseFormatter = new JsonResponseFormatter();
+                crsApp.UseMiddleware<CrsMiddleware>( endpointModel, responseFormatter );
+            } );
         }
     }
 }

@@ -1,18 +1,22 @@
 using System;
 using System.Threading;
 using CK.Core;
+using Microsoft.AspNetCore.Http;
 
 namespace CK.Crs
 {
     public class HttpCommandContext : CommandContext
     {
-        private IServiceProvider _requestServices;
+        private HttpContext _context;
 
-        public HttpCommandContext( IServiceProvider requestServices, string commandId, IActivityMonitor activityMonitor, CommandModel model, CallerId callerId, CancellationToken token = default( CancellationToken ) ) : base( commandId, activityMonitor, model, callerId, token )
+        public HttpCommandContext( HttpContext context, string commandId, IActivityMonitor activityMonitor, CommandModel model, CallerId callerId  )
+            : base( commandId, activityMonitor, model, callerId, context.RequestAborted )
         {
-            _requestServices = requestServices;
+            _context = context;
         }
 
-        public IServiceProvider RequestServices => _requestServices;
+        public IServiceProvider RequestServices => Context.RequestServices;
+
+        public HttpContext Context => _context;
     }
 }

@@ -56,7 +56,7 @@ namespace CK.Crs.InMemory
             _queue.Dispose();
         }
 
-        public void Push<T>( T comand, ICommandContext context )
+        public void Push( object comand, ICommandContext context )
         {
             var depToken = context.Monitor.DependentActivity().CreateToken();
             _queue.Add( new CommandJob

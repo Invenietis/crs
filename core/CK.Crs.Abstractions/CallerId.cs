@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 
 namespace CK.Crs
@@ -8,39 +8,50 @@ namespace CK.Crs
         /// <summary>
         /// A readonly instance of the structure will a null procotol and no values.
         /// </summary>
-        public static readonly CallerId None = new CallerId( null, Span<string>.Empty );
+        public static readonly CallerId None = new CallerId( String.Empty, Span<string>.Empty );
 
-        private const char Separator = ':';
+        private const string Separator = "::";
+
+        private string _token;
+        private string[] _values;
+
         public CallerId( string protocol, Span<string> values )
         {
-            Protocol = protocol;
-            Values = values.ToArray();
+            Protocol = protocol ?? throw new ArgumentNullException( nameof( protocol ) );
+            _values = values.ToArray();
+
+            _token = String.Concat( protocol, Separator, String.Join( Separator, _values ) );
         }
+
+        public bool IsValid => !String.IsNullOrEmpty( Protocol );
 
         public string Protocol { get; }
 
-        public string[] Values { get; }
+        public string[] Values
+        {
+            get
+            {
+                if( _values == null ) return Array.Empty<string>();
+                return _values;
+            }
+        }
 
         /// <summary>
         /// Gets the raw value of this token.
         /// </summary>
         /// <returns></returns>
-        public override string ToString()
-        {
-            StringBuilder b = new StringBuilder();
-            b.Append( Protocol );
-            for( int i = 0; i < Values.Length; ++i ) b.AppendFormat( "{0}{1}", Separator, Values[i] );
-            return b.ToString();
-        }
+        public override string ToString() => _token;
 
         public static CallerId Parse( string token )
         {
-            var s = token.Split( new char[] { ':' }, StringSplitOptions.None );
+            if( String.IsNullOrEmpty( token ) ) return CallerId.None;
+
+            var s = token.Split( Separator.ToCharArray(), StringSplitOptions.None );
             if( s.Length > 1 )
             {
                 return new CallerId( s[0], s.AsSpan().Slice( 1 ) );
             }
-            return default( CallerId );
+            return CallerId.None;
         }
 
         public override bool Equals( object obj )
@@ -56,8 +67,8 @@ namespace CK.Crs
 
         public override int GetHashCode()
         {
-            if( Protocol == null ) return 0;
-            if( Values == null ) return 0;
+            if( String.IsNullOrEmpty( Protocol ) ) return 0;
+            if( Values.Length == 0 ) return 0;
 
             int s = Protocol.GetHashCode();
             for( int i = 0; i < Values.Length; ++i ) s ^= Values[i].GetHashCode();

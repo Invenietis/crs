@@ -19,6 +19,8 @@ namespace CK.Crs
 
         public string ParameterType => _propertyInfo.PropertyType.Name;
 
-        public bool IsAmbientValue => _ambientValue.AmbientValues.FirstOrDefault( e => e.Name == _propertyInfo.Name ) != null;
+        public bool IsAmbientValue => _ambientValue == null ?
+            false :
+            _ambientValue.AmbientValues.FirstOrDefault( e => e.Name == _propertyInfo.Name ) != null;
     }
 }

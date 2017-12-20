@@ -28,14 +28,14 @@ namespace CK.Crs.AspNetCore.Tests
         {
             services.AddAmbientValues( MapFromBaseCommandType );
             services
-                .AddCrs( c => c.Commands( Commands ).Endpoints( Endpoints ) )
+                .AddCrs( Commands ) //.Endpoints( Endpoints ) )
                 .AddInMemoryReceiver()
                 .AddSignalR();
         }
 
         public void Configure( IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory )
         {
-            app.UseMvc();
+            app.UseCrs( "/crs" );
         }
 
         /// <summary>
@@ -49,8 +49,6 @@ namespace CK.Crs.AspNetCore.Tests
                 .AddProviderFrom<CommandBase>()
                     .Select( t => t.ActorId ).ProvidedBy<AlwaysTrusted>();
         }
-
-        private void Endpoints( ICrsEndpointConfigurationRoot e ) => e.Map( typeof( TestEndpoint<> ) ).AcceptAll();
 
         private void Commands( ICommandRegistry registry ) =>
             registry

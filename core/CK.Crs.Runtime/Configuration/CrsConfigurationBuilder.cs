@@ -21,6 +21,7 @@ namespace CK.Crs
             _services = services;
             _traitContext = new CKTraitContext( traitContextName );
             _model = new CrsModel( _traitContext );
+            _commands = new DefaultRequestRegistry( _traitContext );
         }
 
         internal IServiceCollection Services => _services;
@@ -29,18 +30,7 @@ namespace CK.Crs
 
         ICrsConfiguration ICrsConfiguration.Commands( Action<ICommandRegistry> registryConfiguration )
         {
-            _commands = new DefaultRequestRegistry( _traitContext );
-
-            registryConfiguration( Registry );
-            
-            return this;
-        }
-
-        ICrsConfiguration ICrsConfiguration.Endpoints( Action<ICrsEndpointConfigurationRoot> endpointConfiguration )
-        {
-            _endpoints = new CrsEndpointConfiguration( Registry, _model );
-            endpointConfiguration( _endpoints );
-
+            registryConfiguration( _commands );
             return this;
         }
 

@@ -49,9 +49,7 @@ namespace CK.Crs.Samples.AspNetCoreApp
             services.AddAmbientValues( a => a.AddProvider<ActorIdAmbientValueProvider>( nameof( MessageBase.ActorId ) ) );
 
             services
-                .AddCrs( c => c
-                    .Commands( RegisterCommands )
-                    .Endpoints( e => e.Map( typeof( CrsDispatcherEndpoint<> ) ).AcceptAll() ) )
+                .AddCrs( RegisterCommands )
                 .AddRebus(
                     c => c.Transport( t => t.UseSqlServer( conString, "tMessages", "commands_result" ) ),
                     c => c( "commands" )( m => m.HasRebusTag() ) )
@@ -76,7 +74,8 @@ namespace CK.Crs.Samples.AspNetCoreApp
         public void Configure( IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory )
         {
             app.UseDeveloperExceptionPage();
-            app.UseMvc();
+            app.UseCrs( "crs", c => c.AcceptAll().SkipAmbientValuesValidation() );
+            app.UseCrs( "crs-admin", c => c.FilterCommands( t => t.Tags.Overlaps( c.TraitContext.FindOrCreate( "Admin" ) ) ) );
             app.UseFileServer();
         }
     }

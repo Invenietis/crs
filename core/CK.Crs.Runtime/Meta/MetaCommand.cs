@@ -31,6 +31,32 @@ namespace CK.Crs
                 public RequestPropertyInfo[] Parameters { get; set; }
             }
 
+            public static MetaCommandResponse Create( MetaCommand command, IEndpointModel endpointModel )
+            {
+                var result = new Result
+                {
+                    Version = 1,
+                    CallerIdPropertyName = endpointModel.CallerIdName
+                };
+                if( command.ShowCommands )
+                {
+                    result.Commands = new Dictionary<string, MetaCommandDescription>();
+                    foreach( var c in endpointModel.Commands )
+                    {
+                        MetaCommandDescription desc = new MetaCommandDescription
+                        {
+                            CommandName = c.Name,
+                            CommandType = c.CommandType.FullName,
+                            ResultType = c.ResultType?.FullName,
+                            Parameters = c.CommandType.GetTypeInfo().DeclaredProperties.Select( e => new RequestPropertyInfo( e, null ) ).ToArray(),
+                            Traits = c.Tags?.ToString(),
+                            Description = c.Description
+                        };
+                        result.Commands.Add( desc.CommandName, desc );
+                    }
+                }
+                return new MetaCommandResponse( result );
+            }
             public static async Task<MetaCommandResponse> CreateAsync( MetaCommand command, IEndpointModel endpointModel, IAmbientValues ambientValues, IAmbientValuesRegistration registration )
             {
                 var result = new Result

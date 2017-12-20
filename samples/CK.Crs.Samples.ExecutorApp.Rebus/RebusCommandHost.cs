@@ -36,10 +36,9 @@ namespace CK.Crs.Samples.ExecutorApp.Rebus
             var conString = configuration.GetConnectionString( "Messaging" );
 
             services
-                .AddCrsCore(
-                    c => c.Commands( registry => registry
+                .AddCrsCore( registry => registry
                         .Register<RemotelyQueuedCommand>().HandledBy<RemoteHandler>()
-                        .Register<RemotelyQueuedCommand.Result>().IsRebus() ) )
+                        .Register<RemotelyQueuedCommand.Result>().IsRebus() )
                 .AddRebus(
                     c => c.Transport( t => t.UseSqlServer( conString, "tMessages", "commands" ) ),
                     c => c( "commands_result" )( m => m.HasRebusTag() ) );

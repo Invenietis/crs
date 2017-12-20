@@ -6,7 +6,6 @@ namespace CK.Crs
 {
     public interface ICrsModel
     {
-
         /// <summary>
         /// Gets the <see cref="CKTraitContext"/> associated to this endpoint
         /// </summary>
@@ -14,6 +13,6 @@ namespace CK.Crs
 
         IReadOnlyList<IEndpointModel> Endpoints { get; }
 
-        IEndpointModel GetEndpoint( Type type );
+        void AddEndpoint( IEndpointModel model );
     }
 }

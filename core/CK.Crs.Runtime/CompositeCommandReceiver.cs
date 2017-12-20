@@ -24,7 +24,7 @@ namespace CK.Crs
             return true;
         }
 
-        public Task<Response> ReceiveCommand<T>( T command, ICommandContext context )
+        public Task<Response> ReceiveCommand( object command, ICommandContext context )
         {
             context.Monitor.Info( $"Receiving command {context.Model.Name}..." );
             using( context.Monitor.OpenTrace( $"Determining the best receiver for the command among the {_receivers.Count} available receivers..." ) )

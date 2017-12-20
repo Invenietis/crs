@@ -30,7 +30,7 @@ namespace CK.Crs
             _bus.Dispose();
         }
 
-        public async Task<Response> ReceiveCommand<T>( T command, ICommandContext context ) 
+        public async Task<Response> ReceiveCommand( object command, ICommandContext context ) 
         {
             await _bus.Send( command, context.CreateHeaders() );
             context.Monitor.Trace( "Command sent on the Rebus bus" );

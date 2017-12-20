@@ -3,47 +3,74 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using CK.Crs.Infrastructure;
+using System.Xml.Linq;
+using CK.Core;
 
 namespace CK.Crs.Infrastructure
 {
-    class CrsEndpointConfiguration : ICrsEndpointConfigurationRoot, ICrsEndpointConfiguration
+    public class CrsEndpointConfiguration : ICrsEndpointConfiguration
     {
         readonly ICommandRegistry _registry;
-        readonly Dictionary<Type, ISet<CommandModel>> _endpoints;
+        readonly ICrsModel _model;
 
-        Type _currentConfiguredEndpoint;
-        private CrsModel _model;
+        private ISet<CommandModel> _commands;
+        private Type _binder;
+        private bool _validateAmbientValues = true;
+        private bool _validateModel = true;
+        private string _callerIdName = "CallerId";
 
-        internal Dictionary<Type, ISet<CommandModel>> ConfiguredEndpoints => _endpoints;
+        public CKTraitContext TraitContext => _model.TraitContext;
 
-        internal CrsEndpointConfiguration( ICommandRegistry registry, CrsModel model )
+        public CrsEndpointConfiguration( ICommandRegistry registry, ICrsModel model )
         {
             _registry = registry ?? throw new ArgumentNullException( nameof( registry ), "You must first AddCommands before AddEndpoint." );
-            _endpoints = new Dictionary<Type, ISet<CommandModel>>();
             _model = model;
         }
 
-        public ICrsEndpointConfiguration Map( Type endpoint )
+        public ICrsEndpointConfiguration FilterCommands( Func<CommandModel, bool> filter )
         {
-            //if( !ReflectionUtil.IsAssignableToGenericType( endpoint.GetGenericTypeDefinition(), typeof( IHttpCommandReceiver<> ) ) )
-            //    throw new ArgumentException( "The endpoint must implement IHttpCommandReceiver", nameof( endpoint ) );
-
-            _currentConfiguredEndpoint = endpoint;
-
+            _commands = new HashSet<CommandModel>( _registry.Registration.Where( filter ), new CommandModelComparer() );
             return this;
         }
 
-
-        public ICrsEndpointConfigurationRoot Apply( Func<CommandModel, bool> filter )
-        { 
-            Debug.Assert( _currentConfiguredEndpoint != null );
-
-            ISet<CommandModel> commands = new HashSet<CommandModel>( _registry.Registration.Where( filter ), new CommandModelComparer() );
-            _endpoints.Add( _currentConfiguredEndpoint, commands );
-
-            _model.AddEndpoint( new CrsReceiverModel( _model, _currentConfiguredEndpoint, commands ) );
+        public ICrsEndpointConfiguration ChangeDefaultBinder<T>() where T : ICommandBinder
+        {
+            _binder = typeof( T );
             return this;
         }
 
+        public ICrsEndpointConfiguration SkipAmbientValuesValidation()
+        {
+            _validateAmbientValues = false;
+            return this;
+        }
+
+        public ICrsEndpointConfiguration SkipModelValidation()
+        {
+            _validateModel = false;
+            return this;
+        }
+
+        public ICrsEndpointConfiguration ChangeCallerIdName( string newCallerIdName )
+        {
+            if( newCallerIdName == null )
+            {
+                throw new ArgumentNullException( nameof( newCallerIdName ) );
+            }
+
+            _callerIdName = newCallerIdName;
+            return this;
+        }
+
+        public IEndpointModel Build( string path )
+        {
+            var receiverModel = new CrsReceiverModel( path, _model, _binder, _commands ?? _registry.Registration )
+            {
+                ApplyAmbientValuesValidation = _validateAmbientValues,
+                ApplyModelValidation = _validateModel,
+                CallerIdName = _callerIdName
+            };
+            return receiverModel;
+        }
     }
 }

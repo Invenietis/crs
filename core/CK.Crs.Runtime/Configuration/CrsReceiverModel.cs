@@ -8,30 +8,32 @@ namespace CK.Crs.Infrastructure
 
     class CrsReceiverModel : IEndpointModel
     {
-        private Type _currentConfiguredEndpoint;
         private IEnumerable<CommandModel> _requests;
         private readonly ICrsModel _model;
+        private readonly string _path;
 
-        public CrsReceiverModel( ICrsModel model, Type currentConfiguredEndpoint, IEnumerable<CommandModel> requests )
+        public CrsReceiverModel( string path, ICrsModel model, Type commandBinder, IEnumerable<CommandModel> requests )
         {
             _model = model ?? throw new ArgumentNullException( nameof( model ) );
-            _currentConfiguredEndpoint = currentConfiguredEndpoint ?? throw new ArgumentNullException( nameof( currentConfiguredEndpoint ) );
+            _path = path ?? throw new ArgumentNullException( nameof( path ) );
+            Binder = commandBinder;
             _requests = requests;
         }
+
         public ICrsModel CrsModel => _model;
 
-        public string Name => _currentConfiguredEndpoint.Name;
+        public string Path => _path;
 
-        public Type EndpointType => _currentConfiguredEndpoint;
+        public Type Binder { get; }
 
-        public string CallerIdName { get; set; } = "CallerId";
+        public string CallerIdName { get; set; }
 
         /// <summary>
         /// Gets wether we should validate ambient values or not.
         /// </summary>
-        public bool ApplyAmbientValuesValidation { get; internal set; } = true;
+        public bool ApplyAmbientValuesValidation { get; set; }
 
-        public bool ApplyModelValidation { get; internal set; } = true;
+        public bool ApplyModelValidation { get; set; }
 
         public IEnumerable<CommandModel> Commands => _requests;
 

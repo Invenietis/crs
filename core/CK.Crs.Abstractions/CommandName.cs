@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace CK.Crs
 {
@@ -15,6 +15,8 @@ namespace CK.Crs
             var assemblyName = commandType.Assembly.GetName().Name;
             _name = assemblyName + "-" + commandType.FullName;
         }
+
+        public bool IsValid => !String.IsNullOrEmpty( _name );
 
         public static implicit operator string( CommandName name )
         {
