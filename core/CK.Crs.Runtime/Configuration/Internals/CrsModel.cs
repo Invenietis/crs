@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using CK.Core;
 
-namespace CK.Crs.Infrastructure
+namespace CK.Crs.Configuration
 {
     class CrsModel : ICrsModel
     {

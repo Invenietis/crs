@@ -2,7 +2,7 @@ using CK.Core;
 using System;
 using System.Threading;
 
-namespace CK.Crs
+namespace CK.Crs.Meta
 {
     public sealed class MetaCommandContext : ICommandContext
     {

@@ -1,5 +1,6 @@
 using CK.Crs;
-using CK.Crs.Infrastructure;
+using CK.Crs.AspNetCore;
+using CK.Crs.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
@@ -38,14 +39,16 @@ namespace Microsoft.Extensions.DependencyInjection
                 ICommandRegistry registry = app.ApplicationServices.GetRequiredService<ICommandRegistry>();
 
                 var config = new CrsEndpointConfiguration( registry, model );
+
+                var settings = ActivatorUtilities.GetServiceOrCreateInstance<JsonSerializerSettings>( app.ApplicationServices );
                 config.ChangeDefaultBinder<JsonCommandBinder>();
+                config.ChangeDefaultFormatter( new JsonResponseFormatter( settings ) );
+                // Override configuration from the given lambda
                 configuration?.Invoke( config );
 
                 var endpointModel = config.Build( crsPath );
 
-                var settings = ActivatorUtilities.GetServiceOrCreateInstance<JsonSerializerSettings>( app.ApplicationServices );
-                IResponseFormatter responseFormatter = new JsonResponseFormatter( settings );
-                crsApp.UseMiddleware<CrsMiddleware>( endpointModel, responseFormatter );
+                crsApp.UseMiddleware<CrsMiddleware>( endpointModel );
             } );
         }
     }

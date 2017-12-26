@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading;
 
-namespace CK.Crs
+namespace CK.Crs.Hosting
 {
     public class DefaultCommandHost
     { 

@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace CK.Crs
 {
-    class ConnectionManager : ICrsConnectionManager
+    class DefaultConnectionManager : ICrsConnectionManager
     {
         ConcurrentBag<CallerId> _activeConnections;
 
-        public ConnectionManager()
+        public DefaultConnectionManager()
         {
             _activeConnections = new ConcurrentBag<CallerId>();
         }

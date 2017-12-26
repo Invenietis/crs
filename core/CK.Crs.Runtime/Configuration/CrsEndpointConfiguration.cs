@@ -2,11 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using CK.Crs.Infrastructure;
-using System.Xml.Linq;
 using CK.Core;
 
-namespace CK.Crs.Infrastructure
+namespace CK.Crs.Configuration
 {
     public class CrsEndpointConfiguration : ICrsEndpointConfiguration
     {
@@ -18,6 +16,7 @@ namespace CK.Crs.Infrastructure
         private bool _validateAmbientValues = true;
         private bool _validateModel = true;
         private string _callerIdName = "CallerId";
+        private IResponseFormatter _responseFormatter;
 
         public CKTraitContext TraitContext => _model.TraitContext;
 
@@ -36,6 +35,12 @@ namespace CK.Crs.Infrastructure
         public ICrsEndpointConfiguration ChangeDefaultBinder<T>() where T : ICommandBinder
         {
             _binder = typeof( T );
+            return this;
+        }
+
+        public ICrsEndpointConfiguration ChangeDefaultFormatter( IResponseFormatter responseFormatter )
+        {
+            _responseFormatter = responseFormatter;
             return this;
         }
 
@@ -68,7 +73,8 @@ namespace CK.Crs.Infrastructure
             {
                 ApplyAmbientValuesValidation = _validateAmbientValues,
                 ApplyModelValidation = _validateModel,
-                CallerIdName = _callerIdName
+                CallerIdName = _callerIdName,
+                ResponseFormatter = _responseFormatter
             };
             return receiverModel;
         }

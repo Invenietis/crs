@@ -4,11 +4,11 @@ using CK.Core;
 
 namespace CK.Crs
 {
-    public class DefaultRequestRegistry : ICommandRegistry
+    class DefaultCommandRegistry : ICommandRegistry
     {
         Dictionary<CommandName,CommandModel> Map { get; } = new Dictionary<CommandName,CommandModel>();
 
-        public DefaultRequestRegistry( CKTraitContext traitContext )
+        public DefaultCommandRegistry( CKTraitContext traitContext )
         {
             TraitContext = traitContext;
         }

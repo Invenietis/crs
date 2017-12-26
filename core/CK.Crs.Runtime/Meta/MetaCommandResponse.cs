@@ -1,6 +1,6 @@
 using System;
 
-namespace CK.Crs
+namespace CK.Crs.Meta
 {
     public sealed class MetaCommandResponse : Response<MetaCommand.Result>
     {

@@ -1,20 +1,25 @@
 using CK.Core;
+using CK.Crs;
+using CK.Crs.Meta;
+using CK.Crs.Responses;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
-namespace CK.Crs
+namespace CK.Crs.AspNetCore
 {
-    public class HttpCrsEndpointPipeline : ICrsEndpointPipeline
+    class HttpCrsEndpointPipeline : ICrsEndpointPipeline
     {
+        static readonly IEnumerable<ICrsFilter> _filters = new ICrsFilter[] { new AmbientValuesValidationFilter(), new ModelValidationFilter() };
+
         public bool IsValid => Context != null;
 
         public IEndpointModel Model { get; }
 
         public ICommandContext Context { get; }
+
         public HttpContext HttpContext { get; }
 
         public IActivityMonitor Monitor { get; }
@@ -27,7 +32,7 @@ namespace CK.Crs
             HttpContext = httpContext;
         }
 
-        public async Task<Response> ProcessCommand()
+        public virtual async Task<Response> ProcessCommand()
         {
             object command = await BindCommand();
             if( command == null ) throw new InvalidOperationException( "Unable to bind the input command" );
@@ -45,7 +50,7 @@ namespace CK.Crs
             return null;
         }
 
-        public Task<object> BindCommand()
+        public virtual Task<object> BindCommand()
         {
             var binder = ActivatorUtilities.CreateInstance(
                 HttpContext.RequestServices,
@@ -55,40 +60,23 @@ namespace CK.Crs
             return binder.Bind( Context );
         }
 
+        public virtual IEnumerable<ICrsFilter> GetFilters() => _filters;
+
         public async Task<Response> ApplyFilters( object command )
         {
             if( command == null )
             {
                 throw new ArgumentNullException( nameof( command ) );
             }
-
-            if( Model.ApplyAmbientValuesValidation )
+            CrsFilterContext context = new CrsFilterContext( command, Context, Model, HttpContext );
+            foreach( var filter in GetFilters() )
             {
-                IAmbientValues ambientValues = HttpContext.RequestServices.GetRequiredService<IAmbientValues>();
-                IAmbientValuesRegistration ambientValueRegistration = HttpContext.RequestServices.GetRequiredService<IAmbientValuesRegistration>();
-                var vContext = new ReflectionAmbientValueValidationContext( command, Monitor, ambientValues );
-
-                foreach( var v in ambientValueRegistration.AmbientValues )
+                await filter.ApplyFilterAsync( context );
+                if( context.Response != null )
                 {
-                    await vContext.ValidateValueAndRejectOnError( v.Name );
-                }
-
-                if( vContext.Rejected )
-                {
-                    return new InvalidResponse( Context.CommandId, vContext.RejectReason );
+                    return context.Response;
                 }
             }
-            if( Model.ApplyModelValidation )
-            {
-                var items = new Dictionary<object, object>();
-                var validationResults = new List<ValidationResult>();
-                var validationContext = new ValidationContext( command, HttpContext.RequestServices, items );
-                if( !Validator.TryValidateObject( command, validationContext, validationResults ) )
-                {
-                    return new InvalidResponse( Context.CommandId, validationResults );
-                }
-            }
-
             return null;
         }
 

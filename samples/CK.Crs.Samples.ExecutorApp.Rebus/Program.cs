@@ -1,4 +1,5 @@
 using CK.Core;
+using CK.Crs.Hosting;
 using CK.Monitoring;
 using System;
 using System.Threading;
@@ -20,7 +21,7 @@ namespace CK.Crs.Samples.ExecutorApp.Rebus
                 } ) )
                 {
                     ActivityMonitor.AutoConfiguration = ( m ) => m.Output.RegisterClient( new ActivityMonitorConsoleClient() );
-
+                  
                     DefaultCommandHost.Run<RebusCommandHost>( cancellationTokenSource.Token );
                 }
             }

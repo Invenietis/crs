@@ -1,11 +1,10 @@
 using CK.Core;
+using CK.Crs.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace CK.Crs
+namespace CK.Crs.Results
 {
     class DefaultResutDispatcherSelector : IResultDispatcherSelector
     {

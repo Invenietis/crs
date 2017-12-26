@@ -1,14 +1,16 @@
 using CK.Core;
+using CK.Crs;
+using CK.Crs.Meta;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Primitives;
 using System;
 using System.Linq;
 
-namespace CK.Crs
+namespace CK.Crs.AspNetCore
 {
 
-    public class HttpCrsEndpoint : ICrsEndpoint
+    class HttpCrsEndpoint : ICrsEndpoint
     {
         public HttpContext HttpContext { get; }
 
@@ -20,17 +22,13 @@ namespace CK.Crs
         public ICrsEndpointPipeline CreatePipeline( IEndpointModel endpointModel )
         {
             IActivityMonitor monitor = new ActivityMonitor();
-
+            ICommandContext context = null;
             if( HttpContext.Request.Path == new PathString( "/" ) || HttpContext.Request.Path == new PathString( "/__meta" ) )
             {
-                return new HttpCrsEndpointPipeline(
-                    monitor,
-                    endpointModel,
-                    new MetaCommandContext( monitor, endpointModel, HttpContext.RequestAborted ), HttpContext );
+                context = new MetaCommandContext( monitor, endpointModel, HttpContext.RequestAborted );
             }
-
-            var commandContext = CreateCommandContext( monitor, endpointModel );
-            return new HttpCrsEndpointPipeline( monitor, endpointModel, commandContext, HttpContext );
+            else context = CreateCommandContext( monitor, endpointModel );
+            return new HttpCrsEndpointPipeline( monitor, endpointModel, context, HttpContext );
         }
 
         HttpCommandContext CreateCommandContext( IActivityMonitor monitor, IEndpointModel endpointModel )

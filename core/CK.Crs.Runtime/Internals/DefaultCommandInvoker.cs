@@ -23,7 +23,7 @@ namespace CK.Crs
 
             var handler = _factory.CreateHandler( context.Model.HandlerType ) as ICommandHandler;
             if( handler == null )
-                throw new ArgumentException( String.Format( "Handler {0} for {1} impossible to created", context.Model.HandlerType ) );
+                throw new ArgumentException( String.Format( "Handler {0} for {1} impossible to create.", context.Model.HandlerType, context.Model.CommandType ) );
 
             try
             {

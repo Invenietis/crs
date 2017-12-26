@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace CK.Crs
+namespace CK.Crs.AspNetCore
 {
     public class JsonResponseFormatter : IResponseFormatter
     {

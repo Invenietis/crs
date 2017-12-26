@@ -1,6 +1,6 @@
-﻿using CK.Core;
+using CK.Core;
 
-namespace CK.Crs
+namespace CK.Crs.Meta
 {
     class MetaCommandModel : CommandModel
     {

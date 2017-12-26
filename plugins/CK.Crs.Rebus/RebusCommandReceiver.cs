@@ -2,12 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CK.Core;
-using R = Rebus;
-using Rebus.Config;
-using Rebus.Activation;
 using Rebus.Bus;
+using CK.Crs.Responses;
 
-namespace CK.Crs
+namespace CK.Crs.Rebus
 {
     public class RebusCommandReceiver : ICommandReceiver, IDisposable
     {

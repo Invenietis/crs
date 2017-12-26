@@ -2,7 +2,7 @@ using CK.Core;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
-namespace CK.Crs
+namespace CK.Crs.Hosting
 {
     public interface ICommandHost
     {

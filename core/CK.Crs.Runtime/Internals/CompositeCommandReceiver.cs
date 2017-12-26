@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CK.Core;
 using System.Linq;
+using CK.Crs.Responses;
 
 namespace CK.Crs
 {

@@ -5,7 +5,7 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CK.Monitoring" Version="8.1.1" />
+    <PackageReference Include="CK.Monitoring" Version="8.2.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\core\CK.Crs.Runtime\CK.Crs.Runtime.csproj" />

@@ -1,8 +1,7 @@
-using CK.Core;
 using CK.Crs;
+using CK.Crs.Configuration;
+using CK.Crs.Results;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -17,7 +16,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<ICommandHandlerInvoker, DefaultCommandInvoker>();
             services.AddSingleton<IResultDispatcherSelector, DefaultResutDispatcherSelector>();
             services.AddSingleton<IResultReceiverProvider, DefaultResultReceiverProvider>();
-            services.AddSingleton<ICrsConnectionManager, ConnectionManager>();
+            services.AddSingleton<ICrsConnectionManager, DefaultConnectionManager>();
 
             services.AddSingleton( builder.Registry );
 

@@ -1,5 +1,5 @@
 using System;
-namespace CK.Crs
+namespace CK.Crs.Results
 {
     public interface IResultDispatcherSelector
     {

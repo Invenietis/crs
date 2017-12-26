@@ -3,10 +3,10 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CK.Crs
+namespace CK.Crs.Configuration
 {
 
-    public class CrsCoreBuilder : ICrsCoreBuilder
+    class CrsCoreBuilder : ICrsCoreBuilder
     {
         private readonly IServiceCollection _services;
         private readonly ICommandRegistry _registry;

@@ -1,16 +1,14 @@
 using CK.Core;
-using CK.Crs.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CK.Crs
+namespace CK.Crs.Configuration
 {
     public class CrsConfigurationBuilder : ICrsConfiguration
     {
         ICommandRegistry _commands;
-        CrsEndpointConfiguration _endpoints;
 
         readonly IServiceCollection _services;
         readonly CrsModel _model;
@@ -21,12 +19,11 @@ namespace CK.Crs
             _services = services;
             _traitContext = new CKTraitContext( traitContextName );
             _model = new CrsModel( _traitContext );
-            _commands = new DefaultRequestRegistry( _traitContext );
+            _commands = new DefaultCommandRegistry( _traitContext );
         }
 
         internal IServiceCollection Services => _services;
         internal ICommandRegistry Registry => _commands;
-        internal CrsEndpointConfiguration Endpoints => _endpoints;
 
         ICrsConfiguration ICrsConfiguration.Commands( Action<ICommandRegistry> registryConfiguration )
         {

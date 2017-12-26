@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace CK.Crs.Infrastructure
+namespace CK.Crs.Configuration
 {
 
     class CrsReceiverModel : IEndpointModel
@@ -25,6 +25,8 @@ namespace CK.Crs.Infrastructure
         public string Path => _path;
 
         public Type Binder { get; }
+
+        public IResponseFormatter ResponseFormatter { get; set; }
 
         public string CallerIdName { get; set; }
 

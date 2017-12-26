@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CK.Crs
+namespace CK.Crs.Results
 {
     class NoopResultDispatcher : IResultDispatcher
     {

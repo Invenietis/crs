@@ -1,6 +1,5 @@
 using CK.Core;
-using System;
-using System.Threading;
+using CK.Crs.Responses;
 using System.Threading.Tasks;
 
 namespace CK.Crs.InMemory

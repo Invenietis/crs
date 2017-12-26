@@ -1,4 +1,5 @@
 using CK.Core;
+using CK.Crs.Responses;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CK.Crs
 {
-    public class DefaultCommandReceiver : ICommandReceiver
+    internal class DefaultCommandReceiver : ICommandReceiver
     {
         readonly ICommandRegistry _registry;
         readonly ICommandHandlerInvoker _invoker;

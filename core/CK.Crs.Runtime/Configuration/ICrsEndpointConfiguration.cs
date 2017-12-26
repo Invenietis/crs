@@ -1,7 +1,7 @@
 using CK.Core;
 using System;
 
-namespace CK.Crs
+namespace CK.Crs.Configuration
 {
     public interface ICrsEndpointConfiguration
     {
@@ -11,6 +11,7 @@ namespace CK.Crs
         ICrsEndpointConfiguration SkipModelValidation();
         ICrsEndpointConfiguration ChangeDefaultBinder<T>() where T : ICommandBinder;
         ICrsEndpointConfiguration ChangeCallerIdName( string newCallerIdName );
+        ICrsEndpointConfiguration ChangeDefaultFormatter( IResponseFormatter responseFormatter);
     }
 
 }

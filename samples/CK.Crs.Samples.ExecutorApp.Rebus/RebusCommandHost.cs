@@ -7,19 +7,7 @@ using Rebus.Config;
 using Rebus.Routing.TypeBased;
 using System;
 using System.IO;
-using Rebus.SqlServer;
-using System.Threading.Tasks;
-using System.Data.SqlClient;
-using Rebus.Transport;
-using Rebus.Timeouts;
-using Rebus.Pipeline;
-using Rebus.Pipeline.Receive;
-using Rebus.Logging;
-using Rebus.SqlServer.Transport;
-using Rebus.Injection;
-using Rebus.Threading;
-using System.Collections.Generic;
-using Rebus.Messages;
+using CK.Crs.Hosting;
 
 namespace CK.Crs.Samples.ExecutorApp.Rebus
 {

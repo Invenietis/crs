@@ -1,4 +1,3 @@
-using CK.Crs.Infrastructure;
 using System.Collections.Generic;
 using CK.Core;
 using System;
@@ -6,7 +5,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Linq;
 
-namespace CK.Crs
+namespace CK.Crs.Meta
 {
 
     public class MetaCommand : ICommand<MetaCommand.Result>

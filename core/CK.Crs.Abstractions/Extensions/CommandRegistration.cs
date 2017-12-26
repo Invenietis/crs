@@ -9,7 +9,7 @@ namespace CK.Crs
     /// <summary>
     /// Implementation of the fluent registration API.
     /// </summary>
-    public class CommandRegistration : ICommandRegistration
+    class CommandRegistration : ICommandRegistration
     {
         readonly CommandModel _model;
         readonly ICommandRegistry _registry;

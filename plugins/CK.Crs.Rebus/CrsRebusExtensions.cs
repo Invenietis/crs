@@ -6,6 +6,7 @@ using Rebus.Routing.TypeBased;
 using System.Linq;
 using CK.Monitoring;
 using Rebus.Bus;
+using CK.Crs.Results;
 
 namespace Microsoft.Extensions.DependencyInjection
 {

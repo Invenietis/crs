@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace CK.Crs.Infrastructure
+namespace CK.Crs.Configuration
 {
     internal class CommandModelComparer : IEqualityComparer<CommandModel>
     {

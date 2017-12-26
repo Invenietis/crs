@@ -6,7 +6,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace CK.Crs
+namespace CK.Crs.AspNetCore
 {
     public class JsonCommandBinder : ICommandBinder
     {
@@ -19,7 +19,7 @@ namespace CK.Crs
             Context = context;
         }
 
-        public async Task<object> Bind( ICommandContext commandContext )
+        public async virtual Task<object> Bind( ICommandContext commandContext )
         {
             if( commandContext == null )
             {

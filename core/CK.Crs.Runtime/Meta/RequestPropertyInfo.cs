@@ -2,7 +2,7 @@ using System.Reflection;
 using System.Linq;
 using CK.Core;
 
-namespace CK.Crs
+namespace CK.Crs.Meta
 {
     public sealed class RequestPropertyInfo
     {

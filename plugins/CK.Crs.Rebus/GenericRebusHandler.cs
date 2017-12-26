@@ -1,4 +1,5 @@
 using CK.Core;
+using CK.Crs.Results;
 using Rebus.Handlers;
 using Rebus.Messages;
 using Rebus.Pipeline;

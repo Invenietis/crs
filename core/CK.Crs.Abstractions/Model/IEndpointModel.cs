@@ -13,6 +13,11 @@ namespace CK.Crs
         Type Binder { get; }
 
         /// <summary>
+        /// Gets the response formatter used by this endpoint.
+        /// </summary>
+        IResponseFormatter ResponseFormatter { get; }
+
+        /// <summary>
         /// Gets the gloabl <see cref="ICrsModel"/> this endpoint belongs to.
         /// </summary>
         ICrsModel CrsModel { get; }
@@ -20,7 +25,7 @@ namespace CK.Crs
         /// <summary>
         /// Defaults to CallerId
         /// </summary>
-        string CallerIdName { get; set; }
+        string CallerIdName { get; }
 
         /// <summary>
         /// Gets wether we should validate ambient values or not.

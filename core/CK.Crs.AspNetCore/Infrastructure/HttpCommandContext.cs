@@ -3,7 +3,7 @@ using System.Threading;
 using CK.Core;
 using Microsoft.AspNetCore.Http;
 
-namespace CK.Crs
+namespace CK.Crs.AspNetCore
 {
     public class HttpCommandContext : CommandContext
     {

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Rebus.Bus;
+using CK.Crs.Results;
 
 namespace CK.Crs.Rebus
 {

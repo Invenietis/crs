@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace CK.Crs
+namespace CK.Crs.Results
 {
     class BroadcastResultReceiver : IResultReceiver
     {
