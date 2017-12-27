@@ -29,10 +29,24 @@ namespace CK.Crs
         /// Gets the identifier of the caller of this command context.
         /// </summary>
         CallerId CallerId { get; }
-        
+
         /// <summary>
         /// Gets the related <see cref="CommandModel"/> for the given executing command.
         /// </summary>
-        CommandModel Model { get; }
+        ICommandModel Model { get; }
+
+        /// <summary>
+        /// Gets the feature of the given type or null if the feature does not exists.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        T GetFeature<T>() where T : class;
+
+        /// <summary>
+        /// Sets a feature for the given type. Pass null to remove a feature.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="feature"></param>
+        void SetFeature<T>( T feature ) where T : class;
     }
 }

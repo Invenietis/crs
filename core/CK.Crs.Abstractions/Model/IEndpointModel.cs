@@ -3,14 +3,9 @@ using System.Collections.Generic;
 
 namespace CK.Crs
 {
-    public interface IEndpointModel
+    public interface IEndpointModel : IBindable, IFilterable
     {
         string Path { get; }
-
-        /// <summary>
-        /// Gets the default <see cref="ICommandBinder"/> associates with this endpoint
-        /// </summary>
-        Type Binder { get; }
 
         /// <summary>
         /// Gets the response formatter used by this endpoint.
@@ -27,18 +22,8 @@ namespace CK.Crs
         /// </summary>
         string CallerIdName { get; }
 
-        /// <summary>
-        /// Gets wether we should validate ambient values or not.
-        /// </summary>
-        bool ApplyAmbientValuesValidation { get; }
+        IEnumerable<ICommandModel> Commands { get; }
 
-        /// <summary>
-        ///  Gets wether we should apply model validation or not.
-        /// </summary>
-        bool ApplyModelValidation { get; }
-
-        IEnumerable<CommandModel> Commands { get; }
-
-        CommandModel GetCommandModel( Type commandType );
+        ICommandModel GetCommandModel( Type commandType );
     }
 }

@@ -42,6 +42,7 @@ namespace CK.Crs.AspNetCore.Tests
 
                 commandResult.Should().NotBe( null );
                 commandResult.Success.Should().BeTrue();
+
             }
         }
 

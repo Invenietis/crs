@@ -7,26 +7,11 @@ using System.Threading.Tasks;
 
 namespace CK.Crs
 {
-
     /// <summary>
     /// Describes a command and its environment.
     /// </summary>
-    public class CommandModel
+    class CommandModel : ICommandModel
     {
-        internal static string RemoveSuffixes( Type t, params string[] suffixes)
-        {
-            var s = t.Name;
-            foreach (var suf in suffixes)
-            {
-                if (s.EndsWith(suf, StringComparison.OrdinalIgnoreCase))
-                {
-                    int idx = s.IndexOf(suf);
-                    return s.Substring(0, idx);
-                }
-            }
-            return s;
-        }
-
         /// <summary>
         /// Creates a command description
         /// </summary>
@@ -84,6 +69,11 @@ namespace CK.Crs
         /// Gets or sets the binder type for this command. If null, a default binder is applied.
         /// </summary>
         public Type Binder { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public IEnumerable<Type> Filters { get; set; }
 
         /// <summary>
         /// Gets commands traits

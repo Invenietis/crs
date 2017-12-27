@@ -1,4 +1,3 @@
-using CK.Core;
 using CK.Crs;
 using CK.Crs.Meta;
 using CK.Crs.Responses;
@@ -12,8 +11,6 @@ namespace CK.Crs.AspNetCore
 {
     class HttpCrsEndpointPipeline : ICrsEndpointPipeline
     {
-        static readonly IEnumerable<ICrsFilter> _filters = new ICrsFilter[] { new AmbientValuesValidationFilter(), new ModelValidationFilter() };
-
         public bool IsValid => Context != null;
 
         public IEndpointModel Model { get; }
@@ -22,9 +19,9 @@ namespace CK.Crs.AspNetCore
 
         public HttpContext HttpContext { get; }
 
-        public IActivityMonitor Monitor { get; }
+        public CK.Core.IActivityMonitor Monitor { get; }
 
-        public HttpCrsEndpointPipeline( IActivityMonitor monitor, IEndpointModel model, ICommandContext context, HttpContext httpContext )
+        public HttpCrsEndpointPipeline( CK.Core.IActivityMonitor monitor, IEndpointModel model, ICommandContext context, HttpContext httpContext )
         {
             Monitor = monitor ?? throw new ArgumentNullException( nameof( monitor ) );
             Model = model ?? throw new ArgumentNullException( nameof( model ) );
@@ -52,15 +49,12 @@ namespace CK.Crs.AspNetCore
 
         public virtual Task<object> BindCommand()
         {
-            var binder = ActivatorUtilities.CreateInstance(
-                HttpContext.RequestServices,
-                Context.Model.Binder ?? Model.Binder,
-                HttpContext ) as ICommandBinder;
-
+            var binder = HttpContext.RequestServices.GetRequiredService( Context.Model.Binder ?? Model.Binder ) as ICommandBinder;
             return binder.Bind( Context );
         }
 
-        public virtual IEnumerable<ICrsFilter> GetFilters() => _filters;
+        public virtual IEnumerable<ICommandFilter> GetFilters()
+            => HttpContext.RequestServices.GetRequiredService<ICommandFilterProvider>().GetFilters( Context, Model );
 
         public async Task<Response> ApplyFilters( object command )
         {
@@ -68,10 +62,11 @@ namespace CK.Crs.AspNetCore
             {
                 throw new ArgumentNullException( nameof( command ) );
             }
-            CrsFilterContext context = new CrsFilterContext( command, Context, Model, HttpContext );
+
+            CommandFilterContext context = new CommandFilterContext( command, Context, Model );
             foreach( var filter in GetFilters() )
             {
-                await filter.ApplyFilterAsync( context );
+                await filter.OnFilterAsync( context );
                 if( context.Response != null )
                 {
                     return context.Response;
@@ -86,23 +81,19 @@ namespace CK.Crs.AspNetCore
         {
             if( command is MetaCommand metaCommand )
             {
-                if( Model.ApplyAmbientValuesValidation )
-                {
-                    IAmbientValues ambientValues = HttpContext.RequestServices.GetRequiredService<IAmbientValues>();
-                    IAmbientValuesRegistration ambientValueRegistration = HttpContext.RequestServices.GetRequiredService<IAmbientValuesRegistration>();
+                var ambientValues = HttpContext.RequestServices.GetService<CK.Core.IAmbientValues>();
+                var ambientValueRegistration = HttpContext.RequestServices.GetService<CK.Core.IAmbientValuesRegistration>();
 
-                    return await MetaCommand.Result.CreateAsync( metaCommand, Model, ambientValues, ambientValueRegistration );
-                }
-                else
-                {
-                    return MetaCommand.Result.Create( metaCommand, Model );
-                }
+                return await MetaCommand.Result.CreateAsync( metaCommand, Model, ambientValues, ambientValueRegistration );
+
             }
             return null;
         }
 
         public void Dispose()
         {
+            Context.SetFeature<IHttpContextCommandFeature>( null );
+            Context.SetFeature<IRequestServicesCommandFeature>( null );
         }
     }
 }

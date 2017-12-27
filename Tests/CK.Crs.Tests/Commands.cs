@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -46,9 +47,11 @@ namespace CK.Crs.Tests
 
     public class WithdrawMoneyCommand : ICommand<WithdrawMoneyCommand.Result>
     {
+        [Required]
         public Guid AccountId { get; set; }
+        [Required]
         public decimal Amount { get; set; }
-        public bool ShouldThrow { get;  set; }
+        public bool ShouldThrow { get; set; }
 
         public class Result
         {

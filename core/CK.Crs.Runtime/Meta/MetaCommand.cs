@@ -44,7 +44,7 @@ namespace CK.Crs.Meta
                     {
                         MetaCommandDescription desc = new MetaCommandDescription
                         {
-                            CommandName = c.Name,
+                            CommandName = c.Name.ToString(),
                             CommandType = c.CommandType.FullName,
                             ResultType = c.ResultType?.FullName,
                             Parameters = c.CommandType.GetTypeInfo().DeclaredProperties.Select( e => new RequestPropertyInfo( e, null ) ).ToArray(),
@@ -66,13 +66,16 @@ namespace CK.Crs.Meta
 
                 if( command.ShowAmbientValues )
                 {
-                    result.AmbientValues = new Dictionary<string, object>();
-                    foreach( var a in registration.AmbientValues )
+                    if( registration != null )
                     {
-                        if( ambientValues.IsDefined( a.Name ) )
+                        result.AmbientValues = new Dictionary<string, object>();
+                        foreach( var a in registration.AmbientValues )
                         {
-                            var o = await ambientValues.GetValueAsync( a.Name );
-                            result.AmbientValues.Add( a.Name, o );
+                            if( ambientValues.IsDefined( a.Name ) )
+                            {
+                                var o = await ambientValues.GetValueAsync( a.Name );
+                                result.AmbientValues.Add( a.Name, o );
+                            }
                         }
                     }
                 }

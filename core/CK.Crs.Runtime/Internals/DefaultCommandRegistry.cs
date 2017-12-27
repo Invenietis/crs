@@ -6,26 +6,26 @@ namespace CK.Crs
 {
     class DefaultCommandRegistry : ICommandRegistry
     {
-        Dictionary<CommandName,CommandModel> Map { get; } = new Dictionary<CommandName,CommandModel>();
+        Dictionary<CommandName, ICommandModel> Map { get; } = new Dictionary<CommandName, ICommandModel>();
 
         public DefaultCommandRegistry( CKTraitContext traitContext )
         {
             TraitContext = traitContext;
         }
 
-        public IEnumerable<CommandModel> Registration
+        public IEnumerable<ICommandModel> Registration
         {
             get { return Map.Values; }
         }
 
         public CKTraitContext TraitContext { get; }
 
-        public void Register( CommandModel descriptor )
+        public void Register( ICommandModel descriptor )
         {
             Map.Add( descriptor.Name, descriptor );
         }
 
-        public CommandModel GetCommandByName( CommandName name )
+        public ICommandModel GetCommandByName( CommandName name )
         {
             return Map.GetValueWithDefault( name, null );
         }

@@ -1,11 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using CK.Core;
 
 namespace CK.Crs
 {
 
-    public class CommandContext : ICommandContext
+    public abstract class CommandContext : ICommandContext
     {
         /// <summary>
         /// 
@@ -15,7 +16,7 @@ namespace CK.Crs
         /// <param name="model"></param>
         /// <param name="callerId"></param>
         /// <param name="token"></param>
-        public CommandContext( string commandId, IActivityMonitor activityMonitor, CommandModel model, CallerId callerId, CancellationToken token = default( CancellationToken ) )
+        public CommandContext( string commandId, IActivityMonitor activityMonitor, ICommandModel model, CallerId callerId, CancellationToken token = default( CancellationToken ) )
         {
             CommandId = commandId;
             Monitor = activityMonitor ?? throw new ArgumentNullException( nameof( activityMonitor ) );
@@ -34,6 +35,24 @@ namespace CK.Crs
 
         public IEndpointModel ReceiverModel { get; }
 
-        public CommandModel Model { get; }
+        public ICommandModel Model { get; }
+
+        Feature _contextFeature;
+
+        private Feature CommandContextFeature
+        {
+            get => _contextFeature ?? (_contextFeature = new Feature());
+        }
+
+        public T GetFeature<T>() where T : class
+        {
+            return CommandContextFeature.GetFeature<T>();
+        }
+
+        public void SetFeature<T>( T feature ) where T : class
+        {
+            if( feature == null ) CommandContextFeature.RemoveFeature<T>();
+            else CommandContextFeature.SetFeature( feature );
+        }
     }
 }

@@ -14,7 +14,7 @@ namespace CK.Crs
         readonly CommandModel _model;
         readonly ICommandRegistry _registry;
 
-        public CommandModel Model => _model;
+        public ICommandModel Model => _model;
 
         /// <summary>
         /// Creates a <see cref="CommandRegistration"/> from a <see cref="CommandModel"/>

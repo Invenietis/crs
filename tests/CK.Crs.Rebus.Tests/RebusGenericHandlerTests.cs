@@ -193,11 +193,18 @@ namespace CK.Crs.Rebus.Tests
 
         private CommandContext EnsureContext<T>( IServiceProvider services, IActivityMonitor monitor )
         {
-            return new CommandContext(
+            return new TestCommandContext(
                 Guid.NewGuid().ToString( "N" ),
                 monitor,
-                services.GetRequiredService<ICommandRegistry>().Registration.SingleOrDefault( r => r.CommandType == typeof( T ) ),
-                CallerId.None );
+                services.GetRequiredService<ICommandRegistry>().Registration.SingleOrDefault( r => r.CommandType == typeof( T ) ) );
+        }
+
+        class TestCommandContext : CommandContext
+        {
+            public TestCommandContext( string v, IActivityMonitor monitor, ICommandModel commandModel )
+                : base( v, monitor, commandModel, CallerId.None )
+            {
+            }
         }
     }
 }

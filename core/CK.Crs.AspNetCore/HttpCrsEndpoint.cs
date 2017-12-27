@@ -28,6 +28,9 @@ namespace CK.Crs.AspNetCore
                 context = new MetaCommandContext( monitor, endpointModel, HttpContext.RequestAborted );
             }
             else context = CreateCommandContext( monitor, endpointModel );
+            var httpContextFeature = new HttpContextCommandFeature( HttpContext );
+            context.SetFeature<IHttpContextCommandFeature>( httpContextFeature );
+            context.SetFeature<IRequestServicesCommandFeature>( httpContextFeature );
             return new HttpCrsEndpointPipeline( monitor, endpointModel, context, HttpContext );
         }
 
@@ -46,7 +49,7 @@ namespace CK.Crs.AspNetCore
             CommandName commandName = GetCommandName( HttpContext );
 
             ICommandRegistry commandRegistry = HttpContext.RequestServices.GetRequiredService<ICommandRegistry>();
-            CommandModel commandModel = commandRegistry.GetCommandByName( commandName );
+            ICommandModel commandModel = commandRegistry.GetCommandByName( commandName );
             if( commandModel == null )
             {
                 monitor.Warn( $"Command {commandName} does not exists" );

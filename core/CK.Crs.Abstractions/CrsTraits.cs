@@ -11,7 +11,7 @@ namespace CK.Crs
         public static readonly string Result = "Result";
         public static readonly string Broadcast = "Broadcast";
 
-        public static bool HasResultBroadcastTag( this CommandModel commandModel )
+        public static bool HasResultBroadcastTag( this ICommandModel commandModel )
         {
             return HasTag( commandModel, CrsTraits.Broadcast );
         }
@@ -21,7 +21,7 @@ namespace CK.Crs
             return SetTag( commandRegistration, CrsTraits.Result, CrsTraits.Broadcast );
         }
 
-        public static bool HasResultTag( this CommandModel commandModel )
+        public static bool HasResultTag( this ICommandModel commandModel )
         {
             return HasTag( commandModel, CrsTraits.Result );
         }
@@ -31,12 +31,12 @@ namespace CK.Crs
             return SetTag( commandRegistration, CrsTraits.Result );
         }
 
-        public static bool HasTag( this CommandModel commandModel, string trait )
+        public static bool HasTag( this ICommandModel commandModel, string trait )
         {
             return commandModel.Tags.Overlaps( commandModel.Tags.Context.FindOrCreate( trait ) );
         }
 
-        public static bool HasTags( this CommandModel commandModel, params string[] traits )
+        public static bool HasTags( this ICommandModel commandModel, params string[] traits )
         {
             return commandModel.Tags.HasTags( traits );
         }

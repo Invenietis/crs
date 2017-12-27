@@ -10,7 +10,7 @@ using CK.Crs.Results;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
-    public delegate Action<Func<CommandModel, bool>> ConfigureQueue( string queueName );
+    public delegate Action<Func<ICommandModel, bool>> ConfigureQueue( string queueName );
 
     public static class CrsRebusExtensions
     {

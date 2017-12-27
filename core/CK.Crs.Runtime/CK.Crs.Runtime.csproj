@@ -7,12 +7,13 @@
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="2.0.0" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="4.4.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CK.AmbientValues\CK.AmbientValues.csproj" />
     <ProjectReference Include="..\CK.Crs.Abstractions\CK.Crs.Abstractions.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Properties\" />
+    <Folder Include="Properties\" /> 
   </ItemGroup>
 </Project>

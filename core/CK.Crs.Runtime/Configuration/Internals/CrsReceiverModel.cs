@@ -8,16 +8,17 @@ namespace CK.Crs.Configuration
 
     class CrsReceiverModel : IEndpointModel
     {
-        private IEnumerable<CommandModel> _requests;
+        private IEnumerable<ICommandModel> _commands;
         private readonly ICrsModel _model;
         private readonly string _path;
 
-        public CrsReceiverModel( string path, ICrsModel model, Type commandBinder, IEnumerable<CommandModel> requests )
+        public CrsReceiverModel( string path, ICrsModel model, Type commandBinder, IEnumerable<ICommandModel> commands )
         {
             _model = model ?? throw new ArgumentNullException( nameof( model ) );
             _path = path ?? throw new ArgumentNullException( nameof( path ) );
+            _commands = commands;
             Binder = commandBinder;
-            _requests = requests;
+            Filters = Type.EmptyTypes;
         }
 
         public ICrsModel CrsModel => _model;
@@ -25,22 +26,15 @@ namespace CK.Crs.Configuration
         public string Path => _path;
 
         public Type Binder { get; }
+        public IEnumerable<Type> Filters { get; private set; }
 
         public IResponseFormatter ResponseFormatter { get; set; }
 
         public string CallerIdName { get; set; }
 
-        /// <summary>
-        /// Gets wether we should validate ambient values or not.
-        /// </summary>
-        public bool ApplyAmbientValuesValidation { get; set; }
+        public IEnumerable<ICommandModel> Commands => _commands;
 
-        public bool ApplyModelValidation { get; set; }
-
-        public IEnumerable<CommandModel> Commands => _requests;
-
-
-        public CommandModel GetCommandModel( Type requestType )
+        public ICommandModel GetCommandModel( Type requestType )
         {
             // TODO: lookup in a dictionary ?
             // TODO: why first or default? We must ensure that we get the good one.
@@ -50,5 +44,7 @@ namespace CK.Crs.Configuration
             // The request registry and the requests by receivers which is a subset of the registry.
             return Commands.FirstOrDefault( t => t.CommandType == requestType );
         }
+
+        internal void AddFilter( Type filterType ) => Filters = Filters.Concat( new[] { filterType } );
     }
 }

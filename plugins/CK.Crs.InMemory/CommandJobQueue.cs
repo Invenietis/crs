@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace CK.Crs.InMemory
 {
+
     class CommandJobQueue : IDisposable
     {
         readonly BlockingCollection<CommandJob> _queue;
@@ -27,16 +28,15 @@ namespace CK.Crs.InMemory
                         {
                             using( job.Token != null ? monitor.StartDependentActivity( job.Token ) : Util.EmptyDisposable )
                             {
-                                var context2 = new CommandContext( job.CommandContext.CommandId, monitor, job.CommandContext.Model, job.CommandContext.CallerId, default( CancellationToken ) );
                                 monitor.Trace( "Invoking the command..." );
-                                var deferredResult = await invoker.Invoke( job.Command, context2 );
+                                var deferredResult = await invoker.Invoke( job.Command, job.CommandContext );
 
-                                var resultReceiver = resultStrategy.GetResultReceiver( context2 );
+                                var resultReceiver = resultStrategy.GetResultReceiver( job.CommandContext );
                                 if( resultReceiver == null ) monitor.Warn( "No result receiver available for this command. Unable to communicate the result..." );
                                 else
                                 {
                                     monitor.Trace( "Sending the result." );
-                                    await resultReceiver.ReceiveResult( deferredResult, context2 );
+                                    await resultReceiver.ReceiveResult( deferredResult, job.CommandContext );
                                 }
                             }
                         }
@@ -61,7 +61,7 @@ namespace CK.Crs.InMemory
             _queue.Add( new CommandJob
             {
                 Command = comand,
-                CommandContext = context,
+                CommandContext = new CommandJobContext( context ),
                 Token = depToken
             } );
         }

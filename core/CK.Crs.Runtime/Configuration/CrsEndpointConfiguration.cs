@@ -11,12 +11,13 @@ namespace CK.Crs.Configuration
         readonly ICommandRegistry _registry;
         readonly ICrsModel _model;
 
-        private ISet<CommandModel> _commands;
+        private ISet<ICommandModel> _commands;
         private Type _binder;
         private bool _validateAmbientValues = true;
         private bool _validateModel = true;
         private string _callerIdName = "CallerId";
         private IResponseFormatter _responseFormatter;
+        private IList<Type> _filters;
 
         public CKTraitContext TraitContext => _model.TraitContext;
 
@@ -26,9 +27,9 @@ namespace CK.Crs.Configuration
             _model = model;
         }
 
-        public ICrsEndpointConfiguration FilterCommands( Func<CommandModel, bool> filter )
+        public ICrsEndpointConfiguration FilterCommands( Func<ICommandModel, bool> filter )
         {
-            _commands = new HashSet<CommandModel>( _registry.Registration.Where( filter ), new CommandModelComparer() );
+            _commands = new HashSet<ICommandModel>( _registry.Registration.Where( filter ), new CommandModelComparer() );
             return this;
         }
 
@@ -56,14 +57,16 @@ namespace CK.Crs.Configuration
             return this;
         }
 
+        public ICrsEndpointConfiguration AddSecurityFilter<T>() where T : ICommandSecurityFilter
+        {
+            if( _filters == null ) _filters = new List<Type>();
+            _filters.Add( typeof( T ) );
+            return this;
+        }
+
         public ICrsEndpointConfiguration ChangeCallerIdName( string newCallerIdName )
         {
-            if( newCallerIdName == null )
-            {
-                throw new ArgumentNullException( nameof( newCallerIdName ) );
-            }
-
-            _callerIdName = newCallerIdName;
+            _callerIdName = newCallerIdName ?? throw new ArgumentNullException( nameof( newCallerIdName ) );
             return this;
         }
 
@@ -71,12 +74,14 @@ namespace CK.Crs.Configuration
         {
             var receiverModel = new CrsReceiverModel( path, _model, _binder, _commands ?? _registry.Registration )
             {
-                ApplyAmbientValuesValidation = _validateAmbientValues,
-                ApplyModelValidation = _validateModel,
                 CallerIdName = _callerIdName,
                 ResponseFormatter = _responseFormatter
             };
+            if( _validateAmbientValues ) receiverModel.AddFilter( typeof( AmbientValuesValidationFilter ) );
+            if( _validateModel ) receiverModel.AddFilter( typeof( ModelValidationFilter ) );
+            foreach( var f in _filters ) receiverModel.AddFilter( f );
             return receiverModel;
         }
+
     }
 }

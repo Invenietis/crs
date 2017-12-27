@@ -13,7 +13,7 @@ namespace CK.Crs
         public static readonly string CrsPrefix = "CRS_";
         public static readonly string RebusTag = "Rebus";
 
-        public static bool HasRebusTag( this CommandModel commandModel )
+        public static bool HasRebusTag( this ICommandModel commandModel )
         {
             return commandModel.HasTags( RebusTag, CrsTraits.FireForget );
         }

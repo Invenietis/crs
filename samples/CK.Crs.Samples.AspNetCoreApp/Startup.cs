@@ -12,6 +12,7 @@ using CK.Crs.Samples.Handlers;
 using Microsoft.Extensions.Configuration;
 using CK.Crs.Samples.AspNetCoreApp.Extensions;
 using System;
+using System.Threading.Tasks;
 
 namespace CK.Crs.Samples.AspNetCoreApp
 {
@@ -74,8 +75,24 @@ namespace CK.Crs.Samples.AspNetCoreApp
         {
             app.UseDeveloperExceptionPage();
             app.UseCrs( "crs", c => c.AcceptAll().SkipAmbientValuesValidation() );
-            app.UseCrs( "crs-admin", c => c.FilterCommands( t => t.Tags.Overlaps( c.TraitContext.FindOrCreate( "Admin" ) ) ) );
+            app.UseCrs( "crs-admin", c => c
+                .FilterCommands( t => t.Tags.Overlaps( c.TraitContext.FindOrCreate( "Admin" ) ) )
+                .AddSecurityFilter<PolicySecurityFilter>() );
             app.UseFileServer();
+        }
+    }
+
+    class PolicySecurityFilter : ICommandSecurityFilter
+    {
+        public Task OnFilterAsync( CommandFilterContext filterContext )
+        {
+            if( filterContext.CommandContext.Model.HasTag( "Security::Policy::MyPolicy" ) )
+            {
+                // TODO: policy validator.
+                bool failed = true;
+                if( failed ) filterContext.SetResponse( new Responses.ErrorResponse( "Unauthorized", filterContext.CommandContext.CommandId ) );
+            }
+            return Task.CompletedTask;
         }
     }
 }

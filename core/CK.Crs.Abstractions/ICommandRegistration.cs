@@ -53,6 +53,6 @@ namespace CK.Crs
         /// <summary>
         /// Gets the <see cref="CommandModel"/>.
         /// </summary>
-        CommandModel Model { get; }
+        ICommandModel Model { get; }
     }
 }

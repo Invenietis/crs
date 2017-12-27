@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 
 namespace CK.Crs
 {
@@ -8,12 +9,12 @@ namespace CK.Crs
 
         public CommandName( string name )
         {
-            _name = name;
+            _name = name.ToLower( CultureInfo.InvariantCulture );
         }
         public CommandName( Type commandType )
         {
             var assemblyName = commandType.Assembly.GetName().Name;
-            _name = assemblyName + "-" + commandType.FullName;
+            _name = (assemblyName + "-" + commandType.FullName).ToLower( CultureInfo.InvariantCulture );
         }
 
         public bool IsValid => !String.IsNullOrEmpty( _name );

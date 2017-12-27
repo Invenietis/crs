@@ -39,7 +39,7 @@ namespace CK.Crs.AspNetCore.Tests
                 .UseUrls( "http://localhost:5001" )
                 .UseStartup<Startup>();
             var server = new TestServer( builder );
-  
+
             _client = new TestServerClient( server, true );
 
             Services = server.Host.Services;

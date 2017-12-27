@@ -7,11 +7,11 @@ namespace CK.Crs
 {
     public static class ReflectionUtil
     {
-        public static bool IsAssignableToGenericType(Type givenType, Type type)
+        public static bool IsAssignableToGenericType( Type givenType, Type type )
         {
             var interfaceTypes = givenType.GetInterfaces();
 
-            foreach (var it in interfaceTypes)
+            foreach( var it in interfaceTypes )
             {
                 if( it.GetTypeInfo().IsGenericType )
                 {
@@ -23,13 +23,13 @@ namespace CK.Crs
                 }
             }
 
-            if (givenType.GetTypeInfo().IsGenericType && givenType.GetGenericTypeDefinition() == type)
+            if( givenType.GetTypeInfo().IsGenericType && givenType.GetGenericTypeDefinition() == type )
                 return true;
 
             Type baseType = givenType.GetTypeInfo().BaseType;
-            if (baseType == null) return false;
+            if( baseType == null ) return false;
 
-            return IsAssignableToGenericType(baseType, type);
+            return IsAssignableToGenericType( baseType, type );
         }
 
     }

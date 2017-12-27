@@ -33,17 +33,12 @@ namespace CK.Crs.Rebus
             var msgContext = MessageContext.Current;
 
             CommandName commandName = msgContext.GetCommandName();
-            CommandModel model = _registry.GetCommandByName( commandName );
+            ICommandModel model = _registry.GetCommandByName( commandName );
             if( model != null )
             {
                 using( var token = new CancellationTokenSource() )
                 {
-                    var context = new CommandContext(
-                        msgContext.GetCommandId(),
-                        msgContext.GetActivityMonitor(),
-                        model,
-                        msgContext.GetCallerId(),
-                        token.Token );
+                    var context = new RebusCommandContext( msgContext, model, token );
 
                     if( model.ResultType == typeof( T ) )
                     {

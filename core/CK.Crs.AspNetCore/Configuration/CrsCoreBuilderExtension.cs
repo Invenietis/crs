@@ -14,6 +14,10 @@ namespace Microsoft.Extensions.DependencyInjection
         public static ICrsCoreBuilder AddCrs( this IServiceCollection services, Action<ICommandRegistry> commandsConfigurationn )
         {
             var builder = services.AddCrsCore( commandsConfigurationn );
+            builder.Services.AddSingleton<ICommandFilterProvider, FilterProvider>();
+            builder.Services.AddSingleton<ICommandFilter, AmbientValuesValidationFilter>();
+            builder.Services.AddSingleton<ICommandFilter, ModelValidationFilter>();
+            builder.Services.AddSingleton<JsonCommandBinder>();
             builder.Services.AddSingleton( new JsonSerializerSettings
             {
                 ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver()
