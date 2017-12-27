@@ -25,6 +25,26 @@ namespace CK.Crs
             Map.Add( descriptor.Name, descriptor );
         }
 
+        /// <summary>
+        /// Registers a command and its handler.
+        /// </summary>
+        /// <typeparam name="TCommand"></typeparam>
+        /// <typeparam name="THandler"></typeparam>
+        /// <param name="registry"></param>
+        /// <returns></returns>
+        public ICommandRegistration Register<TCommand>() where TCommand : class
+        {
+            var model = new CommandModel( typeof( TCommand ), TraitContext );
+            var registration = new CommandRegistration( this, model );
+            Register( model );
+            if( model.ResultType != null )
+            {
+                registration.IsResultTag();
+            }
+            return registration;
+        }
+
+
         public ICommandModel GetCommandByName( CommandName name )
         {
             return Map.GetValueWithDefault( name, null );
