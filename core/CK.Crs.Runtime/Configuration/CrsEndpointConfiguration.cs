@@ -79,7 +79,7 @@ namespace CK.Crs.Configuration
             };
             if( _validateAmbientValues ) receiverModel.AddFilter( typeof( AmbientValuesValidationFilter ) );
             if( _validateModel ) receiverModel.AddFilter( typeof( ModelValidationFilter ) );
-            foreach( var f in _filters ) receiverModel.AddFilter( f );
+            if( _filters != null ) foreach( var f in _filters ) receiverModel.AddFilter( f );
             return receiverModel;
         }
 

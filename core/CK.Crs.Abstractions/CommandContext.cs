@@ -33,8 +33,6 @@ namespace CK.Crs
 
         public CancellationToken Aborted { get; }
 
-        public IEndpointModel ReceiverModel { get; }
-
         public ICommandModel Model { get; }
 
         Feature _contextFeature;
