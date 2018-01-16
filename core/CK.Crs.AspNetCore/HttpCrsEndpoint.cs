@@ -52,7 +52,7 @@ namespace CK.Crs.AspNetCore
             }
 
             CommandName commandName = GetCommandName( HttpContext );
-            if( commandName.IsValid )
+            if( !commandName.IsValid )
             {
                 monitor.Warn( $"Receives an invalid command name." );
                 return null;
