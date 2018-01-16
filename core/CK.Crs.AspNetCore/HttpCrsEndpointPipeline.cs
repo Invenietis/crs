@@ -31,6 +31,8 @@ namespace CK.Crs.AspNetCore
 
         public virtual async Task<Response> ProcessCommand()
         {
+            if( !IsValid ) throw new InvalidOperationException( "Invalid pipeline state!" );
+
             object command = await BindCommand();
             if( command == null ) throw new InvalidOperationException( "Unable to bind the input command" );
 
@@ -92,8 +94,11 @@ namespace CK.Crs.AspNetCore
 
         public void Dispose()
         {
-            Context.SetFeature<IHttpContextCommandFeature>( null );
-            Context.SetFeature<IRequestServicesCommandFeature>( null );
+            if( Context != null )
+            {
+                Context.SetFeature<IHttpContextCommandFeature>( null );
+                Context.SetFeature<IRequestServicesCommandFeature>( null );
+            }
         }
     }
 }
