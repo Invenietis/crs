@@ -26,7 +26,7 @@ namespace CK.Crs
             return HasTag( commandModel, CrsTraits.Result );
         }
 
-        public static ICommandRegistration IsResultTag( this ICommandRegistration commandRegistration )
+        public static ICommandRegistration SetResultTag( this ICommandRegistration commandRegistration )
         {
             return SetTag( commandRegistration, CrsTraits.Result );
         }
@@ -47,6 +47,11 @@ namespace CK.Crs
             return tags.IsSupersetOf( trait );
         }
 
+        public static ICommandRegistration SetTag( this ICommandRegistration commandRegistration, params string[] traits )
+        {
+            return commandRegistration.SetTag( String.Join( commandRegistration.Model.Tags.Context.Separator.ToString(), traits ) );
+        }
+        
         public static ICommandRegistration SetTag( this ICommandRegistration commandRegistration, string traits )
         {
             CKTrait trait = commandRegistration.Model.Tags.Context.FindOrCreate( traits );
@@ -54,9 +59,5 @@ namespace CK.Crs
             return commandRegistration;
         }
 
-        public static ICommandRegistration SetTag( this ICommandRegistration commandRegistration, params string[] traits )
-        {
-            return commandRegistration.SetTag( String.Join( commandRegistration.Model.Tags.Context.Separator.ToString(), traits ) );
-        }
     }
 }

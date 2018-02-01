@@ -8,17 +8,17 @@ namespace CK.Crs
         /// <summary>
         /// A readonly instance of the structure will a null procotol and no values.
         /// </summary>
-        public static readonly CallerId None = new CallerId( String.Empty, Span<string>.Empty );
+        public static readonly CallerId None = new CallerId( String.Empty, CK.Core.Util.Array.Empty<string>() );
 
         private const string Separator = "::";
 
         private string _token;
         private string[] _values;
 
-        public CallerId( string protocol, Span<string> values )
+        public CallerId( string protocol, string[] values )
         {
             Protocol = protocol ?? throw new ArgumentNullException( nameof( protocol ) );
-            _values = values.ToArray();
+            _values = values;
 
             _token = String.Concat( protocol, Separator, String.Join( Separator, _values ) );
         }
@@ -49,7 +49,9 @@ namespace CK.Crs
             var s = token.Split( Separator.ToCharArray(), StringSplitOptions.None );
             if( s.Length > 1 )
             {
-                return new CallerId( s[0], s.AsSpan().Slice( 1 ) );
+                var parameters = new string[s.Length - 1];
+                Array.ConstrainedCopy( s, 1, parameters, 0, s.Length - 1 );
+                return new CallerId( s[0], parameters );
             }
             return CallerId.None;
         }

@@ -39,7 +39,7 @@ namespace CK.Crs
             Register( model );
             if( model.ResultType != null )
             {
-                registration.IsResultTag();
+                registration.SetResultTag();
             }
             return registration;
         }

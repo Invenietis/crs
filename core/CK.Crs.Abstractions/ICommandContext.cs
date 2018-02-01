@@ -8,7 +8,7 @@ namespace CK.Crs
     /// <summary>
     /// 
     /// </summary>
-    public interface ICommandContext
+    public interface ICommandContext : IFeatureContainer
     {
         /// <summary>
         /// Command identifier
@@ -34,19 +34,5 @@ namespace CK.Crs
         /// Gets the related <see cref="CommandModel"/> for the given executing command.
         /// </summary>
         ICommandModel Model { get; }
-
-        /// <summary>
-        /// Gets the feature of the given type or null if the feature does not exists.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        T GetFeature<T>() where T : class;
-
-        /// <summary>
-        /// Sets a feature for the given type. Pass null to remove a feature.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="feature"></param>
-        void SetFeature<T>( T feature ) where T : class;
     }
 }

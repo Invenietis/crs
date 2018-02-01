@@ -24,7 +24,7 @@ namespace CK.Crs
         public static CallerId GetCallerId( this HubCallerContext context )
         {
             var values = new[] { context.User.Identity.Name, context.ConnectionId };
-            return new CallerId( CallerIdProtocol, values.AsSpan() );
+            return new CallerId( CallerIdProtocol, values );
         }
     }
 }
