@@ -16,7 +16,7 @@ namespace CK.Crs.InMemory
             _queue = new BlockingCollection<CommandJob>();
             Task.Run( async () =>
             {
-                var monitor = new ActivityMonitor();
+                var  monitor = new ActivityMonitor();
                 monitor.Trace( "CommandJobQueue running..." );
                 while( !_queue.IsCompleted )
                 {
@@ -26,7 +26,7 @@ namespace CK.Crs.InMemory
                     {
                         try
                         {
-                            using( job.Token != null ? monitor.StartDependentActivity( job.Token ) : Util.EmptyDisposable )
+                            using( job.CommandContext.ChangeMonitor( monitor ) )
                             {
                                 monitor.Trace( "Invoking the command..." );
                                 var deferredResult = await invoker.Invoke( job.Command, job.CommandContext );
@@ -57,12 +57,10 @@ namespace CK.Crs.InMemory
 
         public void Push( object comand, ICommandContext context )
         {
-            var depToken = context.Monitor.DependentActivity().CreateToken();
             _queue.Add( new CommandJob
             {
                 Command = comand,
-                CommandContext = new CommandJobContext( context ),
-                Token = depToken
+                CommandContext = new CommandJobContext( context )
             } );
         }
     }

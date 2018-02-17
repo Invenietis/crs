@@ -1,10 +1,38 @@
-﻿namespace CK.Crs.InMemory
+using System;
+using System.Threading;
+using CK.Core;
+
+namespace CK.Crs.InMemory
 {
-    class CommandJobContext : CommandContext
+    class CommandJobContext : ICommandContext
     {
+        private readonly ICommandContext _commandContext;
+
         public CommandJobContext( ICommandContext commandContext )
-            : base( commandContext.CommandId, commandContext.Monitor, commandContext.Model, commandContext.CallerId )
         {
+            _commandContext = commandContext;
+            Monitor = commandContext.Monitor;
+        }
+
+        public string CommandId => _commandContext.CommandId;
+
+        public IActivityMonitor Monitor { get; private set; }
+
+        public CancellationToken Aborted => _commandContext.Aborted;
+
+        public CallerId CallerId => _commandContext.CallerId;
+
+        public ICommandModel Model => _commandContext.Model;
+
+        public T GetFeature<T>() where T : class => _commandContext.GetFeature<T>();
+
+        public void SetFeature<T>( T feature ) where T : class => _commandContext.SetFeature( feature );
+
+        internal IDisposable ChangeMonitor( IActivityMonitor monitor )
+        {
+            var depToken = Monitor.DependentActivity().CreateToken();
+            Monitor = monitor;
+            return monitor.StartDependentActivity( depToken );
         }
     }
 }

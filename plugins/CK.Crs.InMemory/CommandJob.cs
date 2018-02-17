@@ -7,7 +7,5 @@ namespace CK.Crs.InMemory
         public object Command { get; set; }
 
         public CommandJobContext CommandContext { get; set; }
-
-        public ActivityMonitor.DependentToken Token { get; set; }
     }
 }
