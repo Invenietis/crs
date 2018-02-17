@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CK.Core;
 
+
 namespace CK.Crs.Tests
 {
     public class AmountTransferredEvent
@@ -16,7 +17,7 @@ namespace CK.Crs.Tests
 
     public class TransferAlwaysSuccessHandler : ICommandHandler<TransferAmountCommand, TransferAmountCommand.Result>
     {
-        public Task<TransferAmountCommand.Result> HandleAsync( TransferAmountCommand command, ICommandContext context )
+        public async Task<TransferAmountCommand.Result> HandleAsync( TransferAmountCommand command, ICommandContext context )
         {
             using( context.Monitor.OpenInfo( $"Transferring {command.Amount} from {command.SourceAccountId} to {command.DestinationAccountId} " ) )
             {
@@ -28,21 +29,21 @@ namespace CK.Crs.Tests
                 context.Monitor.Info( $"Transfer will be effective at {result.EffectiveDate.ToString()}." );
                 context.Monitor.Info( $"You have one hour to cancel it." );
 
-                return Task.FromResult( result );
+                return result;
             }
         }
     }
 
     public class WithDrawyMoneyHandler : ICommandHandler<WithdrawMoneyCommand, WithdrawMoneyCommand.Result>
     {
-        public Task<WithdrawMoneyCommand.Result> HandleAsync( WithdrawMoneyCommand command, ICommandContext commandContext )
+        public async Task<WithdrawMoneyCommand.Result> HandleAsync( WithdrawMoneyCommand command, ICommandContext commandContext )
         {
             if( command.ShouldThrow ) throw new InvalidOperationException( "No more money guy..." );
             var result = new WithdrawMoneyCommand.Result
             {
                 Success = true
             };
-            return Task.FromResult( result );
+            return result;
         }
     }
 

@@ -35,6 +35,18 @@ namespace CK.Crs
         public ICommandRegistration Register<TCommand>() where TCommand : class
         {
             var model = new CommandModel( typeof( TCommand ), TraitContext );
+            return AddRegistration( model );
+        }
+
+
+        public ICommandRegistration Register<TCommand, TResult>() where TCommand : ICommand<TResult>
+        {
+            var model = new CommandModel( typeof( TCommand ), typeof( TResult ), TraitContext );
+            return AddRegistration( model );
+        }
+
+        private ICommandRegistration AddRegistration( CommandModel model )
+        {
             var registration = new CommandRegistration( this, model );
             Register( model );
             if( model.ResultType != null )
@@ -43,7 +55,6 @@ namespace CK.Crs
             }
             return registration;
         }
-
 
         public ICommandModel GetCommandByName( CommandName name )
         {

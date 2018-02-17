@@ -15,16 +15,29 @@ namespace CK.Crs
         /// <summary>
         /// Creates a command description
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="type"></param>
         /// <param name="context"></param>
         /// <param name="binder"></param>
         public CommandModel( Type type, CKTraitContext context, ICommandBinder binder = null )
+            : this( type, FindResultType(type), context, binder )
+        {
+        }
+
+        /// <summary>
+        /// Creates a command description
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="resultType"></param>
+        /// <param name="context"></param>
+        /// <param name="binder"></param>
+        public CommandModel( Type type, Type resultType, CKTraitContext context, ICommandBinder binder = null )
         {
             CommandType = type ?? throw new ArgumentNullException( nameof( type ) );
             Name = new CommandName( type );
             Tags = context.EmptyTrait;
-            ResultType = FindResultType( type );
+            ResultType = resultType;
         }
+
 
         public static Type FindResultType( Type type )
         {
@@ -33,7 +46,7 @@ namespace CK.Crs
             if( commandInterfaces.Length > 0 )
             {
                 var commandResultInterface = commandInterfaces.FirstOrDefault( f => f.IsGenericType && f.Name == commandResultInterfaceName );
-                if( commandResultInterface  != null )
+                if( commandResultInterface != null )
                 {
                     return commandResultInterface.GetGenericArguments()[0];
                 }

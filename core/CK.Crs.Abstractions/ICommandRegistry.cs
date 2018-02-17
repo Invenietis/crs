@@ -22,6 +22,8 @@ namespace CK.Crs
 
         ICommandRegistration Register<TCommand>() where TCommand : class;
 
+        ICommandRegistration Register<TCommand, TResult>() where TCommand : ICommand<TResult>;
+
         /// <summary>
         /// Gets all the available <see cref="CommandModel"/> in the registry
         /// </summary>

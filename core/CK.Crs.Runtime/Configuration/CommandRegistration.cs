@@ -45,22 +45,22 @@ namespace CK.Crs
             return this;
         }
 
-        ICommandConfiguration<ICommandRegistration> ICommandConfiguration<ICommandRegistration>.CommandName( string commandName )
+        ICommandRegistration ICommandRegistration.CommandName( string commandName )
         {
             return CommandName( commandName );
         }
 
-        ICommandConfiguration<ICommandRegistration> ICommandConfiguration<ICommandRegistration>.CustomBinder<T>()
+        ICommandRegistration ICommandRegistration.CustomBinder<T>()
         {
             return CustomBinder<T>();
         }
 
-        ICommandConfiguration<ICommandRegistration> ICommandConfigurationWithHandling<ICommandRegistration>.HandledBy<THandler>()
+        ICommandRegistration ICommandRegistration.HandledBy<THandler>()
         {
             return HandledBy<THandler>();
         }
 
-        ICommandRegistration ICommandConfiguration<ICommandRegistration>.Register<TCommand>()
+        ICommandRegistration ICommandRegistration.Register<TCommand>()
         {
             return _registry.Register<TCommand>();
         }

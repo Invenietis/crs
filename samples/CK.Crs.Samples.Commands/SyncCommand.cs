@@ -1,6 +1,6 @@
 namespace CK.Crs.Samples.Messages
 {
-    public class SyncCommand : MessageBase
+    public class SyncCommand : MessageBase, ICommand<SyncCommand.Result>
     {
         public class Result
         {

@@ -16,6 +16,7 @@ using Rebus.Transport.InMem;
 using CK.Monitoring;
 using Microsoft.Extensions.DependencyInjection;
 
+
 namespace CK.Crs.Rebus.Tests
 {
     [TestFixture]
@@ -37,31 +38,30 @@ namespace CK.Crs.Rebus.Tests
                 return Task.CompletedTask;
             }
 
-            public Task<SimpleCommandWithResult.Result> HandleAsync( SimpleCommandWithResult command, ICommandContext context )
+            public async Task<SimpleCommandWithResult.Result> HandleAsync( SimpleCommandWithResult command, ICommandContext context )
             {
                 var monitor = context.Monitor;
                 Assert.That( monitor, Is.Not.Null );
 
                 monitor.Info( $"The time is {DateTime.UtcNow} for {command.ActorId } from {command.GetType().Name}" );
 
-                return Task.FromResult( new SimpleCommandWithResult.Result { Date = DateTime.UtcNow } );
+                return new SimpleCommandWithResult.Result { Date = DateTime.UtcNow };
             }
 
-            public Task<DateTime> HandleAsync( SimpleCommandWithDirectResult command, ICommandContext context )
+            public async Task<DateTime> HandleAsync( SimpleCommandWithDirectResult command, ICommandContext context )
             {
                 var monitor = context.Monitor;
                 Assert.That( monitor, Is.Not.Null );
 
                 monitor.Info( $"The time is {DateTime.UtcNow} for {command.ActorId } from {command.GetType().Name}" );
 
-                return Task.FromResult( DateTime.UtcNow );
+                return DateTime.UtcNow;
             }
 
-            public Task HandleAsync( SimpleCommandWithResult.Result command, ICommandContext context )
+            public async Task HandleAsync( SimpleCommandWithResult.Result command, ICommandContext context )
             {
                 var monitor = context.Monitor;
                 monitor.Info( $"The time from the result is {command.Date} from {command.GetType().Name}" );
-                return Task.CompletedTask;
             }
         }
 

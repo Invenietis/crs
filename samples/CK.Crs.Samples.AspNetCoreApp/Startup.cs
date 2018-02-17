@@ -63,11 +63,11 @@ namespace CK.Crs.Samples.AspNetCoreApp
             registry.Register<RemotelyQueuedCommand>().IsRebus();
 
             // This command is sent to an in-memory queue executed in webapp process
-            registry.Register<QueuedCommand>().FireAndForget().HandledBy<InProcessHandler>();
+            registry.Register<QueuedCommand>().HandledBy<InProcessHandler>().FireAndForget();
 
             // This command is processed synchronously and the result is returned to the caller.
             // We don't need to specify a result tag etc for this command 
-            registry.Register<SyncCommand>().HandledBy<InProcessHandler>();
+            registry.Register<SyncCommand, SyncCommand.Result, InProcessHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

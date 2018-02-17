@@ -14,10 +14,31 @@ namespace CK.Crs
     /// </summary>
     public static class CommandRegistrationExtensions
     {
-        public static ICommandConfiguration<ICommandRegistration> Register<TCommand, THandler>( this ICommandRegistry registry )
+        /// <summary>
+        /// Registers a command with the given handler
+        /// </summary>
+        /// <typeparam name="TCommand"></typeparam>
+        /// <typeparam name="THandler"></typeparam>
+        /// <param name="registry"></param>
+        /// <returns></returns>
+        public static ICommandRegistration Register<TCommand, THandler>( this ICommandRegistry registry )
             where TCommand : class
+            where THandler : ICommandHandler<TCommand>
         {
             return registry.Register<TCommand>().HandledBy<THandler>();
+        }
+        /// <summary>
+        /// Registers a command with the given handler
+        /// </summary>
+        /// <typeparam name="TCommand"></typeparam>
+        /// <typeparam name="THandler"></typeparam>
+        /// <param name="registry"></param>
+        /// <returns></returns>
+        public static ICommandRegistration Register<TCommand, TResult, THandler>( this ICommandRegistry registry )
+            where TCommand : ICommand<TResult>
+            where THandler : ICommandHandler<TCommand, TResult>
+        {
+            return registry.Register<TCommand, TResult>().HandledBy<THandler>();
         }
 
     }
