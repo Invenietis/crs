@@ -53,7 +53,7 @@ namespace CK.Crs.AspNetCore.Tests
             {
                 var command = new WithdrawMoneyCommand { AccountId = Guid.NewGuid(), Amount = 3500M, ShouldThrow = true };
 
-                crs.Awaiting( x => x.InvokeCommand<WithdrawMoneyCommand, WithdrawMoneyCommand.Result>( command ) ).ShouldThrow<Exception>();
+                crs.Awaiting( x => x.InvokeCommand<WithdrawMoneyCommand, WithdrawMoneyCommand.Result>( command ) ).Should().Throw<Exception>();
             
             }
         }
