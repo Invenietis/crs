@@ -26,7 +26,7 @@ namespace CK.Crs.InMemory
                     {
                         try
                         {
-                            using( job.CommandContext.ChangeMonitor( monitor ) )
+                            using( job.CommandContext.ChangeMonitor() )
                             {
                                 monitor.Trace( "Invoking the command..." );
                                 var deferredResult = await invoker.Invoke( job.Command, job.CommandContext );

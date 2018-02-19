@@ -28,11 +28,11 @@ namespace CK.Crs.InMemory
 
         public void SetFeature<T>( T feature ) where T : class => _commandContext.SetFeature( feature );
 
-        internal IDisposable ChangeMonitor( IActivityMonitor monitor )
+        internal IDisposable ChangeMonitor()
         {
             var depToken = Monitor.DependentActivity().CreateToken();
-            Monitor = monitor;
-            return monitor.StartDependentActivity( depToken );
+            Monitor = new ActivityMonitor();
+            return Monitor.StartDependentActivity( depToken );
         }
     }
 }
