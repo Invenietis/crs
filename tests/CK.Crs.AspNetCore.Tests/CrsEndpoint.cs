@@ -83,7 +83,7 @@ namespace CK.Crs.AspNetCore.Tests
 
         public async Task LoadMeta( PathString crsEndpointPath )
         {
-            var result = await Client.PostJSON<MetaCommand, Response<MetaCommand.Result>>(
+            var result = await Client.PostJSON<MetaCommand, MetaCommand.Result>(
                    new Uri( crsEndpointPath.Add( "/__meta" ), UriKind.Relative ),
                    new MetaCommand { ShowAmbientValues = true, ShowCommands = true } );
 
@@ -112,7 +112,7 @@ namespace CK.Crs.AspNetCore.Tests
             if( ffTag.Overlaps( context.FindOrCreate( commandDescription.Traits ) ) )
             {
 
-                var task = Client.PostJSON<T, DeferredResponse>( uri.Uri, command );
+                var task = Client.PostJSON<T>( uri.Uri, command );
                 task.ContinueWith( new Action<Task<DeferredResponse>, object>( ( t, state ) =>
                 {
                     if( t.Exception != null ) tcs.SetException( t.Exception );
@@ -142,7 +142,7 @@ namespace CK.Crs.AspNetCore.Tests
             else
             {
 
-                Client.PostJSON<T, Response<TResult>>( uri.Uri, command ).ContinueWith( new Action<Task<Response<TResult>>, object>( ( t, state ) =>
+                Client.PostJSON<T, TResult>( uri.Uri, command ).ContinueWith( new Action<Task<Response<TResult>>, object>( ( t, state ) =>
                 {
                     if( t.Exception != null )
                     {
@@ -168,7 +168,7 @@ namespace CK.Crs.AspNetCore.Tests
             {
                 Path = Path.Add( "/" + commandDescription.CommandName )
             };
-            var result = await Client.PostJSON<T, DeferredResponse>( uri.Uri, command );
+            var result = await Client.PostJSON<T>( uri.Uri, command );
             result.CommandId.Should().NotBe( null );
             result.ResponseType.Should().Be( (char)ResponseType.Asynchronous );
             result.Payload.Should().BeOfType<string>();

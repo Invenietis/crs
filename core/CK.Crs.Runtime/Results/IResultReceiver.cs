@@ -22,5 +22,13 @@ namespace CK.Crs.Results
         /// <param name="context"></param>
         /// <returns></returns>
         Task ReceiveResult<T>( T result, ICommandContext context );
+
+        /// <summary>
+        /// Receives the error of the a command invokation.
+        /// </summary>
+        /// <param name="ex"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        Task ReceiveError( Exception ex, ICommandContext context );
     }
 }

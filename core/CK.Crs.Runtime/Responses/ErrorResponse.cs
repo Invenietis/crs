@@ -2,15 +2,14 @@ using System;
 
 namespace CK.Crs.Responses
 {
-    public class ErrorResponse : Response<object>
+    public class ErrorResponse : Response<string>
     {
-        public ErrorResponse( Exception ex, string commandId ) : base( Crs.ResponseType.InternalError, commandId )
+        public ErrorResponse( Exception ex, string commandId ) : base( Crs.ResponseType.InternalError, commandId, ex.ToString() )
         {
-            Payload = ex.ToString();
         }
-        public ErrorResponse( string msg, string commandId ) : base( Crs.ResponseType.InternalError, commandId )
+
+        public ErrorResponse( string msg, string commandId ) : base( Crs.ResponseType.InternalError, commandId, msg )
         {
-            Payload = msg;
         }
     }
 

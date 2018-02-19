@@ -12,9 +12,9 @@ namespace CK.Crs
     internal class DefaultCommandReceiver : ICommandReceiver
     {
         readonly ICommandRegistry _registry;
-        readonly ICommandHandlerInvoker _invoker;
+        readonly ITypedCommandHandlerInvoker _invoker;
 
-        public DefaultCommandReceiver( ICommandRegistry registry, ICommandHandlerInvoker invoker )
+        public DefaultCommandReceiver( ICommandRegistry registry, ITypedCommandHandlerInvoker invoker )
         {
             _registry = registry;
             _invoker = invoker;
@@ -32,11 +32,8 @@ namespace CK.Crs
             Response response = null;
             try
             {
-                var result = await _invoker.Invoke( command, context );
-                response = new Response<object>( context.CommandId )
-                {
-                    Payload = result
-                };
+                var result = await _invoker.InvokeGeneric( command, context );
+                response = ResponseUtil.CreateGenericResponse( result, context );
             }
             catch( Exception ex )
             {

@@ -18,13 +18,13 @@ namespace CK.Crs
         public Response( string commandId ) : base( Crs.ResponseType.Synchronous, commandId )
         {
         }
-
         /// <summary>
+        /// 
         /// Creates a CommandResponse
         /// </summary>
         /// <param name="responseType">The type of a response.</param>
         /// <param name="commandId"></param>
-        public Response( char responseType, string commandId ) : base( responseType, commandId )
+        public Response( string commandId, T payload ) : this( Crs.ResponseType.Synchronous, commandId, payload )
         {
         }
 
@@ -33,8 +33,19 @@ namespace CK.Crs
         /// </summary>
         /// <param name="responseType">The type of a response.</param>
         /// <param name="commandId"></param>
-        protected Response( ResponseType responseType, string commandId ) : base( responseType, commandId )
+        public Response( char responseType, string commandId, T payload ) : base( responseType, commandId )
         {
+            Payload = payload;
+        }
+
+        /// <summary>
+        /// Creates a CommandResponse
+        /// </summary>
+        /// <param name="responseType">The type of a response.</param>
+        /// <param name="commandId"></param>
+        protected Response( ResponseType responseType, string commandId, T payload ) : base( responseType, commandId )
+        {
+            Payload = payload;
         }
 
         /// <summary>

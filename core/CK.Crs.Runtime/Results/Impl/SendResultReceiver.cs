@@ -1,3 +1,4 @@
+using CK.Crs.Responses;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -19,14 +20,16 @@ namespace CK.Crs.Results
         /// </summary>
         public string Name => "SendResultReceiver";
 
+        public Task ReceiveError( Exception ex, ICommandContext context )
+        {
+            var response = new ErrorResponse( ex, context.CommandId );
+            return _dispatcherSelector.SelectDispatcher( context ).Send( context, response );
+        }
+
         public Task ReceiveResult<T>( T result, ICommandContext context )
         {
-            var response = new Response<T>( context.CommandId )
-            {
-                Payload = result
-            };
-            _dispatcherSelector.SelectDispatcher( context ).Send( context, response );
-            return Task.FromResult( response );
+            var response = new Response<T>( context.CommandId, result );
+            return _dispatcherSelector.SelectDispatcher( context ).Send( context, response );
         }
     }
 }

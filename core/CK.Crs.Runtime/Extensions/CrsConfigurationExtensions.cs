@@ -14,6 +14,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddSingleton<ICommandHandlerFactory, DefaultCommandHandlerFactory>();
             services.AddSingleton<ICommandHandlerInvoker, DefaultCommandInvoker>();
+            services.AddSingleton<ITypedCommandHandlerInvoker, TypedCommandInvoker>();
             services.AddSingleton<IResultDispatcherSelector, DefaultResutDispatcherSelector>();
             services.AddSingleton<IResultReceiverProvider, DefaultResultReceiverProvider>();
             services.AddSingleton<ICrsConnectionManager, DefaultConnectionManager>();

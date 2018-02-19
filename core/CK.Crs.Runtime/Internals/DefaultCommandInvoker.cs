@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace CK.Crs
 {
+
     class DefaultCommandInvoker : ICommandHandlerInvoker
     {
         readonly ICommandHandlerFactory _factory;

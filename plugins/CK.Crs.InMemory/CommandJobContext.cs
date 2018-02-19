@@ -8,10 +8,13 @@ namespace CK.Crs.InMemory
     {
         private readonly ICommandContext _commandContext;
 
+        public ActivityMonitor.DependentToken MonitorToken { get; }
+
         public CommandJobContext( ICommandContext commandContext )
         {
             _commandContext = commandContext;
-            Monitor = commandContext.Monitor;
+            MonitorToken = commandContext.Monitor.DependentActivity().CreateToken();
+            Monitor = new ActivityMonitor();
         }
 
         public string CommandId => _commandContext.CommandId;
@@ -30,9 +33,7 @@ namespace CK.Crs.InMemory
 
         internal IDisposable ChangeMonitor()
         {
-            var depToken = Monitor.DependentActivity().CreateToken();
-            Monitor = new ActivityMonitor();
-            return Monitor.StartDependentActivity( depToken );
+            return Monitor.StartDependentActivity( MonitorToken );
         }
     }
 }

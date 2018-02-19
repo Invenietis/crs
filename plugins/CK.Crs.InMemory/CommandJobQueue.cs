@@ -11,12 +11,12 @@ namespace CK.Crs.InMemory
     class CommandJobQueue : IDisposable
     {
         readonly BlockingCollection<CommandJob> _queue;
-        public CommandJobQueue( ICommandHandlerInvoker invoker, IResultReceiverProvider resultStrategy )
+        public CommandJobQueue( ITypedCommandHandlerInvoker invoker, IResultReceiverProvider resultStrategy )
         {
             _queue = new BlockingCollection<CommandJob>();
             Task.Run( async () =>
             {
-                var  monitor = new ActivityMonitor();
+                var monitor = new ActivityMonitor();
                 monitor.Trace( "CommandJobQueue running..." );
                 while( !_queue.IsCompleted )
                 {
@@ -29,15 +29,32 @@ namespace CK.Crs.InMemory
                             using( job.CommandContext.ChangeMonitor() )
                             {
                                 monitor.Trace( "Invoking the command..." );
-                                var deferredResult = await invoker.Invoke( job.Command, job.CommandContext );
 
                                 var resultReceiver = resultStrategy.GetResultReceiver( job.CommandContext );
                                 if( resultReceiver == null ) monitor.Warn( "No result receiver available for this command. Unable to communicate the result..." );
-                                else
+
+                                try
                                 {
-                                    monitor.Trace( "Sending the result." );
-                                    await resultReceiver.ReceiveResult( deferredResult, job.CommandContext );
+                                    object result = await invoker.InvokeGeneric( job.Command, job.CommandContext ).ConfigureAwait( false );
+                                    //var result = await invoker.Invoke( job.Command, job.CommandContext );
+                                    if( resultReceiver != null )
+                                    {
+                                        monitor.Trace( "Sending the result." );
+                                        await resultReceiver.InvokeGenericResult( result, job.CommandContext ).ConfigureAwait( false );
+                                        //await resultReceiver.ReceiveResult( result, job.CommandContext );
+                                    }
                                 }
+                                catch( Exception ex )
+                                {
+                                    monitor.Trace( "Error during command invokation." );
+                                    if( resultReceiver != null )
+                                    {
+                                        monitor.Trace( "Sending the result." );
+                                        await resultReceiver.ReceiveError( ex, job.CommandContext );
+                                    }
+                                }
+
+
                             }
                         }
                         catch( Exception ex )
@@ -48,7 +65,6 @@ namespace CK.Crs.InMemory
                 }
             } );
         }
-
         public void Dispose()
         {
             _queue.CompleteAdding();
