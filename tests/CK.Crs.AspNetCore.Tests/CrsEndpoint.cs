@@ -99,7 +99,7 @@ namespace CK.Crs.AspNetCore.Tests
         {
             var context = new CKTraitContext( "Crs" );
             var tcs = new TaskCompletionSource<TResult>();
-            var commandDescription = Meta.Commands.Where( x => x.Key == new CommandName( typeof( T ) ) ).Select( t => t.Value ).SingleOrDefault();
+            var commandDescription = Meta.Commands.Where( x => x.Value.CommandType == typeof( T ).FullName ).Select( t => t.Value ).SingleOrDefault();
 
             var url = Path.Add( "/" + commandDescription.CommandName );
             var uri = new UriBuilder()

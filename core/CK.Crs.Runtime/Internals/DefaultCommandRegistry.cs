@@ -6,24 +6,18 @@ namespace CK.Crs
 {
     class DefaultCommandRegistry : ICommandRegistry
     {
-        Dictionary<CommandName, ICommandModel> Map { get; } = new Dictionary<CommandName, ICommandModel>();
+        List<ICommandModel> _commands = new List<ICommandModel>();
 
         public DefaultCommandRegistry( CKTraitContext traitContext )
         {
             TraitContext = traitContext;
         }
 
-        public IEnumerable<ICommandModel> Registration
-        {
-            get { return Map.Values; }
-        }
+        public IEnumerable<ICommandModel> Registration => _commands;
+
+        public void Register( ICommandModel descriptor ) => _commands.Add( descriptor );
 
         public CKTraitContext TraitContext { get; }
-
-        public void Register( ICommandModel descriptor )
-        {
-            Map.Add( descriptor.Name, descriptor );
-        }
 
         /// <summary>
         /// Registers a command and its handler.
@@ -37,7 +31,6 @@ namespace CK.Crs
             var model = new CommandModel( typeof( TCommand ), TraitContext );
             return AddRegistration( model );
         }
-
 
         public ICommandRegistration Register<TCommand, TResult>() where TCommand : ICommand<TResult>
         {
@@ -58,7 +51,7 @@ namespace CK.Crs
 
         public ICommandModel GetCommandByName( CommandName name )
         {
-            return Map.GetValueWithDefault( name, null );
+            return _commands.Find( n => n.Name == name );
         }
     }
 }

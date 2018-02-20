@@ -51,7 +51,7 @@ namespace CK.Crs.AspNetCore.Tests
 
         private void Commands( ICommandRegistry registry ) =>
             registry
-                .Register<WithdrawMoneyCommand>().HandledBy<WithDrawyMoneyHandler>()
+                .Register<WithdrawMoneyCommand>().HandledBy<WithDrawyMoneyHandler>().CommandName( "withdraw" )
                 .Register<TransferAmountCommand>().FireAndForget().HandledBy<TransferAlwaysSuccessHandler>();
 
         class AlwaysTrusted : IAmbientValueProvider
