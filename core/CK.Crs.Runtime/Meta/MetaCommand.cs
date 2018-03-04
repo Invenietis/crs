@@ -56,18 +56,19 @@ namespace CK.Crs.Meta
                 }
                 return new MetaCommandResponse( result );
             }
-            public static async Task<MetaCommandResponse> CreateAsync( MetaCommand command, IEndpointModel endpointModel, IAmbientValues ambientValues, IAmbientValuesRegistration registration )
+            public static async Task<MetaCommandResponse> CreateAsync( MetaCommand command, IEndpointModel endpointModel, IServiceProvider services )
             {
                 var result = new Result
                 {
                     Version = 1,
                     CallerIdPropertyName = endpointModel.CallerIdName
                 };
-
+                var registration = services.GetService<IAmbientValuesRegistration>();
                 if( command.ShowAmbientValues )
                 {
                     if( registration != null )
                     {
+                        var ambientValues = services.GetService<IAmbientValues>();
                         result.AmbientValues = new Dictionary<string, object>();
                         foreach( var a in registration.AmbientValues )
                         {

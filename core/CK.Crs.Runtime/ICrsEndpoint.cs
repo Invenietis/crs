@@ -1,3 +1,5 @@
+using CK.Core;
+
 namespace CK.Crs
 {
     /// <summary>
@@ -8,8 +10,9 @@ namespace CK.Crs
         /// <summary>
         /// Creates a <see cref="ICrsEndpointPipeline"/>.
         /// </summary>
+        /// <param name="monitor"></param>
         /// <param name="endpointModel"></param>
-        /// <returns></returns>
-        ICrsEndpointPipeline CreatePipeline( IEndpointModel endpointModel );
+        /// <returns><see cref=ICrsEndpointPipeline"/></returns>
+        ICrsEndpointPipeline CreatePipeline( IActivityMonitor monitor, IEndpointModel endpointModel );
     }
 }

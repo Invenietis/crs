@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CK.Crs.AspNetCore
 {
-    sealed class CrsMiddleware 
+    sealed class CrsMiddleware
     {
         private readonly RequestDelegate _next;
         public CrsMiddleware( RequestDelegate next, IEndpointModel endpointModel )
@@ -20,15 +20,15 @@ namespace CK.Crs.AspNetCore
 
         public async Task Invoke( HttpContext context )
         {
-            ICrsEndpoint endpoint = new HttpCrsEndpoint( context );
-            using( ICrsEndpointPipeline pipeline = endpoint.CreatePipeline( EndpointModel ) )
+            using( var endpoint = new HttpCrsEndpoint( context ) )
             {
+                var pipeline = endpoint.CreatePipeline( new ActivityMonitor(), EndpointModel );
                 if( pipeline.IsValid )
                 {
-                    var response = await pipeline.ProcessCommand();
+                    var response = await pipeline.ProcessCommand().ConfigureAwait( false );
                     if( response != null )
                     {
-                        await WriteResponse( context, response );
+                        await WriteResponse( context, response ).ConfigureAwait( false );
                         return;
                     }
                     pipeline.Monitor.Warn( "No response received from the command receiver..." );
@@ -36,17 +36,18 @@ namespace CK.Crs.AspNetCore
                 else pipeline.Monitor.Warn( "Unable to receive the command" );
             }
 
-            await _next( context );
+            await _next( context ).ConfigureAwait( false );
         }
 
-        private async Task WriteResponse( HttpContext context, Response response )
+        private Task WriteResponse( HttpContext context, Response response )
         {
             var result = EndpointModel.ResponseFormatter.Format( response );
             if( result != null )
             {
                 context.Response.Headers["ContentType"] = EndpointModel.ResponseFormatter.ContentType;
-                await context.Response.WriteAsync( result );
+                return context.Response.WriteAsync( result );
             }
+            return Task.CompletedTask;
         }
     }
 }

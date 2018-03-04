@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 namespace CK.Crs
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public interface ICrsModel
     {
         /// <summary>

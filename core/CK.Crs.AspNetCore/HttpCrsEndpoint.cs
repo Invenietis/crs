@@ -10,8 +10,10 @@ using System.Linq;
 namespace CK.Crs.AspNetCore
 {
 
-    class HttpCrsEndpoint : ICrsEndpoint
+    class HttpCrsEndpoint : ICrsEndpoint, IDisposable
     {
+        ICommandContext _context;
+
         public HttpContext HttpContext { get; }
 
         public HttpCrsEndpoint( HttpContext context )
@@ -19,24 +21,28 @@ namespace CK.Crs.AspNetCore
             HttpContext = context;
         }
 
-        public ICrsEndpointPipeline CreatePipeline( IEndpointModel endpointModel )
+        public void Dispose()
         {
-            IActivityMonitor monitor = new ActivityMonitor();
-            ICommandContext context = null;
+            _context.SetFeature<IHttpContextCommandFeature>( null );
+            _context.SetFeature<IRequestServicesCommandFeature>( null );
+        }
+
+        public ICrsEndpointPipeline CreatePipeline( IActivityMonitor monitor, IEndpointModel endpointModel )
+        {
             if( HttpContext.Request.Path == new PathString( "/" ) || HttpContext.Request.Path == new PathString( "/__meta" ) )
             {
-                context = new MetaCommandContext( monitor, endpointModel, HttpContext.RequestAborted );
+                _context = new MetaCommandContext( monitor, endpointModel, HttpContext.RequestAborted );
             }
-            else context = CreateCommandContext( monitor, endpointModel );
+            else _context = CreateCommandContext( monitor, endpointModel );
 
-            if( context != null )
+            if( _context != null )
             {
                 var httpContextFeature = new HttpContextCommandFeature( HttpContext );
-                context.SetFeature<IHttpContextCommandFeature>( httpContextFeature );
-                context.SetFeature<IRequestServicesCommandFeature>( httpContextFeature );
+                _context.SetFeature<IHttpContextCommandFeature>( httpContextFeature );
+                _context.SetFeature<IRequestServicesCommandFeature>( httpContextFeature );
             }
 
-            return new HttpCrsEndpointPipeline( monitor, endpointModel, context, HttpContext );
+            return new CrsPipeline( monitor, endpointModel, HttpContext.RequestServices, _context );
         }
 
         HttpCommandContext CreateCommandContext( IActivityMonitor monitor, IEndpointModel endpointModel )

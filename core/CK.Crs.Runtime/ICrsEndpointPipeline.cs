@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace CK.Crs
 {
-    public interface ICrsEndpointPipeline : IDisposable
+    public interface ICrsEndpointPipeline
     {
         IActivityMonitor Monitor { get; }
 
