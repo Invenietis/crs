@@ -8,9 +8,9 @@ namespace CK.Crs.SignalR
     {
         // TODO: When typedHub will be available
         // private readonly IHubContext<CrsHub, ICrsHub> _hubContext;
-        private readonly IHubContext<CrsHub> _hubContext;
+        private readonly IHubContext<CrsHub, ICrsHub> _hubContext;
 
-        public SignalRDispatcher( IHubContext<CrsHub> hubContext )
+        public SignalRDispatcher( IHubContext<CrsHub, ICrsHub> hubContext )
         {
             _hubContext = hubContext;
         }
@@ -27,8 +27,8 @@ namespace CK.Crs.SignalR
             return InvokeAsync( _hubContext.Clients.Client( context.CallerId.GetConnectionId() ), response );
         }
 
-        private Task InvokeAsync<T>( IClientProxy clientProxy, Response<T> response )
-            => clientProxy.InvokeAsync( nameof( ICrsHub.ReceiveResult ), response.CommandId, response.ResponseType, response.Payload );
+        private Task InvokeAsync<T>( ICrsHub clientProxy, Response<T> response )
+            => clientProxy.ReceiveResult( response.CommandId, response.ResponseType, response.Payload );
 
         public void Dispose() { }
     }

@@ -4,7 +4,7 @@ namespace CK.Crs.SignalR
 {
     interface ICrsHub
     {
-        Task ReceiveResult( string message );
+        Task ReceiveResult( string commandId, char responseType, object payload );
 
         Task ReceiveCallerId( string callerId );
     }
