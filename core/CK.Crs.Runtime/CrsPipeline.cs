@@ -32,7 +32,7 @@ namespace CK.Crs
             if( !IsValid ) throw new InvalidOperationException( "Invalid pipeline state!" );
 
             object command = await BindCommand().ConfigureAwait( false );
-            if( command == null ) throw new InvalidOperationException( "Unable to bind the input command" );
+            if( command == null ) return new Responses.InvalidResponse( Context.CommandId, "Command cannot be bind. See logs for details." );
 
             Response response = await GetMeta( command ).ConfigureAwait( false );
             if( response != null ) return response;
@@ -50,8 +50,28 @@ namespace CK.Crs
 
         public Task<object> BindCommand()
         {
-            var binder = Services.GetRequiredService( Context.Model.Binder ?? Model.Binder ) as ICommandBinder;
-            return binder.Bind( Context );
+            using( Context.Monitor.OpenInfo( $"Binding Command..." ) )
+            {
+                Type binderType;
+                if( Context.Model.Binder != null )
+                {
+                    Context.Monitor.Trace( "A custom CommandBinder is defined for this command..." );
+                    binderType = Context.Model.Binder;
+                }
+                else
+                {
+                    binderType = Model.Binder;
+                }
+                if( binderType == null ) throw new InvalidOperationException( "No command binder found." );
+
+                var binder = Services.GetRequiredService( binderType ) as ICommandBinder;
+                if( binder == null )
+                {
+                    Context.Monitor.Error( $"Unabled to create a command binder of type {binderType}" );
+                    return null;
+                }
+                return binder.Bind( Context );
+            }
         }
 
         public virtual IEnumerable<ICommandFilter> GetFilters() => Services.GetRequiredService<ICommandFilterProvider>().GetFilters( Context, Model );
@@ -67,15 +87,12 @@ namespace CK.Crs
 
         public async Task<Response> ApplyFilters( object command )
         {
-            if( command == null )
-            {
-                throw new ArgumentNullException( nameof( command ) );
-            }
+            if( command == null ) throw new ArgumentNullException( nameof( command ) );
 
             CommandFilterContext context = new CommandFilterContext( command, Context, Model );
             foreach( var filter in GetFilters() )
             {
-                await filter.OnFilterAsync( context );
+                await filter.OnFilterAsync( context ).ConfigureAwait( false );
                 if( context.Response != null )
                 {
                     return context.Response;

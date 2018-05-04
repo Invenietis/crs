@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace CK.Crs.Configuration
 {
-    public class CrsConfigurationBuilder : ICrsConfiguration
+    class CrsConfigurationBuilder : ICrsConfiguration
     {
         ICommandRegistry _commands;
 

@@ -13,6 +13,13 @@ namespace CK.Crs.AspNetCore
     {
         public string ContentType => "application/json";
 
+        readonly JsonSerializerSettings _settings;
+
+        public JsonCommandBinder( JsonSerializerSettings settings )
+        {
+            _settings = settings;
+        }
+
         public async virtual Task<object> Bind( ICommandContext commandContext )
         {
             if( commandContext == null )
@@ -26,48 +33,38 @@ namespace CK.Crs.AspNetCore
             var httpContext = httpContextFeature.HttpContext;
             if( httpContext.Request.Method != HttpMethod.Post.Method )
             {
-                monitor.Warn( $"Receives a non POST request. Binding does not applies." );
+                monitor.Warn( $"CRS Command binding only applies on POST requests... Request will not be processed." );
                 return null;
             }
 
-            using( monitor.OpenInfo( $"Binding command with {typeof( JsonCommandBinder ).Name}" ) )
+            var request = httpContext.Request;
+            if( !request.ContentType.Contains( ContentType ) )
             {
-
-                var request = httpContext.Request;
-                if( !request.ContentType.Contains( ContentType ) )
+                monitor.Warn( $"ContentType application/json expected but received {request.ContentType}" );
+                return null;
+            }
+            if( request.ContentLength == 0 )
+            {
+                monitor.Warn( $"Content is empty or ContentLength not specified." );
+                return null;
+            }
+            if( request.HasFormContentType )
+            {
+                monitor.Warn( $"Form content is not supported by this {typeof( JsonCommandBinder ).Name}" );
+                return null;
+            }
+            try
+            {
+                monitor.Trace( "Reading the body and tries to bind the command" );
+                using( StreamReader sr = new StreamReader( httpContext.Request.Body ) )
                 {
-                    monitor.Warn( $"ContentType application/json expected but received {request.ContentType}" );
-                    return null;
+                    return JsonConvert.DeserializeObject( await sr.ReadToEndAsync(), commandContext.Model.CommandType, _settings );
                 }
-                if( request.ContentLength == 0 )
-                {
-                    monitor.Warn( $"Content is empty or ContentLength not specified." );
-                    return null;
-                }
-                if( request.HasFormContentType )
-                {
-                    monitor.Warn( $"Form content is not supported by this {typeof( JsonCommandBinder ).Name}" );
-                    return null;
-                }
-                try
-                {
-                    monitor.Trace( "Reading the body and tries to bind the command" );
-                    using( StreamReader sr = new StreamReader( httpContext.Request.Body ) )
-                    {
-                        var settings = ActivatorUtilities.GetServiceOrCreateInstance<JsonSerializerSettings>( httpContext.RequestServices );
-
-                        return JsonConvert.DeserializeObject(
-                            await sr.ReadToEndAsync(),
-                            commandContext.Model.CommandType,
-                            settings );
-                    }
-                }
-                catch( Exception ex )
-                {
-                    monitor.Error( ex );
-                    return null;
-                }
-
+            }
+            catch( Exception ex )
+            {
+                monitor.Error( ex );
+                return null;
             }
         }
     }
