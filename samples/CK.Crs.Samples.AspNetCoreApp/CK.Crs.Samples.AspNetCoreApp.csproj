@@ -10,11 +10,11 @@
     <Folder Include="wwwroot\scripts\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.7" />
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.8" />
     <PackageReference Include="Rebus.SqlServer" Version="4.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\core\CK.Crs.AspNetCore\CK.Crs.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\plugins\CK.Crs.AspNetCore\CK.Crs.AspNetCore.csproj" />
     <ProjectReference Include="..\..\plugins\CK.Crs.InMemory\CK.Crs.InMemory.csproj" />
     <ProjectReference Include="..\..\plugins\CK.Crs.Rebus\CK.Crs.Rebus.csproj" />
     <ProjectReference Include="..\..\plugins\CK.Crs.SignalR\CK.Crs.SignalR.csproj" />

@@ -20,6 +20,12 @@ namespace Microsoft.Extensions.DependencyInjection
         public static ICrsCoreBuilder AddCrs( this IServiceCollection services, Action<ICommandRegistry> commandsConfigurationn )
         {
             var builder = services.AddCrsCore( commandsConfigurationn );
+            return builder.AddAspNetCoreHosting();
+        }
+
+
+        public static ICrsCoreBuilder AddAspNetCoreHosting( this ICrsCoreBuilder builder )
+        {
             builder.Services.AddSingleton<ICommandFilterProvider, FilterProvider>();
             builder.Services.AddSingleton<ICommandFilter, AmbientValuesValidationFilter>();
             builder.Services.AddSingleton<ICommandFilter, ModelValidationFilter>();

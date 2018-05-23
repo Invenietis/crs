@@ -7,12 +7,12 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.1.0-preview2-final" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.0.0" />
     <PackageReference Include="NewtonSoft.Json" Version="11.0.2" />
     
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CK.AmbientValues\CK.AmbientValues.csproj" />
-    <ProjectReference Include="..\CK.Crs.Runtime\CK.Crs.Runtime.csproj" />
+    <ProjectReference Include="..\..\core\CK.Crs.Runtime\CK.Crs.Runtime.csproj" />
   </ItemGroup>
 </Project>

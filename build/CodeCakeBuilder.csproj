@@ -10,8 +10,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Code.Cake" Version="0.25.0" />
-    <PackageReference Include="SimpleGitVersion.Cake" Version="0.30.0" />
+    <PackageReference Include="Code.Cake" Version="0.26.0" />
+    <PackageReference Include="SimpleGitVersion.Cake" Version="0.33.0" />
         
 
   </ItemGroup>

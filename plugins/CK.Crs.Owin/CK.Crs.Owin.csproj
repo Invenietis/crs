@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net461</TargetFramework>
+    </PropertyGroup>
+    <ItemGroup>
+      <PackageReference Include="CK.Crs.Runtime" Version="2.0.0-b11" />
+      <PackageReference Include="NewtonSoft.Json" Version="11.0.2" />
+      <PackageReference Include="Microsoft.Owin.Host.SystemWeb" Version="4.0.0" />
+      
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Configuration\" />
+      <Folder Include="Properties\" />
+    </ItemGroup>
+    <ItemGroup>
+      <Reference Include="System.Web" />
+    </ItemGroup>
+</Project>

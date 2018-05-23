@@ -27,9 +27,10 @@ namespace CK.Crs.AspNetCore.Tests
         {
             services.AddAmbientValues( MapFromBaseCommandType );
             services
-                .AddCrs( Commands ) //.Endpoints( Endpoints ) )
+                .AddCrsCore( Commands ) //.Endpoints( Endpoints ) )
                 .AddInMemoryReceiver()
-                .AddSignalR();
+                .AddSignalR()
+                .AddAspNetCoreHosting();
         }
 
         public void Configure( IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory )
