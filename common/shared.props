@@ -1,53 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-
-  <!-- SharedDir is the /Common directory. -->
+<Project>
   <PropertyGroup>
-    <SharedDir>$(MSBuildThisFileDirectory)</SharedDir>
-    <IsInTestsFolder Condition="$(MSBuildProjectDirectoryNoRoot.Contains('\Tests\'))">true</IsInTestsFolder>
-  </PropertyGroup>
-
-  <!-- Xml documentation is generated in Release or during Cake builds (except for tests projects). -->
-  <PropertyGroup Condition=" '$(IsInTestsFolder)' != 'true' And '$(IsInIntegrationTestsFolder)' != 'true' And ('$(CakeBuild)' == 'true' Or '$(Configuration)' == 'Release') ">
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <!-- Centralized dependencies versions. -->
-  </PropertyGroup>
-
-  <!-- 
-    When building from the CI (ie. from Cake, hence directly with the msbuild tool, SolutionDir is not defined),
-    we unify the behavior here as well as setting the BaseIntermediateOutputPath (the /obj folder)
-    below CodeCakeBuilder/Releases/ so that compilation from external sources does not interfere with visual studio work.
-  -->
-  <PropertyGroup Condition=" '$(CakeBuild)' == 'true' ">
-    <SolutionDir>$([System.IO.Path]::GetDirectoryName($([System.IO.Path]::GetDirectoryName($(MSBuildThisFileDirectory)))))\</SolutionDir>
-  </PropertyGroup>
-  <!-- When not building from the CI, assemblies do not have any AssemblyInfo attributes. -->
-  <PropertyGroup Condition=" '$(CakeBuild)' != 'true' ">
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-  </PropertyGroup>
-
-
-  <PropertyGroup>
-    <!-- Standard properties. -->
-    <AssemblyOriginatorKeyFile>$(SharedDir)SharedKey.snk</AssemblyOriginatorKeyFile>
-    <SignAssembly>true</SignAssembly>
-    <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
-    <RepositoryType>git</RepositoryType>
-
-    <!-- Invenietis standard properties. -->
-    <Copyright>Copyright Invenietis 2017-$([System.DateTime]::UtcNow.ToString("yyyy"))</Copyright>
-    <Company>Invenietis</Company>
+    <Product>CK-CRS Library</Product>
     <Authors>Invenietis</Authors>
-
-    <!-- Properties that are solution depdendents. -->
-    <ProductName>CK-Framework</ProductName>
-    <PackageReleaseNotes>https://github.com/Invenietis/crs/releases</PackageReleaseNotes>
-    <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
+    <Company>Invenietis</Company>
+    <Copyright>© Invenietis 2018</Copyright>
+    <RepositoryUrl>https://invenietis.visualstudio.com/CK/_git/crs</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/Invenietis/crs</RepositoryUrl>
-
+    <!--<AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)Signature.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+    <PublicSign Condition="'$(OS)' != 'Windows_NT'">true</PublicSign>-->
   </PropertyGroup>
 </Project>

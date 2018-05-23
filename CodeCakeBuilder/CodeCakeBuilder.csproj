@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+ 
+  <PropertyGroup>
+    <TargetFramework>net461</TargetFramework>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+ 
+  <ItemGroup>
+    <Compile Remove="Releases\**" />
+    <EmbeddedResource Remove="Releases\**" />
+    <None Remove="Releases\**" />
+  </ItemGroup>
+ 
+  <ItemGroup>
+    <None Remove="TestResult.xml" />
+  </ItemGroup>
+ 
+  <ItemGroup>
+    <PackageReference Include="Cake.Common" Version="0.26.1" />
+    <PackageReference Include="Cake.Core" Version="0.26.1" />
+    <PackageReference Include="CK.Text" Version="6.2.1" />
+    <PackageReference Include="Code.Cake" Version="0.21.1" />
+    <PackageReference Include="SimpleGitVersion.Cake" Version="0.30.0" />
+    <PackageReference Include="SimpleGitVersion.Core" Version="0.30.0" />
+  </ItemGroup>
+ 
+</Project>
