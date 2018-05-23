@@ -5,5 +5,6 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CK.ActivityMonitor.SimpleSender" Version="10.0.0" />
+    <PackageReference Include="CK.AmbientValues" Version="2.0.0" />
   </ItemGroup>
 </Project>
