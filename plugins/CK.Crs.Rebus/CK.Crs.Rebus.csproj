@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="../../common/shared.props" />
 
   <PropertyGroup>
@@ -9,7 +9,6 @@
     <PackageReference Include="CK.Monitoring" Version="9.0.0" />
     <PackageReference Include="MessageTemplates" Version="1.0.0-rc-00275" />
     <PackageReference Include="Rebus" Version="4.2.1" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.0-preview2-final" />
   </ItemGroup>
 
   <ItemGroup>
