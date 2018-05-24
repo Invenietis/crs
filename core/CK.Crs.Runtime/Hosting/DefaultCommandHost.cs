@@ -24,6 +24,7 @@ namespace CK.Crs.Hosting
                 catch( Exception ex )
                 {
                     monitor.Error( ex );
+                    throw;
                 }
                 finally
                 {
