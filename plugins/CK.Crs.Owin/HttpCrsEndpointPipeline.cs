@@ -1,4 +1,3 @@
-using CK.Crs;
 using CK.Crs.Meta;
 using CK.Crs.Responses;
 using Microsoft.Extensions.DependencyInjection;
@@ -6,7 +5,6 @@ using Microsoft.Owin;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace CK.Crs.Owin
 {
@@ -87,11 +85,7 @@ namespace CK.Crs.Owin
         {
             if( command is MetaCommand metaCommand )
             {
-                var ambientValues = ApplicationServices.GetService<CK.Core.IAmbientValues>();
-                var ambientValueRegistration = ApplicationServices.GetService<CK.Core.IAmbientValuesRegistration>();
-
-                return await MetaCommand.Result.CreateAsync( metaCommand, Model, ambientValues, ambientValueRegistration );
-
+                return await MetaCommand.Result.CreateAsync( metaCommand, Model, ApplicationServices );
             }
             return null;
         }

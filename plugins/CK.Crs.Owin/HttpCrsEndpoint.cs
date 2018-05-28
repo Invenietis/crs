@@ -9,10 +9,11 @@ using System.Threading;
 namespace CK.Crs.Owin
 {
 
-    class HttpCrsEndpoint : ICrsEndpoint
+    class HttpCrsEndpoint : ICrsEndpoint, IDisposable
     {
         public IOwinContext OwinContext { get; }
         public IServiceProvider ApplicationServices { get; }
+        ICommandContext _context;
 
         public HttpCrsEndpoint( IOwinContext context, IServiceProvider applicationServices )
         {
@@ -20,24 +21,24 @@ namespace CK.Crs.Owin
             ApplicationServices = applicationServices;
         }
 
-        public ICrsEndpointPipeline CreatePipeline( IEndpointModel endpointModel )
+        public ICrsEndpointPipeline CreatePipeline( IActivityMonitor monitor, IEndpointModel endpointModel )
         {
-            IActivityMonitor monitor = new ActivityMonitor();
-            ICommandContext context = null;
+            if( _context != null ) throw new InvalidOperationException( "There is already a command context. Please creates a new endpoint." );
+
             if( OwinContext.Request.Path == new PathString( "/" ) || OwinContext.Request.Path == new PathString( "/__meta" ) )
             {
-                context = new MetaCommandContext( monitor, endpointModel, CancellationToken.None );
+                _context = new MetaCommandContext( monitor, endpointModel, CancellationToken.None );
             }
-            else context = CreateCommandContext( monitor, endpointModel );
+            else _context = CreateCommandContext( monitor, endpointModel );
 
-            if( context != null )
+            if( _context != null )
             {
                 var owinContextFeature = new OwinContextCommandFeature( OwinContext, ApplicationServices );
-                context.SetFeature<IOwinContextCommandFeature>( owinContextFeature );
-                context.SetFeature<IRequestServicesCommandFeature>( owinContextFeature );
+                _context.SetFeature<IOwinContextCommandFeature>( owinContextFeature );
+                _context.SetFeature<IRequestServicesCommandFeature>( owinContextFeature );
             }
 
-            return new OwinCrsEndpointPipeline( monitor, endpointModel, context, OwinContext, ApplicationServices );
+            return new OwinCrsEndpointPipeline( monitor, endpointModel, _context, OwinContext, ApplicationServices );
         }
 
         OwinCommandContext CreateCommandContext( IActivityMonitor monitor, IEndpointModel endpointModel )
@@ -108,6 +109,12 @@ namespace CK.Crs.Owin
         static CommandName GetCommandName( IOwinContext context )
         {
             return new CommandName( context.Request.Path.Value.Trim( '/' ) );
+        }
+
+        public void Dispose()
+        {
+            _context.SetFeature<IOwinContextCommandFeature>( null );
+            _context.SetFeature<IRequestServicesCommandFeature>( null );
         }
     }
 }

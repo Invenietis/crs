@@ -29,6 +29,8 @@ namespace CK.Crs.AspNetCore
 
         public ICrsEndpointPipeline CreatePipeline( IActivityMonitor monitor, IEndpointModel endpointModel )
         {
+            if( _context != null ) throw new InvalidOperationException( "There is already a command context. Please creates a new endpoint." );
+
             if( HttpContext.Request.Path == new PathString( "/" ) || HttpContext.Request.Path == new PathString( "/__meta" ) )
             {
                 _context = new MetaCommandContext( monitor, endpointModel, HttpContext.RequestAborted );

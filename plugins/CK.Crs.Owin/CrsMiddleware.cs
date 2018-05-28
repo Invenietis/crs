@@ -28,9 +28,10 @@ namespace CK.Crs.Owin
         {
             using( var scope = _applicationServices.CreateScope() )
             {
-                ICrsEndpoint endpoint = new HttpCrsEndpoint( context, scope.ServiceProvider );
-                using( ICrsEndpointPipeline pipeline = endpoint.CreatePipeline( EndpointModel ) )
+                using( var endpoint = new HttpCrsEndpoint( context, scope.ServiceProvider ) )
                 {
+                    var pipeline = endpoint.CreatePipeline( new ActivityMonitor(), EndpointModel );
+
                     Response response = null;
                     if( pipeline.IsValid )
                     {
@@ -48,7 +49,6 @@ namespace CK.Crs.Owin
                         await Next.Invoke( context );
                 }
             }
-
         }
 
         private async Task WriteResponse( IOwinContext context, Response response )
