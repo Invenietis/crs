@@ -4,6 +4,14 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <LangVersion>7.1</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <LangVersion>7.1</LangVersion>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CK.Monitoring" Version="9.0.2-C0017-develop" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.8.0-preview-20180510-03" />

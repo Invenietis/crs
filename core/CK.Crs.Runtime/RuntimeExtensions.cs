@@ -4,18 +4,18 @@ using System.Text;
 
 namespace CK.Crs
 {
-    public static class InMemoryExtensions
+    public static class RuntimeExtensions
     {
-        public static readonly string InMemoryTag = "InMemory";
+        public static readonly string FireAndForgetTag = "FireAndForget";
 
         public static bool HasFireAndForgetTag( this ICommandModel commandModel )
         {
-            return commandModel.HasTags( InMemoryTag, CrsTraits.FireForget );
+            return commandModel.HasTags( FireAndForgetTag, CrsTraits.FireForget );
         }
 
         public static ICommandRegistration FireAndForget( this ICommandRegistration commandRegistration )
         {
-            return commandRegistration.SetTag( InMemoryTag, CrsTraits.FireForget );
+            return commandRegistration.SetTag( FireAndForgetTag, CrsTraits.FireForget );
         }
 
     }
