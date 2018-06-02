@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
  
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
@@ -16,12 +16,10 @@
   </ItemGroup>
  
   <ItemGroup>
-    <PackageReference Include="Cake.Common" Version="0.27.2" />
-    <PackageReference Include="Cake.Core" Version="0.27.2" />
-    <PackageReference Include="CK.Text" Version="6.2.1" />
-    <PackageReference Include="Code.Cake" Version="0.25.0" />
-    <PackageReference Include="SimpleGitVersion.Cake" Version="0.30.0" />
-    <PackageReference Include="SimpleGitVersion.Core" Version="0.30.0" />
+    <PackageReference Include="CK.Text" Version="7.0.1-C0011-develop" />
+    <PackageReference Include="Code.Cake" Version="0.26.1-C0011-develop" />
+    <PackageReference Include="SimpleGitVersion.Cake" Version="0.33.1-C0021-develop" />
+    <PackageReference Include="SimpleGitVersion.Core" Version="0.33.1-C0021-develop" />
   </ItemGroup>
  
 </Project>

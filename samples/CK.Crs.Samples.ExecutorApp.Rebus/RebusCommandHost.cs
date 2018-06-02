@@ -28,7 +28,7 @@ namespace CK.Crs.Samples.ExecutorApp.Rebus
                         .Register<RemotelyQueuedCommand>().HandledBy<RemoteHandler>()
                         .Register<RemotelyQueuedCommand.Result>().IsRebus() )
                 .AddRebus(
-                    c => c.Transport( t => t.UseSqlServer( conString, "tMessages", "commands" ) ),
+                    c => c.Transport( t => t.UseSqlServer( conString, "commands" ) ),
                     c => c( "commands_result" )( m => m.HasRebusTag() ) );
 
         }

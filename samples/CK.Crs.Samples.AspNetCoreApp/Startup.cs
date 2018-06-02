@@ -51,7 +51,7 @@ namespace CK.Crs.Samples.AspNetCoreApp
             services
                 .AddCrs( RegisterCommands )
                 .AddRebus(
-                    c => c.Transport( t => t.UseSqlServer( conString, "tMessages", "commands_result" ) ),
+                    c => c.Transport( t => t.UseSqlServer( conString, "commands_result" ) ),
                     c => c( "commands" )( m => m.HasRebusTag() ) )
                 .AddInMemoryReceiver()
                 .AddSignalR();
@@ -78,7 +78,6 @@ namespace CK.Crs.Samples.AspNetCoreApp
             app.UseCrs( "crs-admin", c => c
                 .FilterCommands( t => t.Tags.Overlaps( c.TraitContext.FindOrCreate( "Admin" ) ) )
                 .AddSecurityFilter<PolicySecurityFilter>() );
-            app.UseFileServer();
         }
     }
 
