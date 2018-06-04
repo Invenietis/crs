@@ -2,6 +2,7 @@ using CK.Crs;
 using CK.Crs.Configuration;
 using CK.Crs.Results;
 using System;
+using System.Linq;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -25,7 +26,10 @@ namespace Microsoft.Extensions.DependencyInjection
                 throw new ArgumentNullException( nameof( registry ) );
             }
 
-            CrsConfigurationBuilder builder = new CrsConfigurationBuilder( services );
+            var builderDescriptor = services.SingleOrDefault( x => x.ServiceType == typeof( ICrsCoreBuilder ) );
+            if( builderDescriptor != null ) return (ICrsCoreBuilder)builderDescriptor.ImplementationInstance;
+
+            var builder = new CrsConfigurationBuilder( services );
             registry( builder.Registry );
 
             services.AddSingleton<ICommandHandlerFactory, DefaultCommandHandlerFactory>();
@@ -34,10 +38,11 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<IResultDispatcherSelector, DefaultResutDispatcherSelector>();
             services.AddSingleton<IResultReceiverProvider, DefaultResultReceiverProvider>();
             services.AddSingleton<ICrsConnectionManager, DefaultConnectionManager>();
-
             services.AddSingleton( builder.Registry );
 
-            return new CrsCoreBuilder( builder );
+            var crsBuilder = new CrsCoreBuilder( builder );
+            services.AddSingleton<ICrsCoreBuilder>( crsBuilder );
+            return crsBuilder;
         }
     }
 }

@@ -49,12 +49,14 @@ namespace CK.Crs.Samples.AspNetCoreApp
             services.AddAmbientValues( a => a.AddProvider<ActorIdAmbientValueProvider>( nameof( MessageBase.ActorId ) ) );
 
             services
-                .AddCrs( RegisterCommands )
+                .AddCrsCore( RegisterCommands )
                 .AddRebus(
                     c => c.Transport( t => t.UseSqlServer( conString, "commands_result" ) ),
                     c => c( "commands" )( m => m.HasRebusTag() ) )
                 .AddInMemoryReceiver()
-                .AddSignalR();
+                .AddSignalR()
+                .AddAspNetCoreHosting();
+
         }
 
         private void RegisterCommands( ICommandRegistry registry )
