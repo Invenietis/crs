@@ -27,7 +27,12 @@ namespace Microsoft.Extensions.DependencyInjection
             }
 
             var builderDescriptor = services.SingleOrDefault( x => x.ServiceType == typeof( ICrsCoreBuilder ) );
-            if( builderDescriptor != null ) return (ICrsCoreBuilder)builderDescriptor.ImplementationInstance;
+            if( builderDescriptor != null )
+            {
+                var impl = (ICrsCoreBuilder)builderDescriptor.ImplementationInstance;
+                registry( impl.Registry );
+                return impl;
+            }
 
             var builder = new CrsConfigurationBuilder( services );
             registry( builder.Registry );
