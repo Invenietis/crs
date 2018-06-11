@@ -7,7 +7,7 @@ namespace CK.Crs.SignalR
     {
         public CrsSignalROptions()
         {
-            CrsHubPath = "crs";
+            CrsHubPath = "/crs";
         }
 
         /// <summary>

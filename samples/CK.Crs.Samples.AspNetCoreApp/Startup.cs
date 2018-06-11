@@ -57,6 +57,13 @@ namespace CK.Crs.Samples.AspNetCoreApp
                 .AddSignalR()
                 .AddAspNetCoreHosting();
 
+            services
+             .AddCrsCore( r =>
+             {
+                 // This command is processed synchronously and the result is returned to the caller.
+                 // We don't need to specify a result tag etc for this command 
+                 r.Register<SyncCommand, SyncCommand.Result, InProcessHandler>();
+             } );
         }
 
         private void RegisterCommands( ICommandRegistry registry )
@@ -66,18 +73,14 @@ namespace CK.Crs.Samples.AspNetCoreApp
 
             // This command is sent to an in-memory queue executed in webapp process
             registry.Register<QueuedCommand>().HandledBy<InProcessHandler>().FireAndForget();
-
-            // This command is processed synchronously and the result is returned to the caller.
-            // We don't need to specify a result tag etc for this command 
-            registry.Register<SyncCommand, SyncCommand.Result, InProcessHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure( IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory )
         {
             app.UseDeveloperExceptionPage();
-            app.UseCrs( "crs", c => c.AcceptAll().SkipAmbientValuesValidation() );
-            app.UseCrs( "crs-admin", c => c
+            app.UseCrs( "/crs", c => c.AcceptAll().SkipAmbientValuesValidation() );
+            app.UseCrs( "/crs-admin", c => c
                 .FilterCommands( t => t.Tags.Overlaps( c.TraitContext.FindOrCreate( "Admin" ) ) )
                 .AddSecurityFilter<PolicySecurityFilter>() );
         }
