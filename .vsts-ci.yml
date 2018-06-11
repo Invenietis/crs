@@ -1,0 +1,55 @@
+resources:
+- repo: self
+  clean: true
+
+queue:
+  name: Self-hosted agent pool
+
+steps:
+- task: DotNetCoreCLI@2
+  inputs:
+    command: restore
+    projects: '*.sln'
+    feedsToUse: config
+    nugetConfigPath: nuget.config
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: run
+    arguments: '--project CodeCakeBuilder -nointeraction'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: 'CodeCakeBuilder\Releases'
+    ArtifactName: 'CodeCakeBuilder Releases'
+    ArtifactType: Container
+
+- task: PublishTestResults@2
+  inputs:
+    testRunner: VSTest
+    testResultsFiles: 'CodeCakeBuilder\**\*.trx'
+
+- task: NuGetCommand@2
+  inputs:
+    command: push
+    packagesToPush: 'NuGetPackages/invenietis-release/*.nupkg'
+    publishVstsFeed: 'ac4e79ad-ed49-499f-99ca-74e3e812f2e8'
+    allowPackageConflicts: true
+
+- task: NuGetCommand@2
+  inputs:
+    command: push
+    packagesToPush: 'NuGetPackages/invenietis-preview/*.nupkg'
+    publishVstsFeed: 'b070b40f-fe83-4705-8dce-ce49b1ff35e3'
+    allowPackageConflicts: true
+
+- task: NuGetCommand@2
+  inputs:
+    command: push
+    packagesToPush: 'NuGetPackages/invenietis-ci/*.nupkg'
+    publishVstsFeed: '2f9198ae-db75-4f47-8cc3-a13749eda388'
+    allowPackageConflicts: true
+
+- task: PublishSymbols@2
+  inputs:
+    SymbolServerType: TeamServices

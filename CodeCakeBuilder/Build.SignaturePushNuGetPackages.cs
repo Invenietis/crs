@@ -14,8 +14,9 @@ namespace CodeCake
     public partial class Build
     {
         const string NUGET_OUTPUT_DIR = "NuGetPackages";
-        const string RELEASE_FEED_NAME = "Signature";
-        const string CI_FEED_NAME = "SignatureCI";
+        const string RELEASE_FEED_NAME = "invenietis-release";
+        const string PREVIEW_FEED_NAME = "invenietis-preview";
+        const string CI_FEED_NAME = "invenietis-ci";
 
         void SignaturePushNuGetPackages( IEnumerable<FilePath> nugetPackages, SimpleRepositoryInfo gitInfo )
         {
@@ -26,7 +27,7 @@ namespace CodeCake
             var outputDir = Cake.Directory( NUGET_OUTPUT_DIR );
             if( Cake.DirectoryExists( outputDir ) )
             {
-                Cake.DeleteDirectory( outputDir, new DeleteDirectorySettings() { Recursive = true, Force = true } );
+                Cake.DeleteDirectory( outputDir, new DeleteDirectorySettings() {Recursive = true, Force = true} );
             }
 
             if( Cake.IsInteractiveMode() )
@@ -46,7 +47,16 @@ namespace CodeCake
 
             if( gitInfo.IsValidRelease )
             {
-                targetDir = Cake.Directory( $"{NUGET_OUTPUT_DIR}/{RELEASE_FEED_NAME}" );
+                if( gitInfo.PreReleaseName == ""
+                    || gitInfo.PreReleaseName == "prerelease"
+                    || gitInfo.PreReleaseName == "rc" )
+                {
+                    targetDir = Cake.Directory( $"{NUGET_OUTPUT_DIR}/{RELEASE_FEED_NAME}" );
+                }
+                else
+                {
+                    targetDir = Cake.Directory( $"{NUGET_OUTPUT_DIR}/{PREVIEW_FEED_NAME}" );
+                }
             }
             else
             {
@@ -72,6 +82,5 @@ namespace CodeCake
             Console.WriteLine( buildNumberInstruction );
             Console.WriteLine();
         }
-
     }
 }

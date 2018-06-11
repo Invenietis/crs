@@ -16,7 +16,7 @@ namespace CodeCake
         {
             Cake.Log.Verbosity = Verbosity.Diagnostic;
 
-            string solutionFilePath = Cake.GetFiles("*.sln").Single().FullPath;
+            string solutionFilePath = Cake.GetFiles( "*.sln" ).Single().FullPath;
 
             var releasesDir = Cake.Directory( "CodeCakeBuilder/Releases" );
             var projects = Cake.ParseSolution( solutionFilePath )
@@ -57,20 +57,20 @@ namespace CodeCake
                      StandardSolutionBuild( solutionFilePath, gitInfo, configuration );
                  } );
 
-            Task( "Unit-Testing" )
-                .IsDependentOn( "Build" )
-                .WithCriteria( () => !Cake.IsInteractiveMode()
-                                     || Cake.ReadInteractiveOption( "Run Unit Tests?", 'Y', 'N' ) == 'Y' )
-                .Does( () =>
-                 {
-                     var testProjects = projects.Where( p => p.Name.EndsWith( ".Tests" ) );
-                     SignatureUnitTests( configuration, testProjects );
-                 } );
+            //Task( "Unit-Testing" )
+            //    .IsDependentOn( "Build" )
+            //    .WithCriteria( () => !Cake.IsInteractiveMode()
+            //                         || Cake.ReadInteractiveOption( "Run Unit Tests?", 'Y', 'N' ) == 'Y' )
+            //    .Does( () =>
+            //     {
+            //         var testProjects = projects.Where( p => p.Name.EndsWith( ".Tests" ) );
+            //         SignatureUnitTests( configuration, testProjects );
+            //     } );
 
 
             Task( "Create-NuGet-Packages" )
                 .WithCriteria( () => gitInfo.IsValid )
-                .IsDependentOn( "Unit-Testing" )
+                .IsDependentOn( "Build" )
                 .Does( () =>
                  {
                      StandardCreateNuGetPackages( releasesDir, projectsToPublish, gitInfo, configuration );
