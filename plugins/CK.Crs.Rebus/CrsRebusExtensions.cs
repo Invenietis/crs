@@ -4,8 +4,6 @@ using CK.Crs;
 using CK.Crs.Rebus;
 using Rebus.Routing.TypeBased;
 using System.Linq;
-using CK.Monitoring;
-using Rebus.Bus;
 using CK.Crs.Results;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -18,14 +16,13 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             builder.AddReceiver( services =>
             {
-                var activator = new GenericHandlerActivator(
+                var activator = new CrsHandlerActivator(
                     services.GetRequiredService<ICommandHandlerInvoker>(),
                     services.GetRequiredService<IResultReceiverProvider>(),
                     builder.Registry );
 
-                var configurer = Configure.With( activator );
-                configurer = configurer.Logging( l => l.Use( new GrandOutputRebusLoggerFactory( GrandOutput.Default ) ) );
-                configurer
+                var configurer = Configure
+                    .With( activator )
                     .Routing( l =>
                     {
                         var typeBasedRouting = l.TypeBased();
@@ -49,8 +46,6 @@ namespace Microsoft.Extensions.DependencyInjection
             } );
 
             return builder;
-
-
         }
     }
 }

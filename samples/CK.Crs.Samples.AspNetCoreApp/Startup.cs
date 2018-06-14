@@ -35,13 +35,6 @@ namespace CK.Crs.Samples.AspNetCoreApp
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices( IServiceCollection services )
         {
-            ActivityMonitor.AutoConfiguration = m => m.Output.RegisterUniqueClient<ActivityMonitorConsoleClient>();
-            LogFile.RootLogPath = Path.Combine( Directory.GetCurrentDirectory(), "Monitoring" );
-            GrandOutput.EnsureActiveDefault( new GrandOutputConfiguration
-            {
-                Handlers = { new TextFileConfiguration { Path = "Logs" } }
-            } );
-
             var conString = Config.GetConnectionString( "Messaging" );
 
             services.AddSingleton<IActorIdProvider, Defaults>();

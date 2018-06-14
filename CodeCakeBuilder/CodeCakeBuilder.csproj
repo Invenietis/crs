@@ -25,9 +25,9 @@
  
   <ItemGroup>
     <PackageReference Include="CK.Text" Version="7.0.1-C0011-develop" />
-    <PackageReference Include="Code.Cake" Version="0.26.1-C0011-develop" />
-    <PackageReference Include="SimpleGitVersion.Cake" Version="0.33.1-C0021-develop" />
-    <PackageReference Include="SimpleGitVersion.Core" Version="0.33.1-C0021-develop" />
+    <PackageReference Include="Code.Cake" Version="0.27.0" />
+    <PackageReference Include="SimpleGitVersion.Cake" Version="0.35.0" />
+    <PackageReference Include="SimpleGitVersion.Core" Version="0.35.0" />
   </ItemGroup>
  
 </Project>

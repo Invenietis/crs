@@ -8,39 +8,29 @@ using Rebus.Routing.TypeBased;
 using System;
 using System.IO;
 using CK.Crs.Hosting;
+using Microsoft.Extensions.Hosting;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace CK.Crs.Samples.ExecutorApp.Rebus
 {
-    class RebusCommandHost : ICommandHost
+    class RebusCommandHost : BackgroundService
     {
-        public void Init( IActivityMonitor monitor, IServiceCollection services )
+        private readonly ICommandReceiver _commandReceiver;
+        private readonly ILogger<RebusCommandHost> _logger;
+
+        public RebusCommandHost( ICommandReceiver commandReceiver, ILogger<RebusCommandHost> logger )
         {
-            var builder = new ConfigurationBuilder()
-                        .SetBasePath( Directory.GetCurrentDirectory() )
-                        .AddJsonFile( "appsettings.json", optional: true, reloadOnChange: true );
-
-            var configuration = builder.Build();
-
-            var conString = configuration.GetConnectionString( "Messaging" );
-
-            services
-                .AddCrsCore( registry => registry
-                        .Register<RemotelyQueuedCommand>().HandledBy<RemoteHandler>()
-                        .Register<RemotelyQueuedCommand.Result>().IsRebus() )
-                .AddRebus(
-                    c => c.Transport( t => t.UseSqlServer( conString, "commands" ) ),
-                    c => c( "commands_result" )( m => m.HasRebusTag() ) );
-
+            _commandReceiver = commandReceiver;
+            _logger = logger;
         }
 
-        public void Start( IActivityMonitor monitor, IServiceProvider services )
+        protected override Task ExecuteAsync( CancellationToken stoppingToken )
         {
-            var receiver = services.GetRequiredService<ICommandReceiver>();
-            monitor.Trace( $"Rebus receiver {receiver.Name} available" );
-        }
+            _logger.LogTrace( $"Rebus receiver {_commandReceiver.Name} available" );
 
-        public void Stop( IActivityMonitor monitor, IServiceProvider services )
-        {
+            return Task.CompletedTask;
         }
     }
 }

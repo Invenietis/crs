@@ -9,6 +9,7 @@ namespace CK.Crs.Samples.AspNetCoreApp
         {
             var host = new WebHostBuilder()
                 .UseKestrel()
+                .UseMonitoring()
                 .UseContentRoot( Directory.GetCurrentDirectory() )
                 .UseStartup<Startup>()
                 .Build();

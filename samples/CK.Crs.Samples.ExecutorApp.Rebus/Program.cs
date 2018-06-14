@@ -1,30 +1,42 @@
 using CK.Core;
 using CK.Crs.Hosting;
-using CK.Monitoring;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
+using CK.Crs.Samples.Messages;
+using CK.Crs.Samples.Handlers;
+using Rebus.Config;
 
 namespace CK.Crs.Samples.ExecutorApp.Rebus
 {
     class Program
     {
 
-        static void Main( string[] args )
+        static async Task Main( string[] args )
         {
-            using( CancellationTokenSource cancellationTokenSource = new CancellationTokenSource() )
-            {
-                Console.CancelKeyPress += ( sender, e ) => cancellationTokenSource.Cancel();
+            var host = new HostBuilder()
+                .ConfigureHostConfiguration( configHost =>
+                {
+                    configHost.AddJsonFile( "appsettings.json", optional: true, reloadOnChange: true );
+                } )
+                .ConfigureServices( (ctx, services) =>
+                {
+                    var conString = ctx.Configuration.GetConnectionString( "Messaging" );
 
-                using( GrandOutput.EnsureActiveDefault( new GrandOutputConfiguration
-                {
-                    Handlers = { new CK.Monitoring.Handlers.TextFileConfiguration { Path = "logs/", MaxCountPerFile = 100 } }
-                } ) )
-                {
-                    ActivityMonitor.AutoConfiguration = ( m ) => m.Output.RegisterClient( new ActivityMonitorConsoleClient() );
-                  
-                    DefaultCommandHost.Run<RebusCommandHost>( cancellationTokenSource.Token );
-                }
-            }
+                    services
+                        .AddHostedService<RebusCommandHost>()
+                        .AddCrsCore( registry => registry
+                                .Register<RemotelyQueuedCommand>().HandledBy<RemoteHandler>()
+                                .Register<RemotelyQueuedCommand.Result>().IsRebus() )
+                        .AddRebus(
+                            c => c.Transport( t => t.UseSqlServer( conString, "commands" ) ),
+                            c => c( "commands_result" )( m => m.HasRebusTag() ) );
+                } );
+
+            await host.RunConsoleAsync();
         }
     }
 }

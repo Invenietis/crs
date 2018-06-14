@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
@@ -35,6 +35,7 @@
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.0" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="2.1.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.0" />
         <PackageReference Include="Rebus.SqlServer" Version="5.0.0-b5" />
     </ItemGroup>

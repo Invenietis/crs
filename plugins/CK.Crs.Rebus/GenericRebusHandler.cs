@@ -1,5 +1,6 @@
 using CK.Core;
 using CK.Crs.Results;
+using Rebus.Bus;
 using Rebus.Handlers;
 using Rebus.Messages;
 using Rebus.Pipeline;
@@ -17,10 +18,10 @@ namespace CK.Crs.Rebus
     {
         ICommandHandlerInvoker _invoker;
         ICommandRegistry _registry;
-        global::Rebus.Bus.IBus _bus;
+        IBus _bus;
         IResultReceiverProvider _resultStrategy;
 
-        public GenericRebusHandler( ICommandHandlerInvoker invoker, ICommandRegistry registry, IResultReceiverProvider resultStrategy, global::Rebus.Bus.IBus bus )
+        public GenericRebusHandler( ICommandHandlerInvoker invoker, ICommandRegistry registry, IResultReceiverProvider resultStrategy, IBus bus )
         {
             _invoker = invoker;
             _registry = registry;

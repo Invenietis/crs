@@ -10,13 +10,13 @@ using CK.Crs.Results;
 
 namespace CK.Crs.Rebus
 {
-    sealed class GenericHandlerActivator : IHandlerActivator, IContainerAdapter
+    sealed class CrsHandlerActivator : IHandlerActivator, IContainerAdapter
     {
         readonly ICommandRegistry _registry;
         readonly ICommandHandlerInvoker _invoker;
         readonly IResultReceiverProvider _resultStrategy;
 
-        public GenericHandlerActivator( ICommandHandlerInvoker invoker, IResultReceiverProvider resultStrategy, ICommandRegistry registry )
+        public CrsHandlerActivator( ICommandHandlerInvoker invoker, IResultReceiverProvider resultStrategy, ICommandRegistry registry )
         {
             _invoker = invoker ?? throw new ArgumentNullException( nameof( invoker ) );
             _resultStrategy = resultStrategy ?? throw new ArgumentNullException( nameof( resultStrategy ) );

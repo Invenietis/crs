@@ -14,8 +14,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CK.Monitoring" Version="9.0.2-C0017-develop" />
-    <PackageReference Include="MessageTemplates" Version="1.0.0-rc-00275" />
     <PackageReference Include="Rebus" Version="5.0.0-b12" />
   </ItemGroup>
 
