@@ -1,4 +1,4 @@
-﻿using CK.Core;
+using CK.Core;
 using System;
 using System.Threading.Tasks;
 
@@ -9,25 +9,26 @@ namespace CK.Crs
         private readonly object _command;
         private readonly IServiceProvider _serviceProvider;
 
-        public DispatcherCommandContextNoWait( Guid commandId, TCommand command, ICommandModel commandModel, IServiceProvider serviceProvider ) :
+        public DispatcherCommandContextNoWait( Guid commandId, TCommand command, ICommandModel commandModel, CallerId callerId, IServiceProvider serviceProvider ) :
             base
             (
                 commandId.ToString(),
                 new ActivityMonitor(),
                 commandModel,
-                CallerId.None
+                callerId
             )
         {
             _command = command;
             _serviceProvider = serviceProvider;
         }
 
-        internal void ReceiveAndIgnoreResult()
+        internal virtual Task<Response> Receive()
         {
+            var receiver = _serviceProvider.GetService<ICommandReceiver>();
             try
             {
-                var receiver = _serviceProvider.GetService<ICommandReceiver>();
-                Task.Run( () => receiver.ReceiveCommand( _command, this ) );
+                var response = receiver.ReceiveCommand( _command, this );
+                return receiver.ReceiveCommand( _command, this );
             }
             catch( Exception ex )
             {

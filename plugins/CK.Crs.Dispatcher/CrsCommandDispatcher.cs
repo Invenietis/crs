@@ -13,16 +13,16 @@ namespace CK.Crs
             _service = service;
         }
 
-        public void Send<TCommand>( Guid commandId, TCommand command )
+        public Task<Response> Send<TCommand>( Guid commandId, TCommand command, CallerId callerId )
         {
             var commandModel = _service.GetService<ICommandRegistry>().GetCommandByName( new CommandName( typeof( TCommand ) ) );
             if( commandModel == null ) throw new ArgumentException( "Command not found" );
 
-            var context = new DispatcherCommandContextNoWait<TCommand>( commandId, command, commandModel, _service ); ;
-            context.ReceiveAndIgnoreResult();
+            var context = new DispatcherCommandContextNoWait<TCommand>( commandId, command, commandModel, callerId, _service ); ;
+            return context.Receive();
         }
 
-        public Task<TResult> SendAndWaitResult<TCommand, TResult>( Guid commandId, TCommand command ) where TCommand : ICommand<TResult>
+        public Task<TResult> SendAndWaitResult<TCommand, TResult>( Guid commandId, TCommand command, CallerId callerId ) where TCommand : ICommand<TResult>
         {
             var commandModel = _service.GetService<ICommandRegistry>().GetCommandByName( new CommandName( typeof( TCommand ) ) );
             if( commandModel == null ) throw new ArgumentException( "Command not found" );

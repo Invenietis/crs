@@ -30,11 +30,11 @@ namespace CK.Crs
             {
                 if( context.Model.ResultType == null )
                 {
-                    await TaskInvokerVoid( handler, command, context );
+                    await TaskInvokerVoid( handler, command, context ).ConfigureAwait( false );
                     return null;
                 }
 
-                return await TaskInvoker( handler, command, context );
+                return await TaskInvoker( handler, command, context ).ConfigureAwait( false );
             }
             catch( Exception ex )
             {

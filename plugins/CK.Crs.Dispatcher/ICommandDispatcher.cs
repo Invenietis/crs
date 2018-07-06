@@ -16,8 +16,9 @@ namespace CK.Crs
         /// </summary>
         /// <param name="commandId"></param>
         /// <param name="command"></param>
+        /// <param name="callerId"></param>
         /// <returns></returns>
-        void Send<TCommand>( Guid commandId, TCommand command );
+        Task<Response> Send<TCommand>( Guid commandId, TCommand command, CallerId callerId );
 
         /// <summary>
         /// Sends a command and waits for the result to be received
@@ -26,7 +27,8 @@ namespace CK.Crs
         /// <typeparam name="TResult"></typeparam>
         /// <param name="commandId"></param>
         /// <param name="command"></param>
+        /// <param name="callerId"></param>
         /// <returns></returns>
-        Task<TResult> SendAndWaitResult<TCommand, TResult>( Guid commandId, TCommand command ) where TCommand : ICommand<TResult>;
+        Task<TResult> SendAndWaitResult<TCommand, TResult>( Guid commandId, TCommand command, CallerId callerId ) where TCommand : ICommand<TResult>;
     }
 }

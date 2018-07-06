@@ -35,10 +35,10 @@ namespace CK.Crs.Owin
                     Response response = null;
                     if( pipeline.IsValid )
                     {
-                        response = await pipeline.ProcessCommand();
+                        response = await pipeline.ProcessCommand().ConfigureAwait( false );
                         if( response != null )
                         {
-                            await WriteResponse( context, response );
+                            await WriteResponse( context, response ).ConfigureAwait( false );
                             return;
                         }
                         pipeline.Monitor.Warn( "No response received from the command receiver..." );
@@ -46,7 +46,7 @@ namespace CK.Crs.Owin
                     else pipeline.Monitor.Warn( "Unable to receive the command" );
 
                     if( response == null && Next != null )
-                        await Next.Invoke( context );
+                        await Next.Invoke( context ).ConfigureAwait( false );
                 }
             }
         }
