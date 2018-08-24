@@ -8,16 +8,16 @@ namespace CK.Crs.Owin
 {
     sealed class CrsOwinMiddleware : OwinMiddleware
     {
-        private readonly IServiceScopeFactory _applicationServices;
+        private readonly IServiceProvider _applicationServices;
 
-        public CrsOwinMiddleware( OwinMiddleware next, IServiceScopeFactory applicationServices, IEndpointModel endpointModel )
+        public CrsOwinMiddleware( OwinMiddleware next, IServiceProvider applicationServices, IEndpointModel endpointModel )
             : base( next )
         {
             EndpointModel = endpointModel;
             _applicationServices = applicationServices;
         }
 
-        public CrsOwinMiddleware( IServiceScopeFactory applicationServices, IEndpointModel endpointModel )
+        public CrsOwinMiddleware( IServiceProvider applicationServices, IEndpointModel endpointModel )
             : this( null, applicationServices, endpointModel )
         {
         }
@@ -26,28 +26,25 @@ namespace CK.Crs.Owin
 
         public async override Task Invoke( IOwinContext context )
         {
-            using( var scope = _applicationServices.CreateScope() )
+            using( var endpoint = new OwinCrsEndpoint( context, _applicationServices ) )
             {
-                using( var endpoint = new HttpCrsEndpoint( context, scope.ServiceProvider ) )
+                var pipeline = endpoint.CreatePipeline( new ActivityMonitor(), EndpointModel );
+
+                Response response = null;
+                if( pipeline.IsValid )
                 {
-                    var pipeline = endpoint.CreatePipeline( new ActivityMonitor(), EndpointModel );
-
-                    Response response = null;
-                    if( pipeline.IsValid )
+                    response = await pipeline.ProcessCommand().ConfigureAwait( false );
+                    if( response != null )
                     {
-                        response = await pipeline.ProcessCommand().ConfigureAwait( false );
-                        if( response != null )
-                        {
-                            await WriteResponse( context, response ).ConfigureAwait( false );
-                            return;
-                        }
-                        pipeline.Monitor.Warn( "No response received from the command receiver..." );
+                        await WriteResponse( context, response ).ConfigureAwait( false );
+                        return;
                     }
-                    else pipeline.Monitor.Warn( "Unable to receive the command" );
-
-                    if( response == null && Next != null )
-                        await Next.Invoke( context ).ConfigureAwait( false );
+                    pipeline.Monitor.Warn( "No response received from the command receiver..." );
                 }
+                else pipeline.Monitor.Warn( "Unable to receive the command" );
+
+                if( response == null && Next != null )
+                    await Next.Invoke( context ).ConfigureAwait( false );
             }
         }
 

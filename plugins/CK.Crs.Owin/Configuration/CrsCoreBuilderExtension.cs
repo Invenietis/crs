@@ -63,12 +63,13 @@ namespace Microsoft.Extensions.DependencyInjection
                 var settings = ActivatorUtilities.GetServiceOrCreateInstance<JsonSerializerSettings>( applicationServices );
                 config.ChangeDefaultBinder<JsonCommandBinder>();
                 config.ChangeDefaultFormatter( new JsonResponseFormatter( settings ) );
+                
                 // Override configuration from the given lambda
                 configuration?.Invoke( config );
 
                 IEndpointModel endpointModel = config.Build( crsPath.Value );
 
-                crsApp.Use<CrsOwinMiddleware>( applicationServices.GetRequiredService<IServiceScopeFactory>(), endpointModel );
+                crsApp.Use<CrsOwinMiddleware>( applicationServices, endpointModel );
             } );
         }
     }

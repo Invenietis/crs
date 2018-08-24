@@ -27,7 +27,6 @@ namespace CK.Crs
             var receiver = _serviceProvider.GetService<ICommandReceiver>();
             try
             {
-                var response = receiver.ReceiveCommand( _command, this );
                 return receiver.ReceiveCommand( _command, this );
             }
             catch( Exception ex )

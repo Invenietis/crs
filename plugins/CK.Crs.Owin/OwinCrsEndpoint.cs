@@ -9,13 +9,14 @@ using System.Threading;
 namespace CK.Crs.Owin
 {
 
-    class HttpCrsEndpoint : ICrsEndpoint, IDisposable
+    class OwinCrsEndpoint : ICrsEndpoint, IDisposable
     {
         public IOwinContext OwinContext { get; }
         public IServiceProvider ApplicationServices { get; }
+
         ICommandContext _context;
 
-        public HttpCrsEndpoint( IOwinContext context, IServiceProvider applicationServices )
+        public OwinCrsEndpoint( IOwinContext context, IServiceProvider applicationServices )
         {
             OwinContext = context;
             ApplicationServices = applicationServices;
