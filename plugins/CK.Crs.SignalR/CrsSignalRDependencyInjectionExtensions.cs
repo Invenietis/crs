@@ -15,7 +15,6 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             builder.Services.AddSignalR();
             builder.AddDispatcher<SignalRDispatcher>( CrsSignalRContextExtensions.CallerIdProtocol );
-            builder.Services.AddSingleton<SignalRDispatcher>();
             builder.Services.AddSingleton<IStartupFilter, CrsSignalRStartupFilter>();
 
             if( configure == null ) configure = new Action<CrsSignalROptions>( _ => { } );

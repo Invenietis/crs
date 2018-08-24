@@ -89,14 +89,5 @@ namespace CK.Crs.Owin
             }
             return null;
         }
-
-        public void Dispose()
-        {
-            if( Context != null )
-            {
-                Context.SetFeature<IOwinContextCommandFeature>( null );
-                Context.SetFeature<IRequestServicesCommandFeature>( null );
-            }
-        }
     }
 }

@@ -24,7 +24,7 @@ namespace CK.Crs.Configuration
             _receivers = new List<Type>();
             _dispatchers = new Dictionary<string, Type>();
             _services.AddSingleton( _model );
-            _services.AddScoped<ICommandReceiver, CompositeCommandReceiver>( s =>
+            _services.AddSingleton<ICommandReceiver, CompositeCommandReceiver>( s =>
             {
                 return new CompositeCommandReceiver(
                     Receivers
@@ -52,8 +52,8 @@ namespace CK.Crs.Configuration
             if( typeof( T ).IsAbstract ) throw new ArgumentException( "You should provided a concrete command receiver" );
             _receivers.Add( typeof( T ) );
 
-            if( factoryFunction != null ) _services.AddScoped( factoryFunction );
-            else _services.AddScoped<T>();
+            if( factoryFunction != null ) _services.AddSingleton( factoryFunction );
+            else _services.AddSingleton<T>();
         }
 
         public void AddDispatcher<T>( string protocol ) where T : class, IResultDispatcher

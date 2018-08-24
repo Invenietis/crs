@@ -4,13 +4,38 @@ using System.Reflection;
 
 namespace CK.Crs
 {
+    public interface ICommandHandlerActivator
+    {
+        object Create( Type t );
+
+        void Release( object o );
+    }
+
+    class DefaultHandlerActivator : ICommandHandlerActivator
+    {
+        private readonly IServiceProvider _serviceProvider;
+
+        public DefaultHandlerActivator( IServiceProvider serviceProvider )
+        {
+            _serviceProvider = serviceProvider;
+        }
+        public object Create( Type t )
+        {
+            return _serviceProvider.GetService( t ) ?? ActivatorUtilities.CreateInstance( _serviceProvider, t );
+        }
+
+        public void Release( object o )
+        {
+        }
+    }
+
     class DefaultCommandHandlerFactory : ICommandHandlerFactory
     {
-        readonly IServiceProvider _services;
+        readonly ICommandHandlerActivator _activator;
 
-        public DefaultCommandHandlerFactory( IServiceProvider services )
+        public DefaultCommandHandlerFactory( ICommandHandlerActivator activator )
         {
-            _services = services;
+            _activator = activator;
         }
 
         ICommandHandler ICommandHandlerFactory.CreateHandler( Type handlerType )
@@ -22,6 +47,7 @@ namespace CK.Crs
         void ICommandHandlerFactory.ReleaseHandler( ICommandHandler handler )
         {
             if( handler is IDisposable d ) d.Dispose();
+            _activator.Release( handler );
         }
 
         T CreateInstanceOrDefault<T>( Type instanceType, Func<T> defaultActivator = null ) where T : class
@@ -29,8 +55,8 @@ namespace CK.Crs
             if( !typeof( T ).IsAssignableFrom( instanceType ) )
                 throw new InvalidOperationException( $"{typeof( T )} is not assignable from {instanceType}" );
 
-            T inst = _services.GetService( instanceType ) as T;
-            return inst ?? (defaultActivator != null ? defaultActivator() : ActivatorUtilities.CreateInstance( _services, instanceType ) as T);
+            T inst = _activator.Create( instanceType ) as T;
+            return inst;
         }
 
     }
