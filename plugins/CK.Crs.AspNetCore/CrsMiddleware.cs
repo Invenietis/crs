@@ -44,7 +44,7 @@ namespace CK.Crs.AspNetCore
             var result = EndpointModel.ResponseFormatter.Format( response );
             if( result != null )
             {
-                context.Response.Headers["ContentType"] = EndpointModel.ResponseFormatter.ContentType;
+                context.Response.Headers["Content-Type"] = EndpointModel.ResponseFormatter.ContentType;
                 return context.Response.WriteAsync( result );
             }
             return Task.CompletedTask;
