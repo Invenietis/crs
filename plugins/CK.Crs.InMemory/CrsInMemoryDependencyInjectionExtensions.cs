@@ -8,7 +8,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static ICrsCoreBuilder AddInMemoryReceiver( this ICrsCoreBuilder builder )
         {
             // The CommandJobQueue is added to the services: it will be disposed when the underlying container is disposed.
-            builder.Services.AddScoped<CommandJobQueue>();
+            builder.Services.AddSingleton<CommandJobQueue>();
             builder.AddReceiver<CommandReceiver>();
             return builder;
         }
