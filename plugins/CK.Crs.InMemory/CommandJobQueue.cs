@@ -35,7 +35,7 @@ namespace CK.Crs.InMemory
 
                                 try
                                 {
-                                    object result = await invoker.InvokeGeneric( job.Command, job.CommandContext ).ConfigureAwait( false );
+                                    object result = await invoker.Invoke( job.Command, job.CommandContext ).ConfigureAwait( false );
                                     //var result = await invoker.Invoke( job.Command, job.CommandContext );
                                     if( resultReceiver != null )
                                     {

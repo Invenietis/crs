@@ -27,7 +27,7 @@ namespace CK.Crs
             var commandModel = _service.GetService<ICommandRegistry>().GetCommandByName( new CommandName( typeof( TCommand ) ) );
             if( commandModel == null ) throw new ArgumentException( "Command not found" );
 
-            var context = new DispatcherCommandContext<TCommand, TResult>( commandId, command, commandModel, _service ); ;
+            var context = new DispatcherCommandContext<TCommand, TResult>( commandId, command, commandModel, callerId, _service ); ;
             return context.Receive();
         }
     }

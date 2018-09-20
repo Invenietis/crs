@@ -5,7 +5,7 @@ namespace CK.Crs
     /// <summary>
     /// Typed command handler invoker.
     /// </summary>
-    public interface ITypedCommandHandlerInvoker
+    public interface ITypedCommandHandlerInvoker : ICommandHandlerInvoker
     {
         /// <summary>
         /// Invokes a typed command.

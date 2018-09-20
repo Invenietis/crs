@@ -32,7 +32,7 @@ namespace CK.Crs
             Response response = null;
             try
             {
-                var result = await _invoker.InvokeGeneric( command, context );
+                var result = await _invoker.Invoke( command, context );
                 response = ResponseUtil.CreateGenericResponse( result, context );
             }
             catch( Exception ex )

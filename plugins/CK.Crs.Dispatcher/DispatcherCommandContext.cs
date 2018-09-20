@@ -12,13 +12,13 @@ namespace CK.Crs
         private readonly object _command;
         private readonly IServiceProvider _serviceProvider;
 
-        public DispatcherCommandContext( Guid commandId, TCommand command, ICommandModel commandModel, IServiceProvider serviceProvider ) :
+        public DispatcherCommandContext( Guid commandId, TCommand command, ICommandModel commandModel, CallerId callerId, IServiceProvider serviceProvider ) :
             base
             (
                 commandId.ToString(),
                 new ActivityMonitor(),
                 commandModel,
-                CallerId.None
+                callerId
             )
         {
             _command = command;

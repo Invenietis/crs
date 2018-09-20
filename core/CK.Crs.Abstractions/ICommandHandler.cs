@@ -26,6 +26,7 @@ namespace CK.Crs
         /// <returns></returns>
         Task HandleAsync( T command, ICommandContext context );
     }
+
     public interface ICommandHandler<in T, TResult> : ICommandHandler
     {
         /// <summary>

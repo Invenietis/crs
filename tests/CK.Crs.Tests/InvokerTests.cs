@@ -22,7 +22,7 @@ namespace CK.Crs.Tests
                 ICommandHandlerFactory factory = new DefaultCommandHandlerFactory( new DefaultHandlerActivator( services ) );
                 ITypedCommandHandlerInvoker typedCommandHandlerInvoker = new TypedCommandInvoker( factory );
 
-                await typedCommandHandlerInvoker.InvokeGeneric( new TestACommand(), new TestContext<TestACommand>( typeof( TestAHandler ) ) );
+                await typedCommandHandlerInvoker.Invoke( new TestACommand(), new TestContext<TestACommand>( typeof( TestAHandler ) ) );
             }
 
             using( var services = new SimpleServiceContainer() )
@@ -32,7 +32,7 @@ namespace CK.Crs.Tests
                 ICommandHandlerFactory factory = new DefaultCommandHandlerFactory( new DefaultHandlerActivator( services ) );
                 ITypedCommandHandlerInvoker typedCommandHandlerInvoker = new TypedCommandInvoker( factory );
 
-                var result = await typedCommandHandlerInvoker.InvokeGeneric(
+                var result = await typedCommandHandlerInvoker.Invoke(
                     new TestACommand(),
                     new TestContext<TestACommand>( typeof( TestAHandlerWithResult ), typeof( TestACommand.Result ) ) );
 
@@ -44,7 +44,7 @@ namespace CK.Crs.Tests
         public async Task factory_tests()
         {
             var services = new ServiceCollection();
-            services.AddCrsCore<ScopedAwareActivator>( r => r.Register<TestACommand, TestACommand.Result,TestAHandlerWithDependency>().SetResultTag() );
+            services.AddCrsCore<ScopedAwareActivator>( r => r.Register<TestACommand>().HandledBy<TestAHandlerWithDependency>() );
             services.AddScoped<TestADependency>();
             using( var provider = services.BuildServiceProvider() )
             {
@@ -62,6 +62,24 @@ namespace CK.Crs.Tests
 
                 var numberOfDistinctHash = result.OfType<Response<TestACommand.Result>>().Select( r => r.Payload ).Select( r => r.Hash ).Distinct().Count();
                 Assert.That( numberOfDistinctHash, Is.EqualTo( 1000 ) );     
+            }
+        }
+
+
+        [Test]
+        public async Task wrong_registrations_tests()
+        {
+            var services = new ServiceCollection();
+            services.AddCrsCore( r => r.Register<TestACommand>().HandledBy<TestAHandler>() );
+            using( var provider = services.BuildServiceProvider() )
+            {
+                var commandModel = provider
+                    .GetRequiredService<ICommandRegistry>()
+                    .GetCommandByName( new CommandName( typeof( TestACommand ) ) );
+
+                await provider
+                    .GetRequiredService<ICommandReceiver>()
+                    .ReceiveCommand( new TestACommand(), new TestContext<TestACommand>( commandModel ) );
             }
         }
 
@@ -112,7 +130,7 @@ namespace CK.Crs.Tests
                 services.Add( () => new TestAHandler() );
 
                 ICommandHandlerFactory factory = new DefaultCommandHandlerFactory( new DefaultHandlerActivator( services ) );
-                ICommandHandlerInvoker commandHandlerInvoker = new DefaultCommandInvoker( factory );
+                ICommandHandlerInvoker commandHandlerInvoker = new TypedCommandInvoker( factory );
 
                 await commandHandlerInvoker.Invoke( new TestACommand(), new TestContext<TestACommand>( typeof( TestAHandler ) ) );
             }
@@ -122,7 +140,7 @@ namespace CK.Crs.Tests
                 services.Add( () => new TestAHandlerWithResult() );
 
                 ICommandHandlerFactory factory = new DefaultCommandHandlerFactory( new DefaultHandlerActivator( services ) );
-                ICommandHandlerInvoker commandHandlerInvoker = new DefaultCommandInvoker( factory );
+                ICommandHandlerInvoker commandHandlerInvoker = new TypedCommandInvoker( factory );
 
                 var result = await commandHandlerInvoker.Invoke(
                     new TestACommand(),
@@ -133,7 +151,7 @@ namespace CK.Crs.Tests
         }
 
 
-        class TestACommand : ICommand<TestACommand.Result>
+        class TestACommand
         {
             public class Result
             {
@@ -176,14 +194,23 @@ namespace CK.Crs.Tests
         }
         class TestContext<T> : ICommandContext
         {
+            public TestContext( ICommandModel model )
+            {
+                Model = model;
+                Monitor = new ActivityMonitor();
+                Monitor.Output.RegisterClient( new ActivityMonitorConsoleClient() );
+            }
+
             public TestContext( Type handlerType, Type resultType = null )
             {
                 Model = new TestCommandModel<T>( handlerType, resultType );
+                Monitor = new ActivityMonitor();
+                Monitor.Output.RegisterClient( new ActivityMonitorConsoleClient() );
             }
 
             public string CommandId => Guid.Empty.ToString();
 
-            public IActivityMonitor Monitor => new ActivityMonitor();
+            public IActivityMonitor Monitor { get; }
 
             public CancellationToken Aborted => default( CancellationToken );
 

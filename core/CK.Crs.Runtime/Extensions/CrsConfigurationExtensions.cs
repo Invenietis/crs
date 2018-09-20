@@ -34,7 +34,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddSingleton<ICommandHandlerActivator, T>();
             services.AddSingleton<ICommandHandlerFactory, DefaultCommandHandlerFactory>();
-            services.AddSingleton<ICommandHandlerInvoker, DefaultCommandInvoker>();
+            services.AddSingleton<ICommandHandlerInvoker, TypedCommandInvoker>();
             services.AddSingleton<ITypedCommandHandlerInvoker, TypedCommandInvoker>();
             services.AddSingleton<IResultDispatcherSelector, DefaultResutDispatcherSelector>();
             services.AddSingleton<IResultReceiverProvider, DefaultResultReceiverProvider>();
