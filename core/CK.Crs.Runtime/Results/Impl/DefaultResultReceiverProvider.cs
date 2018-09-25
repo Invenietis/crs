@@ -1,8 +1,5 @@
 using CK.Core;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace CK.Crs.Results
 {
@@ -25,13 +22,9 @@ namespace CK.Crs.Results
                     context.Monitor.Trace( $"Selecting a broadcast result strategy thanks to the following CommandModel tags: {context.Model.Tags.ToString()}" );
                     return _broadcastResultReceiver ?? (_broadcastResultReceiver = new BroadcastResultReceiver( ResultDispatcherSelector ));
                 }
-                if( context.Model.HasResultTag() )
-                {
-                    context.Monitor.Trace( $"Selecting a single result strategy thanks to the following CommandModel tags: {context.Model.Tags.ToString()}" );
-                    return _defaultResultReceiver ?? (_defaultResultReceiver = new SendResultReceiver( ResultDispatcherSelector ));
-                }
-                context.Monitor.Trace( $"No result strategy configured for this command..." );
-                return null;
+
+                context.Monitor.Trace( $"Selecting a single result strategy thanks to the following CommandModel tags: {context.Model.Tags.ToString()}" );
+                return _defaultResultReceiver ?? (_defaultResultReceiver = new SendResultReceiver( ResultDispatcherSelector ));
             }
         }
     }
