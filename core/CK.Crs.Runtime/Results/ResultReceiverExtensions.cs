@@ -1,3 +1,4 @@
+using CK.Core;
 using System;
 using System.Threading.Tasks;
 
@@ -7,11 +8,16 @@ namespace CK.Crs.Results
     {
         public static Task InvokeGenericResult( this IResultReceiver resultReceiver, object result, ICommandContext context )
         {
-            if( context.Model.ResultType == null )
-                throw new InvalidOperationException( "Cannot invoke a generic result when there is no result typed assigned for the command." );
+            Type resultType = context.Model.ResultType;
+
+            if( resultType == null )
+            {
+                context.Monitor.Trace( $"Returning null result - command has no typed result" );
+                resultType = typeof( object );
+            }
 
             var resultReceiveMethod = resultReceiver.GetType().GetMethod( nameof( IResultReceiver.ReceiveResult ) );
-            resultReceiveMethod = resultReceiveMethod.MakeGenericMethod( context.Model.ResultType );
+            resultReceiveMethod = resultReceiveMethod.MakeGenericMethod( resultType );
             return (Task)resultReceiveMethod.Invoke( resultReceiver, new[] { result, context } );
         }
     }
