@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using System;
 
 namespace CK.Crs.Tests
 {
@@ -34,6 +35,21 @@ namespace CK.Crs.Tests
             Assert.That( ci.Values[0], Is.EqualTo( "0123456789abcdef_-" ) );
             Assert.That( ci.Values[1], Is.EqualTo( "My user|name!" ) );
             Assert.That( ci.ToString(), Is.EqualTo( "SignalR|0123456789abcdef_-|My%20user%7Cname%21" ) );
+        }
+
+        [Test]
+        public void caller_id_fails_with_null_value()
+        {
+            string protocol = "SignalR";
+            string[] values = new[]
+            {
+                "0123456789abcdef_-",
+                null,
+            };
+
+            Assert.Throws<ArgumentNullException>(
+                () => new CallerId( protocol, values )
+                );
         }
     }
 }

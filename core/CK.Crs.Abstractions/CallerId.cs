@@ -9,7 +9,7 @@ namespace CK.Crs
         /// <summary>
         /// A readonly instance of the structure will a null procotol and no values.
         /// </summary>
-        public static readonly CallerId None = new CallerId( String.Empty, CK.Core.Util.Array.Empty<string>() );
+        public static readonly CallerId None = new CallerId( string.Empty, Array.Empty<string>() );
 
         private const char Separator = '|';
 
@@ -31,7 +31,7 @@ namespace CK.Crs
                 );
         }
 
-        public bool IsValid => !String.IsNullOrEmpty( Protocol );
+        public bool IsValid => !string.IsNullOrEmpty( Protocol );
 
         public string Protocol { get; }
 
@@ -52,7 +52,7 @@ namespace CK.Crs
 
         public static CallerId Parse( string token )
         {
-            if( String.IsNullOrEmpty( token ) ) return CallerId.None;
+            if( string.IsNullOrEmpty( token ) ) return CallerId.None;
             var s = token.Split( new char[] { Separator }, StringSplitOptions.None );
             if( s.Length > 1 )
             {
@@ -76,7 +76,7 @@ namespace CK.Crs
 
         public override int GetHashCode()
         {
-            if( String.IsNullOrEmpty( Protocol ) ) return 0;
+            if( string.IsNullOrEmpty( Protocol ) ) return 0;
             if( Values.Length == 0 ) return 0;
 
             int s = Protocol.GetHashCode();

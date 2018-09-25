@@ -20,7 +20,7 @@ namespace CK.Crs
 
         public static CallerId GetCallerId( this HubCallerContext context )
         {
-            var values = new[] { context.ConnectionId, context.User.Identity.Name };
+            var values = new[] { context.ConnectionId, context.User.Identity.Name ?? string.Empty };
             return new CallerId( CallerIdProtocol, values );
         }
     }
