@@ -1,5 +1,6 @@
 using System;
-using System.Text;
+using System.Globalization;
+using System.Linq;
 
 namespace CK.Crs
 {
@@ -10,7 +11,7 @@ namespace CK.Crs
         /// </summary>
         public static readonly CallerId None = new CallerId( String.Empty, CK.Core.Util.Array.Empty<string>() );
 
-        private const string Separator = "::";
+        private const char Separator = '|';
 
         private string _token;
         private string[] _values;
@@ -20,7 +21,14 @@ namespace CK.Crs
             Protocol = protocol ?? throw new ArgumentNullException( nameof( protocol ) );
             _values = values;
 
-            _token = String.Concat( protocol, Separator, String.Join( Separator, _values ) );
+            _token = string.Concat(
+                protocol,
+                Separator,
+                string.Join(
+                    Separator.ToString( CultureInfo.InvariantCulture ),
+                    _values.Select( Uri.EscapeDataString )
+                    )
+                );
         }
 
         public bool IsValid => !String.IsNullOrEmpty( Protocol );
@@ -45,13 +53,12 @@ namespace CK.Crs
         public static CallerId Parse( string token )
         {
             if( String.IsNullOrEmpty( token ) ) return CallerId.None;
-
-            var s = token.Split( Separator.ToCharArray(), StringSplitOptions.None );
+            var s = token.Split( new char[] { Separator }, StringSplitOptions.None );
             if( s.Length > 1 )
             {
                 var parameters = new string[s.Length - 1];
                 Array.ConstrainedCopy( s, 1, parameters, 0, s.Length - 1 );
-                return new CallerId( s[0], parameters );
+                return new CallerId( s[0], parameters.Select( Uri.UnescapeDataString ).ToArray() );
             }
             return CallerId.None;
         }
