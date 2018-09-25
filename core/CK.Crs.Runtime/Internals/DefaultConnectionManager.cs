@@ -10,7 +10,7 @@ namespace CK.Crs
 {
     class DefaultConnectionManager : ICrsConnectionManager
     {
-        ConcurrentBag<CallerId> _activeConnections;
+        readonly ConcurrentBag<CallerId> _activeConnections;
 
         public DefaultConnectionManager()
         {
@@ -26,7 +26,7 @@ namespace CK.Crs
             if( !_activeConnections.TryPeek( out callerId ) )
             {
                 _activeConnections.Add( callerId );
-                return ConnectionAdded?.Invoke( callerId );
+                return ConnectionAdded?.Invoke( callerId ) ?? Task.CompletedTask;
             }
             return Task.CompletedTask;
         }
@@ -35,7 +35,7 @@ namespace CK.Crs
         {
             if( _activeConnections.TryTake( out callerId ) )
             {
-                return ConnectionRemoved?.Invoke( callerId );
+                return ConnectionRemoved?.Invoke( callerId ) ?? Task.CompletedTask;
             }
             return Task.CompletedTask;
         }
