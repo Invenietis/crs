@@ -10,7 +10,6 @@ using Microsoft.Extensions.Configuration;
 using CK.Crs.Tests;
 using System;
 using System.Threading.Tasks;
-using Xunit.Sdk;
 
 namespace CK.Crs.AspNetCore.Tests
 {

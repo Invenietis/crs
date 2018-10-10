@@ -4,26 +4,21 @@ using CK.Crs.Tests;
 using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
+using NUnit.Framework;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace CK.Crs.AspNetCore.Tests
 {
+    [TestFixture]
     public class CrsHttpReceiverTests
     {
-        public ITestOutputHelper OutputHelper { get; }
-
-        public CrsHttpReceiverTests( ITestOutputHelper outputHelper )
+        public CrsHttpReceiverTests( )
         {
-            OutputHelper = outputHelper;
-            ActivityMonitor.AutoConfiguration = m => m.Output.RegisterClient(
-    new ActivityMonitorTextWriterClient( OutputHelper.WriteLine ) );
-
         }
-        [Fact]
+
+        [Test]
         public async Task Reads_Meta_From_Endpoint()
         {
             using( var crs = await CrsEndpoint.Create( "/crs" ) )
@@ -32,7 +27,7 @@ namespace CK.Crs.AspNetCore.Tests
             }
         }
 
-        [Fact]
+        [Test]
         public async Task Invoke_Command()
         {
             using( var crs = await CrsEndpoint.Create( "/crs" ) )
@@ -46,7 +41,7 @@ namespace CK.Crs.AspNetCore.Tests
             }
         }
 
-        [Fact]
+        [Test]
         public async Task Invoke_Command_WithError()
         {
             using( var crs = await CrsEndpoint.Create( "/crs" ) )
@@ -58,7 +53,7 @@ namespace CK.Crs.AspNetCore.Tests
             }
         }
 
-        [Fact]
+        [Test]
         public async Task Invoke_FireAndForget_Command()
         {
             using( var crs = await CrsEndpoint.Create( "/crs" ) )
@@ -73,7 +68,7 @@ namespace CK.Crs.AspNetCore.Tests
             }
         }
 
-        [Fact]
+        [Test]
         public async Task Invoke_FireAndForget_Command_And_AutoListen_To_Callback()
         {
             using( var crs = await CrsEndpoint.Create( "/crs" ) )
