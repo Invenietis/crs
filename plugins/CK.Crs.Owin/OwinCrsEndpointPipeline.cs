@@ -53,8 +53,7 @@ namespace CK.Crs.Owin
 
         public virtual Task<object> BindCommand()
         {
-            var binder = ApplicationServices.GetRequiredService( Context.Model.Binder ?? Model.Binder ) as ICommandBinder;
-            return binder.Bind( Context );
+            return (Context.Model.Binder ?? Model.Binder).Bind( Context );
         }
 
         public virtual IEnumerable<ICommandFilter> GetFilters()

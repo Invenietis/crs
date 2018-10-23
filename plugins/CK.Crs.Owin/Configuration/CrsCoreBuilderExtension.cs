@@ -21,11 +21,6 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.AddSingleton<ICommandFilterProvider, FilterProvider>();
             builder.Services.AddSingleton<ICommandFilter, AmbientValuesValidationFilter>();
             builder.Services.AddSingleton<ICommandFilter, ModelValidationFilter>();
-            builder.Services.AddSingleton<JsonCommandBinder>();
-            builder.Services.AddSingleton( new JsonSerializerSettings
-            {
-                ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver()
-            } );
             return builder;
         }
 
@@ -60,10 +55,13 @@ namespace Microsoft.Extensions.DependencyInjection
 
                 var config = new CrsEndpointConfiguration( registry, model );
 
-                var settings = ActivatorUtilities.GetServiceOrCreateInstance<JsonSerializerSettings>( applicationServices );
-                config.ChangeDefaultBinder<JsonCommandBinder>();
+                var settings = applicationServices.GetService<JsonSerializerSettings>() ?? new JsonSerializerSettings
+                {
+                    ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver()
+                };
+                config.ChangeDefaultBinder( new JsonCommandBinder( settings ) );
                 config.ChangeDefaultFormatter( new JsonResponseFormatter( settings ) );
-                
+
                 // Override configuration from the given lambda
                 configuration?.Invoke( config );
 

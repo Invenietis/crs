@@ -23,17 +23,24 @@ namespace Microsoft.Extensions.DependencyInjection
             return builder.AddAspNetCoreHosting();
         }
 
+        /// <summary>
+        /// Adds basic CRS services to the collection.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="commandsConfigurationn"></param>
+        /// <returns></returns>
+        public static ICrsCoreBuilder AddCrs<T>( this IServiceCollection services, Action<ICommandRegistry> commandsConfigurationn ) where T : class, ICommandHandlerActivator
+        {
+            var builder = services.AddCrsCore<T>( commandsConfigurationn );
+            return builder.AddAspNetCoreHosting();
+        }
+
 
         public static ICrsCoreBuilder AddAspNetCoreHosting( this ICrsCoreBuilder builder )
         {
             builder.Services.AddSingleton<ICommandFilterProvider, FilterProvider>();
             builder.Services.AddSingleton<ICommandFilter, AmbientValuesValidationFilter>();
             builder.Services.AddSingleton<ICommandFilter, ModelValidationFilter>();
-            builder.Services.AddSingleton<JsonCommandBinder>();
-            builder.Services.AddSingleton( new JsonSerializerSettings
-            {
-                ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver()
-            } );
             return builder;
         }
 
@@ -63,9 +70,13 @@ namespace Microsoft.Extensions.DependencyInjection
                 var model = app.ApplicationServices.GetRequiredService<ICrsModel>();
                 var config = new CrsEndpointConfiguration( registry, model );
 
-                var settings = ActivatorUtilities.GetServiceOrCreateInstance<JsonSerializerSettings>( app.ApplicationServices );
+                // Default json settings
+                var settings = app.ApplicationServices.GetService<JsonSerializerSettings>() ?? new JsonSerializerSettings
+                {
+                    ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver()
+                };
+                config.ChangeDefaultBinder( new JsonCommandBinder( settings ) );
                 config.ChangeDefaultFormatter( new JsonResponseFormatter( settings ) );
-                config.ChangeDefaultBinder<JsonCommandBinder>();
 
                 // Override configuration from the given lambda
                 configuration?.Invoke( config );

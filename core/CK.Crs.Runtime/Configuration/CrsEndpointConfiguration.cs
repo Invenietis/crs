@@ -12,10 +12,10 @@ namespace CK.Crs.Configuration
         readonly ICrsModel _model;
 
         private ISet<ICommandModel> _commands;
-        private Type _binder;
         private bool _validateAmbientValues = true;
         private bool _validateModel = true;
         private string _callerIdName = "CallerId";
+        private ICommandBinder _binder;
         private IResponseFormatter _responseFormatter;
         private IList<Type> _filters;
 
@@ -33,9 +33,9 @@ namespace CK.Crs.Configuration
             return this;
         }
 
-        public ICrsEndpointConfiguration ChangeDefaultBinder<T>() where T : ICommandBinder
+        public ICrsEndpointConfiguration ChangeDefaultBinder( ICommandBinder commandBinder )
         {
-            _binder = typeof( T );
+            _binder = commandBinder;
             return this;
         }
 

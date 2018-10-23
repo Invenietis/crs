@@ -52,24 +52,18 @@ namespace CK.Crs
         {
             using( Context.Monitor.OpenInfo( $"Binding Command..." ) )
             {
-                Type binderType;
+                ICommandBinder binder;
                 if( Context.Model.Binder != null )
                 {
                     Context.Monitor.Trace( "A custom CommandBinder is defined for this command..." );
-                    binderType = Context.Model.Binder;
+                    binder = Context.Model.Binder;
                 }
                 else
                 {
-                    binderType = Model.Binder;
+                    binder = Model.Binder;
                 }
-                if( binderType == null ) throw new InvalidOperationException( "No command binder found." );
+                if( binder == null ) throw new InvalidOperationException( "No command binder found." );
 
-                var binder = Services.GetRequiredService( binderType ) as ICommandBinder;
-                if( binder == null )
-                {
-                    Context.Monitor.Error( $"Unabled to create a command binder of type {binderType}" );
-                    return null;
-                }
                 return binder.Bind( Context );
             }
         }

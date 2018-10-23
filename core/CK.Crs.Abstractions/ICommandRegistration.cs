@@ -14,12 +14,13 @@ namespace CK.Crs
         /// <param name="commandName"></param>
         /// <returns></returns>
         ICommandRegistration CommandName( string commandName );
+
         /// <summary>
-        /// Overrides the name of the command.
+        /// Changes the command binder for this command exclusively
         /// </summary>
-        /// <param name="commandName"></param>
+        /// <param name="binder "></param>
         /// <returns></returns>
-        ICommandRegistration CustomBinder<T>() where T : ICommandBinder;
+        ICommandRegistration CustomBinder( ICommandBinder binder );
 
         /// <summary>
         /// Register a new command

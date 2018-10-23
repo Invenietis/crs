@@ -61,7 +61,7 @@ namespace CK.Crs
         /// <summary>
         /// The name of the command
         /// </summary>
-        public CommandName Name { get; set; }
+        public CommandName Name { get; internal set; }
 
         /// <summary>
         /// The <see cref="System.Type"/> of the command to process.
@@ -81,7 +81,7 @@ namespace CK.Crs
         /// <summary>
         /// Gets or sets the binder type for this command. If null, a default binder is applied.
         /// </summary>
-        public Type Binder { get; set; }
+        public ICommandBinder Binder { get; set; }
 
         /// <summary>
         /// 

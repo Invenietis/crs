@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace CK.Crs
 {
@@ -8,6 +8,6 @@ namespace CK.Crs
         /// <summary>
         /// Gets the default <see cref="ICommandBinder"/> associates with this endpoint
         /// </summary>
-        Type Binder { get; }
+        ICommandBinder Binder { get; }
     }
 }

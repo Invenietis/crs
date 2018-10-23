@@ -12,10 +12,11 @@ namespace CK.Crs.Owin
     public class JsonCommandBinder : ICommandBinder
     {
         private readonly IServiceProvider _applicationServices;
+        private JsonSerializerSettings _settings;
 
-        public JsonCommandBinder( IServiceProvider applicationServices )
+        public JsonCommandBinder( JsonSerializerSettings settings )
         {
-            _applicationServices = applicationServices;
+            _settings = settings;
         }
 
         public string ContentType => "application/json";
@@ -64,12 +65,7 @@ namespace CK.Crs.Owin
                     monitor.Trace( "Reading the body and tries to bind the command" );
                     using( StreamReader sr = new StreamReader( owinContext.Request.Body ) )
                     {
-                        var settings = ActivatorUtilities.GetServiceOrCreateInstance<JsonSerializerSettings>( _applicationServices );
-
-                        return JsonConvert.DeserializeObject(
-                            await sr.ReadToEndAsync(),
-                            commandContext.Model.CommandType,
-                            settings );
+                        return JsonConvert.DeserializeObject( await sr.ReadToEndAsync(), commandContext.Model.CommandType, _settings );
                     }
                 }
                 catch( Exception ex )

@@ -12,6 +12,38 @@ namespace CK.Crs.Tests
 {
     public class InvokerTests
     {
+        private class ServiceContainerScopeFactory : IServiceScopeFactory
+        {
+            private readonly SimpleServiceContainer _container;
+
+            public ServiceContainerScopeFactory( SimpleServiceContainer container )
+            {
+                _container = container;
+            }
+            public IServiceScope CreateScope()
+            {
+                var childContainer = new SimpleServiceContainer( _container );
+                return new ServiceScopeContainer( childContainer );
+            }
+
+            class ServiceScopeContainer : IServiceScope
+            {
+                private SimpleServiceContainer _childContainer;
+
+                public ServiceScopeContainer( SimpleServiceContainer childContainer )
+                {
+                    _childContainer = childContainer;
+                }
+
+                public IServiceProvider ServiceProvider => _childContainer.BaseProvider;
+
+                public void Dispose()
+                {
+                    _childContainer.Dispose();
+                }
+            }
+        }
+
         [Test]
         public async Task TypedInvoker_Tests()
         {
@@ -19,7 +51,7 @@ namespace CK.Crs.Tests
             {
                 services.Add( () => new TestAHandler() );
 
-                ICommandHandlerFactory factory = new DefaultCommandHandlerFactory( new DefaultHandlerActivator( services ) );
+                ICommandHandlerFactory factory = new DefaultCommandHandlerFactory( new DefaultHandlerActivator( new ServiceContainerScopeFactory( services ) ) );
                 ITypedCommandHandlerInvoker typedCommandHandlerInvoker = new TypedCommandInvoker( factory );
 
                 await typedCommandHandlerInvoker.Invoke( new TestACommand(), new TestContext<TestACommand>( typeof( TestAHandler ) ) );
@@ -29,7 +61,7 @@ namespace CK.Crs.Tests
             {
                 services.Add( () => new TestAHandlerWithResult() );
 
-                ICommandHandlerFactory factory = new DefaultCommandHandlerFactory( new DefaultHandlerActivator( services ) );
+                ICommandHandlerFactory factory = new DefaultCommandHandlerFactory( new DefaultHandlerActivator( new ServiceContainerScopeFactory( services ) ) );
                 ITypedCommandHandlerInvoker typedCommandHandlerInvoker = new TypedCommandInvoker( factory );
 
                 var result = await typedCommandHandlerInvoker.Invoke(
@@ -61,10 +93,9 @@ namespace CK.Crs.Tests
                                 .ReceiveCommand( new TestACommand(), new TestContext<TestACommand>( typeof( TestAHandlerWithDependency ), typeof( TestACommand.Result ) ) ) ) );
 
                 var numberOfDistinctHash = result.OfType<Response<TestACommand.Result>>().Select( r => r.Payload ).Select( r => r.Hash ).Distinct().Count();
-                Assert.That( numberOfDistinctHash, Is.EqualTo( 1000 ) );     
+                Assert.That( numberOfDistinctHash, Is.EqualTo( 1000 ) );
             }
         }
-
 
         [Test]
         public async Task wrong_registrations_tests()
@@ -129,7 +160,7 @@ namespace CK.Crs.Tests
             {
                 services.Add( () => new TestAHandler() );
 
-                ICommandHandlerFactory factory = new DefaultCommandHandlerFactory( new DefaultHandlerActivator( services ) );
+                ICommandHandlerFactory factory = new DefaultCommandHandlerFactory( new DefaultHandlerActivator( new ServiceContainerScopeFactory( services ) ) );
                 ICommandHandlerInvoker commandHandlerInvoker = new TypedCommandInvoker( factory );
 
                 await commandHandlerInvoker.Invoke( new TestACommand(), new TestContext<TestACommand>( typeof( TestAHandler ) ) );
@@ -139,7 +170,7 @@ namespace CK.Crs.Tests
             {
                 services.Add( () => new TestAHandlerWithResult() );
 
-                ICommandHandlerFactory factory = new DefaultCommandHandlerFactory( new DefaultHandlerActivator( services ) );
+                ICommandHandlerFactory factory = new DefaultCommandHandlerFactory( new DefaultHandlerActivator( new ServiceContainerScopeFactory( services ) ) );
                 ICommandHandlerInvoker commandHandlerInvoker = new TypedCommandInvoker( factory );
 
                 var result = await commandHandlerInvoker.Invoke(
@@ -149,7 +180,6 @@ namespace CK.Crs.Tests
                 Assert.That( result, Is.AssignableFrom<TestACommand.Result>() );
             }
         }
-
 
         class TestACommand
         {
@@ -185,6 +215,7 @@ namespace CK.Crs.Tests
                 return Task.CompletedTask;
             }
         }
+
         class TestAHandlerWithResult : ICommandHandler<TestACommand, TestACommand.Result>
         {
             public Task<TestACommand.Result> HandleAsync( TestACommand command, ICommandContext context )
@@ -192,6 +223,7 @@ namespace CK.Crs.Tests
                 return Task.FromResult<TestACommand.Result>( new TestACommand.Result() );
             }
         }
+
         class TestContext<T> : ICommandContext
         {
             public TestContext( ICommandModel model )
@@ -249,7 +281,7 @@ namespace CK.Crs.Tests
 
             public IEnumerable<Type> Filters { get; }
 
-            public Type Binder { get; }
+            public ICommandBinder Binder { get; }
         }
     }
 }

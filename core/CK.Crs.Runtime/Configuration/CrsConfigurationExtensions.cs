@@ -8,6 +8,23 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class CrsConfigurationExtensions
     {
+        /// <summary>
+        /// Adds crs runtime services and returns a <see cref="ICrsCoreBuilder"/> for registering additionnal components.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="registry"></param>
+        /// <returns></returns>
+        public static ICrsCoreBuilder AddCrsCore( this IServiceCollection services, Action<ICommandRegistry> registry )
+        {
+            return AddCrsCore<DefaultHandlerActivator>( services, registry );
+        }
+
+        /// <summary>
+        /// Adds crs runtime services and returns a <see cref="ICrsCoreBuilder"/> for registering additionnal components.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="registry"></param>
+        /// <returns></returns>
         public static ICrsCoreBuilder AddCrsCore<T>( this IServiceCollection services, Action<ICommandRegistry> registry ) where T : class, ICommandHandlerActivator
         {
 
@@ -45,16 +62,6 @@ namespace Microsoft.Extensions.DependencyInjection
             var crsBuilder = new CrsCoreBuilder( builder );
             services.AddSingleton<ICrsCoreBuilder>( crsBuilder );
             return crsBuilder;
-        }
-        /// <summary>
-        /// Adds crs runtime services and returns a <see cref="ICrsCoreBuilder"/> for registering additionnal components.
-        /// </summary>
-        /// <param name="services"></param>
-        /// <param name="registry"></param>
-        /// <returns></returns>
-        public static ICrsCoreBuilder AddCrsCore( this IServiceCollection services, Action<ICommandRegistry> registry )
-        {
-            return AddCrsCore<DefaultHandlerActivator>( services, registry );
         }
     }
 }

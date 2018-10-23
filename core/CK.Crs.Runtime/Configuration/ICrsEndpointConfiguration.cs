@@ -9,7 +9,7 @@ namespace CK.Crs.Configuration
         ICrsEndpointConfiguration FilterCommands( Func<ICommandModel, bool> filter );
         ICrsEndpointConfiguration SkipAmbientValuesValidation();
         ICrsEndpointConfiguration SkipModelValidation();
-        ICrsEndpointConfiguration ChangeDefaultBinder<T>() where T : ICommandBinder;
+        ICrsEndpointConfiguration ChangeDefaultBinder( ICommandBinder binder );
         ICrsEndpointConfiguration ChangeCallerIdName( string newCallerIdName );
         ICrsEndpointConfiguration ChangeDefaultFormatter( IResponseFormatter responseFormatter);
         ICrsEndpointConfiguration AddSecurityFilter<T>() where T : ICommandSecurityFilter;

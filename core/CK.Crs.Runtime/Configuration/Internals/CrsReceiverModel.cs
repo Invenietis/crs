@@ -12,7 +12,7 @@ namespace CK.Crs.Configuration
         private readonly ICrsModel _model;
         private readonly string _path;
 
-        public CrsReceiverModel( string path, ICrsModel model, Type commandBinder, IEnumerable<ICommandModel> commands )
+        public CrsReceiverModel( string path, ICrsModel model, ICommandBinder commandBinder, IEnumerable<ICommandModel> commands )
         {
             _model = model ?? throw new ArgumentNullException( nameof( model ) );
             _path = path ?? throw new ArgumentNullException( nameof( path ) );
@@ -25,7 +25,8 @@ namespace CK.Crs.Configuration
 
         public string Path => _path;
 
-        public Type Binder { get; }
+        public ICommandBinder Binder { get; }
+
         public IEnumerable<Type> Filters { get; private set; }
 
         public IResponseFormatter ResponseFormatter { get; set; }

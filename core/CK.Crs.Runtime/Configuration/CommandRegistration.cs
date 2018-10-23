@@ -39,9 +39,9 @@ namespace CK.Crs
             return this;
         }
 
-        CommandRegistration CustomBinder<T>()
+        CommandRegistration CustomBinder( ICommandBinder commandBinder )
         {
-            _model.Binder = typeof( T );
+            _model.Binder = commandBinder;
             return this;
         }
 
@@ -50,9 +50,9 @@ namespace CK.Crs
             return CommandName( commandName );
         }
 
-        ICommandRegistration ICommandRegistration.CustomBinder<T>()
+        ICommandRegistration ICommandRegistration.CustomBinder( ICommandBinder commandBinder)
         {
-            return CustomBinder<T>();
+            return CustomBinder( commandBinder );
         }
 
         ICommandRegistration ICommandRegistration.HandledBy<THandler>()
