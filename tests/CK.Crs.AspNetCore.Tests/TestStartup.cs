@@ -49,10 +49,11 @@ namespace CK.Crs.AspNetCore.Tests
                     .Select( t => t.ActorId ).ProvidedBy<AlwaysTrusted>();
         }
 
-        private void Commands( ICommandRegistry registry ) =>
-            registry
-                .Register<WithdrawMoneyCommand>().HandledBy<WithDrawyMoneyHandler>().CommandName( "withdraw" )
-                .Register<TransferAmountCommand>().FireAndForget().HandledBy<TransferAlwaysSuccessHandler>();
+        private void Commands( ICommandRegistry registry )
+        {
+            registry.Register<WithdrawMoneyCommand>().HandledBy<WithDrawyMoneyHandler>().CommandName( "withdraw" );
+            registry.Register<TransferAmountCommand>().FireAndForget().HandledBy<TransferAlwaysSuccessHandler>();
+        }
 
         class AlwaysTrusted : IAmbientValueProvider
         {
