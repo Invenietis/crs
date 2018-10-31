@@ -14,6 +14,13 @@ namespace CK.Crs
     /// </summary>
     public static class CommandRegistrationExtensions
     {
+        public static ICommandRegistration Register<TCommand>( this ICommandRegistry registry ) where TCommand : class
+        {
+            var model = new CommandModel( typeof( TCommand ), registry.TraitContext );
+            return AddRegistration( registry, model );
+        }
+
+
         /// <summary>
         /// Registers a command with the given handler
         /// </summary>
@@ -38,8 +45,24 @@ namespace CK.Crs
             where TCommand : ICommand<TResult>
             where THandler : ICommandHandler<TCommand, TResult>
         {
-            return registry.Register<TCommand, TResult>().HandledBy<THandler>();
+            return registry.RegisterWithResult<TCommand, TResult>().HandledBy<THandler>();
         }
 
+        public static ICommandRegistration RegisterWithResult<TCommand, TResult>( this ICommandRegistry registry ) where TCommand : ICommand<TResult>
+        {
+            var model = new CommandModel( typeof( TCommand ), typeof( TResult ), registry.TraitContext );
+            return AddRegistration( registry, model );
+        }
+
+        static ICommandRegistration AddRegistration( ICommandRegistry registry, CommandModel model )
+        {
+            var registration = new CommandRegistration( registry, model );
+            registry.Register( model );
+            if( model.ResultType != null )
+            {
+                registration.SetResultTag();
+            }
+            return registration;
+        }
     }
 }

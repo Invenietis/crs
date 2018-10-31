@@ -20,10 +20,6 @@ namespace CK.Crs
         /// <param name="command"></param>
         void Register( ICommandModel command );
 
-        ICommandRegistration Register<TCommand>() where TCommand : class;
-
-        ICommandRegistration Register<TCommand, TResult>() where TCommand : ICommand<TResult>;
-
         /// <summary>
         /// Gets all the available <see cref="CommandModel"/> in the registry
         /// </summary>

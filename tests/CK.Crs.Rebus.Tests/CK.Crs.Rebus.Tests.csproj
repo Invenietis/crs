@@ -19,8 +19,8 @@
         <packagereference Include="Microsoft.NET.Test.Sdk" Version="15.9.0"></packagereference>
         <PackageReference Include="Moq" Version="4.10.0" />
         <PackageReference Include="NUnit" Version="3.11.0" />
-        <PackageReference Include="Rebus.SqlServer" Version="5.0.0" />
-        <packagereference Include="NUnit3TestAdapter" Version="3.10.0"></packagereference>
+        <PackageReference Include="Rebus.SqlServer" Version="5.0.2" />
+        <packagereference Include="NUnit3TestAdapter" Version="3.11.0"></packagereference>
         <PackageReference Include="CK.Monitoring" Version="9.1.1" />
     </ItemGroup>
     <ItemGroup>

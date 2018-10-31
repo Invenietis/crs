@@ -38,6 +38,6 @@
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.1" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="2.1.1" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.1" />
-        <PackageReference Include="Rebus.SqlServer" Version="5.0.0" />
+        <PackageReference Include="Rebus.SqlServer" Version="5.0.2" />
     </ItemGroup>
 </Project>

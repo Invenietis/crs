@@ -12,12 +12,11 @@ namespace CK.Crs
         {
             TraitContext = traitContext;
         }
+        public CKTraitContext TraitContext { get; }
 
         public IEnumerable<ICommandModel> Registration => _commands;
 
         public void Register( ICommandModel descriptor ) => _commands.Add( descriptor );
-
-        public CKTraitContext TraitContext { get; }
 
         /// <summary>
         /// Registers a command and its handler.
