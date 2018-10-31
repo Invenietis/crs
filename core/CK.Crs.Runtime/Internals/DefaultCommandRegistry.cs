@@ -18,22 +18,9 @@ namespace CK.Crs
 
         public void Register( ICommandModel descriptor ) => _commands.Add( descriptor );
 
-        /// <summary>
-        /// Registers a command and its handler.
-        /// </summary>
-        /// <typeparam name="TCommand"></typeparam>
-        /// <typeparam name="THandler"></typeparam>
-        /// <param name="registry"></param>
-        /// <returns></returns>
-        public ICommandRegistration Register<TCommand>() where TCommand : class
+        public ICommandRegistration Register( Type commandType, Type resultType = null )
         {
-            var model = new CommandModel( typeof( TCommand ), TraitContext );
-            return AddRegistration( model );
-        }
-
-        public ICommandRegistration Register<TCommand, TResult>() where TCommand : ICommand<TResult>
-        {
-            var model = new CommandModel( typeof( TCommand ), typeof( TResult ), TraitContext );
+            var model = new CommandModel( commandType, resultType, TraitContext );
             return AddRegistration( model );
         }
 

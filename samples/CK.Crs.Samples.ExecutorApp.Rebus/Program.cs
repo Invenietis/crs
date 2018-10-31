@@ -22,15 +22,17 @@ namespace CK.Crs.Samples.ExecutorApp.Rebus
                 {
                     configHost.AddJsonFile( "appsettings.json", optional: true, reloadOnChange: true );
                 } )
-                .ConfigureServices( (ctx, services) =>
+                .ConfigureServices( ( ctx, services ) =>
                 {
                     var conString = ctx.Configuration.GetConnectionString( "Messaging" );
 
                     services
                         .AddHostedService<RebusCommandHost>()
-                        .AddCrsCore( registry => registry
-                                .Register<RemotelyQueuedCommand>().HandledBy<RemoteHandler>()
-                                .Register<RemotelyQueuedCommand.Result>().IsRebus() )
+                        .AddCrsCore( registry =>
+                        {
+                            registry.Register<RemotelyQueuedCommand>().HandledBy<RemoteHandler>();
+                            registry.Register<RemotelyQueuedCommand.Result>().IsRebus();
+                        } )
                         .AddRebus(
                             c => c.Transport( t => t.UseSqlServer( conString, "commands" ) ),
                             c => c( "commands_result" )( m => m.HasRebusTag() ) );

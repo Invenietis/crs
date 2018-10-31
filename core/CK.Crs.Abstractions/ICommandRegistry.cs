@@ -1,4 +1,5 @@
 using CK.Core;
+using System;
 using System.Collections.Generic;
 
 namespace CK.Crs
@@ -15,10 +16,12 @@ namespace CK.Crs
         CKTraitContext TraitContext { get; }
 
         /// <summary>
-        /// Adds a new <see cref="CommandModel"/> to the registry
+        /// Adds a new command <see cref="Type"/> to the registry
         /// </summary>
-        /// <param name="command"></param>
-        void Register( ICommandModel command );
+        /// <param name="commandType"></param>
+        /// <param name="resultType"></param>
+        /// <returns></returns>
+        ICommandRegistration Register( Type commandType, Type resultType = null );
 
         /// <summary>
         /// Gets all the available <see cref="CommandModel"/> in the registry

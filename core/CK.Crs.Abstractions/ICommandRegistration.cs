@@ -23,13 +23,6 @@ namespace CK.Crs
         ICommandRegistration CustomBinder( ICommandBinder binder );
 
         /// <summary>
-        /// Register a new command
-        /// </summary>
-        /// <typeparam name="TCommand"></typeparam>
-        /// <returns></returns>
-        ICommandRegistration Register<TCommand>() where TCommand: class;
-
-        /// <summary>
         /// Sets an handler for a command.
         /// </summary>
         /// <typeparam name="THandler"></typeparam>

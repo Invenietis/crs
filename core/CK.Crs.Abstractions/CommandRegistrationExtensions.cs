@@ -14,12 +14,16 @@ namespace CK.Crs
     /// </summary>
     public static class CommandRegistrationExtensions
     {
+        /// <summary>
+        /// Registers a command and its handler.
+        /// </summary>
+        /// <typeparam name="TCommand"></typeparam>
+        /// <param name="registry"></param>
+        /// <returns></returns>
         public static ICommandRegistration Register<TCommand>( this ICommandRegistry registry ) where TCommand : class
         {
-            var model = new CommandModel( typeof( TCommand ), registry.TraitContext );
-            return AddRegistration( registry, model );
+            return registry.Register( typeof( TCommand ) );
         }
-
 
         /// <summary>
         /// Registers a command with the given handler
@@ -34,35 +38,37 @@ namespace CK.Crs
         {
             return registry.Register<TCommand>().HandledBy<THandler>();
         }
+
         /// <summary>
         /// Registers a command with the given handler
         /// </summary>
         /// <typeparam name="TCommand"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
         /// <typeparam name="THandler"></typeparam>
         /// <param name="registry"></param>
         /// <returns></returns>
         public static ICommandRegistration Register<TCommand, TResult, THandler>( this ICommandRegistry registry )
-            where TCommand : ICommand<TResult>
+            where TCommand : class, ICommand<TResult>
             where THandler : ICommandHandler<TCommand, TResult>
         {
             return registry.RegisterWithResult<TCommand, TResult>().HandledBy<THandler>();
         }
 
-        public static ICommandRegistration RegisterWithResult<TCommand, TResult>( this ICommandRegistry registry ) where TCommand : ICommand<TResult>
+        public static ICommandRegistration RegisterWithResult<TCommand, TResult>( this ICommandRegistry registry )
+            where TCommand : ICommand<TResult>
         {
-            var model = new CommandModel( typeof( TCommand ), typeof( TResult ), registry.TraitContext );
-            return AddRegistration( registry, model );
+            return registry.Register( typeof( TCommand ), typeof( TResult ) );
         }
 
-        static ICommandRegistration AddRegistration( ICommandRegistry registry, CommandModel model )
-        {
-            var registration = new CommandRegistration( registry, model );
-            registry.Register( model );
-            if( model.ResultType != null )
-            {
-                registration.SetResultTag();
-            }
-            return registration;
-        }
+        //static ICommandRegistration AddRegistration( ICommandRegistry registry, CommandModel model )
+        //{
+        //    var registration = new CommandRegistration( registry, model );
+        //    registry.Register( model );
+        //    if( model.ResultType != null )
+        //    {
+        //        registration.SetResultTag();
+        //    }
+        //    return registration;
+        //}
     }
 }

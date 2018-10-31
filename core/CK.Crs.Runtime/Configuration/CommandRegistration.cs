@@ -59,11 +59,5 @@ namespace CK.Crs
         {
             return HandledBy<THandler>();
         }
-
-        ICommandRegistration ICommandRegistration.Register<TCommand>()
-        {
-            return _registry.Register<TCommand>();
-        }
     }
-
 }
