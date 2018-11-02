@@ -19,7 +19,7 @@ namespace CK.Crs
         /// <param name="context"></param>
         /// <param name="binder"></param>
         public CommandModel( Type type, CKTraitContext context, ICommandBinder binder = null )
-            : this( type, FindResultType(type), context, binder )
+            : this( type, null, context, binder )
         {
         }
 
@@ -35,7 +35,7 @@ namespace CK.Crs
             CommandType = type ?? throw new ArgumentNullException( nameof( type ) );
             Name = new CommandName( type );
             Tags = context.EmptyTrait;
-            ResultType = resultType;
+            ResultType = resultType ?? FindResultType( type );
         }
 
 
