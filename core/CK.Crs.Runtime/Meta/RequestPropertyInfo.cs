@@ -21,6 +21,6 @@ namespace CK.Crs.Meta
 
         public bool IsAmbientValue => _ambientValue == null ?
             false :
-            _ambientValue.AmbientValues.FirstOrDefault( e => e.Name == _propertyInfo.Name ) != null;
+            _ambientValue.AmbientValues.SingleOrDefault( e => e.Name == _propertyInfo.Name ) != null;
     }
 }

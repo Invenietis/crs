@@ -26,7 +26,7 @@ namespace CK.Crs.Owin
 
         public async override Task Invoke( IOwinContext context )
         {
-            using( var endpoint = new OwinCrsEndpoint( context, _applicationServices ) )
+            using( var endpoint = new OwinCrsEndpoint( context, _applicationServices, scopeServices: true ) )
             {
                 var pipeline = endpoint.CreatePipeline( new ActivityMonitor(), EndpointModel );
 

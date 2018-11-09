@@ -11,15 +11,31 @@ namespace CK.Crs.Owin
 
     class OwinCrsEndpoint : ICrsEndpoint, IDisposable
     {
-        public IOwinContext OwinContext { get; }
-        public IServiceProvider ApplicationServices { get; }
-
+        private readonly IServiceScope _serviceScope;
         ICommandContext _context;
 
-        public OwinCrsEndpoint( IOwinContext context, IServiceProvider applicationServices )
+        public IOwinContext OwinContext { get; }
+        public IServiceProvider Services { get; }
+
+        public OwinCrsEndpoint( IOwinContext context, IServiceProvider applicationServices, bool scopeServices = true )
         {
-            OwinContext = context;
-            ApplicationServices = applicationServices;
+            if( applicationServices == null )
+            {
+                throw new ArgumentNullException( nameof( applicationServices ) );
+            }
+
+            OwinContext = context ?? throw new ArgumentNullException( nameof( context ) );
+            if( scopeServices )
+            {
+                var serviceScopeFactory = applicationServices.GetRequiredService<IServiceScopeFactory>();
+                _serviceScope = serviceScopeFactory.CreateScope();
+
+                Services = _serviceScope.ServiceProvider;
+            }
+            else
+            {
+                Services = applicationServices;
+            }
         }
 
         public ICrsEndpointPipeline CreatePipeline( IActivityMonitor monitor, IEndpointModel endpointModel )
@@ -34,12 +50,12 @@ namespace CK.Crs.Owin
 
             if( _context != null )
             {
-                var owinContextFeature = new OwinContextCommandFeature( OwinContext, ApplicationServices );
+                var owinContextFeature = new OwinContextCommandFeature( OwinContext, Services );
                 _context.SetFeature<IOwinContextCommandFeature>( owinContextFeature );
                 _context.SetFeature<IRequestServicesCommandFeature>( owinContextFeature );
             }
 
-            return new OwinCrsEndpointPipeline( monitor, endpointModel, _context, OwinContext, ApplicationServices );
+            return new CrsPipeline( monitor, endpointModel, Services, _context );
         }
 
         OwinCommandContext CreateCommandContext( IActivityMonitor monitor, IEndpointModel endpointModel )
@@ -61,7 +77,7 @@ namespace CK.Crs.Owin
                 return null;
             }
 
-            ICommandRegistry commandRegistry = ApplicationServices.GetRequiredService<ICommandRegistry>();
+            ICommandRegistry commandRegistry = Services.GetRequiredService<ICommandRegistry>();
             ICommandModel commandModel = commandRegistry.GetCommandByName( commandName );
             if( commandModel == null )
             {
@@ -114,6 +130,7 @@ namespace CK.Crs.Owin
 
         public void Dispose()
         {
+            _serviceScope?.Dispose();
             _context.SetFeature<IOwinContextCommandFeature>( null );
             _context.SetFeature<IRequestServicesCommandFeature>( null );
         }

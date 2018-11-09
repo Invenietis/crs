@@ -49,7 +49,6 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             return app.Map( crsPath, crsApp =>
             {
-
                 ICrsModel model = applicationServices.GetRequiredService<ICrsModel>();
                 ICommandRegistry registry = applicationServices.GetRequiredService<ICommandRegistry>();
 
