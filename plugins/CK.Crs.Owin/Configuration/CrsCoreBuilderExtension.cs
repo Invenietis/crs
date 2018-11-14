@@ -10,20 +10,6 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class CrsCoreBuilderExtension
     {
-        public static ICrsCoreBuilder AddCrs( this IServiceCollection services, Action<ICommandRegistry> commandsConfigurationn )
-        {
-            var builder = services.AddCrsCore( commandsConfigurationn );
-            return builder.AddOwinHosting();
-        }
-
-        public static ICrsCoreBuilder AddOwinHosting( this ICrsCoreBuilder builder )
-        {
-            builder.Services.AddSingleton<ICommandFilterProvider, FilterProvider>();
-            builder.Services.AddSingleton<ICommandFilter, AmbientValuesValidationFilter>();
-            builder.Services.AddSingleton<ICommandFilter, ModelValidationFilter>();
-            return builder;
-        }
-
         /// <summary>
         /// Maps a default CRS endpoint to the given <paramref name="crsPath"/> that accepts all comamnds, validate ambient values, and valide command model.
         /// </summary>

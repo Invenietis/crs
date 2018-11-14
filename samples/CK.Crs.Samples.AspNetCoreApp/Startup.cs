@@ -47,8 +47,7 @@ namespace CK.Crs.Samples.AspNetCoreApp
                     c => c.Transport( t => t.UseSqlServer( conString, "commands_result" ) ),
                     c => c( "commands" )( m => m.HasRebusTag() ) )
                 .AddInMemoryReceiver()
-                .AddSignalR()
-                .AddAspNetCoreHosting();
+                .AddSignalR();
 
             services
              .AddCrsCore( r =>

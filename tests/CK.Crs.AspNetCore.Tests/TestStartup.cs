@@ -28,8 +28,7 @@ namespace CK.Crs.AspNetCore.Tests
             services
                 .AddCrsCore( Commands ) //.Endpoints( Endpoints ) )
                 .AddInMemoryReceiver()
-                .AddSignalR()
-                .AddAspNetCoreHosting();
+                .AddSignalR();
         }
 
         public void Configure( IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory )

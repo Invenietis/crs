@@ -9,20 +9,13 @@ namespace CK.Crs
 {
     public class ModelValidationFilter : ICommandFilter
     {
-        public ModelValidationFilter( IServiceProvider applicationServices )
-        {
-            ApplicationServices = applicationServices;
-        }
-
-        public IServiceProvider ApplicationServices { get; }
-
         public Task OnFilterAsync( CommandFilterContext filterContext )
         {
             using( filterContext.Monitor.OpenTrace( "Validating command model" ) )
             {
                 var validationResults = new List<ValidationResult>();
 
-                IServiceProvider serviceProvider = filterContext.CommandContext.GetRequestServices() ?? ApplicationServices;
+                var serviceProvider = filterContext.CommandContext.GetRequestServices();
                 var validationContext = new ValidationContext( filterContext.Command, serviceProvider, items: null );
                 if( !Validator.TryValidateObject( filterContext.Command, validationContext, validationResults, validateAllProperties: true ) )
                 {

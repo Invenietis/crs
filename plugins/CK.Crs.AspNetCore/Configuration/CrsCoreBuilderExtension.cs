@@ -12,39 +12,6 @@ namespace Microsoft.Extensions.DependencyInjection
     public static class CrsCoreBuilderExtension
     {
         /// <summary>
-        /// Adds basic CRS services to the collection.
-        /// </summary>
-        /// <param name="services"></param>
-        /// <param name="commandsConfigurationn"></param>
-        /// <returns></returns>
-        public static ICrsCoreBuilder AddCrs( this IServiceCollection services, Action<ICommandRegistry> commandsConfigurationn )
-        {
-            var builder = services.AddCrsCore( commandsConfigurationn );
-            return builder.AddAspNetCoreHosting();
-        }
-
-        /// <summary>
-        /// Adds basic CRS services to the collection.
-        /// </summary>
-        /// <param name="services"></param>
-        /// <param name="commandsConfigurationn"></param>
-        /// <returns></returns>
-        public static ICrsCoreBuilder AddCrs<T>( this IServiceCollection services, Action<ICommandRegistry> commandsConfigurationn ) where T : class, ICommandHandlerActivator
-        {
-            var builder = services.AddCrsCore<T>( commandsConfigurationn );
-            return builder.AddAspNetCoreHosting();
-        }
-
-
-        public static ICrsCoreBuilder AddAspNetCoreHosting( this ICrsCoreBuilder builder )
-        {
-            builder.Services.AddSingleton<ICommandFilterProvider, FilterProvider>();
-            builder.Services.AddSingleton<ICommandFilter, AmbientValuesValidationFilter>();
-            builder.Services.AddSingleton<ICommandFilter, ModelValidationFilter>();
-            return builder;
-        }
-
-        /// <summary>
         /// Maps a default CRS endpoint to the given <paramref name="crsPath"/> that accepts all comamnds, validate ambient values, and valide command model.
         /// </summary>
         /// <param name="app"></param>

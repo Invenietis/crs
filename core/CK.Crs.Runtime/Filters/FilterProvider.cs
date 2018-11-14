@@ -1,11 +1,10 @@
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace CK.Crs.AspNetCore
+namespace CK.Crs
 {
     class FilterProvider : ICommandFilterProvider
     {
@@ -32,8 +31,8 @@ namespace CK.Crs.AspNetCore
             {
                 if( !typeof( ICommandFilter ).IsAssignableFrom( filterType ) ) throw new InvalidOperationException( "Invalid command filter detected" );
 
-                var httpContextFeature = context.GetFeature<IHttpContextCommandFeature>();
-                var filter = (ICommandFilter)ActivatorUtilities.GetServiceOrCreateInstance( httpContextFeature.HttpContext.RequestServices, filterType );
+                var services = context.GetFeature<IRequestServicesCommandFeature>();
+                var filter = (ICommandFilter)ActivatorUtilities.GetServiceOrCreateInstance( services.RequestServices, filterType );
                 yield return filter;
             }
         }
