@@ -1,3 +1,4 @@
+using System;
 using CK.Core;
 
 namespace CK.Crs
@@ -27,7 +28,7 @@ namespace CK.Crs
         /// </summary>
         /// <typeparam name="THandler"></typeparam>
         /// <returns></returns>
-        ICommandRegistration HandledBy<THandler>();
+        ICommandRegistration Handler( Type handler );
 
         /// <summary>
         /// Gets the <see cref="CommandModel"/>.

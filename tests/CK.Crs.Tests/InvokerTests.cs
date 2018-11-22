@@ -101,17 +101,10 @@ namespace CK.Crs.Tests
         public async Task wrong_registrations_tests()
         {
             var services = new ServiceCollection();
-            services.AddCrsCore( r => r.Register<TestACommand>().HandledBy<TestAHandler>() );
-            using( var provider = services.BuildServiceProvider() )
-            {
-                var commandModel = provider
-                    .GetRequiredService<ICommandRegistry>()
-                    .GetCommandByName( new CommandName( typeof( TestACommand ) ) );
-
-                await provider
-                    .GetRequiredService<ICommandReceiver>()
-                    .ReceiveCommand( new TestACommand(), new TestContext<TestACommand>( commandModel ) );
-            }
+            var exception = Assert.Throws<InvalidOperationException>(
+                () => services.AddCrsCore( r => r.Register<TestACommand>().HandledBy<TestAHandler>() )
+                );
+            Assert.That( exception.Message, Is.EqualTo( "This command handler does not match the command model." ) );
         }
 
         public class ScopedAwareActivator : ICommandHandlerActivator
