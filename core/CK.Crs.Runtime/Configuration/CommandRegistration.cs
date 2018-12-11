@@ -26,9 +26,9 @@ namespace CK.Crs
             _model = model;
         }
 
-        CommandRegistration HandledBy<THandler>()
+        CommandRegistration Handler( Type handler )
         {
-            _model.HandlerType = typeof( THandler );
+            _model.HandlerType = handler;
 
             return this;
         }
@@ -55,9 +55,9 @@ namespace CK.Crs
             return CustomBinder( commandBinder );
         }
 
-        ICommandRegistration ICommandRegistration.HandledBy<THandler>()
+        ICommandRegistration ICommandRegistration.Handler( Type handler )
         {
-            return HandledBy<THandler>();
+            return Handler( handler );
         }
     }
 }

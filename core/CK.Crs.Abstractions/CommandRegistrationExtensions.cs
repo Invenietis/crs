@@ -15,6 +15,37 @@ namespace CK.Crs
     public static class CommandRegistrationExtensions
     {
         /// <summary>
+        /// Sets an handler for a command.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="this"></param>
+        /// <returns></returns>
+        public static ICommandRegistration HandledBy<T>( this ICommandRegistration @this ) where T : ICommandHandler
+        {
+
+            if( @this.Model.ResultType == null )
+            {
+                // ICommandHandler<>
+                var commandHandlerInterfaceType = typeof( ICommandHandler<> );
+                // ICommandHandler<CommandType>
+                commandHandlerInterfaceType = commandHandlerInterfaceType.MakeGenericType( @this.Model.CommandType );
+                if( !commandHandlerInterfaceType.IsAssignableFrom( typeof( T ) ) )
+                    throw new InvalidOperationException( "This command handler does not match the command model." );
+            }
+            else
+            {
+                // ICommandHandler<,>
+                var commandHandlerInterfaceType = typeof( ICommandHandler<,> );
+                // ICommandHandler<CommandType,ResultType>
+                commandHandlerInterfaceType = commandHandlerInterfaceType.MakeGenericType( @this.Model.CommandType, @this.Model.ResultType );
+                if( !commandHandlerInterfaceType.IsAssignableFrom( typeof( T ) ) )
+                    throw new InvalidOperationException( "This command handler does not match the command model." );
+            }
+
+            return @this.Handler( typeof( T ) );
+        }
+
+        /// <summary>
         /// Registers a command and its handler.
         /// </summary>
         /// <typeparam name="TCommand"></typeparam>
