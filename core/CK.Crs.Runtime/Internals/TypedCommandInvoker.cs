@@ -15,13 +15,21 @@ namespace CK.Crs
 
         public async Task<object> Invoke( object command, ICommandContext context )
         {
-            if( context.Model.ResultType == null )
+            try
             {
-                await TaskInvokerVoid( this, command, context ).ConfigureAwait( false );
-                return null;
-            }
+                if( context.Model.ResultType == null )
+                {
+                    await TaskInvokerVoid( this, command, context ).ConfigureAwait( false );
+                    return null;
+                }
 
-            return await TaskInvoker( this, command, context ).ConfigureAwait( false );
+                return await TaskInvoker( this, command, context ).ConfigureAwait( false );
+            }
+            catch( Exception ex )
+            {
+                context.Monitor.Error( ex );
+                throw;
+            }
         }
 
         public Task InvokeTyped<TCommand>( TCommand command, ICommandContext context )
