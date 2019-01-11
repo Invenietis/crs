@@ -34,5 +34,8 @@ namespace CK.Crs
         /// Gets the related <see cref="CommandModel"/> for the given executing command.
         /// </summary>
         ICommandModel Model { get; }
+
+
+        IEndpointModel EndpointModel { get; }
     }
 }

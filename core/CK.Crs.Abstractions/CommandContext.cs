@@ -16,11 +16,12 @@ namespace CK.Crs
         /// <param name="model"></param>
         /// <param name="callerId"></param>
         /// <param name="token"></param>
-        public CommandContext( string commandId, IActivityMonitor activityMonitor, ICommandModel model, CallerId callerId, CancellationToken token = default( CancellationToken ) )
+        public CommandContext( string commandId, IActivityMonitor activityMonitor, ICommandModel model, IEndpointModel endpointModel, CallerId callerId, CancellationToken token = default( CancellationToken ) )
         {
             CommandId = commandId;
             Monitor = activityMonitor ?? throw new ArgumentNullException( nameof( activityMonitor ) );
             Model = model ?? throw new ArgumentNullException( nameof( model ) );
+            EndpointModel = endpointModel;
             CallerId = callerId;
             Aborted = token;
         }
@@ -34,6 +35,7 @@ namespace CK.Crs
         public CancellationToken Aborted { get; }
 
         public ICommandModel Model { get; }
+        public IEndpointModel EndpointModel { get; }
 
         Feature _contextFeature;
 

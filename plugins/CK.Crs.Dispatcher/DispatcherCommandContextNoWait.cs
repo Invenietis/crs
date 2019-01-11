@@ -15,6 +15,7 @@ namespace CK.Crs
                 commandId.ToString(),
                 new ActivityMonitor(),
                 commandModel,
+                null,
                 callerId
             )
         {

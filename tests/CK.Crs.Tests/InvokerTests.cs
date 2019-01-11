@@ -243,6 +243,8 @@ namespace CK.Crs.Tests
 
             public ICommandModel Model { get; }
 
+            public IEndpointModel EndpointModel => throw new NotImplementedException();
+
             public T1 GetFeature<T1>() where T1 : class
             {
                 return null;

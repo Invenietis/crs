@@ -27,6 +27,8 @@ namespace CK.Crs.InMemory
 
         public ICommandModel Model => _commandContext.Model;
 
+        public IEndpointModel EndpointModel => _commandContext.EndpointModel;
+
         public T GetFeature<T>() where T : class => _commandContext.GetFeature<T>();
 
         public void SetFeature<T>( T feature ) where T : class => _commandContext.SetFeature( feature );

@@ -104,6 +104,7 @@ namespace CK.Crs.Owin
                 commandId,
                 monitor,
                 commandModel,
+                endpointModel,
                 CallerId.Parse( callerId ) );
 
             return commandContext;

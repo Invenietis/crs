@@ -93,6 +93,7 @@ namespace CK.Crs.AspNetCore
                 commandId,
                 monitor,
                 commandModel,
+                endpointModel,
                 CallerId.Parse( callerId ) );
 
             return commandContext;

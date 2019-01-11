@@ -208,7 +208,7 @@ namespace CK.Crs.Rebus.Tests
         class TestCommandContext : CommandContext
         {
             public TestCommandContext( string v, IActivityMonitor monitor, ICommandModel commandModel )
-                : base( v, monitor, commandModel, CallerId.None )
+                : base( v, monitor, commandModel, null, CallerId.None )
             {
             }
         }

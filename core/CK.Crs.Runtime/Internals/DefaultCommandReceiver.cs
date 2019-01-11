@@ -24,6 +24,7 @@ namespace CK.Crs
 
         public bool AcceptCommand( ICommandContext context )
         {
+            
             return true;
         }
 
