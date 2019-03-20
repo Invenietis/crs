@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using CK.Core;
 
 namespace CK.Crs
@@ -22,6 +23,12 @@ namespace CK.Crs
         /// <param name="binder "></param>
         /// <returns></returns>
         ICommandRegistration CustomBinder( ICommandBinder binder );
+
+        /// <summary>
+        /// Add filters for a command.
+        /// </summary>
+        /// <param name="filters"></param>
+        ICommandRegistration AddFilters( IEnumerable<Type> filters );
 
         /// <summary>
         /// Sets an handler for a command.

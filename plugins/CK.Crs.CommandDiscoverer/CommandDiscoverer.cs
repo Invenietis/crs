@@ -42,6 +42,11 @@ namespace CK.Crs.CommandDiscoverer
                     if( customBinder != null )
                         registration.CustomBinder( customBinder.CommandBinder );
 
+                    var filters = (CommandFiltersAttribute)
+                        Attribute.GetCustomAttribute( command, typeof( CommandFiltersAttribute ) );
+                    if( filters != null )
+                        registration.AddFilters( filters.Filters );
+
                     var fireAndForget = (CommandFireAndForgetAttribute)
                         Attribute.GetCustomAttribute( command, typeof( CommandFireAndForgetAttribute ) );
                     if( fireAndForget != null )

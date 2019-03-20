@@ -45,6 +45,12 @@ namespace CK.Crs
             return this;
         }
 
+        CommandRegistration AddFilters( IEnumerable<Type> filters )
+        {
+            _model.Filters = filters;
+            return this;
+        }
+
         ICommandRegistration ICommandRegistration.CommandName( string commandName )
         {
             return CommandName( commandName );
@@ -53,6 +59,11 @@ namespace CK.Crs
         ICommandRegistration ICommandRegistration.CustomBinder( ICommandBinder commandBinder)
         {
             return CustomBinder( commandBinder );
+        }
+
+        ICommandRegistration ICommandRegistration.AddFilters( IEnumerable<Type> filters )
+        {
+            return AddFilters( filters );
         }
 
         ICommandRegistration ICommandRegistration.Handler( Type handler )
