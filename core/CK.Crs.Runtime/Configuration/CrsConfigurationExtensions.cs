@@ -49,13 +49,13 @@ namespace Microsoft.Extensions.DependencyInjection
             var builder = new CrsConfigurationBuilder( services );
             registry( builder.Registry );
 
-            services.AddSingleton<ICommandHandlerActivator, T>();
-            services.AddSingleton<ICommandHandlerFactory, DefaultCommandHandlerFactory>();
-            services.AddSingleton<ICommandHandlerInvoker, TypedCommandInvoker>();
-            services.AddSingleton<ITypedCommandHandlerInvoker, TypedCommandInvoker>();
-            services.AddSingleton<IResultDispatcherSelector, DefaultResutDispatcherSelector>();
-            services.AddSingleton<IResultReceiverProvider, DefaultResultReceiverProvider>();
-            services.AddSingleton<ICommandFilterProvider, FilterProvider>();
+            services.AddScoped<ICommandHandlerActivator, T>();
+            services.AddScoped<ICommandHandlerFactory, DefaultCommandHandlerFactory>();
+            services.AddScoped<ICommandHandlerInvoker, TypedCommandInvoker>();
+            services.AddScoped<ITypedCommandHandlerInvoker, TypedCommandInvoker>();
+            services.AddScoped<IResultDispatcherSelector, DefaultResutDispatcherSelector>();
+            services.AddScoped<IResultReceiverProvider, DefaultResultReceiverProvider>();
+            services.AddScoped<ICommandFilterProvider, FilterProvider>();
             services.AddSingleton<ICrsConnectionManager, DefaultConnectionManager>();
             services.AddSingleton( builder.Registry );
 

@@ -27,8 +27,12 @@ namespace CK.Crs.Owin
             OwinContext = context ?? throw new ArgumentNullException( nameof( context ) );
             if( scopeServices )
             {
-                var serviceScopeFactory = applicationServices.GetRequiredService<IServiceScopeFactory>();
-                _serviceScope = serviceScopeFactory.CreateScope();
+                _serviceScope = OwinContext.Get<IServiceScope>( nameof( IServiceScope ) );
+                if( _serviceScope == null )
+                {
+                    var serviceScopeFactory = applicationServices.GetRequiredService<IServiceScopeFactory>();
+                    _serviceScope = serviceScopeFactory.CreateScope();
+                }
 
                 Services = _serviceScope.ServiceProvider;
             }

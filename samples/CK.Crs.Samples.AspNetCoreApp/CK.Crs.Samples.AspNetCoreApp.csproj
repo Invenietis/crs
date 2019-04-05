@@ -20,9 +20,9 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CK.AspNet" Version="2.1.2" />
-    <PackageReference Include="Microsoft.AspNetCore" Version="2.1.4" />
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="2.1.1" />
-    <PackageReference Include="Rebus.SqlServer" Version="5.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="2.2.0" />
+    <PackageReference Include="Rebus.SqlServer" Version="5.0.5" />
       <PackageReference Include="CK.Monitoring" Version="9.1.1" />
   </ItemGroup>
   <ItemGroup>
