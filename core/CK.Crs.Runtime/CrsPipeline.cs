@@ -74,7 +74,7 @@ namespace CK.Crs
         {
             if( command is MetaCommand metaCommand )
             {
-                return await MetaCommand.Result.CreateAsync( metaCommand, Model, Services );
+                return await MetaCommand.Result.CreateAsync( metaCommand, Model, Services ).ConfigureAwait( false );
             }
             return null;
         }

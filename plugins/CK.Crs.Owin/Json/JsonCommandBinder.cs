@@ -65,7 +65,7 @@ namespace CK.Crs.Owin
                     monitor.Trace( "Reading the body and tries to bind the command" );
                     using( StreamReader sr = new StreamReader( owinContext.Request.Body ) )
                     {
-                        return JsonConvert.DeserializeObject( await sr.ReadToEndAsync(), commandContext.Model.CommandType, _settings );
+                        return JsonConvert.DeserializeObject( await sr.ReadToEndAsync().ConfigureAwait( false ), commandContext.Model.CommandType, _settings );
                     }
                 }
                 catch( Exception ex )

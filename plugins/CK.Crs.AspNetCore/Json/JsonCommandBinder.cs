@@ -58,7 +58,7 @@ namespace CK.Crs.AspNetCore
                 monitor.Trace( "Reading the body and tries to bind the command" );
                 using( StreamReader sr = new StreamReader( httpContext.Request.Body ) )
                 {
-                    return JsonConvert.DeserializeObject( await sr.ReadToEndAsync(), commandContext.Model.CommandType, _settings );
+                    return JsonConvert.DeserializeObject( await sr.ReadToEndAsync().ConfigureAwait( false ), commandContext.Model.CommandType, _settings );
                 }
             }
             catch( Exception ex )
