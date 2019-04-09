@@ -24,7 +24,7 @@ namespace CK.Crs.Configuration
             _receivers = new List<Type>();
             _dispatchers = new Dictionary<string, Type>();
             _services.AddSingleton( _model );
-            _services.AddSingleton<ICommandReceiver, CompositeCommandReceiver>( s =>
+            _services.AddScoped<ICommandReceiver, CompositeCommandReceiver>( s =>
             {
                 return new CompositeCommandReceiver(
                     Receivers
