@@ -27,8 +27,10 @@ namespace CK.Crs.InMemory
         public Task<Response> ReceiveCommand( object command, ICommandContext context )
         {
             context.Monitor.Trace( "Enqueuinq the command for asynchronous processing." );
-            _queue.Push( command, context );
-            return Task.FromResult<Response>( new DeferredResponse( context.CommandId, context.CallerId ) );
+            bool result = _queue.Push( command, context );
+            if( result ) return Task.FromResult<Response>( new DeferredResponse( context.CommandId, context.CallerId ) );
+
+            return Task.FromResult<Response>( new ErrorResponse( "Queue not available", context.CommandId ) );
         }
     }
 }

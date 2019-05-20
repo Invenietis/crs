@@ -13,6 +13,8 @@ using Microsoft.Extensions.Configuration;
 using CK.Crs.Samples.AspNetCoreApp.Extensions;
 using System;
 using System.Threading.Tasks;
+using CK.Crs.Hosting;
+using CK.Crs.AspNetCore;
 
 namespace CK.Crs.Samples.AspNetCoreApp
 {
@@ -47,6 +49,7 @@ namespace CK.Crs.Samples.AspNetCoreApp
                     c => c.Transport( t => t.UseSqlServer( conString, "commands_result" ) ),
                     c => c( "commands" )( m => m.HasRebusTag() ) )
                 .AddInMemoryReceiver()
+                .AddBackgroundCommandJobHostedService()
                 .AddSignalR();
 
             services

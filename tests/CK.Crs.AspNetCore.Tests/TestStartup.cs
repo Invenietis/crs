@@ -10,6 +10,9 @@ using Microsoft.Extensions.Configuration;
 using CK.Crs.Tests;
 using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Hosting;
+using System.Threading;
+using CK.Crs.Hosting;
 
 namespace CK.Crs.AspNetCore.Tests
 {
@@ -17,7 +20,7 @@ namespace CK.Crs.AspNetCore.Tests
     {
         public IConfiguration Config { get; }
 
-        public Startup( IHostingEnvironment environment )
+        public Startup( Microsoft.AspNetCore.Hosting.IHostingEnvironment environment )
         {
             Config = new ConfigurationBuilder().SetBasePath( environment.ContentRootPath ).AddEnvironmentVariables().Build();
         }
@@ -27,11 +30,14 @@ namespace CK.Crs.AspNetCore.Tests
             services.AddAmbientValues( MapFromBaseCommandType );
             services
                 .AddCrsCore( Commands ) //.Endpoints( Endpoints ) )
-                .AddInMemoryReceiver()
+                .AddInMemoryReceiver( host =>
+                {
+                    services.AddHostedService<BackgroundCommandJobHostedService>();
+                } )
                 .AddSignalR();
         }
 
-        public void Configure( IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory )
+        public void Configure( IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IHostingEnvironment env, ILoggerFactory loggerFactory )
         {
             app.UseCrs( "/crs" );
         }

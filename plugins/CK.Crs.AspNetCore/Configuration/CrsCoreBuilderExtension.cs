@@ -12,6 +12,17 @@ namespace Microsoft.Extensions.DependencyInjection
     public static class CrsCoreBuilderExtension
     {
         /// <summary>
+        /// Registers an hosted service which will wraps the <see cref="ICommandHost"/>
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <returns></returns>
+        public static ICrsCoreBuilder AddBackgroundCommandJobHostedService( this ICrsCoreBuilder builder )
+        {
+            builder.Services.AddHostedService<BackgroundCommandJobHostedService>();
+            return builder;
+        }
+
+        /// <summary>
         /// Maps a default CRS endpoint to the given <paramref name="crsPath"/> that accepts all comamnds, validate ambient values, and valide command model.
         /// </summary>
         /// <param name="app"></param>

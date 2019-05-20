@@ -13,4 +13,5 @@ namespace CK.Crs.AspNetCore
         /// <param name="httpContext"></param>
         HttpContext HttpContext { get; }
     }
+
 }
