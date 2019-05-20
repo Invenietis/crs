@@ -34,7 +34,7 @@ namespace CK.Crs.InMemory
 
         public bool CanGetNextJob => !IsDisposed && !_queue.IsCompleted;
 
-        public CommandJob GetNextJob( CancellationToken token = default )
+        public CommandJob GetNextJob( CancellationToken token = default( CancellationToken) )
         {
             if( IsDisposed ) return null;
             try
