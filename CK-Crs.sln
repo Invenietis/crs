@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.452
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".SolutionItems", ".SolutionItems", "{22EC622B-B1FE-4EA5-B828-83D2FF952DA4}"
 	ProjectSection(SolutionItems) = preProject
@@ -60,9 +60,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeCakeBuilder", "CodeCake
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Dispatcher", "plugins\CK.Crs.Dispatcher\CK.Crs.Dispatcher.csproj", "{3AA17C64-29CE-4F62-9C4D-6A4EE1FEA47C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CK.Crs.CommandDiscoverer", "plugins\CK.Crs.CommandDiscoverer\CK.Crs.CommandDiscoverer.csproj", "{C5E745A6-32E7-4EBE-802C-EFFF53CA8E34}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.CommandDiscoverer", "plugins\CK.Crs.CommandDiscoverer\CK.Crs.CommandDiscoverer.csproj", "{C5E745A6-32E7-4EBE-802C-EFFF53CA8E34}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CK.Crs.Samples.AspNet", "CK.Crs.Samples.AspNet\CK.Crs.Samples.AspNet.csproj", "{C58D85CB-6E6F-47AE-8D0B-A8953EA2B6D7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Samples.AspNet", "CK.Crs.Samples.AspNet\CK.Crs.Samples.AspNet.csproj", "{C58D85CB-6E6F-47AE-8D0B-A8953EA2B6D7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
