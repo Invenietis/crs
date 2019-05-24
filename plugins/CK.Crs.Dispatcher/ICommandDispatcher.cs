@@ -16,6 +16,17 @@ namespace CK.Crs
         /// </summary>
         /// <param name="commandId"></param>
         /// <param name="command"></param>
+        /// <param name="commandType"></param>
+        /// <param name="callerId"></param>
+        /// <returns></returns>
+        Task<Response> Send( Guid commandId, object command, Type commandType, CallerId callerId );
+
+        /// <summary>
+        /// Dispatches a command.
+        /// The command must have been registered in the <see cref="ICommandRegistry"/> before.
+        /// </summary>
+        /// <param name="commandId"></param>
+        /// <param name="command"></param>
         /// <param name="callerId"></param>
         /// <returns></returns>
         Task<Response> Send<TCommand>( Guid commandId, TCommand command, CallerId callerId );
