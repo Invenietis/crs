@@ -52,8 +52,15 @@ namespace CK.Crs.Configuration
             if( typeof( T ).IsAbstract ) throw new ArgumentException( "You should provided a concrete command receiver" );
             _receivers.Add( typeof( T ) );
 
-            if( factoryFunction != null ) _services.AddSingleton( factoryFunction );
-            else _services.AddSingleton<T>();
+            if( factoryFunction != null )
+            {
+                _services.AddSingleton<T>( factoryFunction );
+            }
+            else
+            {
+                _services.AddSingleton<T>();
+            }
+            _services.AddSingleton<ICommandReceiver, T>( ( sp ) => sp.GetService<T>() );
         }
 
         public void AddDispatcher<T>( string protocol ) where T : class, IResultDispatcher
