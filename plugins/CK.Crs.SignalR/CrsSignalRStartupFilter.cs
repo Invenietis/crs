@@ -18,8 +18,8 @@ namespace CK.Crs.SignalR
         {
             return app =>
             {
-                app.UseSignalR( r => r.MapHub<CrsHub>( _options.Value.CrsHubPath ) );
                 next( app );
+                app.UseSignalR( r => r.MapHub<CrsHub>( _options.Value.CrsHubPath ) );
             };
         }
     }
