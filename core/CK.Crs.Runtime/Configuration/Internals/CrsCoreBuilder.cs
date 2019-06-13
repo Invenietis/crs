@@ -49,7 +49,7 @@ namespace CK.Crs.Configuration
 
         public void AddReceiver<T>( Func<IServiceProvider, T> factoryFunction = null ) where T : class, ICommandReceiver
         {
-            if( typeof( T ).IsAbstract ) throw new ArgumentException( "You should provided a concrete command receiver" );
+            if( typeof( T ).IsAbstract ) throw new ArgumentException( "You should provide a concrete implementation type of ICommandReceiver" );
             _receivers.Add( typeof( T ) );
 
             if( factoryFunction != null )
@@ -60,7 +60,9 @@ namespace CK.Crs.Configuration
             {
                 _services.AddSingleton<T>();
             }
-            _services.AddSingleton<ICommandReceiver, T>( ( sp ) => sp.GetService<T>() );
+            // Don't do this: The scoped CompositeCommandReceiver registered in the constructor
+            // handles dispatch of Commands
+            //_services.AddSingleton<ICommandReceiver, T>( ( sp ) => sp.GetService<T>() );
         }
 
         public void AddDispatcher<T>( string protocol ) where T : class, IResultDispatcher
