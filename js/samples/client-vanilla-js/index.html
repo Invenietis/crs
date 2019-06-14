@@ -1,0 +1,31 @@
+<html>
+
+<body>
+    <div class="buttons" id="button-container">
+            <button onclick="initializeCrs()">
+                Connect
+            </button>
+            <button onclick="reloadMetadata()">
+                Reload CRS metadata
+            </button>
+        <button onclick="sendCrsCommand('MySynchronousCommand')">
+            Send MySynchronousCommand
+        </button>
+        <button onclick="sendCrsCommand('MyDeferredCommand')">
+            Send MyDeferredCommand
+        </button>
+    </div>
+
+    <div class="metadata-info">
+        <h1>Metadata</h1>
+        <pre id="pre-metadata-info">(CRS metadata not loaded yet)</pre>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aspnet-signalr/1.1.4/signalr.js"></script>
+    <script type="text/javascript" src="./crs-client.js"></script>
+    <script type="text/javascript" src="./crs-client-signalr.js"></script>
+    <script type="text/javascript" src="./index.js"></script>
+</body>
+
+</html>
