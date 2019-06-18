@@ -2,10 +2,11 @@ import { HubConnection, HubConnectionBuilder, LogLevel } from "@aspnet/signalr";
 
 export class HubConnectionManager {
     private readonly hubConnection: HubConnection;
+    private readonly onClosedCallbacks: Function[] = [];
     private connectionCount: number = 0;
     private retryCount: number = 0;
     private connectingPromise?: Promise<HubConnection>;
-    
+
     public constructor(private readonly url: string, logLevel: LogLevel) {
         this.hubConnection = new HubConnectionBuilder()
             // .configureLogging(LogLevel.Trace)
@@ -40,7 +41,7 @@ export class HubConnectionManager {
     }
 
     public getHubConnection(): Promise<HubConnection> {
-        if(this.connectingPromise) {
+        if (this.connectingPromise) {
             return this.connectingPromise
         }
         return Promise.resolve(this.hubConnection);
@@ -92,10 +93,27 @@ export class HubConnectionManager {
     }
 
     private onHubConnectionClosed(err?: Error) {
+        for(let i = 0; i < this.onClosedCallbacks.length; i++) {
+            try {
+                this.onClosedCallbacks[i]();
+            } catch(e) {
+                console.error(e);
+            }
+        }
         if (this.connectionCount > 0) {
             console.debug(`CRS: Reconnecting`);
             // Reconnect
             this.ensureConnecting(true);
+        }
+    }
+
+    public onClosed(callback: Function): Function {
+        this.onClosedCallbacks.push(callback);
+        return () => {
+            const idx = this.onClosedCallbacks.indexOf(callback);
+            if (idx >= 0) {
+                this.onClosedCallbacks.splice(idx, 1);
+            }
         }
     }
 }
