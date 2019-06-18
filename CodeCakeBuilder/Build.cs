@@ -5,6 +5,7 @@ using Cake.Common.Tools.DotNetCore.Build;
 using Cake.Common.Tools.NUnit;
 using Cake.Core;
 using Cake.Core.Diagnostics;
+using Cake.Core.IO;
 using SimpleGitVersion;
 using System;
 using System.Linq;
@@ -21,7 +22,13 @@ namespace CodeCake
         {
             Cake.Log.Verbosity = Verbosity.Diagnostic;
 
-            var solutionFileName = Cake.Environment.WorkingDirectory.GetDirectoryName() + ".sln";
+            string solutionFileName = System.IO.Path.GetFileName(
+                Cake.GetFiles( "*.sln",
+                    new GlobberSettings
+                    {
+                        Predicate = p => !System.IO.Path.GetFileName( p.Path.FullPath ).EndsWith( ".local.sln", StringComparison.OrdinalIgnoreCase )
+                    } ).Single().FullPath   
+            );
 
             var projects = Cake.ParseSolution( solutionFileName )
                                        .Projects
