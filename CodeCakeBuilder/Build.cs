@@ -1,14 +1,19 @@
 using Cake.Common.IO;
 using Cake.Common.Solution;
+using Cake.Common.Tools.DotNetCore;
+using Cake.Common.Tools.DotNetCore.Build;
+using Cake.Common.Tools.NUnit;
 using Cake.Core;
 using Cake.Core.Diagnostics;
-using Cake.Core.IO;
 using SimpleGitVersion;
+using System;
 using System.Linq;
 
 namespace CodeCake
 {
-
+    /// <summary>
+    /// Standard build "script".
+    /// </summary>
     [AddPath( "%UserProfile%/.nuget/packages/**/tools*" )]
     public partial class Build : CodeCakeHost
     {
@@ -16,28 +21,27 @@ namespace CodeCake
         {
             Cake.Log.Verbosity = Verbosity.Diagnostic;
 
-            string solutionFilePath = Cake.GetFiles( "*.sln" ).Single().FullPath;
+            var solutionFileName = Cake.Environment.WorkingDirectory.GetDirectoryName() + ".sln";
 
-            var releasesDir = Cake.Directory( "CodeCakeBuilder/Releases" );
-            var projects = Cake.ParseSolution( solutionFilePath )
+            var projects = Cake.ParseSolution( solutionFileName )
                                        .Projects
-                                       .Where( p => !(p is SolutionFolder)
-                                                    && p.Name != "CodeCakeBuilder" );
+                                       .Where( p => !(p is SolutionFolder) && p.Name != "CodeCakeBuilder" );
 
             // We do not generate NuGet packages for /Tests projects for this solution.
             var projectsToPublish = projects
                                         .Where( p => !p.Path.Segments.Contains( "Tests" ) );
 
             SimpleRepositoryInfo gitInfo = Cake.GetSimpleRepositoryInfo();
-
-            // Configuration is either "Debug" or "Release".
-            string configuration = "Debug";
+            StandardGlobalInfo globalInfo = CreateStandardGlobalInfo( gitInfo )
+                                                .AddNuGet( projectsToPublish )
+                                                .AddNPM()
+                                                .SetCIBuildTag();
 
             Task( "Check-Repository" )
                 .Does( () =>
-                 {
-                     configuration = StandardCheckRepository( projectsToPublish, gitInfo );
-                 } );
+                {
+                    globalInfo.TerminateIfShouldStop();
+                } );
 
             Task( "Clean" )
                 .IsDependentOn( "Check-Repository" )
@@ -45,50 +49,88 @@ namespace CodeCake
                  {
                      Cake.CleanDirectories( projects.Select( p => p.Path.GetDirectory().Combine( "bin" ) ) );
                      Cake.CleanDirectories( projects.Select( p => p.Path.GetDirectory().Combine( "obj" ) ) );
-                     Cake.CleanDirectories( releasesDir );
+                     Cake.CleanDirectories( globalInfo.ReleasesFolder );
                      Cake.DeleteFiles( "Tests/**/TestResult*.xml" );
+                     globalInfo.GetNPMSolution().RunInstallAndClean( globalInfo, scriptMustExist: false );
                  } );
+
 
             Task( "Build" )
                 .IsDependentOn( "Check-Repository" )
                 .IsDependentOn( "Clean" )
                 .Does( () =>
                  {
-                     StandardSolutionBuild( solutionFilePath, gitInfo, configuration );
+                     StandardSolutionBuild( globalInfo, solutionFileName );
+                     globalInfo.GetNPMSolution().RunBuild( globalInfo );
                  } );
 
-            //Task( "Unit-Testing" )
-            //    .IsDependentOn( "Build" )
-            //    .WithCriteria( () => !Cake.IsInteractiveMode()
-            //                         || Cake.ReadInteractiveOption( "Run Unit Tests?", 'Y', 'N' ) == 'Y' )
-            //    .Does( () =>
-            //     {
-            //         var testProjects = projects.Where( p => p.Name.EndsWith( ".Tests" ) );
-            //         SignatureUnitTests( configuration, testProjects );
-            //     } );
-
-
-            Task( "Create-NuGet-Packages" )
-                .WithCriteria( () => gitInfo.IsValid )
+            Task( "Unit-Testing" )
                 .IsDependentOn( "Build" )
-                .Does( () =>
-                 {
-                     StandardCreateNuGetPackages( releasesDir, projectsToPublish, gitInfo, configuration );
-                 } );
+                .WithCriteria( () => Cake.InteractiveMode() == InteractiveMode.NoInteraction
+                                     || Cake.ReadInteractiveOption( "RunUnitTests", "Run Unit Tests?", 'Y', 'N' ) == 'Y' )
+               .Does( () =>
+                {
+                    var testProjects = projects.Where( p => p.Name.EndsWith( ".Tests" )
+                                                            && !p.Path.Segments.Contains( "Integration" ) );
+                    StandardUnitTests( globalInfo, testProjects );
+                    globalInfo.GetNPMSolution().RunTest( globalInfo );
+                } );
 
-            Task( "Push-NuGet-Packages" )
-                .IsDependentOn( "Create-NuGet-Packages" )
+            Task( "Build-Integration-Projects" )
+                .IsDependentOn( "Unit-Testing" )
+                .Does( () =>
+                {
+                    // Use WebApp.Tests to generate the StObj assembly.
+                    var webAppTests = projects.Single( p => p.Name == "WebApp.Tests" );
+                    var configuration = globalInfo.IsRelease ? "Release" : "Debug";
+                    var path = webAppTests.Path.GetDirectory().CombineWithFilePath( "bin/" + configuration + "/net461/WebApp.Tests.dll" );
+                    Cake.NUnit( path.FullPath, new NUnitSettings() { Include = "GenerateStObjAssembly" } );
+
+                    var webApp = projects.Single( p => p.Name == "WebApp" );
+                    Cake.DotNetCoreBuild( webApp.Path.FullPath,
+                         new DotNetCoreBuildSettings().AddVersionArguments( gitInfo, s =>
+                         {
+                             s.Configuration = configuration;
+                         } ) );
+                } );
+
+            Task( "Integration-Testing" )
+                .IsDependentOn( "Build-Integration-Projects" )
+                .WithCriteria( () => Cake.InteractiveMode() == InteractiveMode.NoInteraction
+                                     || Cake.ReadInteractiveOption( "Run integration tests?", 'N', 'Y' ) == 'Y' )
+                .Does( () =>
+                {
+                    var testIntegrationProjects = projects
+                                                    .Where( p => p.Name.EndsWith( ".Tests" )
+                                                                 && p.Path.Segments.Contains( "Integration" ) );
+                    StandardUnitTests( globalInfo, testIntegrationProjects );
+                } );
+
+
+            Task( "Create-Packages" )
                 .WithCriteria( () => gitInfo.IsValid )
+                .IsDependentOn( "Unit-Testing" )
+                .IsDependentOn( "Integration-Testing" )
                 .Does( () =>
                  {
-                     SignaturePushNuGetPackages( Cake.GetFiles( releasesDir.Path + "/*.nupkg" ), gitInfo );
+                     StandardCreateNuGetPackages( globalInfo );
+                     globalInfo.GetNPMSolution().RunPack( globalInfo );
                  } );
 
+            Task( "Push-Packages" )
+                .WithCriteria( () => gitInfo.IsValid )
+                .IsDependentOn( "Create-Packages" )
+                .Does( () =>
+                 {
+                     globalInfo.PushArtifacts();
+                 } );
 
             // The Default task for this script can be set here.
             Task( "Default" )
-                .IsDependentOn( "Push-NuGet-Packages" );
+                .IsDependentOn( "Push-Packages" );
+
         }
+
 
     }
 }
