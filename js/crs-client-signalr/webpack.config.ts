@@ -25,6 +25,12 @@ const config: webpack.Configuration = {
       ]
     },
     externals: {
+      axios: {
+          commonjs: 'axios',
+          commonjs2: 'axios',
+          amd: 'axios',
+          root: 'axios'
+      },
       '@aspnet/signalr': {
         commonjs: 'signalR',
         commonjs2: 'signalR',

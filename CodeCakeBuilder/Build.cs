@@ -76,41 +76,9 @@ namespace CodeCake
                     globalInfo.GetNPMSolution().RunTest( globalInfo );
                 } );
 
-            Task( "Build-Integration-Projects" )
-                .IsDependentOn( "Unit-Testing" )
-                .Does( () =>
-                {
-                    // Use WebApp.Tests to generate the StObj assembly.
-                    var webAppTests = projects.Single( p => p.Name == "WebApp.Tests" );
-                    var configuration = globalInfo.IsRelease ? "Release" : "Debug";
-                    var path = webAppTests.Path.GetDirectory().CombineWithFilePath( "bin/" + configuration + "/net461/WebApp.Tests.dll" );
-                    Cake.NUnit( path.FullPath, new NUnitSettings() { Include = "GenerateStObjAssembly" } );
-
-                    var webApp = projects.Single( p => p.Name == "WebApp" );
-                    Cake.DotNetCoreBuild( webApp.Path.FullPath,
-                         new DotNetCoreBuildSettings().AddVersionArguments( gitInfo, s =>
-                         {
-                             s.Configuration = configuration;
-                         } ) );
-                } );
-
-            Task( "Integration-Testing" )
-                .IsDependentOn( "Build-Integration-Projects" )
-                .WithCriteria( () => Cake.InteractiveMode() == InteractiveMode.NoInteraction
-                                     || Cake.ReadInteractiveOption( "Run integration tests?", 'N', 'Y' ) == 'Y' )
-                .Does( () =>
-                {
-                    var testIntegrationProjects = projects
-                                                    .Where( p => p.Name.EndsWith( ".Tests" )
-                                                                 && p.Path.Segments.Contains( "Integration" ) );
-                    StandardUnitTests( globalInfo, testIntegrationProjects );
-                } );
-
-
             Task( "Create-Packages" )
                 .WithCriteria( () => gitInfo.IsValid )
                 .IsDependentOn( "Unit-Testing" )
-                .IsDependentOn( "Integration-Testing" )
                 .Does( () =>
                  {
                      StandardCreateNuGetPackages( globalInfo );
