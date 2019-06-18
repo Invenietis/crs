@@ -1,9 +1,9 @@
 {
   "name": "@signature/crs-client",
-  "version": "4.0.0-alpha.0",
+  "version": "0.0.0-0",
   "description": "CRS Client core package",
   "main": "dist/crs-client.js",
-  "types": "dist/src/index.d.ts",
+  "types": "dist/index.d.ts",
   "files": [
     "dist/**/*",
     "src/**/*"

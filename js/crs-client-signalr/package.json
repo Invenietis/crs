@@ -1,9 +1,9 @@
 {
   "name": "@signature/crs-client-signalr",
-  "version": "4.0.0-alpha.0",
+  "version": "0.0.0-0",
   "description": "CRS Client SignalR package",
   "main": "dist/crs-client-signalr.js",
-  "types": "dist/src/index.d.ts",
+  "types": "dist/index.d.ts",
   "scripts": {
     "test": "echo \"No tests\" && exit 0",
     "build": "webpack --mode=production",

@@ -3,10 +3,12 @@ import webpack from 'webpack';
 
 const config: webpack.Configuration = {
     mode: 'development',
-    entry: './src/index.ts',
+    entry: {
+        'crs-client-signalr': './src/index.ts',
+    },
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: 'crs-client-signalr.js',
+        filename: '[name].js',
         library: 'crsClientSignalr',
         libraryTarget: 'umd'
     },
@@ -29,7 +31,12 @@ const config: webpack.Configuration = {
         amd: 'signalR',
         root: 'signalR'
       }
-    }
+    },
+    optimization: {
+        splitChunks: {
+            chunks: 'all',
+        },
+    },
 };
 
 export default config;

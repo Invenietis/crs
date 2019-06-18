@@ -3,10 +3,12 @@ import webpack from 'webpack';
 
 const config: webpack.Configuration = {
     mode: 'development',
-    entry: './src/index.ts',
+    entry: {
+        'crs-client': './src/index.ts',
+    },
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: 'crs-client.js',
+        filename: '[name].js',
         library: 'crsClient',
         libraryTarget: 'umd'
     },
@@ -29,7 +31,12 @@ const config: webpack.Configuration = {
         amd: 'axios',
         root: 'axios'
       }
-    }
+    },
+    optimization: {
+        splitChunks: {
+            chunks: 'all',
+        },
+    },
 };
 
 export default config;
