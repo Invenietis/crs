@@ -1,30 +1,38 @@
-using Code.Cake;
-using CodeCake;
 using System;
 using System.Linq;
 
-namespace CodeCakeBuilder
+namespace CodeCake
 {
     class Program
     {
         /// <summary>
+        /// Basic parameter that sets the solution directory as being the current directory
+        /// instead of using the default lookup to "Solution/Builder/bin/[Configuration]/[targetFramework]" folder.
+        /// Check of this argument uses <see cref="StringComparer.OrdinalIgnoreCase"/>.
+        /// </summary>
+        const string SolutionDirectoryIsCurrentDirectoryParameter = "SolutionDirectoryIsCurrentDirectory";
+
+        /// <summary>
         /// CodeCakeBuilder entry point. This is a default, simple, implementation that can 
         /// be extended as needed.
         /// </summary>
-        /// <param name="args"></param>
-        /// <returns>An error code (typically -1), 0 on success.</returns>
+        /// <param name="args">The command line arguments.</param>
+        /// <returns>An error code (typically negative), 0 on success.</returns>
         static int Main( string[] args )
         {
-            var app = new CodeCakeApplication();
-            bool interactive = !args.Contains( '-' + InteractiveAliases.NoInteractionArgument, StringComparer.OrdinalIgnoreCase );
-            int result = app.Run( args );
-            Console.WriteLine();
-            if( interactive )
+            string solutionDirectory = args.Contains( SolutionDirectoryIsCurrentDirectoryParameter, StringComparer.OrdinalIgnoreCase )
+                                        ? Environment.CurrentDirectory
+                                        : null;
+            var app = new CodeCakeApplication( solutionDirectory );
+            RunResult result = app.Run( args.Where( a => !StringComparer.OrdinalIgnoreCase.Equals( a, SolutionDirectoryIsCurrentDirectoryParameter ) ) );
+            if( result.InteractiveMode == InteractiveMode.Interactive )
             {
-                Console.WriteLine( "Hit any key to exit. (Use -{0} parameter to exit immediately)", InteractiveAliases.NoInteractionArgument );
+                Console.WriteLine();
+                Console.WriteLine( $"Hit any key to exit." );
+                Console.WriteLine( $"Use -{InteractiveAliases.NoInteractionArgument} or -{InteractiveAliases.AutoInteractionArgument} parameter to exit immediately." );
                 Console.ReadKey();
             }
-            return result;
+            return result.ReturnCode;
         }
     }
 }

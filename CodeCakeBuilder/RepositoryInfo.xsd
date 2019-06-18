@@ -1,90 +1,108 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<xs:schema 
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema
     targetNamespace="http://csemver.org/schemas/2015"
     elementFormDefault="qualified"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns="http://csemver.org/schemas/2015"
 >
-  <xs:simpleType name="versionMode">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="None" />
-      <xs:enumeration value="ZeroTimed" />
-      <xs:enumeration value="LastReleaseBased" />
-    </xs:restriction>
-  </xs:simpleType>
+    <xs:simpleType name="versionMode">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="None" />
+            <xs:enumeration value="ZeroTimed" />
+            <xs:enumeration value="LastReleaseBased" />
+        </xs:restriction>
+    </xs:simpleType>
 
-  <xs:simpleType name="StringMax8">
-    <xs:restriction base="xs:string">
-      <xs:maxLength value="8" />
-    </xs:restriction>
-  </xs:simpleType>
+    <xs:simpleType name="possibleVersionsMode">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Default" />
+            <xs:enumeration value="AllSuccessors" />
+            <xs:enumeration value="Restricted" />
+        </xs:restriction>
+    </xs:simpleType>
 
-  <xs:element name="RepositoryInfo">
-    <xs:complexType>
-      <xs:all>
-        <xs:element name="IgnoreModifiedFiles" minOccurs="0" >
-          <xs:complexType>
-            <xs:sequence>
-              <xs:element name="Add" minOccurs="0" maxOccurs="unbounded" />
-            </xs:sequence>
-          </xs:complexType>
-        </xs:element>
-        <xs:element name="Debug" minOccurs="0" >
-          <xs:complexType>
-            <xs:attribute name="IgnoreDirtyWorkingFolder" type="xs:boolean" default="false" >
-              <xs:annotation>
-                <xs:documentation>
-                  Should be reserved to debugging purposes or to cheat the system. 
-                  It should never be commited and must never be pushed with a true value.
-                </xs:documentation>
-              </xs:annotation>
-            </xs:attribute> 
-          </xs:complexType>
-        </xs:element>
-        <xs:element name="Branches" minOccurs="0" >
-          <xs:complexType>
-            <xs:sequence>
-              <xs:element name="Branch" minOccurs="0" maxOccurs="unbounded">
-                <xs:complexType>
-                  <xs:attribute name="CIVersionMode" type="versionMode" default="None" />
-                  <xs:attribute name="Name" type="xs:string" use="required" >
+    <xs:simpleType name="StringMax8">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="8" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:element name="RepositoryInfo">
+        <xs:complexType>
+            <xs:all>
+                <xs:element name="IgnoreModifiedFiles" minOccurs="0" >
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Add" minOccurs="0" maxOccurs="unbounded" />
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="Debug" minOccurs="0" >
+                    <xs:complexType>
+                        <xs:attribute name="IgnoreDirtyWorkingFolder" type="xs:boolean" default="false" >
+                            <xs:annotation>
+                                <xs:documentation>
+                                    Should be reserved to debugging purposes or to cheat the system.
+                                    It should never be commited and must never be pushed with a true value.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:attribute>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="Branches" minOccurs="0" >
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Branch" minOccurs="0" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:attribute name="CIVersionMode" type="versionMode" default="None" />
+                                    <xs:attribute name="Name" type="xs:string" use="required" >
+                                        <xs:annotation>
+                                            <xs:documentation>
+                                                Defines the name of branch that should emit CI packages on new commit points.
+                                                Due to NuGet V2 limitation, the branch name must not be longer than 8 characters.
+                                                If it is the case, you must specify a shorter name with the VersionName attribute.
+                                            </xs:documentation>
+                                        </xs:annotation>
+                                    </xs:attribute>
+                                    <xs:attribute name="VersionName" type="StringMax8">
+                                        <xs:annotation>
+                                            <xs:documentation>
+                                                Defines the name of the branch to use in the version (SemVer and NuGet).
+                                            </xs:documentation>
+                                        </xs:annotation>
+                                    </xs:attribute>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="StartingVersionForCSemVer" minOccurs="0" type="xs:string">
                     <xs:annotation>
-                      <xs:documentation>
-                        Defines the name of branch that should emit CI packages on new commit points. 
-                        Due to NuGet V2 limitation, the branch name must not be longer than 8 characters.
-                        If it is the case, you must specify a shorter name with the VersionName attribute.
-                      </xs:documentation>
+                        <xs:documentation>
+                            The version from which CSemVer rules are enforced.
+                            When set, any version before this one are silently ignored.
+                            This is useful to start working with an existing repository that did not previosuly use Simple Git Versionning by easily forgetting the past.
+                        </xs:documentation>
                     </xs:annotation>
-                  </xs:attribute>
-                  <xs:attribute name="VersionName" type="StringMax8">
+                </xs:element>
+                <xs:element name="PossibleVersionsMode" minOccurs="0" type="possibleVersionsMode">
                     <xs:annotation>
-                      <xs:documentation>
-                        Defines the name of the branch to use in the version (SemVer and NuGet).
-                      </xs:documentation>
+                        <xs:documentation>
+                            Defines which set of possible versions must be used to consider a version tag as a valid one.
+                            Default is 'Restricted': Restricted mode prevents a non-patch version to be produced whenever
+                            a greater version exists in the repository. 'AllSuccessors' mode considers all valid successors: this can be used
+                            on "Long Term Support" branches since this allows a 4.3.0 to be released even if a 5.0.0 version exists.
+                        </xs:documentation>
                     </xs:annotation>
-                  </xs:attribute>
-                </xs:complexType>
-              </xs:element>
-            </xs:sequence>
-          </xs:complexType>
-        </xs:element>
-        <xs:element name="StartingVersionForCSemVer" minOccurs="0" type="xs:string">
-          <xs:annotation>
-            <xs:documentation>
-              The version from which CSemVer rules are enforced.
-              When set, any version before this one are silently ignored.
-              This is useful to start working with an existing repository that did not previosuly use Simple Git Versionning by easily forgetting the past.
-            </xs:documentation>
-          </xs:annotation>
-        </xs:element>
-        <xs:element name="RemoteName" minOccurs="0" type="xs:string" >
-          <xs:annotation>
-            <xs:documentation>
-              Name of the remote defaults to "origin". This should rarely be specified.
-            </xs:documentation>
-          </xs:annotation>
-        </xs:element>
-      </xs:all>
-    </xs:complexType>
-  </xs:element>
+                </xs:element>
+                <xs:element name="RemoteName" minOccurs="0" type="xs:string" >
+                    <xs:annotation>
+                        <xs:documentation>
+                            Name of the remote defaults to "origin". This should rarely be specified.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+            </xs:all>
+        </xs:complexType>
+    </xs:element>
 </xs:schema>
