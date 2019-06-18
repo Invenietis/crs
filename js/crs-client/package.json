@@ -2,7 +2,7 @@
   "name": "@signature/crs-client",
   "version": "0.0.0-0",
   "description": "CRS Client core package",
-  "main": "dist/crs-client.js",
+  "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist/**/*",
@@ -10,20 +10,15 @@
   ],
   "scripts": {
     "test": "echo \"No tests\" && exit 0",
-    "build": "webpack --mode=production",
+    "build": "tsc",
     "clean": "rimraf dist"
   },
   "author": "",
   "license": "LGPL-3.0",
   "devDependencies": {
     "@types/node": "^12.0.8",
-    "@types/webpack": "^4.4.32",
     "rimraf": "^2.6.3",
-    "ts-loader": "^6.0.2",
-    "ts-node": "^8.2.0",
-    "typescript": "^3.5.1",
-    "webpack": "^4.33.0",
-    "webpack-cli": "^3.3.4"
+    "typescript": "^3.5.1"
   },
   "dependencies": {
     "axios": "^0.19.0"

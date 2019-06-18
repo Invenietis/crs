@@ -4,7 +4,7 @@ import webpack from 'webpack';
 const config: webpack.Configuration = {
     mode: 'development',
     entry: {
-        'index': './dist/index.js',
+        'index': './index.ts',
     },
     output: {
         path: path.resolve(__dirname, 'dist'),

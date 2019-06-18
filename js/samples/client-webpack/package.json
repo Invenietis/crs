@@ -2,7 +2,7 @@
   "name": "client-typescript",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -19,7 +19,7 @@
     "webpack-cli": "^3.3.4"
   },
   "dependencies": {
-    "@signature/crs-client": "^3.0.0-a00-00-0009-develop",
-    "@signature/crs-client-signalr": "^3.0.0-a00-00-0009-develop"
+    "@signature/crs-client": "^3.0.0-a00-00-0012-develop",
+    "@signature/crs-client-signalr": "^3.0.0-a00-00-0012-develop"
   }
 }
