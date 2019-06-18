@@ -1,3 +1,4 @@
 <NPMSolution>
-  <Project Path="Clients/webfrontauth" IsPublished="true" ExpectedName="@signature/webfrontauth" />
+    <Project Path="js/crs-client" IsPublished="true" ExpectedName="@signature/crs-client" />
+    <Project Path="js/crs-client-signalr" IsPublished="true" ExpectedName="@signature/crs-client-signalr" />
 </NPMSolution>
