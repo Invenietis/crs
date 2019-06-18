@@ -30,7 +30,7 @@
     <ItemGroup>
         <ProjectReference Include="..\..\core\CK.Crs.Abstractions\CK.Crs.Abstractions.csproj" />
         <ProjectReference Include="..\..\core\CK.Crs.Runtime\CK.Crs.Runtime.csproj" />
-        <ProjectReference Include="..\..\plugins\CK.Crs.Rebus\CK.Crs.Rebus.csproj" />
+        <ProjectReference Include="..\..\Plugins\CK.Crs.Rebus\CK.Crs.Rebus.csproj" />
         <ProjectReference Include="..\CK.Crs.Samples.Handlers\CK.Crs.Samples.Handlers.csproj" />
         <ProjectReference Include="..\CK.Crs.Samples.Messages\CK.Crs.Samples.Messages.csproj" />
     </ItemGroup>

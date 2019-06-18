@@ -20,7 +20,7 @@ if ([Net.ServicePointManager]::SecurityProtocol.ToString().Split(',').Trim() -no
 $profilePath = [System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::UserProfile)
 $tempPath = [System.IO.Path]::GetTempPath()
 
-$pluginLocation = [System.IO.Path]::Combine($profilePath, ".nuget", "plugins");
+$pluginLocation = [System.IO.Path]::Combine($profilePath, ".nuget", "Plugins");
 $tempZipLocation = [System.IO.Path]::Combine($tempPath, "CredProviderZip");
 
 $localNetcoreCredProviderPath = [System.IO.Path]::Combine("netcore", "CredentialProvider.Microsoft");

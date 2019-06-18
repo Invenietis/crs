@@ -25,7 +25,7 @@
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\core\CK.Crs.Runtime\CK.Crs.Runtime.csproj" />
-        <ProjectReference Include="..\..\plugins\CK.Crs.Rebus\CK.Crs.Rebus.csproj" />
+        <ProjectReference Include="..\..\Plugins\CK.Crs.Rebus\CK.Crs.Rebus.csproj" />
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Properties\" />

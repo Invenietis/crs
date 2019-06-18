@@ -27,7 +27,7 @@ namespace CodeCake
                     new GlobberSettings
                     {
                         Predicate = p => !System.IO.Path.GetFileName( p.Path.FullPath ).EndsWith( ".local.sln", StringComparison.OrdinalIgnoreCase )
-                    } ).Single().FullPath   
+                    } ).Single().FullPath
             );
 
             var projects = Cake.ParseSolution( solutionFileName )
@@ -36,7 +36,8 @@ namespace CodeCake
 
             // We do not generate NuGet packages for /Tests projects for this solution.
             var projectsToPublish = projects
-                                        .Where( p => !p.Path.Segments.Contains( "Tests" ) );
+                                        .Where( p => !p.Path.Segments.Contains( "Tests" ) )
+                                        .Where( p => !p.Path.Segments.Contains( "Samples" ) );
 
             SimpleRepositoryInfo gitInfo = Cake.GetSimpleRepositoryInfo();
             StandardGlobalInfo globalInfo = CreateStandardGlobalInfo( gitInfo )

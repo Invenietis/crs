@@ -26,10 +26,10 @@
       <PackageReference Include="CK.Monitoring" Version="9.1.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\plugins\CK.Crs.AspNetCore\CK.Crs.AspNetCore.csproj" />
-    <ProjectReference Include="..\..\plugins\CK.Crs.InMemory\CK.Crs.InMemory.csproj" />
-    <ProjectReference Include="..\..\plugins\CK.Crs.Rebus\CK.Crs.Rebus.csproj" />
-    <ProjectReference Include="..\..\plugins\CK.Crs.SignalR\CK.Crs.SignalR.csproj" />
+    <ProjectReference Include="..\..\Plugins\CK.Crs.AspNetCore\CK.Crs.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\Plugins\CK.Crs.InMemory\CK.Crs.InMemory.csproj" />
+    <ProjectReference Include="..\..\Plugins\CK.Crs.Rebus\CK.Crs.Rebus.csproj" />
+    <ProjectReference Include="..\..\Plugins\CK.Crs.SignalR\CK.Crs.SignalR.csproj" />
     <ProjectReference Include="..\CK.Crs.Samples.Commands\CK.Crs.Samples.Commands.csproj" />
     <ProjectReference Include="..\CK.Crs.Samples.Events\CK.Crs.Samples.Events.csproj" />
     <ProjectReference Include="..\CK.Crs.Samples.Handlers\CK.Crs.Samples.Handlers.csproj" />
