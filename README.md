@@ -4,15 +4,15 @@ A .NET command execution library, with support for ASP.NET Core (as server) and 
 
 ## Goals and ambitions
 
-* A minimalist server-side component handling **commands**.
-* Straightforward, simple API.
+* Minimalist server-side component handling **commands**
+* Straightforward, simple API
 * Explicit as possible in its use
 
 ## Core concepts
 
 ### Commands
 
-A *command* is an instance of a C# command class (eg. `var myCommand = new BrewCoffeeCommand();`.
+A *command* is an instance of a C# command class (eg. `var myCommand = new CreateUserCommand();`.
 
 If the command finishes with a result (sent back to the caller), this class should implement `ICommand<TResult>`.
 Otherwise, this command class does not require any particular interface.
@@ -39,7 +39,7 @@ This command handler is a class implementing `ICommandHandler<TCommand, TResult>
 Command handlers are transient, created every time a command is executed (like ASP.NET Core Controllers), and can implement multiple different commands.
 
 ```csharp
-public class CreateUserHandler : ICommandHandler<CreateUserCommand, string>
+public class CreateUserHandler : ICommandHandler<CreateUserCommand>
 {
     public Task HandleAsync(
         CreateUserCommand command,
@@ -55,11 +55,11 @@ A *Command* has additional metadata properties:
 
 | Property      |     Description    |   Default |  Sample value |
 |---|---|---|---|
-| Name          |  Command name used for routing | `<namespace>.<commandtypename>` w/o `Command suffix` | eg. `CreateUserCommand` -> `my.namespace.createuser` |
+| Name          |  Command name used for routing | `<namespace>.<commandtypename>` w/o `Command` suffix | `my.namespace.createuser` |
 | Description | Command description (for display or documentation) | *(empty string)* | |
 | CommandType | Full name of the Command's .NET Type | `null` | `My.Namespace.CreateUserCommand` |
 | HandlerType | Full name of the CommandHandler's .NET Type | null | `My.Namespace.CreateUserHandler` |
-| Traits      | CKTrait tag list, separated with the default CKTraitContext separator (`&vert;`) | null | `FireForget&vert;SQL` |
+| Traits      | CKTrait tag list, separated with the default CKTraitContext separator (`|`) | null | `FireForget|SQL` |
 
 ## Quick start
 
@@ -91,7 +91,7 @@ A *Command* has additional metadata properties:
                 {
                     // Register your commands/command handlers here.
                     // To register all command handlers/commands from an entire assembly:
-                    //registry.RegisterHandlers( typeof( CommandHandler ).Assembly );
+                    registry.RegisterHandlers( typeof( CreateUserHandler ).Assembly );
                 } )
                 .AddBackgroundCommandJobHostedService()
                 .AddDispatcher()
@@ -156,6 +156,59 @@ Alternatively, you can register it by hand:
         {
             registry.Register<MyDeferredCommand, string, CommandHandler>();
         } )
+```
+
+### Send commands using Javascript
+
+First off, NPM packages are available:
+```bash
+npm i @signature/crs-client
+npm i @signature/crs-client-signalr
+```
+
+If you use vanilla JavaScript, an example is available in `js/samples/client-vanilla-js`.
+
+If you're using TypeScript, you can create a class for each of your command types and send it with Promises:
+
+```ts
+import { Command, CrsEndpoint, CrsEndpointConfiguration } from '@signature/crs-client';
+import { SignalrResponseReceiver } from '@signature/crs-client-signalr';
+
+@Command("MyDeferredCommand")
+export class MyDeferredCommand {
+}
+
+const endpointConfig: CrsEndpointConfiguration = {
+    url: ' http://localhost:5000/api/crs',
+    responseReceivers: [
+        new SignalrResponseReceiver(
+            ' http://localhost:5000/hubs/crs'
+        )
+    ]
+};
+
+const endpoint = new CrsEndpoint(endpointConfig);
+
+async function initializeCrs() {
+    // Get metadata (and connect to SignalR with crs-client-signalr)
+    let metadata = await endpoint.initialize();
+
+    // Create command
+    const command = new MyDeferredCommand();
+
+    // Send command
+    const commandResult = await endpoint.send<string>(command);
+
+    // If server metadata change for some reason (eg. new ambient values after re-authentication),
+    // you can reload the command metadata.
+    metadata = await endpoint.reloadMetadata();
+
+    // If you send any commands using endpoint.send(), CRS will wait until metadata is available
+    // before actually sending it.
+}
+
+initializeCrs();
+
 ```
 
 ## CRS Services Configuration
