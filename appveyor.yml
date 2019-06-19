@@ -1,0 +1,17 @@
+
+version: build{build}
+image: Visual Studio 2017
+clone_folder: C:\CKli-World\CRS-Projects\CK-Crs
+branches:
+  only:
+    - master
+    - develop
+environment:
+  CODECAKEBUILDER_SECRET_KEY:
+    secure: 8VAzdXgUQaJyFoU3WLf2iPFV/8zPDm9qV4TfOpx8/rg=
+build_script:
+  - dotnet run --project CodeCakeBuilder -nointeraction
+test: off
+install:
+  - ps: ./CodeCakeBuilder/InstallCredentialProvider.ps1
+  - cmd: npm install -g npm@6.9.0

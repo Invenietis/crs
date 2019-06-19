@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.452
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".SolutionItems", ".SolutionItems", "{22EC622B-B1FE-4EA5-B828-83D2FF952DA4}"
 	ProjectSection(SolutionItems) = preProject
@@ -10,11 +10,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".SolutionItems", ".Solution
 		common\shared.props = common\shared.props
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Runtime", "core\CK.Crs.Runtime\CK.Crs.Runtime.csproj", "{52C1088B-F87D-489D-B592-38F3881B2271}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Runtime", "Core\CK.Crs.Runtime\CK.Crs.Runtime.csproj", "{52C1088B-F87D-489D-B592-38F3881B2271}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Abstractions", "core\CK.Crs.Abstractions\CK.Crs.Abstractions.csproj", "{7605F8FB-B447-4D6B-91F6-D85ACC9DDBB7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Abstractions", "Core\CK.Crs.Abstractions\CK.Crs.Abstractions.csproj", "{7605F8FB-B447-4D6B-91F6-D85ACC9DDBB7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Samples.AspNetCoreApp", "samples\CK.Crs.Samples.AspNetCoreApp\CK.Crs.Samples.AspNetCoreApp.csproj", "{C412DB42-9922-470C-B78B-21D60443EF9F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Samples.AspNetCoreApp", "Samples\CK.Crs.Samples.AspNetCoreApp\CK.Crs.Samples.AspNetCoreApp.csproj", "{C412DB42-9922-470C-B78B-21D60443EF9F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{7D57BE6C-724C-462F-878C-4F89FC56CC1B}"
 	ProjectSection(SolutionItems) = preProject
@@ -22,9 +22,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{7D57
 		output\Run.sh = output\Run.sh
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Samples.Messages", "samples\CK.Crs.Samples.Messages\CK.Crs.Samples.Messages.csproj", "{7D9D758C-48FA-40ED-BE03-EEDD1078E90A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Samples.Messages", "Samples\CK.Crs.Samples.Messages\CK.Crs.Samples.Messages.csproj", "{7D9D758C-48FA-40ED-BE03-EEDD1078E90A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Samples.Handlers", "samples\CK.Crs.Samples.Handlers\CK.Crs.Samples.Handlers.csproj", "{A51A8BDD-272D-4537-BFB7-0249E80D66A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Samples.Handlers", "Samples\CK.Crs.Samples.Handlers\CK.Crs.Samples.Handlers.csproj", "{A51A8BDD-272D-4537-BFB7-0249E80D66A5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{9DDCC6E6-2DBA-4F14-9FB3-2C8A7E37F722}"
 EndProject
@@ -32,33 +32,39 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{F15FAD1E-E
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{0FF89577-82E3-496D-853F-B34BABCC03D8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Tests", "tests\CK.Crs.Tests\CK.Crs.Tests.csproj", "{6D7BCE30-0C4A-49D8-82D8-361A8410228E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Tests", "Tests\CK.Crs.Tests\CK.Crs.Tests.csproj", "{6D7BCE30-0C4A-49D8-82D8-361A8410228E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Rebus.Tests", "tests\CK.Crs.Rebus.Tests\CK.Crs.Rebus.Tests.csproj", "{925BB910-16F0-40AB-A7F4-92B639A9BCB9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Rebus.Tests", "Tests\CK.Crs.Rebus.Tests\CK.Crs.Rebus.Tests.csproj", "{925BB910-16F0-40AB-A7F4-92B639A9BCB9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Rebus", "plugins\CK.Crs.Rebus\CK.Crs.Rebus.csproj", "{9BD745AB-A7EE-44B3-9F71-201457FE2EE3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Rebus", "Plugins\CK.Crs.Rebus\CK.Crs.Rebus.csproj", "{9BD745AB-A7EE-44B3-9F71-201457FE2EE3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Samples.ExecutorApp.Rebus", "samples\CK.Crs.Samples.ExecutorApp.Rebus\CK.Crs.Samples.ExecutorApp.Rebus.csproj", "{18BF2F26-1F51-4DB7-9348-BE479AE0E471}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Samples.ExecutorApp.Rebus", "Samples\CK.Crs.Samples.ExecutorApp.Rebus\CK.Crs.Samples.ExecutorApp.Rebus.csproj", "{18BF2F26-1F51-4DB7-9348-BE479AE0E471}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Samples.Commands", "samples\CK.Crs.Samples.Commands\CK.Crs.Samples.Commands.csproj", "{21E76E65-1508-49E7-A40A-64D7665462C0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Samples.Commands", "Samples\CK.Crs.Samples.Commands\CK.Crs.Samples.Commands.csproj", "{21E76E65-1508-49E7-A40A-64D7665462C0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Samples.Events", "samples\CK.Crs.Samples.Events\CK.Crs.Samples.Events.csproj", "{26394BCA-DBFD-4C1C-A651-D257608AD54B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Samples.Events", "Samples\CK.Crs.Samples.Events\CK.Crs.Samples.Events.csproj", "{26394BCA-DBFD-4C1C-A651-D257608AD54B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Messages", "Messages", "{7D59C250-C6EF-4E3B-8928-AFB5F53216E0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.InMemory", "plugins\CK.Crs.InMemory\CK.Crs.InMemory.csproj", "{42DC3EEC-5702-44D8-8DDB-85DE7722552F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.InMemory", "Plugins\CK.Crs.InMemory\CK.Crs.InMemory.csproj", "{42DC3EEC-5702-44D8-8DDB-85DE7722552F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.SignalR", "plugins\CK.Crs.SignalR\CK.Crs.SignalR.csproj", "{49D88596-D494-4380-A848-28D5DE00D230}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.SignalR", "Plugins\CK.Crs.SignalR\CK.Crs.SignalR.csproj", "{49D88596-D494-4380-A848-28D5DE00D230}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.AspNetCore.Tests", "tests\CK.Crs.AspNetCore.Tests\CK.Crs.AspNetCore.Tests.csproj", "{B30273AE-17C4-43E7-8D50-6BB3D3E967A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.AspNetCore.Tests", "Tests\CK.Crs.AspNetCore.Tests\CK.Crs.AspNetCore.Tests.csproj", "{B30273AE-17C4-43E7-8D50-6BB3D3E967A5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Owin", "plugins\CK.Crs.Owin\CK.Crs.Owin.csproj", "{9CA451D0-BC6C-4311-A625-84E189AA82AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Owin", "Plugins\CK.Crs.Owin\CK.Crs.Owin.csproj", "{9CA451D0-BC6C-4311-A625-84E189AA82AD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.AspNetCore", "plugins\CK.Crs.AspNetCore\CK.Crs.AspNetCore.csproj", "{A8668EC9-B4F7-41CE-A64F-491379193257}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.AspNetCore", "Plugins\CK.Crs.AspNetCore\CK.Crs.AspNetCore.csproj", "{A8668EC9-B4F7-41CE-A64F-491379193257}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeCakeBuilder", "CodeCakeBuilder\CodeCakeBuilder.csproj", "{10EAF3BF-E551-44EF-B49B-F10AA349572A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Dispatcher", "plugins\CK.Crs.Dispatcher\CK.Crs.Dispatcher.csproj", "{3AA17C64-29CE-4F62-9C4D-6A4EE1FEA47C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Dispatcher", "Plugins\CK.Crs.Dispatcher\CK.Crs.Dispatcher.csproj", "{3AA17C64-29CE-4F62-9C4D-6A4EE1FEA47C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.CommandDiscoverer", "Plugins\CK.Crs.CommandDiscoverer\CK.Crs.CommandDiscoverer.csproj", "{C5E745A6-32E7-4EBE-802C-EFFF53CA8E34}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Samples.AspNet", "Samples\CK.Crs.Samples.AspNet\CK.Crs.Samples.AspNet.csproj", "{C58D85CB-6E6F-47AE-8D0B-A8953EA2B6D7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CK.Crs.Samples.AspNetCoreBasicApp", "Samples\CK.Crs.Samples.AspNetCoreBasicApp\CK.Crs.Samples.AspNetCoreBasicApp.csproj", "{071C6C61-1DDF-4B55-955E-A1F218DBC90A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -212,6 +218,30 @@ Global
 		{3AA17C64-29CE-4F62-9C4D-6A4EE1FEA47C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3AA17C64-29CE-4F62-9C4D-6A4EE1FEA47C}.Release|x86.ActiveCfg = Release|Any CPU
 		{3AA17C64-29CE-4F62-9C4D-6A4EE1FEA47C}.Release|x86.Build.0 = Release|Any CPU
+		{C5E745A6-32E7-4EBE-802C-EFFF53CA8E34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5E745A6-32E7-4EBE-802C-EFFF53CA8E34}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5E745A6-32E7-4EBE-802C-EFFF53CA8E34}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C5E745A6-32E7-4EBE-802C-EFFF53CA8E34}.Debug|x86.Build.0 = Debug|Any CPU
+		{C5E745A6-32E7-4EBE-802C-EFFF53CA8E34}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5E745A6-32E7-4EBE-802C-EFFF53CA8E34}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5E745A6-32E7-4EBE-802C-EFFF53CA8E34}.Release|x86.ActiveCfg = Release|Any CPU
+		{C5E745A6-32E7-4EBE-802C-EFFF53CA8E34}.Release|x86.Build.0 = Release|Any CPU
+		{C58D85CB-6E6F-47AE-8D0B-A8953EA2B6D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C58D85CB-6E6F-47AE-8D0B-A8953EA2B6D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C58D85CB-6E6F-47AE-8D0B-A8953EA2B6D7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C58D85CB-6E6F-47AE-8D0B-A8953EA2B6D7}.Debug|x86.Build.0 = Debug|Any CPU
+		{C58D85CB-6E6F-47AE-8D0B-A8953EA2B6D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C58D85CB-6E6F-47AE-8D0B-A8953EA2B6D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C58D85CB-6E6F-47AE-8D0B-A8953EA2B6D7}.Release|x86.ActiveCfg = Release|Any CPU
+		{C58D85CB-6E6F-47AE-8D0B-A8953EA2B6D7}.Release|x86.Build.0 = Release|Any CPU
+		{071C6C61-1DDF-4B55-955E-A1F218DBC90A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{071C6C61-1DDF-4B55-955E-A1F218DBC90A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{071C6C61-1DDF-4B55-955E-A1F218DBC90A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{071C6C61-1DDF-4B55-955E-A1F218DBC90A}.Debug|x86.Build.0 = Debug|Any CPU
+		{071C6C61-1DDF-4B55-955E-A1F218DBC90A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{071C6C61-1DDF-4B55-955E-A1F218DBC90A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{071C6C61-1DDF-4B55-955E-A1F218DBC90A}.Release|x86.ActiveCfg = Release|Any CPU
+		{071C6C61-1DDF-4B55-955E-A1F218DBC90A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -235,6 +265,9 @@ Global
 		{9CA451D0-BC6C-4311-A625-84E189AA82AD} = {9DDCC6E6-2DBA-4F14-9FB3-2C8A7E37F722}
 		{A8668EC9-B4F7-41CE-A64F-491379193257} = {9DDCC6E6-2DBA-4F14-9FB3-2C8A7E37F722}
 		{3AA17C64-29CE-4F62-9C4D-6A4EE1FEA47C} = {9DDCC6E6-2DBA-4F14-9FB3-2C8A7E37F722}
+		{C5E745A6-32E7-4EBE-802C-EFFF53CA8E34} = {9DDCC6E6-2DBA-4F14-9FB3-2C8A7E37F722}
+		{C58D85CB-6E6F-47AE-8D0B-A8953EA2B6D7} = {7D57BE6C-724C-462F-878C-4F89FC56CC1B}
+		{071C6C61-1DDF-4B55-955E-A1F218DBC90A} = {7D57BE6C-724C-462F-878C-4F89FC56CC1B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E5EC816C-DD93-48F1-8299-A8772EEF4F2A}

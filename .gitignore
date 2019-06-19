@@ -49,3 +49,4 @@ output/
 crs-store.xml
 crs-store-slim.xml
 /NuGetPackages/
+/samples/CK.Crs.Samples.AspNetCoreApp/Logs/

@@ -15,15 +15,15 @@
 
   <ItemGroup>
     <PackageReference Include="CK.AspNet.Tester" Version="2.1.2" />
-    <PackageReference Include="FluentAssertions" Version="5.4.2" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="1.0.4" />
+    <PackageReference Include="FluentAssertions" Version="5.6.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="1.1.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\plugins\CK.Crs.AspNetCore\CK.Crs.AspNetCore.csproj" />
-    <ProjectReference Include="..\..\plugins\CK.Crs.InMemory\CK.Crs.InMemory.csproj" />
-    <ProjectReference Include="..\..\plugins\CK.Crs.SignalR\CK.Crs.SignalR.csproj" />
+    <ProjectReference Include="..\..\Plugins\CK.Crs.AspNetCore\CK.Crs.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\Plugins\CK.Crs.InMemory\CK.Crs.InMemory.csproj" />
+    <ProjectReference Include="..\..\Plugins\CK.Crs.SignalR\CK.Crs.SignalR.csproj" />
     <ProjectReference Include="..\CK.Crs.Tests\CK.Crs.Tests.csproj" />
   </ItemGroup>
 
