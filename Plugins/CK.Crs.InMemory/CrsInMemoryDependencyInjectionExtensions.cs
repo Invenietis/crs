@@ -14,7 +14,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             builder.Services.AddSingleton<CommandJobQueue>();
             builder.AddReceiver<CommandReceiver>();
-
+            builder.Services.AddSingleton<CommandReceiver>();
             builder.Services.AddSingleton<ICommandHost>( ( sp ) =>
             {
                 var bJobService = new BackgroundJobService();

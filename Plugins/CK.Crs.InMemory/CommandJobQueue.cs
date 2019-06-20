@@ -13,13 +13,8 @@ namespace CK.Crs.InMemory
     {
         readonly BlockingCollection<CommandJob> _queue;
 
-        public CommandJobQueue( IServiceScopeFactory serviceScopeFactory )
+        public CommandJobQueue()
         {
-            if( serviceScopeFactory == null )
-            {
-                throw new ArgumentNullException( nameof( serviceScopeFactory ) );
-            }
-
             _queue = new BlockingCollection<CommandJob>();
         }
 

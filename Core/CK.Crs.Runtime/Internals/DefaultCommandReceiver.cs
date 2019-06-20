@@ -11,12 +11,10 @@ namespace CK.Crs
 {
     internal class DefaultCommandReceiver : ICommandReceiver
     {
-        readonly ICommandRegistry _registry;
         readonly ITypedCommandHandlerInvoker _invoker;
 
-        public DefaultCommandReceiver( ICommandRegistry registry, ITypedCommandHandlerInvoker invoker )
+        public DefaultCommandReceiver(ITypedCommandHandlerInvoker invoker )
         {
-            _registry = registry;
             _invoker = invoker;
         }
 

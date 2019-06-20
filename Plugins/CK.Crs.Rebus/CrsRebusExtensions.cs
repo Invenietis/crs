@@ -14,7 +14,7 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static ICrsCoreBuilder AddRebus( this ICrsCoreBuilder builder, Action<RebusConfigurer> rebusConfigurer, params Action<ConfigureQueue>[] commandConfigs )
         {
-            builder.AddReceiver( services =>
+            builder.Services.AddSingleton<RebusCommandReceiver>( services =>
             {
                 var activator = new CrsHandlerActivator(
                     services.GetRequiredService<ICommandHandlerInvoker>(),
@@ -44,6 +44,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 activator.SetBus( bus );
                 return new RebusCommandReceiver( bus );
             } );
+            builder.AddReceiver<RebusCommandReceiver>();
 
             return builder;
         }
