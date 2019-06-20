@@ -14,7 +14,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns></returns>
         public static ICrsCoreBuilder AddDispatcher( this ICrsCoreBuilder builder )
         {
-            builder.Services.AddScoped<ICommandDispatcher, CrsCommandDispatcher>();
+            builder.Services.AddSingleton<ICommandDispatcher, CrsCommandDispatcher>();
 
             return builder;
         }

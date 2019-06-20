@@ -1,6 +1,7 @@
 using CK.Core;
 using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CK.Crs
 {
@@ -24,15 +25,18 @@ namespace CK.Crs
 
         internal virtual Task<Response> Receive()
         {
-            var receiver = _serviceProvider.GetService<ICommandReceiver>();
-            try
+            using( var serviceScope = _serviceProvider.CreateScope() )
             {
-                return receiver.ReceiveCommand( _command, this );
-            }
-            catch( Exception ex )
-            {
-                Monitor.Error( ex );
-                throw;
+                var receiver = ServiceContainerExtension.GetService<ICommandReceiver>( serviceScope.ServiceProvider );
+                try
+                {
+                    return receiver.ReceiveCommand( _command, this );
+                }
+                catch( Exception ex )
+                {
+                    Monitor.Error( ex );
+                    throw;
+                }
             }
         }
     }

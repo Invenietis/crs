@@ -16,8 +16,7 @@ namespace CK.Crs
         /// Adds a custom <see cref="ICommandReceiver"/> to the crs core builder.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="factoryFunction"></param>
-        void AddReceiver<T>( Func<IServiceProvider, T> factoryFunction = null ) where T : class, ICommandReceiver;
+        void AddReceiver<T>() where T : class, ICommandReceiver;
 
         /// <summary>
         /// Adds a custom <see cref="IResultDispatcher"/> to the crs core builder.

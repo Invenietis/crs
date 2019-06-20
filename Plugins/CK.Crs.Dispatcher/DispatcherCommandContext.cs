@@ -1,8 +1,8 @@
 using CK.Core;
-using CK.Crs;
 using CK.Crs.Responses;
 using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CK.Crs
 {
@@ -34,16 +34,19 @@ namespace CK.Crs
 
         internal async Task<TResult> Receive()
         {
-            try
+            using( var serviceScope = _serviceProvider.CreateScope() )
             {
-                var receiver = _serviceProvider.GetService<ICommandReceiver>();
-                var response = await receiver.ReceiveCommand( _command, this ).ConfigureAwait( false );
-                return await HandleResponse( response ).ConfigureAwait( false );
-            }
-            catch( Exception ex )
-            {
-                Monitor.Error( ex );
-                throw;
+                try
+                {
+                    var receiver = ServiceContainerExtension.GetService<ICommandReceiver>( serviceScope.ServiceProvider );
+                    var response = await receiver.ReceiveCommand( _command, this ).ConfigureAwait( false );
+                    return await HandleResponse( response ).ConfigureAwait( false );
+                }
+                catch( Exception ex )
+                {
+                    Monitor.Error( ex );
+                    throw;
+                }
             }
 
         }
