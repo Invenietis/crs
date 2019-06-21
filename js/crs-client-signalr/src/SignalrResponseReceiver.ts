@@ -47,16 +47,30 @@ export class SignalrResponseReceiver implements ResponseReceiver {
         return this.callerId;
     }
 
-    public async initialize(): Promise<void> {
+    public initialize(): Promise<void> {
         this.hubConnectionManager.onClosed(() => this.onDisconnect());
-        await this.hubConnectionManager.connect().then((hubConnection) => {
-            hubConnection.on('ReceiveCallerId', (connectionId) => {
-                this.callerId = connectionId;
-            });
-            hubConnection.on('ReceiveResult', (sourceCommandId, responseType, response) => {
+        this.hubConnectionManager.on('ReceiveCallerId', (connectionId) => {
+            this.callerId = connectionId;
+        });
+        this.hubConnectionManager.on('ReceiveResult', (sourceCommandId, responseType, response) => {
+            this.onResult(sourceCommandId, responseType, response);
+        } );
+
+        return new Promise( (resolve, reject) => {
+            this.hubConnectionManager.onClosed(() => this.onDisconnect());
+            this.hubConnectionManager.on('ReceiveResult', (sourceCommandId, responseType, response) => {
                 this.onResult(sourceCommandId, responseType, response);
             } );
-        });
+            this.hubConnectionManager.on('ReceiveCallerId', (connectionId) => {
+                console.debug( `CRS: Received CallerId: ${connectionId}`);
+                this.callerId = connectionId;
+                resolve();
+            });
+
+            this.hubConnectionManager.connect().then(() => {
+                console.debug('CRS: Waiting for CallerId from SignalR');
+            }).catch((e) => reject(e));
+        } );
     }
 
     private ensureResponseProxy(commandId: string): ResponseProxy {
