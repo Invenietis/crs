@@ -1,44 +1,7 @@
 import { ResponseReceiver, CommandResponse, ResponseType } from "@signature/crs-client";
 import { LogLevel } from '@aspnet/signalr';
 import { HubConnectionManager } from "./HubConnectionManager";
-
-class ResponseProxy {
-    private responseType?: ResponseType;
-    private result?: any;
-    private error?: any;
-    private resolve?: Function;
-    private reject?: Function;
-
-    constructor(
-        private readonly commandId: string
-        ) {
-    }
-
-    public setResponse(responseType: ResponseType, result: any) {
-        this.responseType = responseType;
-        this.result = result;
-        this.checkResolve();
-    }
-
-    public setError(reason: any) {
-        this.error = reason;
-        this.checkResolve();
-    }
-
-    public setResolver(resolve: Function, reject: Function) {
-        this.resolve = resolve;
-        this.reject = reject;
-        this.checkResolve();
-    }
-
-    private checkResolve() {
-        if(this.resolve && this.responseType) {
-            this.resolve(this.responseType, this.result);
-        } else if(this.reject && this.error) {
-            this.reject(this.error);
-        }
-    }
-}
+import { ResponseProxy } from "./ResponseProxy";
 
 export class SignalrResponseReceiver implements ResponseReceiver {
     private readonly hubConnectionManager: HubConnectionManager;
@@ -84,16 +47,30 @@ export class SignalrResponseReceiver implements ResponseReceiver {
         return this.callerId;
     }
 
-    public async initialize(): Promise<void> {
+    public initialize(): Promise<void> {
         this.hubConnectionManager.onClosed(() => this.onDisconnect());
-        await this.hubConnectionManager.connect().then((hubConnection) => {
-            hubConnection.on('ReceiveCallerId', (connectionId) => {
-                this.callerId = connectionId;
-            });
-            hubConnection.on('ReceiveResult', (sourceCommandId, responseType, response) => {
+        this.hubConnectionManager.on('ReceiveCallerId', (connectionId) => {
+            this.callerId = connectionId;
+        });
+        this.hubConnectionManager.on('ReceiveResult', (sourceCommandId, responseType, response) => {
+            this.onResult(sourceCommandId, responseType, response);
+        } );
+
+        return new Promise( (resolve, reject) => {
+            this.hubConnectionManager.onClosed(() => this.onDisconnect());
+            this.hubConnectionManager.on('ReceiveResult', (sourceCommandId, responseType, response) => {
                 this.onResult(sourceCommandId, responseType, response);
             } );
-        });
+            this.hubConnectionManager.on('ReceiveCallerId', (connectionId) => {
+                console.debug( `CRS: Received CallerId: ${connectionId}`);
+                this.callerId = connectionId;
+                resolve();
+            });
+
+            this.hubConnectionManager.connect().then(() => {
+                console.debug('CRS: Waiting for CallerId from SignalR');
+            }).catch((e) => reject(e));
+        } );
     }
 
     private ensureResponseProxy(commandId: string): ResponseProxy {
