@@ -72,12 +72,12 @@ export class HubConnectionManager {
     private async doConnect(reconnecting?: boolean): Promise<HubConnection> {
         ++this.retryCount;
         try {
-            console.debug(`CRS: Connecting to SignalR Hub: ${this.url}`);
+            console.debug(`CRS-SignalR: Connecting to SignalR Hub: ${this.url}`);
             await this.hubConnection.start();
-            console.debug(`CRS: Connected to SignalR Hub: ${this.url}`);
+            console.debug(`CRS-SignalR: Connected to SignalR Hub: ${this.url}`);
             this.retryCount = 0;
         } catch (err) {
-            console.debug(`CRS: Connection failed. Waiting before conenction retry`);
+            console.debug(`CRS-SignalR: Connection failed. Pending retry.`);
             // Wait and retry
             await new Promise(resolve => setTimeout(resolve, HubConnectionManager.getBackoffTimeMs(this.retryCount)));
             if (this.connectionCount > 0) {
@@ -88,7 +88,7 @@ export class HubConnectionManager {
     }
 
     private doDisconnect(): Promise<void> {
-        console.debug(`CRS: Disconnecting`);
+        console.debug(`CRS-SignalR: Disconnecting`);
         return this.hubConnection.stop();
     }
 
@@ -101,7 +101,7 @@ export class HubConnectionManager {
             }
         }
         if (this.connectionCount > 0) {
-            console.debug(`CRS: Reconnecting`);
+            console.debug(`CRS-SignalR: Reconnecting`);
             // Reconnect
             this.ensureConnecting(true);
         }

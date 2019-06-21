@@ -40,14 +40,14 @@ export class CrsEndpoint {
             this.config.axiosInstance,
             this.config.metadataOptions,
             this.ambientValuesProvider
-            );
+        );
         this.commandEmitter = new CommandEmitter(
-            this.config.url, 
-            this.config.axiosInstance, 
-            this.metadataService, 
-            this.ambientValuesProvider, 
+            this.config.url,
+            this.config.axiosInstance,
+            this.metadataService,
+            this.ambientValuesProvider,
             this.responseReceivers
-            );
+        );
     }
 
     public send<TResult>(command: any): Promise<TResult> {
@@ -55,11 +55,14 @@ export class CrsEndpoint {
     }
 
     public reloadMetadata(): Promise<EndpointMetadata> {
-        return this.internalReloadMetadata();
+        if (this.metadataService.currentMetadataPromise) {
+            return this.internalReloadMetadata();
+        }
+        throw new Error('CRS has not been initialized.');
     }
 
     public getMetadata(): Promise<EndpointMetadata> {
-        if(this.metadataService.currentMetadataPromise) {
+        if (this.metadataService.currentMetadataPromise) {
             return this.metadataService.currentMetadataPromise;
         }
         throw new Error('CRS has not been initialized.');
