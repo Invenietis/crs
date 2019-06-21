@@ -30,32 +30,44 @@ const buttonContainer = <HTMLElement>document.getElementById('button-container')
 const metadataContainer = <HTMLElement>document.getElementById('pre-metadata-info');
 const endpoint = new CrsEndpoint(endpointConfig);
 
-window.initializeCrs = function() {
-    endpoint.initialize().then(function (metadata) {
-        metadataContainer.innerHTML = JSON.stringify(metadata, undefined, 4);
-    }).catch(function(err) {
-        alert(err);
-    });
-}
-window.sendCrsCommand = function(commandName) {
-    let command: any;
-    switch(commandName) {
-        case 'MySynchronousCommand': command = new MySynchronousCommand(); break;
-        case 'MyDeferredCommand': command = new MyDeferredCommand(); break;
-        default: throw new Error(`Not suppported: ${commandName}`);
+window.initializeCrs = function () {
+    try {
+        endpoint.initialize().then(function (metadata) {
+            metadataContainer.innerHTML = JSON.stringify(metadata, undefined, 4);
+        }).catch(function (err) {
+            alert(err);
+        });
+    } catch (e) {
+        alert(e);
     }
+}
+window.sendCrsCommand = function (commandName) {
+    try {
+        let command: any;
+        switch (commandName) {
+            case 'MySynchronousCommand': command = new MySynchronousCommand(); break;
+            case 'MyDeferredCommand': command = new MyDeferredCommand(); break;
+            default: throw new Error(`Not suppported: ${commandName}`);
+        }
 
-    endpoint.send<any>(command).then( (result) => {
-        alert(result);
-    }).catch(function(err) {
-        alert(err);
-    });
+        endpoint.send<any>(command).then((result) => {
+            alert(result);
+        }).catch(function (err) {
+            alert(err);
+        });
+    } catch (e) {
+        alert(e);
+    }
 }
 
-window.reloadMetadata = function() {
-    endpoint.reloadMetadata().then(function (metadata) {
-        metadataContainer.innerHTML = JSON.stringify(metadata, undefined, 4);
-    }).catch(function(err) {
-        alert(err);
-    });
+window.reloadMetadata = function () {
+    try {
+        endpoint.reloadMetadata().then(function (metadata) {
+            metadataContainer.innerHTML = JSON.stringify(metadata, undefined, 4);
+        }).catch(function (err) {
+            alert(err);
+        });
+    } catch (e) {
+        alert(e);
+    }
 }
