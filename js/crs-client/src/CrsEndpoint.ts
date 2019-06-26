@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { EndpointMetadata } from './EndpointMetadata';
+import { EndpointMetadata, DefaultResponseFormatter } from './EndpointMetadata';
 import { MetadataService } from './MetadataService';
 import { CommandEmitter } from './CommandEmitter';
 import { AmbientValuesProvider } from './AmbientValuesProvider';
@@ -31,6 +31,9 @@ export class CrsEndpoint {
         if (this.config.metadataOptions === undefined) {
             this.config.metadataOptions = defaultMetadataOptions;
         }
+        if (this.config.responseFormatter === undefined) {
+            this.config.responseFormatter = new DefaultResponseFormatter();
+        }
 
         this.responseReceivers = this.config.responseReceivers;
 
@@ -39,14 +42,16 @@ export class CrsEndpoint {
             this.config.url,
             this.config.axiosInstance,
             this.config.metadataOptions,
-            this.ambientValuesProvider
+            this.ambientValuesProvider,
+            this.config.responseFormatter
         );
         this.commandEmitter = new CommandEmitter(
             this.config.url,
             this.config.axiosInstance,
             this.metadataService,
             this.ambientValuesProvider,
-            this.responseReceivers
+            this.responseReceivers,
+            this.config.responseFormatter
         );
     }
 
