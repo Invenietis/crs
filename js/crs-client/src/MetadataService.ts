@@ -1,6 +1,6 @@
 import { AxiosInstance, CancelTokenSource, CancelToken } from "axios";
 import axios from "axios";
-import { EndpointMetadataResponse, EndpointMetadata } from "./EndpointMetadata";
+import { EndpointMetadataResponse, EndpointMetadata, IResponseFormatter } from './EndpointMetadata';
 import { AmbientValuesProvider } from "./AmbientValuesProvider";
 import { MetadataOptions, MetadataPath } from "./MetadataOptions";
 
@@ -12,7 +12,8 @@ export class MetadataService {
         private readonly crsEndpoint: string,
         private readonly axios: AxiosInstance,
         private readonly options: MetadataOptions,
-        private readonly ambientValuesProvider: AmbientValuesProvider
+        private readonly ambientValuesProvider: AmbientValuesProvider,
+        private readonly responseFormatter: IResponseFormatter
         ) {
     }
 
@@ -42,6 +43,6 @@ export class MetadataService {
         console.debug(`CRS: Fetching medatata from ${url}`);
         return this.axios.post(url, this.options, {
             cancelToken: cancelToken,
-        }).then(resp => resp.data);
+        }).then(resp => this.responseFormatter.parseResponse(resp.data));
     }
 }

@@ -5,7 +5,7 @@ import { AmbientValuesProvider } from './AmbientValuesProvider';
 import { CommandResponse } from "./CommandResponse";
 import { ResponseReceiver } from "./ResponseReceiver";
 import { ResponseType } from "./ResponseType";
-import { EndpointCommandMetadata } from './EndpointMetadata';
+import { EndpointCommandMetadata, IResponseFormatter } from './EndpointMetadata';
 
 function serializeQueryParams(obj: any) {
     const str = [];
@@ -25,7 +25,8 @@ export class CommandEmitter {
         private readonly axiosInstance: AxiosInstance,
         private readonly metadataService: MetadataService,
         private readonly ambientValuesProvider: AmbientValuesProvider,
-        private readonly responseReceivers: ResponseReceiver[]
+        private readonly responseReceivers: ResponseReceiver[],
+        private readonly responseFormatter: IResponseFormatter
     ) {
         this.defaultCallerId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     }
@@ -103,7 +104,7 @@ export class CommandEmitter {
 
                     return this.axiosInstance
                         .post<CommandResponse<TResult>>(`${commandUrl}?${serializeQueryParams(query)}`, commandPayload)
-                        .then(resp => resp.data);
+                        .then(resp => this.responseFormatter.parseResponse(resp.data));
                 });
             });
         } else {

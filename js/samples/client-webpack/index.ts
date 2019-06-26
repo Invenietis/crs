@@ -1,4 +1,4 @@
-import { Command, CrsEndpoint, CrsEndpointConfiguration } from '@signature/crs-client';
+import { Command, CrsEndpoint, CrsEndpointConfiguration, PascalCaseResponseFormatter } from '@signature/crs-client';
 import { SignalrResponseReceiver } from '@signature/crs-client-signalr';
 
 declare global {
@@ -23,7 +23,8 @@ const endpointConfig: CrsEndpointConfiguration = {
         new SignalrResponseReceiver(
             'http://localhost:5000/hubs/crs'
         )
-    ]
+    ],
+    responseFormatter: new PascalCaseResponseFormatter(true, false),
 };
 
 const buttonContainer = <HTMLElement>document.getElementById('button-container');

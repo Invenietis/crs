@@ -1,6 +1,7 @@
 import { AxiosInstance } from "axios";
 import { ResponseReceiver } from "./ResponseReceiver";
 import { MetadataOptions } from "./MetadataOptions";
+import { IResponseFormatter } from "./EndpointMetadata";
 
 export interface CrsEndpointConfiguration {
     /**
@@ -25,4 +26,12 @@ export interface CrsEndpointConfiguration {
      * If not provided, the default command receivers will be used. Note that this may or may not support deferred responses.
      */
     responseReceivers?: ResponseReceiver[];
+
+    /*
+     * A custom response formatter. Optional.
+     * You can provide your custom response formatter (eg. PascalCaseResponseFormatter) if
+     * you change how response formatting is implemented server-side.
+     * If not provided, the DefaultResponseFormatter will be used, and will receive response as-is (assumed in camelCase).
+     */
+    responseFormatter?: IResponseFormatter;
 }
