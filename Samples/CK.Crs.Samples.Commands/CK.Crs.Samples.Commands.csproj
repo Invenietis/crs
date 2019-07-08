@@ -1,21 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-      <IsPackable>false</IsPackable>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <IsPackable>false</IsPackable>
+        <LangVersion>7.1</LangVersion>
+    </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <LangVersion>7.1</LangVersion>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <LangVersion>7.1</LangVersion>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\core\CK.Crs.Abstractions\CK.Crs.Abstractions.csproj" />
-    <ProjectReference Include="..\CK.Crs.Samples.Messages\CK.Crs.Samples.Messages.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\core\CK.Crs.Abstractions\CK.Crs.Abstractions.csproj" />
+        <ProjectReference Include="..\CK.Crs.Samples.Messages\CK.Crs.Samples.Messages.csproj" />
+    </ItemGroup>
 
 </Project>
