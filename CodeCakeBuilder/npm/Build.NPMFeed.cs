@@ -8,11 +8,11 @@ using Newtonsoft.Json.Linq;
 using System.IO;
 using System.Threading.Tasks;
 using CSemVer;
-using Cake.Core;
 using CodeCake.Abstractions;
-using SimpleGitVersion;
 using Cake.Common.Diagnostics;
 using CK.Text;
+using System.Text;
+using System.Net.Http;
 
 namespace CodeCake
 {
@@ -34,10 +34,20 @@ namespace CodeCake
             {
                 var tasks = pushes.Select( p => PublishOnePackageAsync( p ) ).ToArray();
                 await System.Threading.Tasks.Task.WhenAll( tasks );
+                await OnAllArtifactsPushed( pushes );
             }
-
             protected abstract Task PublishOnePackageAsync( ArtifactPush push );
 
+            /// <summary>
+            /// Called once all the packages are pushed.
+            /// Does nothing at this level.
+            /// </summary>
+            /// <param name="pushes">The instances to push (that necessary target this feed).</param>
+            /// <returns>The awaitable.</returns>
+            protected virtual Task OnAllArtifactsPushed( IEnumerable<ArtifactPush> pushes )
+            {
+                return System.Threading.Tasks.Task.CompletedTask;
+            }
         }
 
         class NPMLocalFeed : NPMFeed
@@ -112,7 +122,7 @@ namespace CodeCake
                                     JObject json = JObject.Parse( viewString );
                                     if( json.TryGetValue( "versions", out JToken versions ) )
                                     {
-                                        return !((JArray)versions).ToObject<string[]>().Contains( a.ArtifactInstance.Version.ToString() );
+                                        return !((JArray)versions).ToObject<string[]>().Contains( a.ArtifactInstance.Version.ToNuGetPackageString() );
                                     }
                                     return true;
                                 }
@@ -124,7 +134,7 @@ namespace CodeCake
 
             protected override Task PublishOnePackageAsync( ArtifactPush p )
             {
-                var tags = p.Version.PackageQuality.GetLabels().Select( l => l.ToString() ).ToList();
+                var tags = p.Version.PackageQuality.GetLabels().Select( l => l.ToString().ToLowerInvariant() ).ToList();
                 var project = (NPMPublishedProject)p.LocalArtifact;
                 using( TokenInjector( project ) )
                 {
@@ -138,10 +148,10 @@ namespace CodeCake
                         } );
                     foreach( string tag in tags.Skip( 1 ) )
                     {
-                        Cake.Information( $"Adding tag \"{tag}\" to \"{project.Name}@{project.ArtifactInstance.Version}\"..." );
+                        Cake.Information( $"Setting tag '{tag}' on '{project.Name}' to '{project.ArtifactInstance.Version.ToNuGetPackageString()}' version." );
                         // The FromPath is actually required - if executed outside the relevant directory,
                         // it will miss the .npmrc with registry configs.
-                        Cake.NpmDistTagAdd( project.Name, project.ArtifactInstance.Version.ToString(), tag, s => s.FromPath( project.DirectoryPath.Path ) );
+                        Cake.NpmDistTagAdd( project.Name, project.ArtifactInstance.Version.ToNuGetPackageString(), tag, s => s.FromPath( project.DirectoryPath.Path ) );
                     }
                 }
                 return System.Threading.Tasks.Task.CompletedTask;
@@ -167,6 +177,7 @@ namespace CodeCake
                         ? project.TemporarySetPushTargetAndPasswordLogin( FeedUri, ResolveAPIKey() )
                         : project.TemporarySetPushTargetAndTokenLogin( FeedUri, ResolveAPIKey() );
             }
+
         }
 
         /// <summary>
@@ -208,6 +219,66 @@ namespace CodeCake
             {
                 return project.TemporarySetPushTargetAndAzurePatLogin( FeedUri, ResolveAPIKey() );
             }
+
+            /// <summary>
+            /// Implements Package promotion in @CI, @Exploratory, @Preview, @Latest and @Stable views.
+            /// </summary>
+            /// <param name="ctx">The Cake context.</param>
+            /// <param name="pushes">The set of artifacts to promote.</param>
+            /// <returns>The awaitable.</returns>
+            protected override async Task OnAllArtifactsPushed( IEnumerable<ArtifactPush> pushes )
+            {
+                var basicAuth = Convert.ToBase64String( Encoding.ASCII.GetBytes( ":" + Cake.InteractiveEnvironmentVariable( SecretKeyName ) ) );
+                foreach( var p in pushes )
+                {
+                    bool isNpm = p.Feed.ArtifactType is NPMArtifactType;
+                    string uriProtocol = isNpm ? "npm" : "nuget";
+                    foreach( var view in p.Version.PackageQuality.GetLabels() )
+                    {
+                        
+                        
+                        using( HttpRequestMessage req = new HttpRequestMessage( HttpMethod.Post, $"https://pkgs.dev.azure.com/{Organization}/_apis/packaging/feeds/{FeedName}/{uriProtocol}/packagesBatch?api-version=5.0-preview.1" ) )
+                        {
+                            req.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue( "Basic", basicAuth );
+                            var body = GetPromotionJSONBody( p.Name, p.Version.ToNuGetPackageString(), view.ToString(), isNpm );
+                            req.Content = new StringContent( body, Encoding.UTF8, "application/json" );
+                            using( var m = await StandardGlobalInfo.SharedHttpClient.SendAsync( req ) )
+                            {
+                                if( m.IsSuccessStatusCode )
+                                {
+                                    Cake.Information( $"Package '{p.Name}' promoted to view '@{view}'." );
+                                }
+                                else
+                                {
+                                    Cake.Error( $"Package '{p.Name}' promotion to view '@{view}' failed." );
+                                    // Throws!
+                                    m.EnsureSuccessStatusCode();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            string GetPromotionJSONBody( string packageName, string packageVersion, string viewId, bool npm )
+            {
+                var bodyFormat = @"{
+ ""data"": {
+    ""viewId"": ""{viewId}""
+  },
+  ""operation"": 0,
+  ""packages"": [{
+    ""id"": ""{packageName}"",
+    ""version"": ""{packageVersion}"",
+    ""protocolType"": ""{NuGetOrNpm}""
+  }]
+}";
+                return bodyFormat.Replace( "{NuGetOrNpm}", npm ? "Npm" : "NuGet" )
+                                 .Replace( "{viewId}", viewId )
+                                 .Replace( "{packageName}", packageName )
+                                 .Replace( "{packageVersion}", packageVersion );
+            }
+
         }
     }
 }

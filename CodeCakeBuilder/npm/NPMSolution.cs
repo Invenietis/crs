@@ -36,11 +36,11 @@ namespace CodeCake
         /// Runs "npm install" on all <see cref="Projects"/>.
         /// </summary>
         /// <param name="globalInfo">The global information object.</param>
-        public void RunInstall( StandardGlobalInfo globalInfo )
+        public void RunInstall()
         {
             foreach( var p in Projects )
             {
-                p.RunInstall( globalInfo );
+                p.RunInstall();
             }
         }
 
@@ -52,11 +52,11 @@ namespace CodeCake
         /// throwing an exception.
         /// </param>
         /// <param name="cleanScriptName">The script name that must exist in the package.json.</param>
-        public void RunInstallAndClean( StandardGlobalInfo globalInfo, bool scriptMustExist = true, string cleanScriptName = "clean" )
+        public void RunInstallAndClean( bool scriptMustExist = true, string cleanScriptName = "clean" )
         {
             foreach( var p in Projects )
             {
-                p.RunInstallAndClean( globalInfo, scriptMustExist, cleanScriptName );
+                p.RunInstallAndClean( scriptMustExist, cleanScriptName );
             }
         }
 
@@ -68,11 +68,11 @@ namespace CodeCake
         /// False to only emit a warning and return false if the script doesn't exist instead of
         /// throwing an exception.
         /// </param>
-        public void RunBuild( StandardGlobalInfo globalInfo, bool scriptMustExist = true )
+        public void RunBuild( bool scriptMustExist = true )
         {
             foreach( var p in Projects )
             {
-                p.RunBuild( globalInfo, scriptMustExist );
+                p.RunBuild( scriptMustExist );
             }
         }
 
@@ -85,11 +85,11 @@ namespace CodeCake
         /// False to only emit a warning and return false if the script doesn't exist instead of
         /// throwing an exception.
         /// </param>
-        public void RunTest( StandardGlobalInfo globalInfo, bool scriptMustExist = true )
+        public void RunTest( bool scriptMustExist = true )
         {
             foreach( var p in Projects )
             {
-                p.RunTest( globalInfo, scriptMustExist );
+                p.RunTest( scriptMustExist );
             }
         }
 
@@ -102,11 +102,11 @@ namespace CodeCake
         /// By default, "scripts" and "devDependencies" are removed from the package.json file.
         /// </param>
         /// <param name="packageJsonPreProcessor">Optional package.json pre processor.</param>
-        public void RunPack( StandardGlobalInfo globalInfo, bool cleanupPackageJson = true, Action<JObject> packageJsonPreProcessor = null )
+        public void RunPack( bool cleanupPackageJson = true, Action<JObject> packageJsonPreProcessor = null )
         {
             foreach( var p in PublishedProjects )
             {
-                p.RunPack( globalInfo, cleanupPackageJson, packageJsonPreProcessor );
+                p.RunPack( cleanupPackageJson, packageJsonPreProcessor );
             }
         }
 
@@ -115,15 +115,15 @@ namespace CodeCake
         /// </summary>
         /// <param name="version">The version of all published packages.</param>
         /// <returns>The solution object.</returns>
-        public static NPMSolution ReadFromNPMSolutionFile( SVersion version )
+        public static NPMSolution ReadFromNPMSolutionFile( StandardGlobalInfo globalInfo )
         {
             var projects = XDocument.Load( "CodeCakeBuilder/NPMSolution.xml" ).Root
-                            .Elements("Project")
+                            .Elements( "Project" )
                             .Select( p => (bool)p.Attribute( "IsPublished" )
-                                            ? NPMPublishedProject.Load( (string)p.Attribute( "Path" ),
+                                            ? NPMPublishedProject.Load( globalInfo, (string)p.Attribute( "Path" ),
                                                                         (string)p.Attribute( "ExpectedName" ),
-                                                                        version )
-                                            : new NPMProject( (string)p.Attribute( "Path" ) ) );
+                                                                        globalInfo.Version )
+                                            : new NPMProject( globalInfo, (string)p.Attribute( "Path" ) ) );
             return new NPMSolution( projects );
         }
     }

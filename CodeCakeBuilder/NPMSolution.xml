@@ -1,4 +1,4 @@
 <NPMSolution>
-    <Project Path="js/crs-client" IsPublished="true" ExpectedName="@signature/crs-client" />
-    <Project Path="js/crs-client-signalr" IsPublished="true" ExpectedName="@signature/crs-client-signalr" />
+  <Project Path="js/crs-client" IsPublished="true" ExpectedName="@signature/crs-client" />
+  <Project Path="js/crs-client-signalr" IsPublished="true" ExpectedName="@signature/crs-client-signalr" />
 </NPMSolution>

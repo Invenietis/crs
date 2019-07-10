@@ -1,7 +1,7 @@
 
 version: build{build}
 image: Visual Studio 2017
-clone_folder: C:\CKli-World\CRS-Projects\CK-Crs
+clone_folder: C:\CKli-World\CK-Crs-Projects\CK-Crs
 branches:
   only:
     - master

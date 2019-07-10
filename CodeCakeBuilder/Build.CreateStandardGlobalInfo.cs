@@ -1,15 +1,6 @@
-using Cake.Common;
 using Cake.Common.Build;
 using Cake.Common.Diagnostics;
-using Cake.Common.Solution;
-using Cake.Core;
-using CK.Text;
-using CodeCake.Abstractions;
-using CSemVer;
 using SimpleGitVersion;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace CodeCake
 {

@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace CodeCake
@@ -27,6 +28,10 @@ namespace CodeCake
         List<ArtifactPush> _artifactPushes;
         bool _ignoreNoArtifactsToProduce;
 
+        static StandardGlobalInfo()
+        {
+            SharedHttpClient = new HttpClient();
+        }
         public StandardGlobalInfo( ICakeContext ctx, SimpleRepositoryInfo gitInfo )
         {
             _ctx = ctx;
@@ -79,6 +84,13 @@ namespace CodeCake
         /// Gets whether this is a purely local build.
         /// </summary>
         public bool IsLocalCIRelease { get; set; }
+
+        /// <summary>
+        /// Shared http client.
+        /// See: https://aspnetmonsters.com/2016/08/2016-08-27-httpclientwrong/
+        /// Do not add any default on it.
+        /// </summary>
+        public static readonly HttpClient SharedHttpClient;
 
         /// <summary>
         /// Gets whether artifacts should be pushed to remote feeds.

@@ -1,13 +1,9 @@
-using Cake.Core;
-using CK.Text;
 using CodeCake.Abstractions;
-using CSemVer;
-using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using Cake.Npm;
+using Cake.Common.Diagnostics;
+using CSemVer;
 
 namespace CodeCake
 {
@@ -21,6 +17,12 @@ namespace CodeCake
         /// <returns>This info.</returns>
         public static StandardGlobalInfo AddNPM( this StandardGlobalInfo globalInfo, NPMSolution solution )
         {
+            SVersion minmimalNpmVersionRequired = SVersion.Create( 6, 7, 0 );
+            string npmVersion = globalInfo.Cake.NpmGetNpmVersion();
+            if( SVersion.Parse( npmVersion ) < minmimalNpmVersionRequired )
+            {
+                globalInfo.Cake.TerminateWithError( "Outdated npm. Version older than this are known to fail on publish." );
+            }
             new Build.NPMArtifactType( globalInfo, solution );
             return globalInfo;
         }
@@ -33,7 +35,7 @@ namespace CodeCake
         /// <returns>This info.</returns>
         public static StandardGlobalInfo AddNPM( this StandardGlobalInfo @this )
         {
-            return AddNPM( @this, NPMSolution.ReadFromNPMSolutionFile( @this.Version ) );
+            return AddNPM( @this, NPMSolution.ReadFromNPMSolutionFile( @this ) );
         }
 
         /// <summary>
@@ -68,7 +70,7 @@ namespace CodeCake
             protected override IEnumerable<ArtifactFeed> GetRemoteFeeds()
             {
                 yield return new AzureNPMFeed( this, "Signature-OpenSource", "Default" );
-if( GlobalInfo.Version.PackageQuality >= PackageQuality.ReleaseCandidate ) yield return new NPMRemoteFeed( this, "NPMJS_ORG_PUSH_PAT", "https://registry.npmjs.org/", false );
+if( GlobalInfo.Version.PackageQuality >= CSemVer.PackageQuality.ReleaseCandidate ) yield return new NPMRemoteFeed( this, "NPMJS_ORG_PUSH_PAT", "https://registry.npmjs.org/", false );
 
             }
 
@@ -78,9 +80,6 @@ if( GlobalInfo.Version.PackageQuality >= PackageQuality.ReleaseCandidate ) yield
                     new NPMLocalFeed( this, GlobalInfo.LocalFeedPath )
                 };
             }
-
-
         }
-
     }
 }
