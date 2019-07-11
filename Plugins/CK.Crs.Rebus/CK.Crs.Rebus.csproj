@@ -2,7 +2,7 @@
   <Import Project="../../common/shared.props" />
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
-      <LangVersion>7.2</LangVersion>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Rebus" Version="5.3.1" />

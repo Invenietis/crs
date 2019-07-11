@@ -1,3 +1,5 @@
+using Cake.Npm;
+using CodeCake.Abstractions;
 using CSemVer;
 using Newtonsoft.Json.Linq;
 using System;
@@ -7,19 +9,65 @@ using System.Xml.Linq;
 
 namespace CodeCake
 {
+    public static class StandardGlobalInfoNPMExtension
+    {
+        /// <summary>
+        /// Adds the <see cref="NPMSolution"/> to the <paramref name="globalInfo"/>
+        /// </summary>
+        /// <param name="this">This global info.</param>
+        /// <param name="solution">The NPM solution.</param>
+        /// <returns>This info.</returns>
+        public static StandardGlobalInfo AddNPM( this StandardGlobalInfo globalInfo, NPMSolution solution )
+        {
+            SVersion minmimalNpmVersionRequired = SVersion.Create( 6, 7, 0 );
+            string npmVersion = globalInfo.Cake.NpmGetNpmVersion();
+            if( SVersion.Parse( npmVersion ) < minmimalNpmVersionRequired )
+            {
+                globalInfo.Cake.TerminateWithError( "Outdated npm. Version older than this are known to fail on publish." );
+            }
+            globalInfo.RegisterSolution( solution );
+            return globalInfo;
+        }
+
+        /// <summary>
+        /// Adds the <see cref="Build.NPMArtifactType"/> for NPM based on <see cref="NPMSolution.ReadFromNPMSolutionFile"/>
+        /// (projects are defined by "CodeCakeBuilder/NPMSolution.xml" file).
+        /// </summary>
+        /// <param name="this">This global info.</param>
+        /// <returns>This info.</returns>
+        public static StandardGlobalInfo AddNPM( this StandardGlobalInfo @this )
+        {
+            return AddNPM( @this, NPMSolution.ReadFromNPMSolutionFile( @this ) );
+        }
+
+        /// <summary>
+        /// Gets the NPM solution handled by the single <see cref="Build.NPMArtifactType"/>.
+        /// </summary>
+        /// <param name="this">This global info.</param>
+        /// <returns>The NPM solution.</returns>
+        public static NPMSolution GetNPMSolution( this StandardGlobalInfo @this )
+        {
+            return @this.Solutions.OfType<NPMSolution>().Single();
+        }
+
+    }
+
     /// <summary>
     /// Encapsulates a set of <see cref="NPMProject"/> that can be <see cref="NPMPublishedProject"/>.
     /// </summary>
-    public class NPMSolution
+    public partial class NPMSolution : ISolution
     {
+        readonly StandardGlobalInfo _globalInfo;
+
         /// <summary>
         /// Initiaizes a new <see cref="NPMSolution" />.
         /// </summary>
         /// <param name="projects">Set of projects.</param>
-        public NPMSolution( IEnumerable<NPMProject> projects )
+        NPMSolution( StandardGlobalInfo globalInfo, IEnumerable<NPMProject> projects )
         {
             Projects = projects.ToArray();
             PublishedProjects = Projects.OfType<NPMPublishedProject>().ToArray();
+            _globalInfo = globalInfo;
         }
 
         /// <summary>
@@ -124,7 +172,13 @@ namespace CodeCake
                                                                         (string)p.Attribute( "ExpectedName" ),
                                                                         globalInfo.Version )
                                             : new NPMProject( globalInfo, (string)p.Attribute( "Path" ) ) );
-            return new NPMSolution( projects );
+            return new NPMSolution( globalInfo, projects );
         }
+
+        void ISolution.Clean() => RunInstallAndClean( true );
+
+        void ISolution.Build() => RunBuild( true );
+
+        void ISolution.Test() => RunTest( true );
     }
 }

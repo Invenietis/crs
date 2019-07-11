@@ -43,8 +43,8 @@ namespace CodeCake
                  {
                      globalInfo.GetDotnetSolution().Clean();
                      Cake.CleanDirectories( globalInfo.ReleasesFolder );
-                    
-                     globalInfo.GetNPMSolution().RunInstallAndClean( globalInfo, scriptMustExist: false );
+
+                     globalInfo.GetNPMSolution().RunInstallAndClean( scriptMustExist: false );
                  } );
 
 
@@ -54,7 +54,7 @@ namespace CodeCake
                 .Does( () =>
                  {
                      globalInfo.GetDotnetSolution().Build();
-                     globalInfo.GetNPMSolution().RunBuild( globalInfo );
+                     globalInfo.GetNPMSolution().RunBuild();
                  } );
 
             Task( "Unit-Testing" )
@@ -63,10 +63,10 @@ namespace CodeCake
                                      || Cake.ReadInteractiveOption( "RunUnitTests", "Run Unit Tests?", 'Y', 'N' ) == 'Y' )
                .Does( () =>
                 {
-                    var testProjects = projects.Where( p => p.Name.EndsWith( ".Tests" )
+                    var testProjects = globalInfo.GetDotnetSolution().Projects.Where( p => p.Name.EndsWith( ".Tests" )
                                                             && !p.Path.Segments.Contains( "Integration" ) );
-                  globalInfo.GetDotnetSolution().Test();
-                    globalInfo.GetNPMSolution().RunTest( globalInfo );
+                    globalInfo.GetDotnetSolution().Test();
+                    globalInfo.GetNPMSolution().RunTest();
                 } );
 
             Task( "Create-Packages" )
@@ -75,7 +75,7 @@ namespace CodeCake
                 .Does( () =>
                  {
                      globalInfo.GetDotnetSolution().Pack();
-                     globalInfo.GetNPMSolution().RunPack( globalInfo, false, ( d ) =>
+                     globalInfo.GetNPMSolution().RunPack( false, ( d ) =>
                      {
                          if( gitInfo.IsValid )
                          {

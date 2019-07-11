@@ -7,7 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".SolutionItems", ".Solution
 	ProjectSection(SolutionItems) = preProject
 		BuildPackPackarium.bat = BuildPackPackarium.bat
 		RepositoryInfo.xml = RepositoryInfo.xml
-		common\shared.props = common\shared.props
+		common\Shared.props = common\Shared.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Runtime", "Core\CK.Crs.Runtime\CK.Crs.Runtime.csproj", "{52C1088B-F87D-489D-B592-38F3881B2271}"
@@ -64,7 +64,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.CommandDiscoverer", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Samples.AspNet", "Samples\CK.Crs.Samples.AspNet\CK.Crs.Samples.AspNet.csproj", "{C58D85CB-6E6F-47AE-8D0B-A8953EA2B6D7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CK.Crs.Samples.AspNetCoreBasicApp", "Samples\CK.Crs.Samples.AspNetCoreBasicApp\CK.Crs.Samples.AspNetCoreBasicApp.csproj", "{071C6C61-1DDF-4B55-955E-A1F218DBC90A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Samples.AspNetCoreBasicApp", "Samples\CK.Crs.Samples.AspNetCoreBasicApp\CK.Crs.Samples.AspNetCoreBasicApp.csproj", "{071C6C61-1DDF-4B55-955E-A1F218DBC90A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

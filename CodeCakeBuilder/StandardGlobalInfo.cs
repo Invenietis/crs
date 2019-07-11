@@ -24,7 +24,7 @@ namespace CodeCake
     {
         readonly ICakeContext _ctx;
         readonly SimpleRepositoryInfo _gitInfo;
-        readonly HashSet<ArtifactType> _artifactTypes = new HashSet<ArtifactType>();
+        readonly HashSet<ISolution> _solutions = new HashSet<ISolution>();
         List<ArtifactPush> _artifactPushes;
         bool _ignoreNoArtifactsToProduce;
 
@@ -43,6 +43,11 @@ namespace CodeCake
             Directory.CreateDirectory( ReleasesFolder );
         }
 
+        public void RegisterSolution(ISolution solution)
+        {
+            _solutions.Add( solution );
+        }
+
         /// <summary>
         /// Gets the Cake context.
         /// </summary>
@@ -53,10 +58,12 @@ namespace CodeCake
         /// </summary>
         public SimpleRepositoryInfo GitInfo => _gitInfo;
 
+        IEnumerable<ISolutionProducingArtifact> SolutionProducingArtifacts => Solutions.OfType<ISolutionProducingArtifact>();
+
         /// <summary>
-        /// Gets the set of <see cref="ArtifactType"/> that have been registered.
+        /// Gets the set of <see cref="ArtifactType"/> of the <see cref="ISolutionProducingArtifact"/> that have been registered.
         /// </summary>
-        public ISet<ArtifactType> ArtifactTypes => _artifactTypes;
+        public IEnumerable<ArtifactType> ArtifactTypes => SolutionProducingArtifacts.Select(p=>p.ArtifactType);
 
         /// <summary>
         /// Gets the release folder: "CodeCakeBuilder/Releases".
@@ -126,6 +133,7 @@ namespace CodeCake
         /// </summary>
         public bool NoArtifactsToProduce => !GetArtifactPushList().Any();
 
+
         /// <summary>
         /// Gets a read only list of all the pushes of artifacts for all <see cref="ArtifactType"/>.
         /// </summary>
@@ -139,7 +147,7 @@ namespace CodeCake
             if( _artifactPushes == null || reset )
             {
                 _artifactPushes = new List<ArtifactPush>();
-                var tasks = _artifactTypes.Select( f => f.GetPushListAsync() ).ToArray();
+                var tasks = ArtifactTypes.Select( f => f.GetPushListAsync() ).ToArray();
                 Task.WaitAll( tasks );
                 foreach( var p in tasks.Select( t => t.Result ) )
                 {
@@ -154,6 +162,8 @@ namespace CodeCake
         /// </summary>
         public bool ShouldStop => NoArtifactsToProduce && !IgnoreNoArtifactsToProduce;
 
+        public IReadOnlyCollection<ISolution> Solutions => _solutions;
+
         /// <summary>
         /// Simply calls <see cref="ArtifactType.PushAsync(IEnumerable{ArtifactPush})"/> on each <see cref="ArtifactTypes"/>
         /// with their correct typed artifacts.
@@ -161,7 +171,7 @@ namespace CodeCake
         public void PushArtifacts( IEnumerable<ArtifactPush> pushes = null )
         {
             if( pushes == null ) pushes = GetArtifactPushList();
-            var tasks = _artifactTypes.Select( t => t.PushAsync( pushes.Where( a => a.Feed.ArtifactType == t ) ) ).ToArray();
+            var tasks = ArtifactTypes.Select( t => t.PushAsync( pushes.Where( a => a.Feed.ArtifactType == t ) ) ).ToArray();
             Task.WaitAll( tasks );
         }
 

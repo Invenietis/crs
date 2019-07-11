@@ -1,9 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="../../common/shared.props" />
-
   <PropertyGroup>
     <TargetFramework>netstandard1.1</TargetFramework>
-      <IsPackable>false</IsPackable>
     <LangVersion>7.1</LangVersion>
+    <IsPackable>False</IsPackable>
   </PropertyGroup>
 </Project>

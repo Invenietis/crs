@@ -29,7 +29,6 @@ namespace CodeCake.Abstractions
         {
             _globalInfo = globalInfo;
             _typeName = typeName;
-            _globalInfo.ArtifactTypes.Add( this );
         }
 
         /// <summary>
