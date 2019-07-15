@@ -14,7 +14,7 @@ namespace CK.Crs.AspNetCore.Tests
     [TestFixture]
     public class CrsHttpReceiverTests
     {
-        public CrsHttpReceiverTests( )
+        public CrsHttpReceiverTests()
         {
         }
 
@@ -49,7 +49,7 @@ namespace CK.Crs.AspNetCore.Tests
                 var command = new WithdrawMoneyCommand { AccountId = Guid.NewGuid(), Amount = 3500M, ShouldThrow = true };
 
                 crs.Awaiting( x => x.InvokeCommand<WithdrawMoneyCommand, WithdrawMoneyCommand.Result>( command ) ).Should().Throw<Exception>();
-            
+
             }
         }
 
@@ -68,7 +68,7 @@ namespace CK.Crs.AspNetCore.Tests
             }
         }
 
-        [Test]
+        [Test, Timeout( 5000 )]
         public async Task Invoke_FireAndForget_Command_And_AutoListen_To_Callback()
         {
             using( var crs = await CrsEndpoint.Create( "/crs" ) )
