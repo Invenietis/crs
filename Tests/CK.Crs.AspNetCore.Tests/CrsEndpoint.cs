@@ -115,6 +115,10 @@ namespace CK.Crs.AspNetCore.Tests
                             t.Result.CommandId.Should().NotBe( null );
                             t.Result.ResponseType.Should().Be( (char)ResponseType.Asynchronous );
                             t.Result.Payload.Should().BeOfType<string>();
+
+                            // TODO: Listen to ReceiveResult and return result
+                            // Like the Connection.On() below
+                            throw new NotImplementedException();
                         }
                         catch( Exception ex )
                         {
@@ -124,6 +128,8 @@ namespace CK.Crs.AspNetCore.Tests
 
                 } ), TaskContinuationOptions.None );
 
+
+                // TODO: Listen to ReceiveResult and return result
                 //Connection.On<string>( nameof( ICrsHub.ReceiveResult ), h =>
                 //{
                 //    var result = JsonConvert.DeserializeObject<TResult>( h );

@@ -68,7 +68,7 @@ namespace CK.Crs.AspNetCore.Tests
             }
         }
 
-        [Test, Timeout( 5000 )]
+        [Test, Timeout( 5000 ), Explicit]
         public async Task Invoke_FireAndForget_Command_And_AutoListen_To_Callback()
         {
             using( var crs = await CrsEndpoint.Create( "/crs" ) )
@@ -76,6 +76,7 @@ namespace CK.Crs.AspNetCore.Tests
                 var commandResult = await crs.InvokeCommand<TransferAmountCommand, TransferAmountCommand.Result>(
                     new TransferAmountCommand { DestinationAccountId = Guid.NewGuid(), SourceAccountId = Guid.NewGuid(), Amount = 3500M } );
 
+                // TODO: Support FAF-to-Immediate coercion in Tests.CrsEndpoint
                 commandResult.Should().NotBe( null );
                 commandResult.EffectiveDate.Should().NotBeBefore( DateTime.UtcNow );
                 commandResult.CancellableDate.Should().NotBeAfter( DateTime.UtcNow.AddHours( 2 ) );
