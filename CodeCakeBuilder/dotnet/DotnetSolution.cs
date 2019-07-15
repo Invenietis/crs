@@ -85,6 +85,7 @@ namespace CodeCake
                 .ToList();
             var packableProjects = projects.Where(
                     p => ((bool?)XDocument.Load( p.Path.FullPath )
+                        .Root
                         .Elements( "PropertyGroup" )
                         .Elements( "IsPackable" ).LastOrDefault() ?? true) == true
                 )
