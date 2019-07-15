@@ -18,7 +18,7 @@ namespace CodeCake
     /// <summary>
     /// Standard build "script".
     /// </summary>
-    [AddPath( "%UserProfile%/.nuget/packages/**/tools*" )]
+    [AddPath("%UserProfile%/.nuget/packages/**/tools*")]
     public partial class Build : CodeCakeHost
     {
         public Build()
@@ -26,81 +26,75 @@ namespace CodeCake
             Cake.Log.Verbosity = Verbosity.Diagnostic;
 
             SimpleRepositoryInfo gitInfo = Cake.GetSimpleRepositoryInfo();
-            StandardGlobalInfo globalInfo = CreateStandardGlobalInfo( gitInfo )
+            StandardGlobalInfo globalInfo = CreateStandardGlobalInfo(gitInfo)
                                                 .AddDotnet()
                                                 .AddNPM()
                                                 .SetCIBuildTag();
 
-            Task( "Check-Repository" )
-                .Does( () =>
+            Task("Check-Repository")
+                .Does(() =>
+               {
+                   globalInfo.TerminateIfShouldStop();
+               });
+
+            Task("Clean")
+                .IsDependentOn("Check-Repository")
+                .Does(() =>
                 {
-                    globalInfo.TerminateIfShouldStop();
-                } );
+                    globalInfo.GetDotnetSolution().Clean();
+                    Cake.CleanDirectories(globalInfo.ReleasesFolder);
 
-            Task( "Clean" )
-                .IsDependentOn( "Check-Repository" )
-                .Does( () =>
-                 {
-                     globalInfo.GetDotnetSolution().Clean();
-                     Cake.CleanDirectories( globalInfo.ReleasesFolder );
-
-                     globalInfo.GetNPMSolution().RunInstallAndClean( scriptMustExist: false );
-                 } );
+                    globalInfo.GetNPMSolution().RunInstallAndClean(scriptMustExist: false);
+                });
 
 
-            Task( "Build" )
-                .IsDependentOn( "Check-Repository" )
-                .IsDependentOn( "Clean" )
-                .Does( () =>
-                 {
-                     globalInfo.GetDotnetSolution().Build();
-                     globalInfo.GetNPMSolution().RunBuild();
-                 } );
-
-            Task( "Unit-Testing" )
-                .IsDependentOn( "Build" )
-                .WithCriteria( () => Cake.InteractiveMode() == InteractiveMode.NoInteraction
-                                     || Cake.ReadInteractiveOption( "RunUnitTests", "Run Unit Tests?", 'Y', 'N' ) == 'Y' )
-               .Does( () =>
+            Task("Build")
+                .IsDependentOn("Check-Repository")
+                .IsDependentOn("Clean")
+                .Does(() =>
                 {
-                    var testProjects = globalInfo.GetDotnetSolution().Projects.Where( p => p.Name.EndsWith( ".Tests" )
-                                                            && !p.Path.Segments.Contains( "Integration" ) );
-                    globalInfo.GetDotnetSolution().Test();
-                    globalInfo.GetNPMSolution().RunTest();
-                } );
+                    globalInfo.GetDotnetSolution().Build();
+                    globalInfo.GetNPMSolution().RunBuild();
+                });
 
-            Task( "Create-Packages" )
+            Task("Unit-Testing")
+                .IsDependentOn("Build")
+                .WithCriteria(() => Cake.InteractiveMode() == InteractiveMode.NoInteraction
+                                    || Cake.ReadInteractiveOption("RunUnitTests", "Run Unit Tests?", 'Y', 'N') == 'Y')
+               .Does(() =>
+               {
+                   var testProjects = globalInfo.GetDotnetSolution().Projects.Where(p => p.Name.EndsWith(".Tests")
+                                                           && !p.Path.Segments.Contains("Integration"));
+                   globalInfo.GetDotnetSolution().Test();
+                   globalInfo.GetNPMSolution().RunTest();
+               });
+
+            Task("Create-Packages")
                 //.WithCriteria( () => gitInfo.IsValid )
-                .IsDependentOn( "Unit-Testing" )
-                .Does( () =>
-                 {
-                     globalInfo.GetDotnetSolution().Pack();
-                     globalInfo.GetNPMSolution().RunPack( false, ( d ) =>
-                     {
-                         if( gitInfo.IsValid )
-                         {
-                             UpdateLocalNpmVersions( globalInfo, d );
-                         }
-                     } );
-                 } );
+                .IsDependentOn("Unit-Testing")
+                .Does(() =>
+                {
+                    globalInfo.GetDotnetSolution().Pack();
+                    globalInfo.GetNPMSolution().RunPack(false);
+                });
 
-            Task( "Push-Packages" )
-                .WithCriteria( () => gitInfo.IsValid )
-                .IsDependentOn( "Create-Packages" )
-                .Does( () =>
-                 {
-                     globalInfo.PushArtifacts();
-                 } );
+            Task("Push-Packages")
+                .WithCriteria(() => gitInfo.IsValid)
+                .IsDependentOn("Create-Packages")
+                .Does(() =>
+                {
+                    globalInfo.PushArtifacts();
+                });
 
             // The Default task for this script can be set here.
-            Task( "Default" )
-                .IsDependentOn( "Push-Packages" );
+            Task("Default")
+                .IsDependentOn("Push-Packages");
 
         }
 
-        private void UpdateLocalNpmVersions( StandardGlobalInfo globalInfo, JObject obj )
+        private void UpdateLocalNpmVersions(StandardGlobalInfo globalInfo, JObject obj)
         {
-            var npmArtifact = globalInfo.ArtifactTypes.FirstOrDefault( x => x.TypeName == "NPM" ) as NPMArtifactType;
+            var npmArtifact = globalInfo.ArtifactTypes.FirstOrDefault(x => x.TypeName == "NPM") as NPMArtifactType;
             var dependencyPropNames = new string[]
             {
                 "dependencies",
@@ -110,26 +104,26 @@ namespace CodeCake
                 "optionalDependencies",
             };
 
-            foreach( var dependencyPropName in dependencyPropNames )
+            foreach (var dependencyPropName in dependencyPropNames)
             {
-                if( obj.ContainsKey( dependencyPropName ) )
+                if (obj.ContainsKey(dependencyPropName))
                 {
-                    FixupLocalNpmVersion( (JObject)obj[dependencyPropName], npmArtifact );
+                    FixupLocalNpmVersion((JObject)obj[dependencyPropName], npmArtifact);
                 }
             }
         }
 
 
-        private void FixupLocalNpmVersion( JObject dependencies, NPMArtifactType npmArtifactType )
+        private void FixupLocalNpmVersion(JObject dependencies, NPMArtifactType npmArtifactType)
         {
-            foreach( KeyValuePair<string, JToken> keyValuePair in dependencies )
+            foreach (KeyValuePair<string, JToken> keyValuePair in dependencies)
             {
-                var localProject = npmArtifactType?.Solution?.Projects.FirstOrDefault( x => x.PackageJson.Name == keyValuePair.Key )
+                var localProject = npmArtifactType?.Solution?.Projects.FirstOrDefault(x => x.PackageJson.Name == keyValuePair.Key)
                     as NPMPublishedProject;
 
-                if( localProject != null )
+                if (localProject != null)
                 {
-                    dependencies[keyValuePair.Key] = new JValue( "^" + localProject.ArtifactInstance.Version.ToNuGetPackageString() );
+                    dependencies[keyValuePair.Key] = new JValue("^" + localProject.ArtifactInstance.Version.ToNuGetPackageString());
                 }
             }
         }
