@@ -16,7 +16,7 @@
     <ProjectReference Include="..\..\Plugins\CK.Crs.Owin\CK.Crs.Owin.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CK.WeakAssemblyNameResolver" Version="0.5.0" />
+    <PackageReference Include="CK.WeakAssemblyNameResolver" Version="0.5.2--0006-develop" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
   </ItemGroup>
   <ItemGroup>
