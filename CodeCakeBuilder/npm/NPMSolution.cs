@@ -23,7 +23,7 @@ namespace CodeCake
             string npmVersion = globalInfo.Cake.NpmGetNpmVersion();
             if( SVersion.Parse( npmVersion ) < minmimalNpmVersionRequired )
             {
-                globalInfo.Cake.TerminateWithError( "Outdated npm. Version older than this are known to fail on publish." );
+                globalInfo.Cake.TerminateWithError( "Outdated npm. Version older than v6.7.0 are known to fail on publish." );
             }
             globalInfo.RegisterSolution( solution );
             return globalInfo;

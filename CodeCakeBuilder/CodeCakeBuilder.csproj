@@ -6,7 +6,7 @@
     <IsPackable>False</IsPackable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Cake.Npm" Version="0.16.0" />
+    <PackageReference Include="Cake.Npm" Version="0.17.0" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NuGet.Protocol" Version="5.1.0" />
