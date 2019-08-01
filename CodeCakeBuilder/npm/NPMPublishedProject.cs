@@ -15,7 +15,7 @@ namespace CodeCake
         NPMPublishedProject(StandardGlobalInfo globalInfo, NormalizedPath path, SimplePackageJsonFile json, SVersion v )
             : base( globalInfo, path, json )
         {
-            ArtifactInstance = new ArtifactInstance( new Artifact( "NPM", json.Name ), v );
+            ArtifactInstance = new ArtifactInstance( new Artifact( "NPM", json.Name ), globalInfo.Version );
             string tgz = json.Name.Replace( "@", "" ).Replace( '/', '-' );
             TGZName = tgz + "-" + v.ToString() + ".tgz";
         }
@@ -45,9 +45,9 @@ namespace CodeCake
         /// By default, "scripts" and "devDependencies" are removed from the package.json file.
         /// </param>
         /// <param name="packageJsonPreProcessor">Optional package.json pre processor.</param>
-        public void RunPack( bool cleanupPackageJson = true, Action<JObject> packageJsonPreProcessor = null )
+        public void RunPack( Action<JObject> packageJsonPreProcessor = null )
         {
-            using( TemporaryPrePack( ArtifactInstance.Version, cleanupPackageJson, packageJsonPreProcessor ) )
+            using( TemporaryPrePack( ArtifactInstance.Version, packageJsonPreProcessor ) )
             {
                 GlobalInfo.Cake.NpmPack( new NpmPackSettings()
                 {

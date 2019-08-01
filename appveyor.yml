@@ -15,3 +15,12 @@ test: off
 install:
   - ps: ./CodeCakeBuilder/InstallCredentialProvider.ps1
   - cmd: npm install -g npm@6.9.0
+artifacts:
+  - path: '**\*.log'
+    name: Log file
+  - path: '**\*.trx'
+    name: Visual studio test results file
+  - path: '**\Tests\**\TestResult*.xml'
+    name: NUnit tests result files
+  - path: '**Tests\**\Logs\**\*'
+    name: Log files

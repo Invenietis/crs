@@ -39,13 +39,13 @@ namespace CodeCake
                 {
                     json.Remove( "devDependencies" );
                     json.Remove( "scripts" );
+                    UpdateLocalNpmVersions( version, json );
                 }
-                UpdateLocalNpmVersions( json );
                 packageJsonPreProcessor?.Invoke( json );
                 File.WriteAllText( p.PackageJson.JsonFilePath, json.ToString() );
             }
 
-            void UpdateLocalNpmVersions( JObject obj )
+            void UpdateLocalNpmVersions(SVersion version, JObject obj )
             {
                 var npmArtifact = _p.GlobalInfo.ArtifactTypes.FirstOrDefault( x => x.TypeName == "NPM" ) as NPMArtifactType;
                 var dependencyPropNames = new string[]
@@ -61,19 +61,19 @@ namespace CodeCake
                 {
                     if( obj.ContainsKey( dependencyPropName ) )
                     {
-                        FixupLocalNpmVersion( (JObject)obj[dependencyPropName], npmArtifact );
+                        FixupLocalNpmVersion(version, (JObject)obj[dependencyPropName], npmArtifact );
                     }
                 }
             }
 
-            void FixupLocalNpmVersion( JObject dependencies, NPMArtifactType npmArtifactType )
+            void FixupLocalNpmVersion(SVersion version, JObject dependencies, NPMArtifactType npmArtifactType )
             {
                 foreach( KeyValuePair<string, JToken> keyValuePair in dependencies )
                 {
                     if( npmArtifactType?.Solution?.Projects.FirstOrDefault( x => x.PackageJson.Name == keyValuePair.Key )
                         is NPMPublishedProject localProject )
                     {
-                        dependencies[keyValuePair.Key] = new JValue( "^" + localProject.ArtifactInstance.Version.ToNuGetPackageString() );
+                        dependencies[keyValuePair.Key] = new JValue( "^" +version);
                     }
                 }
             }
@@ -293,9 +293,9 @@ namespace CodeCake
             return new PackageVersionReplacer( this, version, false, null );
         }
 
-        private protected IDisposable TemporaryPrePack( SVersion version, bool cleanupPackageJson, Action<JObject> packageJsonPreProcessor )
+        private protected IDisposable TemporaryPrePack( SVersion version, Action<JObject> packageJsonPreProcessor )
         {
-            return new PackageVersionReplacer( this, version, cleanupPackageJson, packageJsonPreProcessor );
+            return new PackageVersionReplacer( this, version, true, packageJsonPreProcessor );
         }
 
         #region .npmrc configuration

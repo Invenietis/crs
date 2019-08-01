@@ -150,11 +150,11 @@ namespace CodeCake
         /// By default, "scripts" and "devDependencies" are removed from the package.json file.
         /// </param>
         /// <param name="packageJsonPreProcessor">Optional package.json pre processor.</param>
-        public void RunPack( bool cleanupPackageJson = true, Action<JObject> packageJsonPreProcessor = null )
+        public void RunPack( Action<JObject> packageJsonPreProcessor = null )
         {
             foreach( var p in PublishedProjects )
             {
-                p.RunPack( cleanupPackageJson, packageJsonPreProcessor );
+                p.RunPack( packageJsonPreProcessor );
             }
         }
 
