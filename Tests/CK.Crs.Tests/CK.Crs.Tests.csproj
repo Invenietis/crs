@@ -6,7 +6,7 @@
     <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CK.Monitoring" Version="10.1.1-p00-00-0009-develop" />
+    <PackageReference Include="CK.Monitoring" Version="10.1.1-p00-00-0011-develop" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
     <PackageReference Include="Moq" Version="4.10.1" />
