@@ -75,7 +75,7 @@ namespace CodeCake
                 .Does(() =>
                 {
                     globalInfo.GetDotnetSolution().Pack();
-                    globalInfo.GetNPMSolution().RunPack(false);
+                    globalInfo.GetNPMSolution().RunPack();
                 });
 
             Task("Push-Packages")
@@ -90,42 +90,6 @@ namespace CodeCake
             Task("Default")
                 .IsDependentOn("Push-Packages");
 
-        }
-
-        private void UpdateLocalNpmVersions(StandardGlobalInfo globalInfo, JObject obj)
-        {
-            var npmArtifact = globalInfo.ArtifactTypes.FirstOrDefault(x => x.TypeName == "NPM") as NPMArtifactType;
-            var dependencyPropNames = new string[]
-            {
-                "dependencies",
-                "peerDependencies",
-                "devDependencies",
-                "bundledDependencies",
-                "optionalDependencies",
-            };
-
-            foreach (var dependencyPropName in dependencyPropNames)
-            {
-                if (obj.ContainsKey(dependencyPropName))
-                {
-                    FixupLocalNpmVersion((JObject)obj[dependencyPropName], npmArtifact);
-                }
-            }
-        }
-
-
-        private void FixupLocalNpmVersion(JObject dependencies, NPMArtifactType npmArtifactType)
-        {
-            foreach (KeyValuePair<string, JToken> keyValuePair in dependencies)
-            {
-                var localProject = npmArtifactType?.Solution?.Projects.FirstOrDefault(x => x.PackageJson.Name == keyValuePair.Key)
-                    as NPMPublishedProject;
-
-                if (localProject != null)
-                {
-                    dependencies[keyValuePair.Key] = new JValue("^" + localProject.ArtifactInstance.Version.ToNuGetPackageString());
-                }
-            }
         }
     }
 }
