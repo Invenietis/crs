@@ -176,7 +176,7 @@ namespace CodeCake
         public bool CheckCommitMemoryKey( NormalizedPath key )
         {
             bool done = File.Exists( MemoryFilePath )
-                        ? Array.IndexOf( File.ReadAllLines( MemoryFilePath ), key ) >= 0
+                        ? Array.IndexOf( File.ReadAllLines( MemoryFilePath ), key.Path ) >= 0
                         : false;
             if( done )
             {
