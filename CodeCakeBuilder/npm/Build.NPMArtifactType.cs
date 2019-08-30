@@ -48,6 +48,7 @@ namespace CodeCake
             protected override IEnumerable<ArtifactFeed> GetRemoteFeeds()
             {
                 yield return new AzureNPMFeed( this, "Signature-OpenSource", "Default" );
+if( GlobalInfo.Version.PackageQuality >= CSemVer.PackageQuality.ReleaseCandidate ) yield return new NPMRemoteFeed( this, "NPMJS_ORG_PUSH_PAT", "https://registry.npmjs.org/", false );
 
             }
 

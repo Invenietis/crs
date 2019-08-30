@@ -43,7 +43,7 @@ namespace CodeCake
             Directory.CreateDirectory( ReleasesFolder );
         }
 
-        public void RegisterSolution(ISolution solution)
+        public void RegisterSolution( ISolution solution )
         {
             _solutions.Add( solution );
         }
@@ -63,7 +63,7 @@ namespace CodeCake
         /// <summary>
         /// Gets the set of <see cref="ArtifactType"/> of the <see cref="ISolutionProducingArtifact"/> that have been registered.
         /// </summary>
-        public IEnumerable<ArtifactType> ArtifactTypes => SolutionProducingArtifacts.Select(p=>p.ArtifactType);
+        public IEnumerable<ArtifactType> ArtifactTypes => SolutionProducingArtifacts.Select( p => p.ArtifactType );
 
         /// <summary>
         /// Gets the release folder: "CodeCakeBuilder/Releases".
@@ -83,9 +83,9 @@ namespace CodeCake
         public string BuildConfiguration => IsRelease ? "Release" : "Debug";
 
         /// <summary>
-        /// Gets the version of the packages: this is the <see cref="RepositoryInfo.FinalNuGetVersion"/>.
+        /// Gets the version of the packages: this is the <see cref="RepositoryInfo.FinalVersion"/>.
         /// </summary>
-        public SVersion Version => _gitInfo.Info.FinalNuGetVersion;
+        public SVersion Version => _gitInfo.Info.FinalVersion;
 
         /// <summary>
         /// Gets whether this is a purely local build.
@@ -164,6 +164,37 @@ namespace CodeCake
 
         public IReadOnlyCollection<ISolution> Solutions => _solutions;
 
+        #region Memory key support.
+
+        string MemoryFilePath => $"CodeCakeBuilder/MemoryKey.{GitInfo.CommitSha}.txt";
+
+        public void WriteCommitMemoryKey( NormalizedPath key )
+        {
+            if( GitInfo.IsValid ) File.AppendAllLines( MemoryFilePath, new[] { key.ToString() } );
+        }
+
+        public bool CheckCommitMemoryKey( NormalizedPath key )
+        {
+            bool done = File.Exists( MemoryFilePath )
+                        ? Array.IndexOf( File.ReadAllLines( MemoryFilePath ), key ) >= 0
+                        : false;
+            if( done )
+            {
+                if( !GitInfo.IsValid )
+                {
+                    Cake.Information( $"Dirty commit. Key exists but is ignored: {key}" );
+                    done = false;
+                }
+                else
+                {
+                    Cake.Information( $"Key exists on this commit: {key}" );
+                }
+            }
+            return done;
+        }
+
+        #endregion
+
         /// <summary>
         /// Simply calls <see cref="ArtifactType.PushAsync(IEnumerable{ArtifactPush})"/> on each <see cref="ArtifactTypes"/>
         /// with their correct typed artifacts.
@@ -189,7 +220,7 @@ namespace CodeCake
                 // Azure (formerly VSTS, formerly VSO) analyzes the stdout to set its build number.
                 // On clash, the default Azure/VSTS/VSO build number is used: to ensure that the actual
                 // version will be always be available we need to inject a uniquifier.
-                string buildVersion = AddSkipped( $"{gitInfo.SafeNuGetVersion}_{DateTime.UtcNow:yyyyMMdd-HHmmss}" );
+                string buildVersion = AddSkipped( $"{gitInfo.SafeVersion}_{DateTime.UtcNow:yyyyMMdd-HHmmss}" );
                 Cake.Information( $"Using VSTS build number: {buildVersion}" );
                 string buildInstruction = $"##vso[build.updatebuildnumber]{buildVersion}";
                 Console.WriteLine();
@@ -201,11 +232,11 @@ namespace CodeCake
             {
                 try
                 {
-                    appVeyor.UpdateBuildVersion( AddSkipped( gitInfo.SafeNuGetVersion ) );
+                    appVeyor.UpdateBuildVersion( AddSkipped( gitInfo.SafeVersion ) );
                 }
                 catch
                 {
-                    appVeyor.UpdateBuildVersion( AddSkipped( $"{gitInfo.SafeNuGetVersion} ({appVeyor.Environment.Build.Number})" ) );
+                    appVeyor.UpdateBuildVersion( AddSkipped( $"{gitInfo.SafeVersion} ({appVeyor.Environment.Build.Number})" ) );
                 }
             }
 

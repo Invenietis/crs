@@ -51,7 +51,7 @@ namespace CodeCake.Abstractions
 
         public override int GetHashCode() => Version.GetHashCode() ^ Artifact.GetHashCode();
 
-        public override string ToString() => $"{Artifact}/{Version.ToNuGetPackageString()}";
+        public override string ToString() => $"{Artifact}/{Version.ToNormalizedString()}";
 
         /// <summary>
         /// Implements == operator.

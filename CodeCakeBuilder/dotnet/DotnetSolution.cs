@@ -65,7 +65,7 @@ namespace CodeCake
         /// </param>
         /// <returns></returns>
         public static DotnetSolution FromSolutionInCurrentWorkingDirectory(
-            StandardGlobalInfo globalInfo)
+            StandardGlobalInfo globalInfo )
         {
             string solutionFileName = System.IO.Path.GetFileName(
                 globalInfo.Cake.GetFiles( "*.sln",
@@ -127,32 +127,6 @@ namespace CodeCake
             {
                 testProjects = Projects.Where( p => p.Name.EndsWith( ".Tests" ) );
             }
-            string memoryFilePath = $"CodeCakeBuilder/UnitTestsDone.{_globalInfo.GitInfo.CommitSha}.txt";
-
-            void WriteTestDone( FilePath test )
-            {
-                if( _globalInfo.GitInfo.IsValid ) File.AppendAllLines( memoryFilePath, new[] { test.ToString() } );
-            }
-
-            bool CheckTestDone( FilePath test )
-            {
-                bool done = File.Exists( memoryFilePath )
-                            ? File.ReadAllLines( memoryFilePath ).Contains( test.ToString() )
-                            : false;
-                if( done )
-                {
-                    if( !_globalInfo.GitInfo.IsValid )
-                    {
-                        _globalInfo.Cake.Information( "Dirty commit: tests are run again (base commit tests were successful)." );
-                        done = false;
-                    }
-                    else
-                    {
-                        _globalInfo.Cake.Information( "Test already successful on this commit." );
-                    }
-                }
-                return done;
-            }
 
             foreach( SolutionProject project in testProjects )
             {
@@ -169,53 +143,62 @@ namespace CodeCake
                     string testBinariesPath = "";
                     if( isNunitLite )
                     {
-                        //we are with nunitLite
+                        // Using NUnitLite.
                         testBinariesPath = fileWithoutExtension + ".exe";
                         if( File.Exists( testBinariesPath ) )
                         {
                             _globalInfo.Cake.Information( $"Testing via NUnitLite ({framework}): {testBinariesPath}" );
-                            if( CheckTestDone( testBinariesPath ) ) return;
-                            _globalInfo.Cake.NUnit3( new[] { testBinariesPath }, new NUnit3Settings
+                            if( !_globalInfo.CheckCommitMemoryKey( testBinariesPath ) )
                             {
-                                Results = new[] { new NUnit3Result() { FileName = FilePath.FromString( projectPath.AppendPart( "TestResult.Net461.xml" ) ) } }
-                            } );
+                                _globalInfo.Cake.NUnit3( new[] { testBinariesPath }, new NUnit3Settings
+                                {
+                                    Results = new[] { new NUnit3Result() { FileName = FilePath.FromString( projectPath.AppendPart( "TestResult.Net461.xml" ) ) } }
+                                } );
+                            }
                         }
                         else
                         {
                             testBinariesPath = fileWithoutExtension + ".dll";
                             _globalInfo.Cake.Information( $"Testing via NUnitLite ({framework}): {testBinariesPath}" );
-                            if( CheckTestDone( testBinariesPath ) ) return;
-                            _globalInfo.Cake.DotNetCoreExecute( testBinariesPath );
+                            if( !_globalInfo.CheckCommitMemoryKey( testBinariesPath ) )
+                            {
+                                _globalInfo.Cake.DotNetCoreExecute( testBinariesPath );
+                            }
                         }
                     }
                     if( isVSTest )
                     {
                         testBinariesPath = fileWithoutExtension + ".dll";
-                        //VS Tests
+                        // VS Tests
                         _globalInfo.Cake.Information( $"Testing via VSTest ({framework}): {testBinariesPath}" );
-                        if( CheckTestDone( testBinariesPath ) ) return;
-                        _globalInfo.Cake.DotNetCoreTest( projectPath, new DotNetCoreTestSettings()
+                        if( !_globalInfo.CheckCommitMemoryKey( testBinariesPath ) )
                         {
-                            Configuration = _globalInfo.BuildConfiguration,
-                            Framework = framework,
-                            NoRestore = true,
-                            NoBuild = true,
-                            Logger = "trx"
-                        } );
+                            _globalInfo.Cake.DotNetCoreTest( projectPath, new DotNetCoreTestSettings()
+                            {
+                                Configuration = _globalInfo.BuildConfiguration,
+                                Framework = framework,
+                                NoRestore = true,
+                                NoBuild = true,
+                                Logger = "trx"
+                            } );
+                        }
                     }
 
                     if( !isVSTest && !isNunitLite )
                     {
                         testBinariesPath = fileWithoutExtension + ".dll";
                         _globalInfo.Cake.Information( "Testing via NUnit: {0}", testBinariesPath );
-                        _globalInfo.Cake.NUnit( new[] { testBinariesPath }, new NUnitSettings()
+                        if( !_globalInfo.CheckCommitMemoryKey( testBinariesPath ) )
                         {
-                            Framework = "v4.5",
-                            ResultsFile = FilePath.FromString( projectPath.AppendPart( "TestResult.Net461.xml" ) )
-                        } );
+                            _globalInfo.Cake.NUnit( new[] { testBinariesPath }, new NUnitSettings()
+                            {
+                                Framework = "v4.5",
+                                ResultsFile = FilePath.FromString( projectPath.AppendPart( "TestResult.Net461.xml" ) )
+                            } );
 
+                        }
                     }
-                    WriteTestDone( testBinariesPath );
+                    _globalInfo.WriteCommitMemoryKey( testBinariesPath );
                 }
             }
         }

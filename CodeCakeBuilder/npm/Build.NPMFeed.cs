@@ -122,7 +122,7 @@ namespace CodeCake
                                     JObject json = JObject.Parse( viewString );
                                     if( json.TryGetValue( "versions", out JToken versions ) )
                                     {
-                                        return !((JArray)versions).ToObject<string[]>().Contains( a.ArtifactInstance.Version.ToNuGetPackageString() );
+                                        return !((JArray)versions).ToObject<string[]>().Contains( a.ArtifactInstance.Version.ToNormalizedString() );
                                     }
                                     return true;
                                 }
@@ -148,10 +148,10 @@ namespace CodeCake
                         } );
                     foreach( string tag in tags.Skip( 1 ) )
                     {
-                        Cake.Information( $"Setting tag '{tag}' on '{project.Name}' to '{project.ArtifactInstance.Version.ToNuGetPackageString()}' version." );
+                        Cake.Information( $"Setting tag '{tag}' on '{project.Name}' to '{project.ArtifactInstance.Version.ToNormalizedString()}' version." );
                         // The FromPath is actually required - if executed outside the relevant directory,
                         // it will miss the .npmrc with registry configs.
-                        Cake.NpmDistTagAdd( project.Name, project.ArtifactInstance.Version.ToNuGetPackageString(), tag, s => s.FromPath( project.DirectoryPath.Path ) );
+                        Cake.NpmDistTagAdd( project.Name, project.ArtifactInstance.Version.ToNormalizedString(), tag, s => s.FromPath( project.DirectoryPath.Path ) );
                     }
                 }
                 return System.Threading.Tasks.Task.CompletedTask;
@@ -240,7 +240,7 @@ namespace CodeCake
                         using( HttpRequestMessage req = new HttpRequestMessage( HttpMethod.Post, $"https://pkgs.dev.azure.com/{Organization}/_apis/packaging/feeds/{FeedName}/{uriProtocol}/packagesBatch?api-version=5.0-preview.1" ) )
                         {
                             req.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue( "Basic", basicAuth );
-                            var body = GetPromotionJSONBody( p.Name, p.Version.ToNuGetPackageString(), view.ToString(), isNpm );
+                            var body = GetPromotionJSONBody( p.Name, p.Version.ToNormalizedString(), view.ToString(), isNpm );
                             req.Content = new StringContent( body, Encoding.UTF8, "application/json" );
                             using( var m = await StandardGlobalInfo.SharedHttpClient.SendAsync( req ) )
                             {

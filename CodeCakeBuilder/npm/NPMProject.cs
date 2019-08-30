@@ -34,7 +34,7 @@ namespace CodeCake
                 _savedPackageJson = File.ReadAllText( p.PackageJson.JsonFilePath );
 
                 JObject json = JObject.Parse( _savedPackageJson );
-                json["version"] = version.ToNuGetPackageString();
+                json["version"] = version.ToNormalizedString();
                 if( preparePack )
                 {
                     json.Remove( "devDependencies" );
@@ -45,7 +45,7 @@ namespace CodeCake
                 File.WriteAllText( p.PackageJson.JsonFilePath, json.ToString() );
             }
 
-            void UpdateLocalNpmVersions(SVersion version, JObject obj )
+            void UpdateLocalNpmVersions( SVersion version, JObject obj )
             {
                 var npmArtifact = _p.GlobalInfo.ArtifactTypes.FirstOrDefault( x => x.TypeName == "NPM" ) as NPMArtifactType;
                 var dependencyPropNames = new string[]
@@ -61,19 +61,19 @@ namespace CodeCake
                 {
                     if( obj.ContainsKey( dependencyPropName ) )
                     {
-                        FixupLocalNpmVersion(version, (JObject)obj[dependencyPropName], npmArtifact );
+                        FixupLocalNpmVersion( version, (JObject)obj[dependencyPropName], npmArtifact );
                     }
                 }
             }
 
-            void FixupLocalNpmVersion(SVersion version, JObject dependencies, NPMArtifactType npmArtifactType )
+            void FixupLocalNpmVersion( SVersion version, JObject dependencies, NPMArtifactType npmArtifactType )
             {
                 foreach( KeyValuePair<string, JToken> keyValuePair in dependencies )
                 {
                     if( npmArtifactType?.Solution?.Projects.FirstOrDefault( x => x.PackageJson.Name == keyValuePair.Key )
                         is NPMPublishedProject localProject )
                     {
-                        dependencies[keyValuePair.Key] = new JValue( "^" +version);
+                        dependencies[keyValuePair.Key] = new JValue( "^" + version );
                     }
                 }
             }
@@ -286,7 +286,15 @@ namespace CodeCake
         /// throwing an exception.
         /// </param>
         /// <returns>False if the script doesn't exist (<paramref name="scriptMustExist"/> is false), otherwise true.</returns>
-        public void RunTest( bool scriptMustExist = true ) => RunScript( "test", scriptMustExist );
+        public void RunTest( bool scriptMustExist = true )
+        {
+            var key = DirectoryPath.AppendPart( "test" );
+            if( !GlobalInfo.CheckCommitMemoryKey( key ) )
+            {
+                RunScript( "test", scriptMustExist );
+                GlobalInfo.WriteCommitMemoryKey( key );
+            }
+        }
 
         private protected IDisposable TemporarySetVersion( SVersion version )
         {
