@@ -13,7 +13,7 @@
     <PackageReference Include="NUnit" Version="3.12.0" />
     <PackageReference Include="Rebus.SqlServer" Version="5.1.0" />
     <packagereference Include="NUnit3TestAdapter" Version="3.14.0"></packagereference>
-    <PackageReference Include="CK.Monitoring" Version="10.2.2--0002-develop" />
+    <PackageReference Include="CK.Monitoring" Version="10.2.2--0004-develop" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\core\CK.Crs.Runtime\CK.Crs.Runtime.csproj" />
