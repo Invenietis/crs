@@ -19,7 +19,7 @@ namespace CK.Crs
 
         public string Name => "CompositeCommandReceiver";
 
-        public bool AcceptCommand( ICommandContext context )
+        public bool AcceptCommand( object command, ICommandContext context )
         {
             // By design this command receiver is the root of the other ones.
             return true;
@@ -33,7 +33,7 @@ namespace CK.Crs
                 foreach( var receiver in _receivers )
                 {
                     context.Monitor.Trace( $"Challenging receiver {receiver.Name}." );
-                    if( receiver.AcceptCommand( context ) )
+                    if( receiver.AcceptCommand( command, context ) )
                     {
                         context.Monitor.Trace( $"Receiver {receiver.Name} accepts to receive the command." );
                         return receiver.ReceiveCommand( command, context );

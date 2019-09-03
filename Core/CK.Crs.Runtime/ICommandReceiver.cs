@@ -18,7 +18,7 @@ namespace CK.Crs
         /// </summary>
         /// <param name="context">The context to receive</param>
         /// <returns>True if accepted, false otherwise.</returns>
-        bool AcceptCommand( ICommandContext context );
+        bool AcceptCommand( object command, ICommandContext context );
 
         /// <summary>
         /// Receives the command and returns the appropriate <see cref="Response"/>.

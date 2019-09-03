@@ -18,7 +18,7 @@ namespace CK.Crs.Rebus
 
         public string Name => "Rebus";
 
-        public bool AcceptCommand( ICommandContext context )
+        public bool AcceptCommand( object command, ICommandContext context )
         {
             return context.Model.HasRebusTag();
         }
