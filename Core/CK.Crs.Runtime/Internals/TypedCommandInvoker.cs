@@ -1,5 +1,6 @@
 using CK.Core;
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace CK.Crs
@@ -84,6 +85,7 @@ namespace CK.Crs
 
         private string ClassName( Type type )
         {
+            Debug.Assert( type.FullName.Remove( 0, type.Namespace.Length + 1 ) == type.Name, "If this is good, ClassName must be replaced with type.Name..." );
             return type.FullName.Remove( 0, type.Namespace.Length + 1 );
         }
 
@@ -95,7 +97,7 @@ namespace CK.Crs
             return handlerObject;
         }
 
-        internal static async Task<object> TaskInvoker( ITypedCommandHandlerInvoker invoker, object command, ICommandContext context )
+        static async Task<object> TaskInvoker( ITypedCommandHandlerInvoker invoker, object command, ICommandContext context )
         {
             var genericMethod = invoker.GetType().GetMethod( nameof( ITypedCommandHandlerInvoker.InvokeTypedWithResult ) );
             genericMethod = genericMethod.MakeGenericMethod( context.Model.CommandType, context.Model.ResultType );
@@ -107,7 +109,7 @@ namespace CK.Crs
             return result;
         }
 
-        internal static Task TaskInvokerVoid( ITypedCommandHandlerInvoker invoker, object command, ICommandContext context )
+        static Task TaskInvokerVoid( ITypedCommandHandlerInvoker invoker, object command, ICommandContext context )
         {
             var genericMethod = invoker.GetType().GetMethod( nameof( ITypedCommandHandlerInvoker.InvokeTyped ) );
             genericMethod = genericMethod.MakeGenericMethod( context.Model.CommandType );

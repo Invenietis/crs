@@ -20,7 +20,7 @@ namespace CK.Crs
 
         public string Name => "DefaultReceiver";
 
-        public bool AcceptCommand( ICommandContext context )
+        public bool AcceptCommand( object command, ICommandContext context )
         {
             return true;
         }

@@ -18,11 +18,11 @@ namespace CK.Crs.AspNetCore
 
         public IEndpointModel EndpointModel { get; }
 
-        public async Task Invoke( HttpContext context )
+        public async Task Invoke( HttpContext context, IActivityMonitor monitor = null )
         {
             using( var endpoint = new HttpCrsEndpoint( context ) )
             {
-                var pipeline = endpoint.CreatePipeline( new ActivityMonitor(), EndpointModel );
+                var pipeline = endpoint.CreatePipeline( monitor ?? new ActivityMonitor(), EndpointModel );
                 if( pipeline.IsValid )
                 {
                     var response = await pipeline.ProcessCommand().ConfigureAwait( false );

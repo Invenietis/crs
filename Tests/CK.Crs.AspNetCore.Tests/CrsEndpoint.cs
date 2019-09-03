@@ -17,7 +17,6 @@ namespace CK.Crs.AspNetCore.Tests
         public static async Task<CrsEndpoint> Create( PathString path )
         {
             CrsEndpoint endpoint = new CrsEndpoint( path );
-            //await endpoint.Connection.StartAsync().OrTimeout();
             await endpoint.LoadMeta( "/crs" );
             return endpoint;
         }
