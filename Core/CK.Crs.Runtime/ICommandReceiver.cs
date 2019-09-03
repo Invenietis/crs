@@ -14,7 +14,7 @@ namespace CK.Crs
         string Name { get; }
 
         /// <summary>
-        /// Gets wether this <see cref="ICommandReceiver"/> accepts to receive the given <see cref="ICommandContext"/>.
+        /// Gets whether this <see cref="ICommandReceiver"/> accepts to receive the given <see cref="ICommandContext"/>.
         /// </summary>
         /// <param name="context">The context to receive</param>
         /// <returns>True if accepted, false otherwise.</returns>
