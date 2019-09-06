@@ -19,7 +19,7 @@ namespace CK.Crs.Configuration
         private IResponseFormatter _responseFormatter;
         private IList<Type> _filters;
 
-        public CKTraitContext TraitContext => _model.TraitContext;
+        public CKTraitContext TagContext => _model.TagContext;
 
         public CrsEndpointConfiguration( ICommandRegistry registry, ICrsModel model )
         {

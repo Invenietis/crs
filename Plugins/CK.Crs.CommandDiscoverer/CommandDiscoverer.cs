@@ -65,7 +65,7 @@ namespace CK.Crs.CommandDiscoverer
                     var setTag = (CommandSetTagAttribute)
                         Attribute.GetCustomAttribute( command, typeof( CommandSetTagAttribute ) );
                     if( setTag != null )
-                        registration.SetTag( setTag.Traits );
+                        registration.SetTag( setTag.Tags );
                 }
 
             return @this;

@@ -8,11 +8,11 @@ namespace CK.Crs
     {
         List<ICommandModel> _commands = new List<ICommandModel>();
 
-        public DefaultCommandRegistry( CKTraitContext traitContext )
+        public DefaultCommandRegistry( CKTraitContext tagContext )
         {
-            TraitContext = traitContext;
+            TagContext = tagContext;
         }
-        public CKTraitContext TraitContext { get; }
+        public CKTraitContext TagContext { get; }
 
         public IEnumerable<ICommandModel> Registration => _commands;
 
@@ -20,7 +20,7 @@ namespace CK.Crs
 
         public ICommandRegistration Register( Type commandType, Type resultType = null )
         {
-            var model = new CommandModel( commandType, resultType, TraitContext );
+            var model = new CommandModel( commandType, resultType, TagContext );
             return AddRegistration( model );
         }
 

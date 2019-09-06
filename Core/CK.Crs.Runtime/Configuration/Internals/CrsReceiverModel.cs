@@ -40,7 +40,7 @@ namespace CK.Crs.Configuration
             // TODO: lookup in a dictionary ?
             // TODO: why first or default? We must ensure that we get the good one.
             // Maybe by adding a CKTrait during configuration to each RequestDescription. This 
-            // traits will identityf the Receiver (which is unique)
+            // tags will identityf the Receiver (which is unique)
             // BTW, We should decouple which request are handle by which receiver...
             // The request registry and the requests by receivers which is a subset of the registry.
             return Commands.FirstOrDefault( t => t.CommandType == requestType );

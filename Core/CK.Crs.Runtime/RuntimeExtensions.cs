@@ -10,12 +10,12 @@ namespace CK.Crs
 
         public static bool HasFireAndForgetTag( this ICommandModel commandModel )
         {
-            return commandModel.HasTags( FireAndForgetTag, CrsTraits.FireForget );
+            return commandModel.HasTags( FireAndForgetTag, CrsTags.FireForget );
         }
 
         public static ICommandRegistration FireAndForget( this ICommandRegistration commandRegistration )
         {
-            return commandRegistration.SetTag( FireAndForgetTag, CrsTraits.FireForget );
+            return commandRegistration.SetTag( FireAndForgetTag, CrsTags.FireForget );
         }
 
     }

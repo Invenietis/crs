@@ -14,7 +14,7 @@ namespace CK.Crs
         /// </summary>
         CommandName Name { get; }
         /// <summary>
-        /// A <see cref="CKTrait"/> exposings the command traits which are used by the command pipeline 
+        /// A <see cref="CKTrait"/> exposings the command tags which are used by the command pipeline 
         /// to take decisions about the command handling.
         /// </summary>
         CKTrait Tags { get; set; }

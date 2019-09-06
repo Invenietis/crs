@@ -89,7 +89,7 @@ namespace CK.Crs
         public IEnumerable<Type> Filters { get; set; }
 
         /// <summary>
-        /// Gets commands traits
+        /// Gets commands tags
         /// This gives a hint to CRS to pick the best command executor.
         /// </summary>
         public CKTrait Tags { get; set; }

@@ -15,12 +15,12 @@ namespace CK.Crs
 
         public static bool HasRebusTag( this ICommandModel commandModel )
         {
-            return commandModel.HasTags( RebusTag, CrsTraits.FireForget );
+            return commandModel.HasTags( RebusTag, CrsTags.FireForget );
         }
 
         public static ICommandRegistration IsRebus( this ICommandRegistration commandRegistration )
         {
-            return commandRegistration.SetTag( RebusTag, CrsTraits.FireForget );
+            return commandRegistration.SetTag( RebusTag, CrsTags.FireForget );
         }
 
         public static Dictionary<string, string> CreateHeaders( this ICommandContext context )

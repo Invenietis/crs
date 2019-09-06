@@ -13,7 +13,7 @@ namespace CK.Crs
         /// <summary>
         /// Gets the CRS <see cref="CKTraitContext"/>.
         /// </summary>
-        CKTraitContext TraitContext { get; }
+        CKTraitContext TagContext { get; }
 
         /// <summary>
         /// Adds a new command <see cref="Type"/> to the registry

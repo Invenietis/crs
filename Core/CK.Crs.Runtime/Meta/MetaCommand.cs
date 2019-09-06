@@ -25,7 +25,7 @@ namespace CK.Crs.Meta
                 public string CommandType { get; set; }
                 public string CommandName { get; set; }
                 public string ResultType { get; set; }
-                public string Traits { get; set; }
+                public string Tags { get; set; }
                 public string Description { get; set; }
                 public RequestPropertyInfo[] Parameters { get; set; }
             }
@@ -48,7 +48,7 @@ namespace CK.Crs.Meta
                             CommandType = c.CommandType.FullName,
                             ResultType = c.ResultType?.FullName,
                             Parameters = c.CommandType.GetTypeInfo().DeclaredProperties.Select( e => new RequestPropertyInfo( e, null ) ).ToArray(),
-                            Traits = c.Tags?.ToString(),
+                            Tags = c.Tags?.ToString(),
                             Description = c.Description
                         };
                         result.Commands.Add( desc.CommandName, desc );
@@ -63,12 +63,12 @@ namespace CK.Crs.Meta
                     Version = 1,
                     CallerIdPropertyName = endpointModel.CallerIdName
                 };
-                var registration = services.GetService<IAmbientValuesRegistration>();
+                var registration = services.GetService<IAmbientValuesRegistration>( false );
                 if( command.ShowAmbientValues )
                 {
                     if( registration != null )
                     {
-                        var ambientValues = services.GetService<IAmbientValues>();
+                        var ambientValues = services.GetService<IAmbientValues>( false );
                         result.AmbientValues = new Dictionary<string, object>();
                         foreach( var a in registration.AmbientValues )
                         {
@@ -91,7 +91,7 @@ namespace CK.Crs.Meta
                             CommandType = c.CommandType.FullName,
                             ResultType = c.ResultType?.FullName,
                             Parameters = c.CommandType.GetTypeInfo().DeclaredProperties.Select( e => new RequestPropertyInfo( e, registration ) ).ToArray(),
-                            Traits = c.Tags?.ToString(),
+                            Tags = c.Tags?.ToString(),
                             Description = c.Description
                         };
                         result.Commands.Add( desc.CommandName, desc );

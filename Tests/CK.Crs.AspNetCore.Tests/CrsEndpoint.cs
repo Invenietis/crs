@@ -90,7 +90,7 @@ namespace CK.Crs.AspNetCore.Tests
 
         public Task<TResult> InvokeCommand<T, TResult>( T command )
         {
-            var context = new CKTraitContext( "Crs" );
+            var context = CKTraitContext.Create( "Crs" );
             var tcs = new TaskCompletionSource<TResult>();
             var commandDescription = Meta.Commands.Where( x => x.Value.CommandType == typeof( T ).FullName ).Select( t => t.Value ).Single();
 
@@ -100,8 +100,8 @@ namespace CK.Crs.AspNetCore.Tests
                 Query = Meta.CallerIdPropertyName + "=" + "3712"
             };
 
-            var ffTag = context.FindOrCreate( CrsTraits.FireForget );
-            if( ffTag.Overlaps( context.FindOrCreate( commandDescription.Traits ) ) )
+            var ffTag = context.FindOrCreate( CrsTags.FireForget );
+            if( ffTag.Overlaps( context.FindOrCreate( commandDescription.Tags ) ) )
             {
 
                 var task = Client.PostJSON<T>( uri.Uri, command );

@@ -7,7 +7,7 @@ namespace CK.Crs.Meta
     public sealed class MetaCommandContext : CommandContext
     {
         public MetaCommandContext( IActivityMonitor monitor, IEndpointModel endpointModel, CancellationToken cancellationToken )
-            : base( Guid.Empty.ToString( "N" ), monitor, new MetaCommandModel( endpointModel.CrsModel.TraitContext ), CallerId.None, cancellationToken )
+            : base( Guid.Empty.ToString( "N" ), monitor, new MetaCommandModel( endpointModel.CrsModel.TagContext ), CallerId.None, cancellationToken )
         {
         }
     }

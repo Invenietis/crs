@@ -5,7 +5,7 @@ namespace CK.Crs.Configuration
 {
     public interface ICrsEndpointConfiguration
     {
-        CKTraitContext TraitContext { get; }
+        CKTraitContext TagContext { get; }
         ICrsEndpointConfiguration FilterCommands( Func<ICommandModel, bool> filter );
         ICrsEndpointConfiguration SkipAmbientValuesValidation();
         ICrsEndpointConfiguration SkipModelValidation();

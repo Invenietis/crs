@@ -19,7 +19,7 @@ namespace CK.Crs.InMemory
         {
             bool res = context.Model.HasFireAndForgetTag();
             if( res == false )
-                context.Monitor.Trace( "Command does not have the FireAndForget trait." );
+                context.Monitor.Trace( "Command does not have the FireAndForget tag." );
 
             return res;
         }

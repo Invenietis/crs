@@ -4,7 +4,8 @@
 
   <Branches>
     <Branch Name="develop" CIVersionMode="LastReleaseBased" VersionName="develop" />
-    <Branch Name="develop-local" VersionName="local" CIVersionMode="ZeroTimed" />
+
   </Branches>
   <IgnoreModifiedFiles />
+  <Debug IgnoreDirtyWorkingFolder="true" />
 </RepositoryInfo>

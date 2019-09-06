@@ -76,7 +76,7 @@ namespace CK.Crs.Samples.AspNetCoreApp
             app.UseDeveloperExceptionPage();
             app.UseCrs( "/crs", c => c.AcceptAll().SkipAmbientValuesValidation() );
             app.UseCrs( "/crs-admin", c => c
-                .FilterCommands( t => t.Tags.Overlaps( c.TraitContext.FindOrCreate( "Admin" ) ) )
+                .FilterCommands( t => t.Tags.Overlaps( c.TagContext.FindOrCreate( "Admin" ) ) )
                 .AddSecurityFilter<PolicySecurityFilter>() );
         }
     }
