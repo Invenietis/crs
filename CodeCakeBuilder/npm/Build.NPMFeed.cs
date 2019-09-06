@@ -235,8 +235,6 @@ namespace CodeCake
                     string uriProtocol = isNpm ? "npm" : "nuget";
                     foreach( var view in p.Version.PackageQuality.GetLabels() )
                     {
-                        
-                        
                         using( HttpRequestMessage req = new HttpRequestMessage( HttpMethod.Post, $"https://pkgs.dev.azure.com/{Organization}/_apis/packaging/feeds/{FeedName}/{uriProtocol}/packagesBatch?api-version=5.0-preview.1" ) )
                         {
                             req.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue( "Basic", basicAuth );
