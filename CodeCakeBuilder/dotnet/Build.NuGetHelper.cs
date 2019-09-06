@@ -362,7 +362,7 @@ namespace CodeCake
                     var updater = await _updater;
                     foreach( var p in pushes )
                     {
-                        string packageString = p.Name + "." + p.Version.ToNormalizedString();
+                        string packageString = p.Name + "." + p.Version.WithBuildMetaData( null ).ToNormalizedString();
                         var fullPath = ArtifactType.GlobalInfo.ReleasesFolder.AppendPart( packageString + ".nupkg" );
                         await updater.Push(
                             fullPath,
