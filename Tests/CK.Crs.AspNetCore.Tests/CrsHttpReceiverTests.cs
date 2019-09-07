@@ -1,22 +1,15 @@
-using CK.AspNet.Tester;
-using CK.Core;
 using CK.Crs.Tests;
 using FluentAssertions;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.TestHost;
 using NUnit.Framework;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
+using static CK.Testing.MonitorTestHelper;
 
 namespace CK.Crs.AspNetCore.Tests
 {
     [TestFixture]
     public class CrsHttpReceiverTests
     {
-        public CrsHttpReceiverTests()
-        {
-        }
 
         [Test]
         public async Task Reads_Meta_From_Endpoint()
