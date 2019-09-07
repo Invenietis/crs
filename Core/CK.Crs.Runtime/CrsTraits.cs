@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CK.Crs
 {
-    public static class CrsTraits
+    public static class CrsTags
     {
         public static readonly string FireForget = "FireForget";
         public static readonly string Result = "Result";
@@ -13,49 +13,49 @@ namespace CK.Crs
 
         public static bool HasResultBroadcastTag( this ICommandModel commandModel )
         {
-            return HasTag( commandModel, CrsTraits.Broadcast );
+            return HasTag( commandModel, CrsTags.Broadcast );
         }
 
         public static ICommandRegistration BroadcastResult( this ICommandRegistration commandRegistration )
         {
-            return SetTag( commandRegistration, CrsTraits.Result, CrsTraits.Broadcast );
+            return SetTag( commandRegistration, CrsTags.Result, CrsTags.Broadcast );
         }
 
         public static bool HasResultTag( this ICommandModel commandModel )
         {
-            return HasTag( commandModel, CrsTraits.Result );
+            return HasTag( commandModel, CrsTags.Result );
         }
 
         public static ICommandRegistration SetResultTag( this ICommandRegistration commandRegistration )
         {
-            return SetTag( commandRegistration, CrsTraits.Result );
+            return SetTag( commandRegistration, CrsTags.Result );
         }
 
-        public static bool HasTag( this ICommandModel commandModel, string trait )
+        public static bool HasTag( this ICommandModel commandModel, string tag )
         {
-            return commandModel.Tags.Overlaps( commandModel.Tags.Context.FindOrCreate( trait ) );
+            return commandModel.Tags.Overlaps( commandModel.Tags.Context.FindOrCreate( tag ) );
         }
 
-        public static bool HasTags( this ICommandModel commandModel, params string[] traits )
+        public static bool HasTags( this ICommandModel commandModel, params string[] tags )
         {
-            return commandModel.Tags.HasTags( traits );
+            return commandModel.Tags.HasTags( tags );
         }
-        public static bool HasTags( this CKTrait tags, params string[] traits )
+        public static bool HasTags( this CKTrait @this, params string[] tags )
         {
-            var combinedTraits = String.Join( tags.Context.Separator.ToString(), traits );
-            CKTrait trait = tags.Context.FindOrCreate( combinedTraits );
-            return tags.IsSupersetOf( trait );
+            var combinedTags = String.Join( @this.Context.Separator.ToString(), tags );
+            CKTrait tag = @this.Context.FindOrCreate( combinedTags );
+            return @this.IsSupersetOf( tag );
         }
 
-        public static ICommandRegistration SetTag( this ICommandRegistration commandRegistration, params string[] traits )
+        public static ICommandRegistration SetTag( this ICommandRegistration commandRegistration, params string[] tags )
         {
-            return commandRegistration.SetTag( String.Join( commandRegistration.Model.Tags.Context.Separator.ToString(), traits ) );
+            return commandRegistration.SetTag( String.Join( commandRegistration.Model.Tags.Context.Separator.ToString(), tags ) );
         }
         
-        public static ICommandRegistration SetTag( this ICommandRegistration commandRegistration, string traits )
+        public static ICommandRegistration SetTag( this ICommandRegistration commandRegistration, string tags )
         {
-            CKTrait trait = commandRegistration.Model.Tags.Context.FindOrCreate( traits );
-            commandRegistration.Model.Tags = commandRegistration.Model.Tags.Apply( trait, SetOperation.Union );
+            CKTrait tag = commandRegistration.Model.Tags.Context.FindOrCreate( tags );
+            commandRegistration.Model.Tags = commandRegistration.Model.Tags.Apply( tag, SetOperation.Union );
             return commandRegistration;
         }
 

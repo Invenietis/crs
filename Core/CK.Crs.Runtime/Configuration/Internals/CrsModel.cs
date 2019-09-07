@@ -9,16 +9,16 @@ namespace CK.Crs.Configuration
     class CrsModel : ICrsModel
     {
         List<IEndpointModel> _models;
-        CKTraitContext _traitContext;
-        public CrsModel( CKTraitContext traitContext )
+        CKTraitContext _tagContext;
+        public CrsModel( CKTraitContext tagContext )
         {
-            _traitContext = traitContext;
+            _tagContext = tagContext;
             _models = new List<IEndpointModel>();
         }
 
         public IReadOnlyList<IEndpointModel> Endpoints => _models;
 
-        public CKTraitContext TraitContext => _traitContext;
+        public CKTraitContext TagContext => _tagContext;
 
         public IEndpointModel GetEndpoint( string path )
         {

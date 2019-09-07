@@ -12,7 +12,7 @@ namespace CK.Crs
         /// <summary>
         /// Gets the <see cref="CKTraitContext"/> associated to this endpoint
         /// </summary>
-        CKTraitContext TraitContext { get; }
+        CKTraitContext TagContext { get; }
 
         IReadOnlyList<IEndpointModel> Endpoints { get; }
 

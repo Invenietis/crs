@@ -5,11 +5,11 @@ namespace CK.Crs.CommandDiscoverer.Attributes
     [AttributeUsage( AttributeTargets.Class )]
     public class CommandSetTagAttribute : Attribute
     {
-        public string[] Traits { get; }
+        public string[] Tags { get; }
 
-        public CommandSetTagAttribute( params string[] traits )
+        public CommandSetTagAttribute( params string[] tags )
         {
-            Traits = traits;
+            Tags = tags;
         }
     }
 }

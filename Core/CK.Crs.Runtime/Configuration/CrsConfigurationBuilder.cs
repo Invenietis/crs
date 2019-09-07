@@ -12,14 +12,14 @@ namespace CK.Crs.Configuration
 
         readonly IServiceCollection _services;
         readonly CrsModel _model;
-        readonly CKTraitContext _traitContext;
+        readonly CKTraitContext _tagContext;
 
-        public CrsConfigurationBuilder( IServiceCollection services, string traitContextName = "Crs" )
+        public CrsConfigurationBuilder( IServiceCollection services, string tagContextName = "Crs" )
         {
             _services = services;
-            _traitContext = new CKTraitContext( traitContextName );
-            _model = new CrsModel( _traitContext );
-            _commands = new DefaultCommandRegistry( _traitContext );
+            _tagContext = CKTraitContext.Create( tagContextName );
+            _model = new CrsModel( _tagContext );
+            _commands = new DefaultCommandRegistry( _tagContext );
         }
 
         internal IServiceCollection Services => _services;
