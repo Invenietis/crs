@@ -1,3 +1,0 @@
-C:/Dev/CK/CK-Crs-Projects/CK-Crs/Tests/CK.Crs.Tests/bin/Debug/netcoreapp2.0/CK.Crs.Tests.dll
-C:/Dev/CK/CK-Crs-Projects/CK-Crs/Tests/CK.Crs.Rebus.Tests/bin/Debug/netcoreapp2.0/CK.Crs.Rebus.Tests.dll
-C:/Dev/CK/CK-Crs-Projects/CK-Crs/Tests/CK.Crs.AspNetCore.Tests/bin/Debug/netcoreapp2.0/CK.Crs.AspNetCore.Tests.dll
