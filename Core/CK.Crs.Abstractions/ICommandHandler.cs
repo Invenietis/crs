@@ -18,11 +18,8 @@ namespace CK.Crs
         /// <summary>
         /// Handles a request with the given <see cref="ICommandContext"/>.
         /// </summary>
-        /// <remarks>
-        /// If the request is like a Command, the context is the one of this command. 
-        /// If the request is like an Event, the context is the original command that raises this event.</remarks>
         /// <param name="command">The request to handle.</param>
-        /// <param name="context">The command context. See remarks.</param>
+        /// <param name="context">The command context.</param>
         /// <returns></returns>
         Task HandleAsync( T command, ICommandContext context );
     }
@@ -32,11 +29,8 @@ namespace CK.Crs
         /// <summary>
         /// Handles a request with the given <see cref="ICommandContext"/>.
         /// </summary>
-        /// <remarks>
-        /// If the request is like a Command, the context is the one of this command. 
-        /// If the request is like an Event, the context is the original command that raises this event.</remarks>
         /// <param name="command">The request to handle.</param>
-        /// <param name="context">The command context. See remarks.</param>
+        /// <param name="context">The command context.</param>
         /// <returns></returns>
         Task<TResult> HandleAsync( T command, ICommandContext context );
     }
