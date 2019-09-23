@@ -28,14 +28,6 @@ namespace CodeCake
 
         public string TGZName { get; }
 
-        private protected override void DoRunScript( string n )
-        {
-            using( TemporarySetVersion( ArtifactInstance.Version ) )
-            {
-                base.DoRunScript( n );
-            }
-        }
-
         /// <summary>
         /// Generates the .tgz file in the <see cref="StandardGlobalInfo.ReleasesFolder"/>
         /// by calling npm pack.

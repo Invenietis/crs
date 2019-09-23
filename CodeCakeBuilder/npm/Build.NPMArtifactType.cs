@@ -1,11 +1,6 @@
 using CodeCake.Abstractions;
 using System.Collections.Generic;
-using System.Linq;
-using Cake.Npm;
-using Cake.Common.Diagnostics;
-using CSemVer;
 using static CodeCake.Build;
-using CodeCake;
 
 namespace CodeCake
 {

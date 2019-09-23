@@ -256,14 +256,17 @@ namespace CodeCake
             return true;
         }
 
-        private protected virtual void DoRunScript( string n )
+        private protected void DoRunScript( string n )
         {
-            GlobalInfo.Cake.NpmRunScript(
+            using( TemporarySetVersion( GlobalInfo.Version ) )
+            {
+                GlobalInfo.Cake.NpmRunScript(
                     n,
                     s => s
                         .WithLogLevel( NpmLogLevel.Info )
                         .FromPath( DirectoryPath.Path )
                 );
+            }
         }
 
         /// <summary>
