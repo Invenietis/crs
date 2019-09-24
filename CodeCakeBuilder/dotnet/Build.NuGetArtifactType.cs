@@ -12,7 +12,7 @@ using static CodeCake.Build;
 namespace CodeCake
 {
 
-    public partial class DotnetSolution : ISolutionProducingArtifact
+    public partial class DotnetSolution : ICIPublishWorkflow
     {
         private ArtifactType _artifactType;
 
@@ -88,7 +88,9 @@ namespace CodeCake
             protected override IEnumerable<ArtifactFeed> GetRemoteFeeds()
             {
                 if( GlobalInfo.Version.PackageQuality >= CSemVer.PackageQuality.ReleaseCandidate ) yield return new RemoteFeed( this, "nuget.org", "https://api.nuget.org/v3/index.json", "NUGET_ORG_PUSH_API_KEY" );
+if( GlobalInfo.Version.PackageQuality >= CSemVer.PackageQuality.ReleaseCandidate ) yield return new RemoteFeed( this, "nuget.org", "https://api.nuget.org/v3/index.json", "NUGET_ORG_PUSH_API_KEY" );
 yield return new SignatureVSTSFeed( this, "Signature-OpenSource", "Default" );
+
 
             }
 

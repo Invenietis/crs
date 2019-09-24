@@ -1,6 +1,6 @@
 namespace CodeCake.Abstractions
 {
-    interface ISolutionProducingArtifact
+    interface ICIPublishWorkflow
     {
         /// <summary>
         /// Pack the solution: it produce the artifacts.

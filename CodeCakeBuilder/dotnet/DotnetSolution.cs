@@ -33,7 +33,7 @@ namespace CodeCake
         }
     }
 
-    public partial class DotnetSolution : ISolution
+    public partial class DotnetSolution : ICIWorkflow
     {
         readonly StandardGlobalInfo _globalInfo;
         public readonly string SolutionFileName;
@@ -199,8 +199,8 @@ namespace CodeCake
             }
         }
 
-        void ISolution.Build() => Build();
+        void ICIWorkflow.Build() => Build();
 
-        void ISolution.Test() => Test();
+        void ICIWorkflow.Test() => Test();
     }
 }
