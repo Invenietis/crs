@@ -37,15 +37,15 @@ namespace CodeCake
                    globalInfo.TerminateIfShouldStop();
                });
 
-            Task("Clean")
-                .IsDependentOn("Check-Repository")
-                .Does(() =>
-                {
-                    globalInfo.GetDotnetSolution().Clean();
-                    Cake.CleanDirectories(globalInfo.ReleasesFolder);
+            Task( "Clean" )
+                .IsDependentOn( "Check-Repository" )
+                .Does( () =>
+                 {
+                     globalInfo.GetDotnetSolution().Clean();
+                     Cake.CleanDirectories( globalInfo.ReleasesFolder );
 
-                    globalInfo.GetNPMSolution().RunInstallAndClean(scriptMustExist: false);
-                });
+                     globalInfo.GetNPMSolution().Clean();
+                 } );
 
 
             Task("Build")
@@ -54,7 +54,7 @@ namespace CodeCake
                 .Does(() =>
                 {
                     globalInfo.GetDotnetSolution().Build();
-                    globalInfo.GetNPMSolution().RunBuild();
+                    globalInfo.GetNPMSolution().Build();
                 });
 
             Task("Unit-Testing")
@@ -66,7 +66,7 @@ namespace CodeCake
                    var testProjects = globalInfo.GetDotnetSolution().Projects.Where(p => p.Name.EndsWith(".Tests")
                                                            && !p.Path.Segments.Contains("Integration"));
                    globalInfo.GetDotnetSolution().Test();
-                   globalInfo.GetNPMSolution().RunTest();
+                   globalInfo.GetNPMSolution().Test();
                });
 
             Task("Create-Packages")
