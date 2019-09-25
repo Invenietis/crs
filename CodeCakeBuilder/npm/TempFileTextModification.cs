@@ -14,12 +14,17 @@ namespace CodeCake
     {
         readonly string _originalText;
         readonly NormalizedPath _path;
+        private readonly bool _filePreviouslyExisted;
 
         TempFileTextModification(
-            string savedPackageJson, NormalizedPath path )
+            string savedPackageJson,
+            NormalizedPath path,
+            bool filePreviouslyExisted
+            )
         {
             _originalText = savedPackageJson;
             _path = path;
+            _filePreviouslyExisted = filePreviouslyExisted;
         }
 
         protected TempFileTextModification( TempFileTextModification toCopy )
@@ -30,14 +35,24 @@ namespace CodeCake
 
         public static (string content, TempFileTextModification temp) CreateTempFileTextModification( NormalizedPath path )
         {
+            bool fileExist = File.Exists( path );
+            if( !fileExist ) File.Create( path ).Dispose();
             string txt = File.ReadAllText( path );
-            return (txt, new TempFileTextModification( txt, path ));
+            return (txt, new TempFileTextModification( txt, path, fileExist ));
         }
 
         /// <summary>
         /// Revert the change made to the package.json
         /// </summary>
-        public void Dispose() => File.WriteAllText( _path, _originalText );
+        public void Dispose()
+        {
+            if( !_filePreviouslyExisted )
+            {
+                File.Delete( _path );
+                return;
+            }
+            File.WriteAllText( _path, _originalText );
+        }
 
 
         /// <summary>
