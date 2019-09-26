@@ -99,7 +99,7 @@ namespace CK.Crs.Rebus.Tests
                     Assert.That( response.ResponseType, Is.EqualTo( (char)ResponseType.Synchronous ) );
 
                     context = EnsureContext<SimpleCommandWithDirectResult>( services, monitor );
-                    var response2 = (Response<object>)await dispatcher.ReceiveCommand( new SimpleCommandWithDirectResult { ActorId = 421 }, context );
+                    var response2 = (Response<DateTime>)await dispatcher.ReceiveCommand( new SimpleCommandWithDirectResult { ActorId = 421 }, context );
                     Assert.That( response2.ResponseType, Is.EqualTo( (char)ResponseType.Synchronous ) );
                     Assert.That( response2.Payload, Is.Not.Null.And.AssignableFrom<DateTime>() );
 

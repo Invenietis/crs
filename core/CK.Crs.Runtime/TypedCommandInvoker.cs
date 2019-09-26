@@ -1,18 +1,34 @@
 using CK.Core;
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace CK.Crs
 {
-    class TypedCommandInvoker : ITypedCommandHandlerInvoker
+    /// <summary>
+    /// A specialization of <see cref="ITypedCommandHandlerInvoker"/>
+    /// using <see cref="ICommandHandlerFactory"/> to create command handlers,
+    /// and type reflection to find the proper method to call.
+    /// </summary>
+    public class TypedCommandInvoker : ITypedCommandHandlerInvoker
     {
         readonly ICommandHandlerFactory _factory;
 
+        /// <summary>
+        /// Creates a new instance of <see cref="TypedCommandInvoker"/>
+        /// </summary>
+        /// <param name="factory">The command handler factory to use</param>
         public TypedCommandInvoker( ICommandHandlerFactory factory )
         {
             _factory = factory ?? throw new ArgumentNullException( nameof( factory ) );
         }
 
+        /// <summary>
+        /// Attempts to invoke the given command without typing.
+        /// </summary>
+        /// <param name="command">The CRS command to invoke.</param>
+        /// <param name="context">The context of the given CRS command.</param>
+        /// <returns>An awaitable task with the object returned by the CRS command handler.</returns>
         public async Task<object> Invoke( object command, ICommandContext context )
         {
             try
@@ -32,6 +48,12 @@ namespace CK.Crs
             }
         }
 
+        /// <summary>
+        /// Attempts to invoke the given command without a returned result.
+        /// </summary>
+        /// <param name="command">The CRS command to invoke.</param>
+        /// <param name="context">The context of the given CRS command.</param>
+        /// <returns>An awaitable task.</returns>
         public Task InvokeTyped<TCommand>( TCommand command, ICommandContext context )
         {
             if( context == null )
@@ -45,7 +67,7 @@ namespace CK.Crs
                 var handler = handlerObject as ICommandHandler<TCommand>;
                 if( handler == null )
                     throw new ArgumentException(
-                        $"Handler of type {ClassName(context.Model.HandlerType)} must implements ICommandHandler<{ClassName(context.Model.CommandType)}>." );
+                        $"Handler of type {ClassName( context.Model.HandlerType )} must implements ICommandHandler<{ClassName( context.Model.CommandType )}>." );
 
 
                 return handler.HandleAsync( command, context );
@@ -57,6 +79,12 @@ namespace CK.Crs
             }
         }
 
+        /// <summary>
+        /// Attempts to invoke the given command with a returned result.
+        /// </summary>
+        /// <param name="command">The CRS command to invoke.</param>
+        /// <param name="context">The context of the given CRS command.</param>
+        /// <returns>An awaitable task, with the typed command result.</returns>
         public Task<TResult> InvokeTypedWithResult<TCommand, TResult>( TCommand command, ICommandContext context )
         {
             if( context == null )
@@ -70,7 +98,7 @@ namespace CK.Crs
                 var handler = handlerObject as ICommandHandler<TCommand, TResult>;
                 if( handler == null )
                     throw new ArgumentException(
-                        $"Handler of type {ClassName(context.Model.HandlerType)} must implements ICommandHandler<{ClassName(context.Model.CommandType)},{ClassName(context.Model.ResultType)}>." );
+                        $"Handler of type {ClassName( context.Model.HandlerType )} must implements ICommandHandler<{ClassName( context.Model.CommandType )},{ClassName( context.Model.ResultType )}>." );
 
                 context.Monitor.Trace( $"Handler {context.Model.HandlerType} has been succesfuly resolved." );
                 return handler.HandleAsync( command, context );
@@ -84,6 +112,8 @@ namespace CK.Crs
 
         private string ClassName( Type type )
         {
+            Debug.Assert( type.FullName.Remove( 0, type.Namespace.Length + 1 ) == type.Name, "If this is good, ClassName must be replaced with type.Name..." );
+            // TODO: Can the line below be replaced with type.Name? (See Assert above)
             return type.FullName.Remove( 0, type.Namespace.Length + 1 );
         }
 
@@ -95,7 +125,7 @@ namespace CK.Crs
             return handlerObject;
         }
 
-        internal static async Task<object> TaskInvoker( ITypedCommandHandlerInvoker invoker, object command, ICommandContext context )
+        static async Task<object> TaskInvoker( ITypedCommandHandlerInvoker invoker, object command, ICommandContext context )
         {
             var genericMethod = invoker.GetType().GetMethod( nameof( ITypedCommandHandlerInvoker.InvokeTypedWithResult ) );
             genericMethod = genericMethod.MakeGenericMethod( context.Model.CommandType, context.Model.ResultType );
@@ -107,7 +137,7 @@ namespace CK.Crs
             return result;
         }
 
-        internal static Task TaskInvokerVoid( ITypedCommandHandlerInvoker invoker, object command, ICommandContext context )
+        static Task TaskInvokerVoid( ITypedCommandHandlerInvoker invoker, object command, ICommandContext context )
         {
             var genericMethod = invoker.GetType().GetMethod( nameof( ITypedCommandHandlerInvoker.InvokeTyped ) );
             genericMethod = genericMethod.MakeGenericMethod( context.Model.CommandType );

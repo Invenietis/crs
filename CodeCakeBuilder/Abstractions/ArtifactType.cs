@@ -5,8 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using static CodeCake.Build;
-
 namespace CodeCake.Abstractions
 {
     /// <summary>
@@ -31,7 +29,6 @@ namespace CodeCake.Abstractions
         {
             _globalInfo = globalInfo;
             _typeName = typeName;
-            _globalInfo.ArtifactTypes.Add( this );
         }
 
         /// <summary>

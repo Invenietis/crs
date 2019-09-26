@@ -27,7 +27,7 @@ namespace CK.Crs
         {
             using( var serviceScope = _serviceProvider.CreateScope() )
             {
-                var receiver = ServiceContainerExtension.GetService<ICommandReceiver>( serviceScope.ServiceProvider );
+                var receiver = ServiceContainerExtension.GetService<ICommandReceiver>( serviceScope.ServiceProvider, true );
                 try
                 {
                     return receiver.ReceiveCommand( _command, this );

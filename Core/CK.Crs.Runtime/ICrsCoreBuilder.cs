@@ -24,5 +24,7 @@ namespace CK.Crs
         /// <typeparam name="T"></typeparam>
         /// <param name="protocol"></param>
         void AddDispatcher<T>( string protocol ) where T : class, IResultDispatcher;
+
+        void AddReceiver( Func<IServiceProvider, ICommandReceiver> createReceiver );
     }
 }

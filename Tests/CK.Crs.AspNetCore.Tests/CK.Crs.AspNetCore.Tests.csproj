@@ -1,30 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
-    <IsPackable>false</IsPackable>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <IsPackable>False</IsPackable>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="CK.AspNet.Tester" Version="2.1.2" />
-    <PackageReference Include="FluentAssertions" Version="5.6.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.1.0" />
+    <PackageReference Include="CK.AspNet.Tester" Version="2.2.0" />
+    <PackageReference Include="FluentAssertions" Version="5.9.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="1.1.0" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\Plugins\CK.Crs.AspNetCore\CK.Crs.AspNetCore.csproj" />
     <ProjectReference Include="..\..\Plugins\CK.Crs.InMemory\CK.Crs.InMemory.csproj" />
     <ProjectReference Include="..\..\Plugins\CK.Crs.SignalR\CK.Crs.SignalR.csproj" />
     <ProjectReference Include="..\CK.Crs.Tests\CK.Crs.Tests.csproj" />
   </ItemGroup>
-
 </Project>

@@ -33,13 +33,6 @@ namespace CodeCake
             static ILogger _logger;
 
             /// <summary>
-            /// Shared http client.
-            /// See: https://aspnetmonsters.com/2016/08/2016-08-27-httpclientwrong/
-            /// Do not add any default on it.
-            /// </summary>
-            public static readonly HttpClient SharedHttpClient;
-
-            /// <summary>
             /// Implements a IPackageSourceProvider that mixes sources from NuGet.config settings
             /// and sources that are used by the build chain.
             /// </summary>
@@ -57,7 +50,7 @@ namespace CodeCake
 
                 public PackageSource FindOrCreateFromUrl( string name, string urlV3 )
                 {
-                    if( string.IsNullOrEmpty( urlV3 ) || !urlV3.EndsWith( "/v3/index.json" ) )
+                    if( string.IsNullOrEmpty( urlV3 ) || (!new Uri( urlV3 ).IsFile && !urlV3.EndsWith( "/v3/index.json" )) )
                     {
                         throw new ArgumentException( "Feed requires a /v3/index.json url.", nameof( urlV3 ) );
                     }
@@ -147,7 +140,6 @@ namespace CodeCake
                 _sourceCache = new SourceCacheContext().WithRefreshCacheTrue();
                 _providers = new List<Lazy<INuGetResourceProvider>>();
                 _providers.AddRange( Repository.Provider.GetCoreV3() );
-                SharedHttpClient = new HttpClient();
             }
 
             class Logger : ILogger
@@ -256,7 +248,7 @@ namespace CodeCake
                 readonly PackageSource _packageSource;
                 readonly SourceRepository _sourceRepository;
                 readonly AsyncLazy<PackageUpdateResource> _updater;
-                
+
                 /// <summary>
                 /// Initialize a new remote feed.
                 /// Its final <see cref="Name"/> is the one of the existing feed if it appears in the existing
@@ -334,7 +326,7 @@ namespace CodeCake
                     MetadataResource meta = await _sourceRepository.GetResourceAsync<MetadataResource>();
                     foreach( var p in artifacts )
                     {
-                        var pId = new PackageIdentity( p.ArtifactInstance.Artifact.Name, new NuGetVersion( p.ArtifactInstance.Version.ToNuGetPackageString() ) );
+                        var pId = new PackageIdentity( p.ArtifactInstance.Artifact.Name, new NuGetVersion( p.ArtifactInstance.Version.ToNormalizedString() ) );
                         if( await meta.Exists( pId, _sourceCache, logger, CancellationToken.None ) )
                         {
                             Cake.Debug( $" ==> Feed '{Name}' already contains {p.ArtifactInstance}." );
@@ -370,7 +362,7 @@ namespace CodeCake
                     var updater = await _updater;
                     foreach( var p in pushes )
                     {
-                        string packageString = p.Name + "." + p.Version.ToNuGetPackageString();
+                        string packageString = p.Name + "." + p.Version.WithBuildMetaData( null ).ToNormalizedString();
                         var fullPath = ArtifactType.GlobalInfo.ReleasesFolder.AppendPart( packageString + ".nupkg" );
                         await updater.Push(
                             fullPath,
@@ -502,10 +494,10 @@ namespace CodeCake
             public string FeedName { get; }
 
             /// <summary>
-            /// Implements Package promotion in @CI, @Preview, @Latest and @Stable views.
+            /// Implements Package promotion in @CI, @Exploratory, @Preview, @Latest and @Stable views.
             /// </summary>
             /// <param name="ctx">The Cake context.</param>
-            /// <param name="path">The path where the .nupkg mus be found.</param>
+            /// <param name="pushes">The set of artifacts to promote.</param>
             /// <returns>The awaitable.</returns>
             protected override async Task OnAllArtifactsPushed( IEnumerable<ArtifactPush> pushes )
             {
@@ -517,9 +509,9 @@ namespace CodeCake
                         using( HttpRequestMessage req = new HttpRequestMessage( HttpMethod.Post, $"https://pkgs.dev.azure.com/{Organization}/_apis/packaging/feeds/{FeedName}/nuget/packagesBatch?api-version=5.0-preview.1" ) )
                         {
                             req.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue( "Basic", basicAuth );
-                            var body = GetPromotionJSONBody( p.Name, p.Version.ToNuGetPackageString(), view.ToString() );
+                            var body = GetPromotionJSONBody( p.Name, p.Version.ToNormalizedString(), view.ToString() );
                             req.Content = new StringContent( body, Encoding.UTF8, "application/json" );
-                            using( var m = await NuGetHelper.SharedHttpClient.SendAsync( req ) )
+                            using( var m = await StandardGlobalInfo.SharedHttpClient.SendAsync( req ) )
                             {
                                 if( m.IsSuccessStatusCode )
                                 {
@@ -613,7 +605,6 @@ namespace CodeCake
 
             protected override string ResolveAPIKey() => null;
         }
-
     }
 }
 

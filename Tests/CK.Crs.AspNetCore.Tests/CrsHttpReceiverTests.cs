@@ -1,22 +1,15 @@
-using CK.AspNet.Tester;
-using CK.Core;
 using CK.Crs.Tests;
 using FluentAssertions;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.TestHost;
 using NUnit.Framework;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
+using static CK.Testing.MonitorTestHelper;
 
 namespace CK.Crs.AspNetCore.Tests
 {
     [TestFixture]
     public class CrsHttpReceiverTests
     {
-        public CrsHttpReceiverTests( )
-        {
-        }
 
         [Test]
         public async Task Reads_Meta_From_Endpoint()
@@ -49,7 +42,7 @@ namespace CK.Crs.AspNetCore.Tests
                 var command = new WithdrawMoneyCommand { AccountId = Guid.NewGuid(), Amount = 3500M, ShouldThrow = true };
 
                 crs.Awaiting( x => x.InvokeCommand<WithdrawMoneyCommand, WithdrawMoneyCommand.Result>( command ) ).Should().Throw<Exception>();
-            
+
             }
         }
 
@@ -68,7 +61,7 @@ namespace CK.Crs.AspNetCore.Tests
             }
         }
 
-        [Test]
+        [Test, Timeout( 5000 ), Explicit]
         public async Task Invoke_FireAndForget_Command_And_AutoListen_To_Callback()
         {
             using( var crs = await CrsEndpoint.Create( "/crs" ) )
@@ -76,6 +69,7 @@ namespace CK.Crs.AspNetCore.Tests
                 var commandResult = await crs.InvokeCommand<TransferAmountCommand, TransferAmountCommand.Result>(
                     new TransferAmountCommand { DestinationAccountId = Guid.NewGuid(), SourceAccountId = Guid.NewGuid(), Amount = 3500M } );
 
+                // TODO: Support FAF-to-Immediate coercion in Tests.CrsEndpoint
                 commandResult.Should().NotBe( null );
                 commandResult.EffectiveDate.Should().NotBeBefore( DateTime.UtcNow );
                 commandResult.CancellableDate.Should().NotBeAfter( DateTime.UtcNow.AddHours( 2 ) );

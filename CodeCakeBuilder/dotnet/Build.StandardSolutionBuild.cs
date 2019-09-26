@@ -16,19 +16,10 @@ namespace CodeCake
         /// <param name="globalInfo">The current StandardGlobalInfo.</param>
         /// <param name="solutionFileName">The solution file name to build (relative to the repository root).</param>
         /// <param name="excludedProjectName">Optional project names (without path nor .csproj extension).</param>
+        [Obsolete( "Use DotnetSolution.Build() instead")]
         void StandardSolutionBuild( StandardGlobalInfo globalInfo, string solutionFileName, params string[] excludedProjectName )
         {
-            using( var tempSln = Cake.CreateTemporarySolutionFile( solutionFileName ) )
-            {
-                var exclude = new List<string>( excludedProjectName ) { "CodeCakeBuilder" };
-                tempSln.ExcludeProjectsFromBuild( exclude.ToArray() );
-                Cake.DotNetCoreBuild( tempSln.FullPath.FullPath,
-                    new DotNetCoreBuildSettings().AddVersionArguments( globalInfo.GitInfo, s =>
-                    {
-                        s.Configuration = globalInfo.BuildConfiguration;
-                    } ) );
-            }
+            globalInfo.GetDotnetSolution().Build( excludedProjectName );
         }
-
     }
 }

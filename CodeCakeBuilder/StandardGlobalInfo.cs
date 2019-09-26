@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace CodeCake
@@ -23,10 +24,14 @@ namespace CodeCake
     {
         readonly ICakeContext _ctx;
         readonly SimpleRepositoryInfo _gitInfo;
-        readonly HashSet<ArtifactType> _artifactTypes = new HashSet<ArtifactType>();
+        readonly HashSet<ICIWorkflow> _solutions = new HashSet<ICIWorkflow>();
         List<ArtifactPush> _artifactPushes;
         bool _ignoreNoArtifactsToProduce;
 
+        static StandardGlobalInfo()
+        {
+            SharedHttpClient = new HttpClient();
+        }
         public StandardGlobalInfo( ICakeContext ctx, SimpleRepositoryInfo gitInfo )
         {
             _ctx = ctx;
@@ -36,6 +41,11 @@ namespace CodeCake
                            && (gitInfo.PreReleaseName.Length == 0 || gitInfo.PreReleaseName == "rc");
             ReleasesFolder = "CodeCakeBuilder/Releases";
             Directory.CreateDirectory( ReleasesFolder );
+        }
+
+        public void RegisterSolution( ICIWorkflow solution )
+        {
+            _solutions.Add( solution );
         }
 
         /// <summary>
@@ -48,10 +58,12 @@ namespace CodeCake
         /// </summary>
         public SimpleRepositoryInfo GitInfo => _gitInfo;
 
+        IEnumerable<ICIPublishWorkflow> SolutionProducingArtifacts => Solutions.OfType<ICIPublishWorkflow>();
+
         /// <summary>
-        /// Gets the set of <see cref="ArtifactType"/> that have been registered.
+        /// Gets the set of <see cref="ArtifactType"/> of the <see cref="ICIPublishWorkflow"/> that have been registered.
         /// </summary>
-        public ISet<ArtifactType> ArtifactTypes => _artifactTypes;
+        public IEnumerable<ArtifactType> ArtifactTypes => SolutionProducingArtifacts.Select( p => p.ArtifactType );
 
         /// <summary>
         /// Gets the release folder: "CodeCakeBuilder/Releases".
@@ -71,14 +83,21 @@ namespace CodeCake
         public string BuildConfiguration => IsRelease ? "Release" : "Debug";
 
         /// <summary>
-        /// Gets the version of the packages: this is the <see cref="RepositoryInfo.FinalNuGetVersion"/>.
+        /// Gets the version of the packages: this is the <see cref="RepositoryInfo.FinalVersion"/>.
         /// </summary>
-        public SVersion Version => _gitInfo.Info.FinalNuGetVersion;
+        public SVersion Version => _gitInfo.Info.FinalVersion;
 
         /// <summary>
         /// Gets whether this is a purely local build.
         /// </summary>
         public bool IsLocalCIRelease { get; set; }
+
+        /// <summary>
+        /// Shared http client.
+        /// See: https://aspnetmonsters.com/2016/08/2016-08-27-httpclientwrong/
+        /// Do not add any default on it.
+        /// </summary>
+        public static readonly HttpClient SharedHttpClient;
 
         /// <summary>
         /// Gets whether artifacts should be pushed to remote feeds.
@@ -114,6 +133,7 @@ namespace CodeCake
         /// </summary>
         public bool NoArtifactsToProduce => !GetArtifactPushList().Any();
 
+
         /// <summary>
         /// Gets a read only list of all the pushes of artifacts for all <see cref="ArtifactType"/>.
         /// </summary>
@@ -127,7 +147,7 @@ namespace CodeCake
             if( _artifactPushes == null || reset )
             {
                 _artifactPushes = new List<ArtifactPush>();
-                var tasks = _artifactTypes.Select( f => f.GetPushListAsync() ).ToArray();
+                var tasks = ArtifactTypes.Select( f => f.GetPushListAsync() ).ToArray();
                 Task.WaitAll( tasks );
                 foreach( var p in tasks.Select( t => t.Result ) )
                 {
@@ -142,6 +162,39 @@ namespace CodeCake
         /// </summary>
         public bool ShouldStop => NoArtifactsToProduce && !IgnoreNoArtifactsToProduce;
 
+        public IReadOnlyCollection<ICIWorkflow> Solutions => _solutions;
+
+        #region Memory key support.
+
+        string MemoryFilePath => $"CodeCakeBuilder/MemoryKey.{GitInfo.CommitSha}.txt";
+
+        public void WriteCommitMemoryKey( NormalizedPath key )
+        {
+            if( GitInfo.IsValid ) File.AppendAllLines( MemoryFilePath, new[] { key.ToString() } );
+        }
+
+        public bool CheckCommitMemoryKey( NormalizedPath key )
+        {
+            bool done = File.Exists( MemoryFilePath )
+                        ? Array.IndexOf( File.ReadAllLines( MemoryFilePath ), key.Path ) >= 0
+                        : false;
+            if( done )
+            {
+                if( !GitInfo.IsValid )
+                {
+                    Cake.Information( $"Dirty commit. Key exists but is ignored: {key}" );
+                    done = false;
+                }
+                else
+                {
+                    Cake.Information( $"Key exists on this commit: {key}" );
+                }
+            }
+            return done;
+        }
+
+        #endregion
+
         /// <summary>
         /// Simply calls <see cref="ArtifactType.PushAsync(IEnumerable{ArtifactPush})"/> on each <see cref="ArtifactTypes"/>
         /// with their correct typed artifacts.
@@ -149,7 +202,7 @@ namespace CodeCake
         public void PushArtifacts( IEnumerable<ArtifactPush> pushes = null )
         {
             if( pushes == null ) pushes = GetArtifactPushList();
-            var tasks = _artifactTypes.Select( t => t.PushAsync( pushes.Where( a => a.Feed.ArtifactType == t ) ) ).ToArray();
+            var tasks = ArtifactTypes.Select( t => t.PushAsync( pushes.Where( a => a.Feed.ArtifactType == t ) ) ).ToArray();
             Task.WaitAll( tasks );
         }
 
@@ -167,7 +220,7 @@ namespace CodeCake
                 // Azure (formerly VSTS, formerly VSO) analyzes the stdout to set its build number.
                 // On clash, the default Azure/VSTS/VSO build number is used: to ensure that the actual
                 // version will be always be available we need to inject a uniquifier.
-                string buildVersion = AddSkipped( $"{gitInfo.SafeNuGetVersion}_{DateTime.UtcNow:yyyyMMdd-HHmmss}" );
+                string buildVersion = AddSkipped( $"{gitInfo.SafeVersion}_{DateTime.UtcNow:yyyyMMdd-HHmmss}" );
                 Cake.Information( $"Using VSTS build number: {buildVersion}" );
                 string buildInstruction = $"##vso[build.updatebuildnumber]{buildVersion}";
                 Console.WriteLine();
@@ -179,11 +232,11 @@ namespace CodeCake
             {
                 try
                 {
-                    appVeyor.UpdateBuildVersion( AddSkipped( gitInfo.SafeNuGetVersion ) );
+                    appVeyor.UpdateBuildVersion( AddSkipped( gitInfo.SafeVersion ) );
                 }
                 catch
                 {
-                    appVeyor.UpdateBuildVersion( AddSkipped( $"{gitInfo.SafeNuGetVersion} ({appVeyor.Environment.Build.Number})" ) );
+                    appVeyor.UpdateBuildVersion( AddSkipped( $"{gitInfo.SafeVersion} ({appVeyor.Environment.Build.Number})" ) );
                 }
             }
 

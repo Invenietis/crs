@@ -50,3 +50,13 @@ crs-store.xml
 crs-store-slim.xml
 /NuGetPackages/
 /samples/CK.Crs.Samples.AspNetCoreApp/Logs/
+
+[Bb]in/
+[Oo]bj/
+[Rr]elease/
+[Rr]eleases/
+.vs/
+Tests/**/TestResult*.xml
+Tests/**/Logs/
+Tests/**/CKSetup-WorkingDir/
+CodeCakeBuilder/MemoryKey.*.txt

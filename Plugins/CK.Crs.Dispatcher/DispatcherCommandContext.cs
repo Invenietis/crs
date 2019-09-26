@@ -38,7 +38,7 @@ namespace CK.Crs
             {
                 try
                 {
-                    var receiver = ServiceContainerExtension.GetService<ICommandReceiver>( serviceScope.ServiceProvider );
+                    var receiver = ServiceContainerExtension.GetService<ICommandReceiver>( serviceScope.ServiceProvider, true );
                     var response = await receiver.ReceiveCommand( _command, this ).ConfigureAwait( false );
                     return await HandleResponse( response ).ConfigureAwait( false );
                 }

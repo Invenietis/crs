@@ -1,3 +1,6 @@
+using Cake.Npm;
+using CK.Text;
+using CodeCake.Abstractions;
 using CSemVer;
 using Newtonsoft.Json.Linq;
 using System;
@@ -7,77 +10,123 @@ using System.Xml.Linq;
 
 namespace CodeCake
 {
+    public static class StandardGlobalInfoNPMExtension
+    {
+        /// <summary>
+        /// Adds the <see cref="NPMSolution"/> to the <paramref name="globalInfo"/>
+        /// </summary>
+        /// <param name="this">This global info.</param>
+        /// <param name="solution">The NPM solution.</param>
+        /// <returns>This info.</returns>
+        public static StandardGlobalInfo AddNPM( this StandardGlobalInfo globalInfo, NPMSolution solution )
+        {
+            SVersion minmimalNpmVersionRequired = SVersion.Create( 6, 7, 0 );
+            string npmVersion = globalInfo.Cake.NpmGetNpmVersion();
+            if( SVersion.Parse( npmVersion ) < minmimalNpmVersionRequired )
+            {
+                globalInfo.Cake.TerminateWithError( "Outdated npm. Version older than v6.7.0 are known to fail on publish." );
+            }
+            globalInfo.RegisterSolution( solution );
+            return globalInfo;
+        }
+
+        /// <summary>
+        /// Adds the <see cref="Build.NPMArtifactType"/> for NPM based on <see cref="NPMSolution.ReadFromNPMSolutionFile"/>
+        /// (projects are defined by "CodeCakeBuilder/NPMSolution.xml" file).
+        /// </summary>
+        /// <param name="this">This global info.</param>
+        /// <returns>This info.</returns>
+        public static StandardGlobalInfo AddNPM( this StandardGlobalInfo @this )
+        {
+            return AddNPM( @this, NPMSolution.ReadFromNPMSolutionFile( @this ) );
+        }
+
+        /// <summary>
+        /// Gets the NPM solution handled by the single <see cref="Build.NPMArtifactType"/>.
+        /// </summary>
+        /// <param name="this">This global info.</param>
+        /// <returns>The NPM solution.</returns>
+        public static NPMSolution GetNPMSolution( this StandardGlobalInfo @this )
+        {
+            return @this.Solutions.OfType<NPMSolution>().Single();
+        }
+
+    }
+
     /// <summary>
     /// Encapsulates a set of <see cref="NPMProject"/> that can be <see cref="NPMPublishedProject"/>.
     /// </summary>
-    public class NPMSolution
+    public partial class NPMSolution : NPMProjectContainer, ICIWorkflow
     {
+        readonly StandardGlobalInfo _globalInfo;
+
         /// <summary>
         /// Initiaizes a new <see cref="NPMSolution" />.
         /// </summary>
         /// <param name="projects">Set of projects.</param>
-        public NPMSolution( IEnumerable<NPMProject> projects )
+        NPMSolution(
+            StandardGlobalInfo globalInfo )
+            : base()
         {
-            Projects = projects.ToArray();
-            PublishedProjects = Projects.OfType<NPMPublishedProject>().ToArray();
+            _globalInfo = globalInfo;
         }
 
-        /// <summary>
-        /// Gets all the NPM projects.
-        /// </summary>
-        public IReadOnlyList<NPMProject> Projects { get; }
+        public IEnumerable<AngularWorkspace> AngularWorkspaces => Containers.OfType<AngularWorkspace>();
+
 
         /// <summary>
-        /// Gets the published projects.
+        /// Runs "npm ci" on all <see cref="SimpleProjects"/>.
         /// </summary>
-        public IReadOnlyList<NPMPublishedProject> PublishedProjects { get; }
-
-        /// <summary>
-        /// Runs "npm install" on all <see cref="Projects"/>.
-        /// </summary>
-        /// <param name="globalInfo">The global information object.</param>
-        public void RunInstall( StandardGlobalInfo globalInfo )
+        public void RunNpmCI()
         {
-            foreach( var p in Projects )
+            foreach( var p in AllProjects )
             {
-                p.RunInstall( globalInfo );
+                p.RunNpmCi();
             }
         }
 
-        /// <summary>
-        /// Runs "npm install"  and a required (or optional) "clean" script on all <see cref="Projects"/>.
-        /// </summary>
-        /// <param name="scriptMustExist">
-        /// False to only emit a warning and return false if the script doesn't exist instead of
-        /// throwing an exception.
-        /// </param>
-        /// <param name="cleanScriptName">The script name that must exist in the package.json.</param>
-        public void RunInstallAndClean( StandardGlobalInfo globalInfo, bool scriptMustExist = true, string cleanScriptName = "clean" )
+        public void Clean()
         {
-            foreach( var p in Projects )
+            foreach( var p in AllProjects )
             {
-                p.RunInstallAndClean( globalInfo, scriptMustExist, cleanScriptName );
+                p.RunNpmCi();
+            }
+
+            foreach( var p in SimpleProjects )
+            {
+                p.RunClean();
+            }
+
+            foreach( var p in AngularWorkspaces )
+            {
+                p.WorkspaceProject.RunClean();
             }
         }
 
+
+
         /// <summary>
-        /// Runs the 'build-debug', 'build-release' or 'build' script on all <see cref="Projects"/>.
+        /// Runs the 'build-debug', 'build-release' or 'build' script on all <see cref="SimpleProjects"/>.
         /// </summary>
         /// <param name="globalInfo">The global information object.</param>
         /// <param name="scriptMustExist">
         /// False to only emit a warning and return false if the script doesn't exist instead of
         /// throwing an exception.
         /// </param>
-        public void RunBuild( StandardGlobalInfo globalInfo, bool scriptMustExist = true )
+        public void Build()
         {
-            foreach( var p in Projects )
+            foreach( var p in SimpleProjects )
             {
-                p.RunBuild( globalInfo, scriptMustExist );
+                p.RunBuild();
+            }
+            foreach( var p in AngularWorkspaces )
+            {
+                p.WorkspaceProject.RunBuild();
             }
         }
 
         /// <summary>
-        /// Runs the 'test' script on all <see cref="Projects"/>.
+        /// Runs the 'test' script on all <see cref="SimpleProjects"/>.
         /// </summary>
         /// <param name="globalInfo">The global information object.</param>
         /// <param name="globalInfo"></param>
@@ -85,28 +134,32 @@ namespace CodeCake
         /// False to only emit a warning and return false if the script doesn't exist instead of
         /// throwing an exception.
         /// </param>
-        public void RunTest( StandardGlobalInfo globalInfo, bool scriptMustExist = true )
+        public void Test()
         {
-            foreach( var p in Projects )
+            foreach( var p in SimpleProjects )
             {
-                p.RunTest( globalInfo, scriptMustExist );
+                p.RunTest();
+            }
+            foreach( var p in AngularWorkspaces )
+            {
+                p.WorkspaceProject.RunTest();
             }
         }
 
         /// <summary>
         /// Generates the .tgz file in the <see cref="StandardGlobalInfo.ReleasesFolder"/>
-        /// by calling npm pack for all <see cref="PublishedProjects"/>.
+        /// by calling npm pack for all <see cref="SimplePublishedProjects"/>.
         /// </summary>
         /// <param name="globalInfo">The global information object.</param>
         /// <param name="cleanupPackageJson">
         /// By default, "scripts" and "devDependencies" are removed from the package.json file.
         /// </param>
         /// <param name="packageJsonPreProcessor">Optional package.json pre processor.</param>
-        public void RunPack( StandardGlobalInfo globalInfo, bool cleanupPackageJson = true, Action<JObject> packageJsonPreProcessor = null )
+        public void RunPack( Action<JObject> packageJsonPreProcessor = null )
         {
-            foreach( var p in PublishedProjects )
+            foreach( var p in AllPublishedProjects )
             {
-                p.RunPack( globalInfo, cleanupPackageJson, packageJsonPreProcessor );
+                p.RunPack( packageJsonPreProcessor );
             }
         }
 
@@ -115,16 +168,27 @@ namespace CodeCake
         /// </summary>
         /// <param name="version">The version of all published packages.</param>
         /// <returns>The solution object.</returns>
-        public static NPMSolution ReadFromNPMSolutionFile( SVersion version )
+        public static NPMSolution ReadFromNPMSolutionFile( StandardGlobalInfo globalInfo )
         {
-            var projects = XDocument.Load( "CodeCakeBuilder/NPMSolution.xml" ).Root
-                            .Elements("Project")
-                            .Select( p => (bool)p.Attribute( "IsPublished" )
-                                            ? NPMPublishedProject.Load( (string)p.Attribute( "Path" ),
-                                                                        (string)p.Attribute( "ExpectedName" ),
-                                                                        version )
-                                            : new NPMProject( (string)p.Attribute( "Path" ) ) );
-            return new NPMSolution( projects );
+            var document = XDocument.Load( "CodeCakeBuilder/NPMSolution.xml" ).Root;
+            var solution = new NPMSolution( globalInfo );
+
+            foreach( var item in document.Elements( "AngularWorkspace" ) )
+            {
+               solution.Add(AngularWorkspace.Create( globalInfo,
+                        solution,
+                        (string)item.Attribute( "Path" ),
+                        (string)item.Attribute( "OutputFolder" ) ));
+            }
+            foreach( var item in document.Elements( "Project" ) )
+            {
+                solution.Add(NPMPublishedProject.Create(
+                        globalInfo,
+                        solution,
+                        (string)item.Attribute( "Path" ),
+                        (string)item.Attribute( "OutputFolder" ) ));
+            }
+            return solution;
         }
     }
 }

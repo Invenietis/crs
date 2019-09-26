@@ -17,7 +17,6 @@ namespace CK.Crs.AspNetCore.Tests
         public static async Task<CrsEndpoint> Create( PathString path )
         {
             CrsEndpoint endpoint = new CrsEndpoint( path );
-            //await endpoint.Connection.StartAsync().OrTimeout();
             await endpoint.LoadMeta( "/crs" );
             return endpoint;
         }
@@ -90,19 +89,18 @@ namespace CK.Crs.AspNetCore.Tests
 
         public Task<TResult> InvokeCommand<T, TResult>( T command )
         {
-            var context = new CKTraitContext( "Crs" );
+            var context = CKTraitContext.Create( "Crs" );
             var tcs = new TaskCompletionSource<TResult>();
-            var commandDescription = Meta.Commands.Where( x => x.Value.CommandType == typeof( T ).FullName ).Select( t => t.Value ).SingleOrDefault();
+            var commandDescription = Meta.Commands.Where( x => x.Value.CommandType == typeof( T ).FullName ).Select( t => t.Value ).Single();
 
-            var url = Path.Add( "/" + commandDescription.CommandName );
             var uri = new UriBuilder()
             {
                 Path = Path.Add( "/" + commandDescription.CommandName ),
                 Query = Meta.CallerIdPropertyName + "=" + "3712"
             };
 
-            var ffTag = context.FindOrCreate( CrsTraits.FireForget );
-            if( ffTag.Overlaps( context.FindOrCreate( commandDescription.Traits ) ) )
+            var ffTag = context.FindOrCreate( CrsTags.FireForget );
+            if( ffTag.Overlaps( context.FindOrCreate( commandDescription.Tags ) ) )
             {
 
                 var task = Client.PostJSON<T>( uri.Uri, command );
@@ -116,6 +114,10 @@ namespace CK.Crs.AspNetCore.Tests
                             t.Result.CommandId.Should().NotBe( null );
                             t.Result.ResponseType.Should().Be( (char)ResponseType.Asynchronous );
                             t.Result.Payload.Should().BeOfType<string>();
+
+                            // TODO: Listen to ReceiveResult and return result
+                            // Like the Connection.On() below
+                            throw new NotImplementedException();
                         }
                         catch( Exception ex )
                         {
@@ -125,6 +127,8 @@ namespace CK.Crs.AspNetCore.Tests
 
                 } ), TaskContinuationOptions.None );
 
+
+                // TODO: Listen to ReceiveResult and return result
                 //Connection.On<string>( nameof( ICrsHub.ReceiveResult ), h =>
                 //{
                 //    var result = JsonConvert.DeserializeObject<TResult>( h );
@@ -156,7 +160,7 @@ namespace CK.Crs.AspNetCore.Tests
         }
         public async Task<string> InvokeFireAndForgetCommand<T>( T command )
         {
-            var commandDescription = Meta.Commands.Where( x => x.Key == new CommandName( typeof( T ) ) ).Select( t => t.Value ).SingleOrDefault();
+            var commandDescription = Meta.Commands.Where( x => x.Key == new CommandName( typeof( T ) ) ).Select( t => t.Value ).Single();
             var uri = new UriBuilder()
             {
                 Path = Path.Add( "/" + commandDescription.CommandName )

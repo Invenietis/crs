@@ -15,11 +15,11 @@ namespace CK.Crs.InMemory
 
         public string Name => "InMemoryReceiver";
 
-        public bool AcceptCommand( ICommandContext context )
+        public bool AcceptCommand( object command, ICommandContext context )
         {
             bool res = context.Model.HasFireAndForgetTag();
             if( res == false )
-                context.Monitor.Trace( "Command does not have the FireAndForget trait." );
+                context.Monitor.Trace( "Command does not have the FireAndForget tag." );
 
             return res;
         }
