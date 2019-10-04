@@ -31,9 +31,9 @@ namespace CK.Crs.AspNetCore
                         await WriteResponse( context, response ).ConfigureAwait( false );
                         return;
                     }
-                    pipeline.Monitor.Warn( "No response received from the command receiver..." );
+                    pipeline.Monitor.Warn( "No response received from the command receiver." );
                 }
-                else pipeline.Monitor.Warn( "Unable to receive the command" );
+                else pipeline.Monitor.Warn( "Unable to receive the command. Check previous logs for more information." );
             }
 
             await _next( context ).ConfigureAwait( false );
