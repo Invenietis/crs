@@ -5,7 +5,9 @@ using Cake.Common.Tools.DotNetCore;
 using Cake.Common.Tools.DotNetCore.Build;
 using Cake.Common.Tools.DotNetCore.Test;
 using Cake.Common.Tools.NUnit;
+using Cake.Core;
 using Cake.Core.IO;
+using Cake.Core.IO.Arguments;
 using CK.Text;
 using CodeCake.Abstractions;
 using SimpleGitVersion;
@@ -169,14 +171,19 @@ namespace CodeCake
                         _globalInfo.Cake.Information( $"Testing via VSTest ({framework}): {testBinariesPath}" );
                         if( !_globalInfo.CheckCommitMemoryKey( testBinariesPath ) )
                         {
-                            _globalInfo.Cake.DotNetCoreTest( projectPath, new DotNetCoreTestSettings()
+                            var options = new DotNetCoreTestSettings()
                             {
                                 Configuration = _globalInfo.BuildConfiguration,
                                 Framework = framework,
                                 NoRestore = true,
                                 NoBuild = true,
                                 Logger = "trx"
-                            } );
+                            };
+                            if( _globalInfo.Cake.Environment.GetEnvironmentVariable( "DisableNodeReUse" ) != null )
+                            {
+                                options.ArgumentCustomization = args => args.Append( "/nodeReuse:false" );
+                            }
+                            _globalInfo.Cake.DotNetCoreTest( projectPath, options );
                         }
                     }
 

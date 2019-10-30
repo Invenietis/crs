@@ -50,7 +50,7 @@ export class SignalrResponseReceiver implements ResponseReceiver {
             console.warn(`CRS-SignalR: No metadata is available for command ${commandName}. The SignalR CallerId will be used.`);
             return this.internalGetCallerId();
         }
-        const commandTraits = commandMetadata.traits.split('|');
+        const commandTraits = commandMetadata.traits ? commandMetadata.traits.split('|') : [];
         if(commandTraits.indexOf('FireForget') >= 0) {
             return this.internalGetCallerId();
         }

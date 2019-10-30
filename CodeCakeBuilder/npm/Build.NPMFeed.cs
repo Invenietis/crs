@@ -65,7 +65,7 @@ namespace CodeCake
             public override Task<IEnumerable<ArtifactPush>> CreatePushListAsync( IEnumerable<ILocalArtifact> artifacts )
             {
                 var result = artifacts.Cast<NPMPublishedProject>()
-                                .Select( a => (A: a, P: _pathToLocalFeed.AppendPart( a.TGZName ) ) )
+                                .Select( a => (A: a, P: _pathToLocalFeed.AppendPart( a.TGZName )) )
                                 .Where( aP => !File.Exists( aP.P ) )
                                 .Select( aP => new ArtifactPush( aP.A, this ) )
                                 .ToList();
@@ -200,18 +200,23 @@ namespace CodeCake
                                                                    .Replace( ' ', '_' )
                                                      + "_PAT";
 
-            public AzureNPMFeed( NPMArtifactType t, string organization, string feedName )
+            public AzureNPMFeed( NPMArtifactType t, string organization, string feedName, string projectName )
                 : base( t,
                         GetSecretKeyName( organization ),
-                        $"https://pkgs.dev.azure.com/{organization}/_packaging/{feedName}/npm/registry/" )
+                        projectName != null ?
+                          $"https://pkgs.dev.azure.com/{organization}/{projectName}/_packaging/{feedName}/npm/registry/"
+                        : $"https://pkgs.dev.azure.com/{organization}/_packaging/{feedName}/npm/registry/" )
             {
                 Organization = organization;
                 FeedName = feedName;
+                ProjectName = projectName;
             }
 
             public string Organization { get; }
 
             public string FeedName { get; }
+
+            public string ProjectName { get; }
 
             public override string Name => $"AzureNPM:{Organization}/{FeedName}";
 
@@ -235,7 +240,10 @@ namespace CodeCake
                     string uriProtocol = isNpm ? "npm" : "nuget";
                     foreach( var view in p.Version.PackageQuality.GetLabels() )
                     {
-                        using( HttpRequestMessage req = new HttpRequestMessage( HttpMethod.Post, $"https://pkgs.dev.azure.com/{Organization}/_apis/packaging/feeds/{FeedName}/{uriProtocol}/packagesBatch?api-version=5.0-preview.1" ) )
+                        var url = ProjectName != null ?
+                              $"https://pkgs.dev.azure.com/{Organization}/{ProjectName}/_apis/packaging/feeds/{FeedName}/{uriProtocol}/packagesBatch?api-version=5.0-preview.1"
+                            : $"https://pkgs.dev.azure.com/{Organization}/_apis/packaging/feeds/{FeedName}/{uriProtocol}/packagesBatch?api-version=5.0-preview.1";
+                        using( HttpRequestMessage req = new HttpRequestMessage( HttpMethod.Post, url ) )
                         {
                             req.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue( "Basic", basicAuth );
                             var body = GetPromotionJSONBody( p.Name, p.Version.ToNormalizedString(), view.ToString(), isNpm );

@@ -65,7 +65,7 @@ export interface EndpointCommandMetadata {
         prefix: string,
         commandName: string
     };
-    traits: string;
+    traits?: string;
     descriptions: string;
     parameters: Array<{
         parameterName: string,

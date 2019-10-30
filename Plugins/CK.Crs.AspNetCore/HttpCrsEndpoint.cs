@@ -23,13 +23,13 @@ namespace CK.Crs.AspNetCore
 
         public void Dispose()
         {
-            _context.SetFeature<IHttpContextCommandFeature>( null );
-            _context.SetFeature<IRequestServicesCommandFeature>( null );
+            _context?.SetFeature<IHttpContextCommandFeature>( null );
+            _context?.SetFeature<IRequestServicesCommandFeature>( null );
         }
 
         public ICrsEndpointPipeline CreatePipeline( IActivityMonitor monitor, IEndpointModel endpointModel )
         {
-            if( _context != null ) throw new InvalidOperationException( "There is already a command context. Please creates a new endpoint." );
+            if( _context != null ) throw new InvalidOperationException( "A command context was already set. Please create a new endpoint." );
 
             if( HttpContext.Request.Path == new PathString( "/" ) || HttpContext.Request.Path == new PathString( "/__meta" ) )
             {
@@ -62,7 +62,7 @@ namespace CK.Crs.AspNetCore
             CommandName commandName = GetCommandName( HttpContext );
             if( !commandName.IsValid )
             {
-                monitor.Warn( $"Receives an invalid command name." );
+                monitor.Warn( $"CommandName is invalid: {commandName}" );
                 return null;
             }
 
@@ -70,21 +70,21 @@ namespace CK.Crs.AspNetCore
             ICommandModel commandModel = commandRegistry.GetCommandByName( commandName );
             if( commandModel == null )
             {
-                monitor.Warn( $"Command {commandName} does not exists." );
+                monitor.Warn( $"Command does not exist: {commandName}" );
                 return null;
             }
 
             commandModel = endpointModel.GetCommandModel( commandModel.CommandType );
             if( commandModel == null )
             {
-                monitor.Warn( $"Command {commandName} not accepted by this endpoint" );
+                monitor.Warn( $"Command was not accepted by this endpoint: {commandName}" );
                 return null;
             }
 
             var callerId = GetCallerId( monitor, endpointModel, HttpContext );
             if( String.IsNullOrEmpty( callerId ) )
             {
-                monitor.Warn( $"No caller id provided to this endpoint. Please provides one." );
+                monitor.Warn( $"No CallerId was provided by the client to this endpoint. Please provide one." );
             }
 
             var commandId = Guid.NewGuid().ToString( "N" );
@@ -100,12 +100,13 @@ namespace CK.Crs.AspNetCore
 
         static string GetCallerId( IActivityMonitor monitor, IEndpointModel endpointModel, HttpContext context )
         {
-            monitor.Trace( $"Lookup for {endpointModel.CallerIdName} into the request header" );
+            monitor.Trace( $"Looking for \"{endpointModel.CallerIdName}\" in request headers..." );
             if( context.Request.Headers.TryGetValue( endpointModel.CallerIdName, out StringValues callerIdValue ) ) return callerIdValue;
 
-            monitor.Trace( $"Lookup for {endpointModel.CallerIdName} into the request query string" );
+            monitor.Trace( $"Looking for \"{endpointModel.CallerIdName}\" in request query string..." );
             if( context.Request.Query.TryGetValue( endpointModel.CallerIdName, out callerIdValue ) ) return callerIdValue;
 
+            monitor.Warn( $"\"{endpointModel.CallerIdName}\" was not found in either request headers or query string." );
             return callerIdValue;
         }
 
