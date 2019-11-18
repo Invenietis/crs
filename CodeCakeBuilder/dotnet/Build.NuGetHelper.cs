@@ -190,7 +190,6 @@ namespace CodeCake
                     {
                         ctx.Information( $"{s.Name} => {s.Source}" );
                     }
-                    InitializeVSTSEnvironment( ctx );
                     _logger = new Logger( ctx );
 
                 }
@@ -199,37 +198,43 @@ namespace CodeCake
 
             static void InitializeVSTSEnvironment( ICakeContext ctx )
             {
-                List<Creds> pats = _vstsFeeds
-                    .Select( s => ctx.InteractiveEnvironmentVariable( s.SecretKeyName ) )
-                    .Where( s => !string.IsNullOrEmpty( s ) )
-                    .Select( s => new Creds( s ) ).ToList();
-
-                var credProviders = new AsyncLazy<IEnumerable<ICredentialProvider>>( () => System.Threading.Tasks.Task.FromResult<IEnumerable<ICredentialProvider>>( pats ) );
                 HttpHandlerResourceV3.CredentialService = new Lazy<ICredentialService>(
-                    () => new CredentialService(
-                        providers: credProviders,
-                        nonInteractive: true,
-                        handlesDefaultCredentials: true ) );
-
-                ctx.Information( $"Created {pats.Count} feed(s) Credential Provider." );
+                        () => new CredentialService(
+                            providers: new AsyncLazy<IEnumerable<ICredentialProvider>>( () => System.Threading.Tasks.Task.FromResult<IEnumerable<ICredentialProvider>>( new List<Creds> { new Creds( ctx ) }.AsEnumerable() ) ),
+                            nonInteractive: true,
+                            handlesDefaultCredentials: true )
+                        );
             }
 
             class Creds : ICredentialProvider
             {
-                readonly string _token;
+                private readonly ICakeContext _ctx;
 
-                public Creds( string token )
+                public Creds( ICakeContext ctx )
                 {
-                    if( string.IsNullOrWhiteSpace( token ) ) throw new ArgumentNullException();
-                    _token = token;
+                    _ctx = ctx;
                 }
 
                 public string Id { get; }
 
-                public Task<CredentialResponse> GetAsync( Uri uri, IWebProxy proxy, CredentialRequestType type, string message, bool isRetry, bool nonInteractive, CancellationToken cancellationToken )
-                {
-                    return System.Threading.Tasks.Task.FromResult( new CredentialResponse( new NetworkCredential( "CKli", _token ) ) );
-                }
+                public Task<CredentialResponse> GetAsync(
+                    Uri uri,
+                    IWebProxy proxy,
+                    CredentialRequestType type,
+                    string message,
+                    bool isRetry,
+                    bool nonInteractive,
+                    CancellationToken cancellationToken ) =>
+                    System.Threading.Tasks.Task.FromResult(
+                        new CredentialResponse(
+                            new NetworkCredential(
+                                "CKli",
+                                _ctx.InteractiveEnvironmentVariable(
+                                    _vstsFeeds.Single( p => new Uri( p.Url ).ToString() == uri.ToString() ).SecretKeyName
+                                )
+                            )
+                        )
+                    );
             }
 
             /// <summary>
@@ -240,7 +245,7 @@ namespace CodeCake
                 readonly PackageSource _packageSource;
                 readonly SourceRepository _sourceRepository;
                 readonly AsyncLazy<PackageUpdateResource> _updater;
-
+                bool _vstsCredInit;
                 /// <summary>
                 /// Initialize a new remote feed.
                 /// Its final <see cref="Name"/> is the one of the existing feed if it appears in the existing
@@ -253,7 +258,15 @@ namespace CodeCake
                 protected NuGetFeed( NuGetArtifactType type, string name, string urlV3 )
                     : this( type, _sourceProvider.FindOrCreateFromUrl( name, urlV3 ) )
                 {
-                    if( this is VSTSFeed f ) _vstsFeeds.Add( f );
+                    if( this is VSTSFeed f )
+                    {
+                        if(!_vstsCredInit)
+                        {
+                            _vstsCredInit = true;
+                            InitializeVSTSEnvironment( Cake );
+                        }
+                        _vstsFeeds.Add( f );
+                    }
                 }
 
                 /// <summary>
