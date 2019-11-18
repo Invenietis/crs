@@ -1,18 +1,18 @@
-using System;
-using System.Collections.Generic;
+using Cake.Common.Diagnostics;
 using Cake.Common.IO;
 using Cake.Npm;
 using Cake.Npm.Publish;
-using System.Linq;
-using Newtonsoft.Json.Linq;
-using System.IO;
-using System.Threading.Tasks;
-using CSemVer;
-using CodeCake.Abstractions;
-using Cake.Common.Diagnostics;
 using CK.Text;
-using System.Text;
+using CodeCake.Abstractions;
+using CSemVer;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace CodeCake
 {

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace CodeCake
 {
@@ -53,7 +52,7 @@ namespace CodeCake
             _projects.Add( project );
         }
 
-        public void Add(NPMProjectContainer container)
+        public void Add( NPMProjectContainer container )
         {
             if( _containers.Contains( container ) ) throw new InvalidOperationException( "Element was already present in the list." );
             _containers.Add( container );

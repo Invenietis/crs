@@ -14,6 +14,7 @@ using NuGet.Versioning;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
@@ -191,53 +192,44 @@ namespace CodeCake
                     }
                     InitializeVSTSEnvironment( ctx );
                     _logger = new Logger( ctx );
-                    var credProviders = new AsyncLazy<IEnumerable<ICredentialProvider>>( async () => await GetCredentialProvidersAsync( _logger ) );
-                    HttpHandlerResourceV3.CredentialService = new Lazy<ICredentialService>(
-                        () => new CredentialService(
-                            providers: credProviders,
-                            nonInteractive: true,
-                            handlesDefaultCredentials: true ) );
+
                 }
                 return _logger;
             }
 
             static void InitializeVSTSEnvironment( ICakeContext ctx )
             {
-                // Workaround for dev/NuGet.Client\src\NuGet.Core\NuGet.Protocol\Plugins\PluginFactory.cs line 161:
-                // FileName = Environment.GetEnvironmentVariable("DOTNET_HOST_PATH"),
-                // This line should be:
-                // FileName = Environment.GetEnvironmentVariable("DOTNET_HOST_PATH") ?? "dotnet",
-                //
-                // Issue: https://github.com/NuGet/Home/issues/7438
-                //
-                Environment.SetEnvironmentVariable( "DOTNET_HOST_PATH", "dotnet" );
+                List<Creds> pats = _vstsFeeds
+                    .Select( s => ctx.InteractiveEnvironmentVariable( s.SecretKeyName ) )
+                    .Where( s => !string.IsNullOrEmpty( s ) )
+                    .Select( s => new Creds( s ) ).ToList();
 
-                // The VSS_NUGET_EXTERNAL_FEED_ENDPOINTS is used by Azure Credential Provider to handle authentication
-                // for the feed.
-                int count = 0;
-                StringBuilder b = new StringBuilder( @"{""endpointCredentials"":[" );
-                foreach( var f in _vstsFeeds )
-                {
-                    var azureFeedPAT = ctx.InteractiveEnvironmentVariable( f.SecretKeyName );
-                    if( !String.IsNullOrEmpty( azureFeedPAT ) )
-                    {
-                        ++count;
-                        b.Append( @"{""endpoint"":""" ).AppendJSONEscaped( f.Url ).Append( @"""," )
-                         .Append( @"""username"":""Unused"",""password"":""" ).AppendJSONEscaped( azureFeedPAT ).Append( @"""" )
-                         .Append( "}" );
-                    }
-                }
-                b.Append( "]}" );
-                ctx.Information( $"Created {count} feed end point(s) in VSS_NUGET_EXTERNAL_FEED_ENDPOINTS." );
-                Environment.SetEnvironmentVariable( "VSS_NUGET_EXTERNAL_FEED_ENDPOINTS", b.ToString() );
+                var credProviders = new AsyncLazy<IEnumerable<ICredentialProvider>>( () => System.Threading.Tasks.Task.FromResult<IEnumerable<ICredentialProvider>>( pats ) );
+                HttpHandlerResourceV3.CredentialService = new Lazy<ICredentialService>(
+                    () => new CredentialService(
+                        providers: credProviders,
+                        nonInteractive: true,
+                        handlesDefaultCredentials: true ) );
+
+                ctx.Information( $"Created {pats.Count} feed(s) Credential Provider." );
             }
 
-            static async Task<IEnumerable<ICredentialProvider>> GetCredentialProvidersAsync( ILogger logger )
+            class Creds : ICredentialProvider
             {
-                var providers = new List<ICredentialProvider>();
-                var securePluginProviders = await new SecurePluginCredentialProviderBuilder( pluginManager: PluginManager.Instance, canShowDialog: false, logger: logger ).BuildAllAsync();
-                providers.AddRange( securePluginProviders );
-                return providers;
+                readonly string _token;
+
+                public Creds( string token )
+                {
+                    if( string.IsNullOrWhiteSpace( token ) ) throw new ArgumentNullException();
+                    _token = token;
+                }
+
+                public string Id { get; }
+
+                public Task<CredentialResponse> GetAsync( Uri uri, IWebProxy proxy, CredentialRequestType type, string message, bool isRetry, bool nonInteractive, CancellationToken cancellationToken )
+                {
+                    return System.Threading.Tasks.Task.FromResult( new CredentialResponse( new NetworkCredential( "CKli", _token ) ) );
+                }
             }
 
             /// <summary>

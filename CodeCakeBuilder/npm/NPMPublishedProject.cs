@@ -3,7 +3,6 @@ using Cake.Npm;
 using Cake.Npm.Pack;
 using CK.Text;
 using CodeCake.Abstractions;
-using CSemVer;
 using Newtonsoft.Json.Linq;
 using System;
 using System.IO;

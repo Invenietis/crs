@@ -168,7 +168,7 @@ namespace CodeCake
                     new NpmRunScriptSettings()
                     {
                         ScriptName = scriptName,
-                        LogLevel= NpmLogLevel.Info,
+                        LogLevel = NpmLogLevel.Info,
                         WorkingDirectory = runInBuildDirectory ? OutputPath.Path : DirectoryPath.Path
                     }
                 );

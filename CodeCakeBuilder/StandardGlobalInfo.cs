@@ -1,7 +1,6 @@
 using Cake.Common;
 using Cake.Common.Build;
 using Cake.Common.Build.AppVeyor;
-using Cake.Common.Build.GitLabCI;
 using Cake.Common.Build.TFBuild;
 using Cake.Common.Diagnostics;
 using Cake.Core;
@@ -249,7 +248,7 @@ namespace CodeCake
                     AzurePipelineUpdateBuildVersion( azureVersion );
                 }
             }
-            catch(Exception e)
+            catch( Exception e )
             {
                 Cake.Warning( "Could not set the Build Version !!!" );
                 Cake.Warning( e );
