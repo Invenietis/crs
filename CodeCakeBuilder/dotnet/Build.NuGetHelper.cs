@@ -196,16 +196,6 @@ namespace CodeCake
                 return _logger;
             }
 
-            static void InitializeVSTSEnvironment( ICakeContext ctx )
-            {
-                HttpHandlerResourceV3.CredentialService = new Lazy<ICredentialService>(
-                        () => new CredentialService(
-                            providers: new AsyncLazy<IEnumerable<ICredentialProvider>>( () => System.Threading.Tasks.Task.FromResult<IEnumerable<ICredentialProvider>>( new List<Creds> { new Creds( ctx ) }.AsEnumerable() ) ),
-                            nonInteractive: true,
-                            handlesDefaultCredentials: true )
-                        );
-            }
-
             class Creds : ICredentialProvider
             {
                 private readonly ICakeContext _ctx;
@@ -245,7 +235,6 @@ namespace CodeCake
                 readonly PackageSource _packageSource;
                 readonly SourceRepository _sourceRepository;
                 readonly AsyncLazy<PackageUpdateResource> _updater;
-                bool _vstsCredInit;
                 /// <summary>
                 /// Initialize a new remote feed.
                 /// Its final <see cref="Name"/> is the one of the existing feed if it appears in the existing
@@ -260,10 +249,17 @@ namespace CodeCake
                 {
                     if( this is VSTSFeed f )
                     {
-                        if(!_vstsCredInit)
+                        if( HttpHandlerResourceV3.CredentialService == null )
                         {
-                            _vstsCredInit = true;
-                            InitializeVSTSEnvironment( Cake );
+                            HttpHandlerResourceV3.CredentialService = new Lazy<ICredentialService>(
+                            () => new CredentialService(
+                                providers: new AsyncLazy<IEnumerable<ICredentialProvider>>(
+                                    () => System.Threading.Tasks.Task.FromResult<IEnumerable<ICredentialProvider>>(
+                                        new List<Creds> { new Creds( Cake ) } )
+                                ),
+                                nonInteractive: true,
+                                handlesDefaultCredentials: true )
+                            );
                         }
                         _vstsFeeds.Add( f );
                     }
