@@ -71,7 +71,7 @@ namespace CodeCake
         public void RunPack( Action<JObject> packageJsonPreProcessor = null )
         {
             var tgz = OutputPath.AppendPart( TGZName );
-            using( TemporarySetPackageVersion( ArtifactInstance.Version ) )
+            using( TemporarySetPackageVersion( ArtifactInstance.Version, true ) )
             {
                 using( TemporaryPrePack( ArtifactInstance.Version, packageJsonPreProcessor, false ) )
                 {

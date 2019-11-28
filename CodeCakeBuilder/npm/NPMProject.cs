@@ -204,9 +204,9 @@ namespace CodeCake
             }
         }
 
-        private protected IDisposable TemporarySetPackageVersion( SVersion version )
+        private protected IDisposable TemporarySetPackageVersion( SVersion version, bool targetOutputPath = false )
         {
-            return TempFileTextModification.TemporaryReplacePackageVersion( PackageJson.JsonFilePath, version );
+            return TempFileTextModification.TemporaryReplacePackageVersion( !targetOutputPath ? PackageJson.JsonFilePath : OutputPath.AppendPart( "package.json" ), version );
         }
 
         private protected IDisposable TemporaryPrePack( SVersion version, Action<JObject> packageJsonPreProcessor, bool ckliLocalFeedMode )
