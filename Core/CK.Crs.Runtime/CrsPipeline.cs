@@ -48,7 +48,7 @@ namespace CK.Crs
         }
 
 
-        public Task<object> BindCommand()
+        public async Task<object> BindCommand()
         {
             using( Context.Monitor.OpenInfo( $"Binding Command..." ) )
             {
@@ -64,7 +64,7 @@ namespace CK.Crs
                 }
                 if( binder == null ) throw new InvalidOperationException( "No command binder found." );
 
-                return binder.Bind( Context );
+                return await binder.Bind( Context );
             }
         }
 
