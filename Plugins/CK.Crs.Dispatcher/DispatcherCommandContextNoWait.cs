@@ -23,14 +23,14 @@ namespace CK.Crs
             _serviceProvider = serviceProvider;
         }
 
-        internal virtual Task<Response> Receive()
+        internal virtual async Task<Response> Receive()
         {
             using( var serviceScope = _serviceProvider.CreateScope() )
             {
                 var receiver = ServiceContainerExtension.GetService<ICommandReceiver>( serviceScope.ServiceProvider, true );
                 try
                 {
-                    return receiver.ReceiveCommand( _command, this );
+                    return await receiver.ReceiveCommand( _command, this );
                 }
                 catch( Exception ex )
                 {
