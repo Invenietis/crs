@@ -1,3 +1,5 @@
+using Cake.Common.Diagnostics;
+using Cake.Core;
 using CK.Text;
 using CSemVer;
 using Newtonsoft.Json.Linq;
@@ -6,7 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using static CodeCake.Build;
+using System.Text.RegularExpressions;
 
 namespace CodeCake
 {
@@ -64,46 +66,73 @@ namespace CodeCake
         /// <param name="packageJsonPreProcessor"></param>
         /// <returns></returns>
         public static IDisposable TemporaryReplacePackageVersion(
-            NPMSolution npmSolution,
             NormalizedPath jsonPath,
-            SVersion version,
-            bool preparePack,
-            Action<JObject> packageJsonPreProcessor )
+            SVersion version)
         {
             (string content, TempFileTextModification temp) = CreateTempFileTextModification( jsonPath );
             JObject json = JObject.Parse( content );
             json["version"] = version.ToNormalizedString();
-            if( preparePack )
+            File.WriteAllText( jsonPath, json.ToString() );
+            return temp;
+        }
+
+        public static IDisposable TemporaryReplaceDependenciesVersion(
+            NPMSolution npmSolution,
+            NormalizedPath jsonPath,
+            bool ckliLocalFeedMode,
+            SVersion version,
+            Action<JObject> packageJsonPreProcessor
+        )
+        {
+            (string content, TempFileTextModification temp) = CreateTempFileTextModification( jsonPath );
+            JObject json = JObject.Parse( content );
+            packageJsonPreProcessor?.Invoke( json );
+            json.Remove( "devDependencies" );
+            foreach( var dependencyPropName in new string[]
             {
-                json.Remove( "devDependencies" );
-                json.Remove( "scripts" );
-                string[] _dependencyPropNames = new string[]
-                {
                 "dependencies",
                 "peerDependencies",
-                "devDependencies",
                 "bundledDependencies",
                 "optionalDependencies",
-                };
-                foreach( var dependencyPropName in _dependencyPropNames )
+            } )
+            {
+                if( json.ContainsKey( dependencyPropName ) )
                 {
-                    if( json.ContainsKey( dependencyPropName ) )
+                    JObject dependencies = (JObject)json[dependencyPropName];
+                    foreach( KeyValuePair<string, JToken> keyValuePair in dependencies )
                     {
-                        JObject dependencies = (JObject)json[dependencyPropName];
-                        foreach( KeyValuePair<string, JToken> keyValuePair in dependencies )
+                        if( npmSolution.AllPublishedProjects.FirstOrDefault( x => x.PackageJson.Name == keyValuePair.Key )
+                            is NPMPublishedProject localProject )
                         {
-                            if( npmSolution.AllPublishedProjects.FirstOrDefault( x => x.PackageJson.Name == keyValuePair.Key )
-                                is NPMPublishedProject localProject )
-                            {
-                                dependencies[keyValuePair.Key] = new JValue( "^" + version );
-                            }
+                            dependencies[keyValuePair.Key] = new JValue( "^" + version );
+                        }
+                    }
+                    if( ckliLocalFeedMode )
+                    {
+                        foreach( var dependency in ((IEnumerable<KeyValuePair<string, JToken>>)dependencies)
+                            .Select( s => new KeyValuePair<string, string>( s.Key, s.Value.ToString() ) )
+                            .Where( p => p.Value.StartsWith( "file:" ) )
+                            .Select( s => new KeyValuePair<string, SVersion>( s.Key, ParseVersionFromPackagePath( s.Value ) ) ) )
+                        {
+                            dependencies[dependency.Key] = dependency.Value.ToNormalizedString();
                         }
                     }
                 }
             }
-            packageJsonPreProcessor?.Invoke( json );
-            File.WriteAllText( jsonPath, json.ToString() );
             return temp;
+        }
+
+        /// <summary>
+        /// Parses a full path and extracts a <see cref="SVersion"/>.
+        /// </summary>
+        /// <param name="fullPath">The full path of the package.</param>
+        /// <returns>The <see cref="SVersion"/> of the package.</returns>
+        static SVersion ParseVersionFromPackagePath( string fullPath )
+        {
+            var fName = Path.GetFileNameWithoutExtension( fullPath );
+            int idxV = Regex.Match( fName, "\\.\\d" ).Index;
+            var id = fName.Substring( 0, idxV );
+            return SVersion.Parse( fName.Substring( idxV + 1 ) );
         }
 
         public static TempFileTextModification TemporaryInjectNPMToken( NormalizedPath npmrcPath, string pushUri, string scope, Action<List<string>, string> configure )

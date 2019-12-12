@@ -168,7 +168,7 @@ namespace CodeCake
                     new NpmRunScriptSettings()
                     {
                         ScriptName = scriptName,
-                        LogLevel= NpmLogLevel.Info,
+                        LogLevel = NpmLogLevel.Info,
                         WorkingDirectory = runInBuildDirectory ? OutputPath.Path : DirectoryPath.Path
                     }
                 );
@@ -204,14 +204,14 @@ namespace CodeCake
             }
         }
 
-        private protected IDisposable TemporarySetVersion( SVersion version )
+        private protected IDisposable TemporarySetPackageVersion( SVersion version, bool targetOutputPath = false )
         {
-            return TempFileTextModification.TemporaryReplacePackageVersion( NpmSolution, PackageJson.JsonFilePath, version, false, null );
+            return TempFileTextModification.TemporaryReplacePackageVersion( !targetOutputPath ? PackageJson.JsonFilePath : OutputPath.AppendPart( "package.json" ), version );
         }
 
-        private protected IDisposable TemporaryPrePack( SVersion version, Action<JObject> packageJsonPreProcessor )
+        private protected IDisposable TemporaryPrePack( SVersion version, Action<JObject> packageJsonPreProcessor, bool ckliLocalFeedMode )
         {
-            return TempFileTextModification.TemporaryReplacePackageVersion( NpmSolution, OutputPath.AppendPart( "package.json" ), version, true, packageJsonPreProcessor );
+            return TempFileTextModification.TemporaryReplaceDependenciesVersion( NpmSolution, OutputPath.AppendPart( "package.json" ), ckliLocalFeedMode, version, packageJsonPreProcessor );
         }
 
         #region .npmrc configuration

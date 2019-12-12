@@ -1,5 +1,4 @@
 using Cake.Npm;
-using CK.Text;
 using CodeCake.Abstractions;
 using CSemVer;
 using Newtonsoft.Json.Linq;
@@ -175,18 +174,18 @@ namespace CodeCake
 
             foreach( var item in document.Elements( "AngularWorkspace" ) )
             {
-               solution.Add(AngularWorkspace.Create( globalInfo,
-                        solution,
-                        (string)item.Attribute( "Path" ),
-                        (string)item.Attribute( "OutputFolder" ) ));
+                solution.Add( AngularWorkspace.Create( globalInfo,
+                         solution,
+                         (string)item.Attribute( "Path" ),
+                         (string)item.Attribute( "OutputFolder" ) ) );
             }
             foreach( var item in document.Elements( "Project" ) )
             {
-                solution.Add(NPMPublishedProject.Create(
+                solution.Add( NPMPublishedProject.Create(
                         globalInfo,
                         solution,
                         (string)item.Attribute( "Path" ),
-                        (string)item.Attribute( "OutputFolder" ) ));
+                        (string)item.Attribute( "OutputFolder" ) ) );
             }
             return solution;
         }

@@ -1,6 +1,5 @@
 using CK.Text;
 using Newtonsoft.Json.Linq;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -39,7 +38,7 @@ namespace CodeCake
                 p => NPMPublishedProject.Create(
                     globalInfo,
                     npmSolution,
-                    path.Combine(new NormalizedPath( angularJson["projects"][p]["root"].ToString()) ),
+                    path.Combine( new NormalizedPath( angularJson["projects"][p]["root"].ToString() ) ),
                     outputFolder.AppendPart( p )
                 )
             ).ToList();

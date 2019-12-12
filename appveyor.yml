@@ -13,7 +13,6 @@ build_script:
   - dotnet run --project CodeCakeBuilder -nointeraction
 test: off
 install:
-  - ps: ./CodeCakeBuilder/InstallCredentialProvider.ps1
   - cmd: npm install -g npm@6.9.0
   - ps: Install-Product node 12
 artifacts:

@@ -39,15 +39,14 @@ namespace CK.Crs.AspNetCore
             await _next( context ).ConfigureAwait( false );
         }
 
-        private Task WriteResponse( HttpContext context, Response response )
+        private async Task WriteResponse( HttpContext context, Response response )
         {
             var result = EndpointModel.ResponseFormatter.Format( response );
             if( result != null )
             {
                 context.Response.Headers["Content-Type"] = EndpointModel.ResponseFormatter.ContentType;
-                return context.Response.WriteAsync( result );
+                await context.Response.WriteAsync( result );
             }
-            return Task.CompletedTask;
         }
     }
 }
