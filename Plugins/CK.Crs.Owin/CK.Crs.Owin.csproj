@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="../../common/shared.props" />
   <PropertyGroup>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <ItemGroup>
@@ -10,8 +10,5 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\core\CK.Crs.Runtime\CK.Crs.Runtime.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.Web" />
   </ItemGroup>
 </Project>
