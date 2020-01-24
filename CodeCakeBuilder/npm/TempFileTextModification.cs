@@ -119,6 +119,7 @@ namespace CodeCake
                     }
                 }
             }
+            File.WriteAllText( jsonPath, json.ToString() );
             return temp;
         }
 
