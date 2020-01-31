@@ -5,7 +5,7 @@
     <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CK.ActivityMonitor.SimpleSender" Version="13.0.0-a" />
-    <PackageReference Include="CK.AmbientValues" Version="4.0.0-a" />
+    <PackageReference Include="CK.ActivityMonitor.SimpleSender" Version="13.0.0-a00-00-0018-develop" />
+    <PackageReference Include="CK.AmbientValues" Version="4.0.0-a00-00-0016-develop" />
   </ItemGroup>
 </Project>
