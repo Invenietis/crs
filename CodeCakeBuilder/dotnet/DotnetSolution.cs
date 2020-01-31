@@ -133,7 +133,11 @@ namespace CodeCake
                 string assetsJson = File.ReadAllText( objDir.AppendPart( "project.assets.json" ) );
                 bool isNunitLite = assetsJson.Contains( "NUnitLite" );
                 bool isVSTest = assetsJson.Contains( "Microsoft.NET.Test.Sdk" );
-                foreach( NormalizedPath buildDir in Directory.GetDirectories( binDir ) )
+                foreach( NormalizedPath buildDir in
+                    Directory.GetDirectories( binDir )
+                        .Where( p => Directory.EnumerateFiles( p )
+                        .Any() )
+                )
                 {
                     string framework = buildDir.LastPart;
                     string fileWithoutExtension = buildDir.AppendPart( project.Name );
@@ -141,26 +145,11 @@ namespace CodeCake
                     if( isNunitLite )
                     {
                         // Using NUnitLite.
-                        testBinariesPath = fileWithoutExtension + ".exe";
-                        if( File.Exists( testBinariesPath ) )
+                        testBinariesPath = fileWithoutExtension + ".dll";
+                        _globalInfo.Cake.Information( $"Testing via NUnitLite ({framework}): {testBinariesPath}" );
+                        if( !_globalInfo.CheckCommitMemoryKey( testBinariesPath ) )
                         {
-                            _globalInfo.Cake.Information( $"Testing via NUnitLite ({framework}): {testBinariesPath}" );
-                            if( !_globalInfo.CheckCommitMemoryKey( testBinariesPath ) )
-                            {
-                                _globalInfo.Cake.NUnit3( new[] { testBinariesPath }, new NUnit3Settings
-                                {
-                                    Results = new[] { new NUnit3Result() { FileName = FilePath.FromString( projectPath.AppendPart( "TestResult.Net461.xml" ) ) } }
-                                } );
-                            }
-                        }
-                        else
-                        {
-                            testBinariesPath = fileWithoutExtension + ".dll";
-                            _globalInfo.Cake.Information( $"Testing via NUnitLite ({framework}): {testBinariesPath}" );
-                            if( !_globalInfo.CheckCommitMemoryKey( testBinariesPath ) )
-                            {
-                                _globalInfo.Cake.DotNetCoreExecute( testBinariesPath );
-                            }
+                            _globalInfo.Cake.DotNetCoreExecute( testBinariesPath );
                         }
                     }
                     if( isVSTest )
