@@ -5,7 +5,7 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CK.AspNet.Tester" Version="3.0.0-b00-00-0005-develop" />
+    <PackageReference Include="CK.AspNet.Tester" Version="3.0.0-b00-00-0006-develop" />
     <PackageReference Include="FluentAssertions" Version="5.9.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="3.1.1" />
