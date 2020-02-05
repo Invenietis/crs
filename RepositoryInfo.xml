@@ -7,5 +7,5 @@
 
   </Branches>
   <IgnoreModifiedFiles />
-  <Debug IgnoreDirtyWorkingFolder="false" />
+  <Debug IgnoreDirtyWorkingFolder="true" />
 </RepositoryInfo>
