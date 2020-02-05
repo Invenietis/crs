@@ -10,11 +10,11 @@
     <Folder Include="wwwroot\scripts\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CK.AspNet" Version="5.0.0-a00-00-0020-develop" />
+    <PackageReference Include="CK.AspNet" Version="0.0.0--02nrapj-local+v5.0.0-a" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="2.2.0" />
     <PackageReference Include="Rebus.SqlServer" Version="5.1.0" />
-    <PackageReference Include="CK.Monitoring" Version="12.0.0-a00-00-0019-develop" />
+    <PackageReference Include="CK.Monitoring.Hosting" Version="0.0.0--02nr9cw-local+v12.0.0-a" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Plugins\CK.Crs.AspNetCore\CK.Crs.AspNetCore.csproj" />
