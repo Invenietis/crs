@@ -32,4 +32,10 @@ dotnet_naming_symbols.private_internal_fields.applicable_accessibilities = priva
 dotnet_naming_style.camel_case_underscore_style.required_prefix = _
 dotnet_naming_style.camel_case_underscore_style.capitalization = camel_case
 
+# This warning is irrelevant because we almost only use managed objects.
+# The dispose pattern (see here https://docs.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-dispose) is useful only in some edge case, and most of the time a simple IDisposable implementation is enough.
+# If you feel like you NEED to handle an umanaged resource, please let's talk about this first: it may well be a bad idea...
+# CA1063: Implement IDisposable Correctly
+dotnet_diagnostic.CA1063.severity = none
+
 # /Signature-Code .editorconfig
