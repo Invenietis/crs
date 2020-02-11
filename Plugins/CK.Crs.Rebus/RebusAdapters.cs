@@ -90,7 +90,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             var resolvedHandlerInstances = GetMessageHandlersForMessage<TMessage>( scope );
 
-            transactionContext.OnDisposed( scope.Dispose );
+            transactionContext.OnDisposed( ctx => scope.Dispose() );
 
             return Task.FromResult( (IEnumerable<IHandleMessages<TMessage>>)resolvedHandlerInstances.ToArray() );
         }
@@ -236,11 +236,9 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             var implementedHandlerInterfaces = GetImplementedHandlerInterfaces( typeToRegister ).ToArray();
 
-            if( !implementedHandlerInterfaces.Any() )
-                return;
+            if( !implementedHandlerInterfaces.Any() ) return;
 
-            implementedHandlerInterfaces
-                .ForEach( i => services.AddTransient( i, typeToRegister ) );
+            Array.ForEach( implementedHandlerInterfaces, i => services.AddTransient( i, typeToRegister ) );
         }
     }
     /// <summary>

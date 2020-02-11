@@ -69,8 +69,8 @@ namespace CK.Crs
                 var monitor = new ActivityMonitor();
                 if( context.Headers.TryGetValue( key, out string monitorToken ) )
                 {
-                    var monitorDisposable = monitor.StartDependentActivity( ActivityMonitor.DependentToken.Parse( monitorToken ) );
-                    context.TransactionContext.OnDisposed( () => monitorDisposable.Dispose() );
+                    var activity = monitor.StartDependentActivity( ActivityMonitor.DependentToken.Parse( monitorToken ) );
+                    context.TransactionContext.OnDisposed( ctx => activity.Dispose() );
                 }
                 return monitor;
             } );

@@ -1,20 +1,22 @@
 using System.IO;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 
 namespace CK.Crs.Samples.AspNetCoreApp
 {
-    public class Program
+    public static class Program
     {
-        public static void Main( string[] args )
+        public static Task Main( string[] args )
         {
-            var host = new WebHostBuilder()
-                .UseKestrel()
+            return new HostBuilder().ConfigureWebHostDefaults( webHostBuilder =>
+                 webHostBuilder.UseKestrel()
+                    .UseContentRoot( Directory.GetCurrentDirectory() )
+                    .UseStartup<Startup>()
+              )
                 .UseMonitoring()
-                .UseContentRoot( Directory.GetCurrentDirectory() )
-                .UseStartup<Startup>()
-                .Build();
-
-            host.Run();
+                .Build()
+                .RunAsync();
         }
     }
 }
