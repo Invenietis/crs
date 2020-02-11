@@ -13,7 +13,7 @@
     <PackageReference Include="CK.AspNet" Version="5.0.0-a00-00-0015-develop" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="2.2.0" />
-    <PackageReference Include="Rebus.SqlServer" Version="5.1.0" />
+    <PackageReference Include="Rebus.SqlServer" Version="6.0.0" />
     <PackageReference Include="CK.Monitoring.Hosting" Version="12.0.0-a00-00-0015-develop" />
   </ItemGroup>
   <ItemGroup>
