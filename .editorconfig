@@ -38,4 +38,10 @@ dotnet_naming_style.camel_case_underscore_style.capitalization = camel_case
 # CA1063: Implement IDisposable Correctly
 dotnet_diagnostic.CA1063.severity = none
 
+# IDE0063: Use simple 'using' statement. Most of the time, the 'not simple' using scope is better.
+csharp_prefer_simple_using_statement = false:none
+
+# CA1031: Do not catch general exception types
+dotnet_diagnostic.CA1031.severity = none
+
 # /Signature-Code .editorconfig
