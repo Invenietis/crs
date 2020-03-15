@@ -2,7 +2,7 @@
 
 A .NET command execution library, with support for ASP.NET Core (as server) and Typescript (as client).
 
-![AppVeyor](https://img.shields.io/appveyor/ci/olivier-spinelli/crs.svg) ![Nuget](https://img.shields.io/nuget/vpre/CK.Crs.AspNetCore.svg)
+![AppVeyor](https://img.shields.io/appveyor/build/Signature-OpenSource/crs.svg) ![Nuget](https://img.shields.io/nuget/vpre/CK.Crs.AspNetCore.svg)
 
 ## Goals and ambitions
 
