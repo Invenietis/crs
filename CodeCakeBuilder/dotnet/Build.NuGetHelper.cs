@@ -373,6 +373,8 @@ namespace CodeCake
                             getApiKey: endpoint => apiKey,
                             getSymbolApiKey: symbolsEndpoint => null,
                             noServiceEndpoint: false,
+                            skipDuplicate: true,
+                            symbolPackageUpdateResource: null,
                             log: logger );
                     }
                     await OnAllArtifactsPushed( pushes );

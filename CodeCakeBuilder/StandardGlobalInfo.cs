@@ -219,7 +219,7 @@ namespace CodeCake
             {
                 // Azure (formerly VSTS, formerly VSO) analyzes the stdout to set its build number.
                 // On clash, the default Azure/VSTS/VSO build number is used: to ensure that the actual
-                // version will be always be available we need to inject a uniquifier.
+                // version will be always available we need to inject a uniquifier.
                 string buildVersion = AddSkipped( $"{gitInfo.SafeVersion}_{DateTime.UtcNow:yyyyMMdd-HHmmss}" );
                 Cake.Information( $"Using VSTS build number: {buildVersion}" );
                 return $"##vso[build.updatebuildnumber]{buildVersion}";
@@ -236,9 +236,11 @@ namespace CodeCake
             ITFBuildProvider vsts = Cake.TFBuild();
             try
             {
-                if( appVeyor.IsRunningOnAppVeyor ) //Warning: 
+                if( appVeyor.IsRunningOnAppVeyor )
                 {
-                    appVeyor.UpdateBuildVersion( AddSkipped( _gitInfo.SafeVersion ) );
+                    var v = _gitInfo.SafeVersion;
+                    if( !_gitInfo.IsValid ) v += " (#" + appVeyor.Environment.Build.Number.ToString() + ")";
+                    appVeyor.UpdateBuildVersion( AddSkipped( v ) );
                 }
 
                 if( vsts.IsRunningOnAzurePipelinesHosted || vsts.IsRunningOnAzurePipelines )
