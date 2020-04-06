@@ -10,13 +10,26 @@
     <PathMap Condition=" '$(CKWorldPath)' != '' ">$(CKWorldPath)=C:\CK-World</PathMap>
   </PropertyGroup>
 
-  <!--<BasicDefinitions>: It is useful to knwow whether we are in the Tests/ folder and/or if the current project is a Test.-->
+  <!--<BasicDefinitions>: provides simple and useful definitions.-->
   <PropertyGroup>
-    <IsTestProject Condition="$(MSBuildProjectName.EndsWith('.Tests'))">true</IsTestProject>
-    <IsInTestsFolder Condition="$(MSBuildProjectDirectoryNoRoot.Contains('\Tests\'))">true</IsInTestsFolder>
     <!-- SolutionDir is defined by Visual Studio, we unify the behavior here. -->
-    <SolutionDir Condition=" $(SolutionDir) == '' ">$([System.IO.Path]::GetDirectoryName($([System.IO.Path]::GetDirectoryName($(MSBuildThisFileDirectory)))))\</SolutionDir>
+    <SolutionDir Condition=" $(SolutionDir) == '' ">$([System.IO.Path]::GetDirectoryName($([System.IO.Path]::GetDirectoryName($(MSBuildThisFileDirectory)))))/</SolutionDir>
+    <!-- CakeBuild is obsolete: the new standard ContinuousIntegrationBuild should be used. -->
+    <ContinuousIntegrationBuild Condition=" '$(CakeBuild)' == 'true' ">true</ContinuousIntegrationBuild>
+    <!-- Always enable Deterministic build. -->
+    <Deterministic>true</Deterministic>
+    <!-- Always allow the repository url to appear in the nuget package. -->
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <!-- InformationalVersion is either the Zero version or provided by the CodeCakeBuilder when in CI build). -->
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+    <!-- Always embedds the .pdb in the nuget package.
+       TODO: When using SourceLink, we should follow the guidelines here: https://github.com/dotnet/sourcelink#using-source-link-in-net-projects
+             (only for packages that are ultimately uploaded to nuget.org). -->
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
   </PropertyGroup>
+  <ItemGroup>
+    <SourceRoot Include="$(SolutionDir)" />
+  </ItemGroup>
   <!--</BasicDefinitions>-->
 
   <!--<StandardProperties>-->
@@ -35,15 +48,8 @@
   </PropertyGroup>
   <!--</StandardProperties>-->
 
-  <!--<ReproducibleBuilds>: See http://blog.paranoidcoding.com/2016/04/05/deterministic-builds-in-roslyn.html.-->
-  <PropertyGroup Condition=" '$(CakeBuild)' == 'true' ">
-    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
-    <Deterministic>true</Deterministic>
-  </PropertyGroup>
-  <!--</ReproducibleBuilds>-->
-
   <!--<ZeroVersion>: When not building from the CI, assemblies always use the ZeroVersion (see CSemVer.InformationalVersion).-->
-  <PropertyGroup Condition=" '$(CakeBuild)' != 'true' ">
+  <PropertyGroup Condition=" '$(ContinuousIntegrationBuild)' != 'true' ">
     <Version>0.0.0-0</Version>
     <AssemblyVersion>0.0.0</AssemblyVersion>
     <FileVersion>0.0.0.0</FileVersion>
@@ -52,20 +58,13 @@
   <!--</ZeroVersion>-->
 
   <!--<GenerateDocumentation>: Default is in Release or during Cake builds (except for projects below Tests/). Each project can override GenerateDocumentationFile property.-->
-  <PropertyGroup Condition=" '$(IsInTestsFolder)' != 'true' And ('$(CakeBuild)' == 'true' Or '$(Configuration)' == 'Release') ">
+  <PropertyGroup Condition=" '$(IsInTestsFolder)' != 'true' And ('$(ContinuousIntegrationBuild)' == 'true' Or '$(Configuration)' == 'Release') ">
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <!--</GenerateDocumentation>-->
 
-  <!--<SourceLink>: is enabled only for Cake build. -->
-  <PropertyGroup>
-    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(CakeBuild)' == 'true' ">
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
-  </PropertyGroup>
-  <ItemGroup Condition=" '$(CakeBuild)' == 'true' ">
+  <!--<SourceLink>: is enabled only for ContinuousIntegrationBuild build. -->
+  <ItemGroup Condition=" '$(ContinuousIntegrationBuild)' == 'true' ">
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
   </ItemGroup>
   <!--</SourceLink>-->

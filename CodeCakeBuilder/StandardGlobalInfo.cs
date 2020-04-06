@@ -236,15 +236,14 @@ namespace CodeCake
             ITFBuildProvider vsts = Cake.TFBuild();
             try
             {
-                string azureVersion = ComputeAzurePipelineUpdateBuildVersion( _gitInfo );
-                string appveyorVersion = AddSkipped( _gitInfo.SafeVersion );
                 if( appVeyor.IsRunningOnAppVeyor ) //Warning: 
                 {
-                    appVeyor.UpdateBuildVersion( appveyorVersion );
+                    appVeyor.UpdateBuildVersion( AddSkipped( _gitInfo.SafeVersion ) );
                 }
 
                 if( vsts.IsRunningOnAzurePipelinesHosted || vsts.IsRunningOnAzurePipelines )
                 {
+                    string azureVersion = ComputeAzurePipelineUpdateBuildVersion( _gitInfo );
                     AzurePipelineUpdateBuildVersion( azureVersion );
                 }
             }
