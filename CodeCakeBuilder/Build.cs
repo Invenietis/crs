@@ -1,3 +1,9 @@
+using Cake.Npm;
+using Cake.Npm.RunScript;
+using Cake.Npm;
+using Cake.Npm.RunScript;
+using Cake.Npm;
+using Cake.Npm.RunScript;
 using Cake.Common.IO;
 using Cake.Common.Solution;
 using Cake.Common.Tools.DotNetCore;
@@ -25,8 +31,7 @@ namespace CodeCake
         {
             Cake.Log.Verbosity = Verbosity.Diagnostic;
 
-            SimpleRepositoryInfo gitInfo = Cake.GetSimpleRepositoryInfo();
-            StandardGlobalInfo globalInfo = CreateStandardGlobalInfo(gitInfo)
+            StandardGlobalInfo globalInfo = CreateStandardGlobalInfo()
                                                 .AddDotnet()
                                                 .AddNPM()
                                                 .SetCIBuildTag();
@@ -70,7 +75,7 @@ namespace CodeCake
                });
 
             Task("Create-Packages")
-                //.WithCriteria( () => gitInfo.IsValid )
+                //.WithCriteria( () => globalInfo.IsValid )
                 .IsDependentOn("Unit-Testing")
                 .Does(() =>
                 {
@@ -79,7 +84,7 @@ namespace CodeCake
                 });
 
             Task("Push-Packages")
-                .WithCriteria(() => gitInfo.IsValid)
+                .WithCriteria(() => globalInfo.IsValid)
                 .IsDependentOn("Create-Packages")
                 .Does(() =>
                 {

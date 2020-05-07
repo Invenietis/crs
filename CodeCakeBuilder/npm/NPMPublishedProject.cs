@@ -12,13 +12,14 @@ namespace CodeCake
     public class NPMPublishedProject : NPMProject, ILocalArtifact
     {
         readonly bool _ckliLocalFeedMode;
+
         NPMPublishedProject( StandardGlobalInfo globalInfo, NPMSolution npmSolution, SimplePackageJsonFile json, NormalizedPath outputPath )
             : base( globalInfo, npmSolution, json, outputPath )
         {
             _ckliLocalFeedMode = json.CKliLocalFeedMode;
-            ArtifactInstance = new ArtifactInstance( new Artifact( "NPM", json.Name ), globalInfo.Version );
+            ArtifactInstance = new ArtifactInstance( new Artifact( "NPM", json.Name ), globalInfo.BuildInfo.Version );
             string tgz = json.Name.Replace( "@", "" ).Replace( '/', '-' );
-            TGZName = tgz + "-" + globalInfo.Version.WithBuildMetaData( "" ).ToNormalizedString() + ".tgz";
+            TGZName = tgz + "-" + globalInfo.BuildInfo.Version.WithBuildMetaData( "" ).ToNormalizedString() + ".tgz";
         }
 
         /// <summary>

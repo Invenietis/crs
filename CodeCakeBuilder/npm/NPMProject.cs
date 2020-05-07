@@ -7,6 +7,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
 using System.Text;
+using SimpleGitVersion;
 
 namespace CodeCake
 {
@@ -77,7 +78,7 @@ namespace CodeCake
         public bool HasScript( string name ) => PackageJson.Scripts.Contains( name );
 
         /// <summary>
-        /// Finds either "baseName-debug", "baseName-release" depending on <paramref name="isRelease"/>
+        /// Finds either "baseName-debug", "baseName-release" depending on <see cref="ICommitBuildInfo.BuildConfiguration"/>
         /// and falls back to baseName if specific scripts don't exist.
         /// By default, at least 'baseName' must exist otherwise an InvalidOperationException is thrown.
         /// </summary>
@@ -90,11 +91,8 @@ namespace CodeCake
         /// <returns>The best script (or null if it doesn't exist and <paramref name="checkBaseNameExist"/> is null).</returns>
         public string FindBestScript( string baseName, bool? checkBaseNameExist = true )
         {
-            string n;
-            if( (GlobalInfo.IsRelease && HasScript( (n = baseName + "-release") )) || (!GlobalInfo.IsRelease && HasScript( (n = baseName + "-debug") )) )
-            {
-                return n;
-            }
+            string n = baseName + '-' + GlobalInfo.BuildInfo.BuildConfiguration;
+            if( HasScript( n ) ) return n;
             if( checkBaseNameExist == null )
             {
                 return HasScript( baseName ) ? baseName : null;
