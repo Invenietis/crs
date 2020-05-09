@@ -5,15 +5,15 @@
     <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.3" />
     <PackageReference Include="MessageTemplates" Version="1.0.0-rc-00275" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.3" />
     <packagereference Include="Microsoft.NET.Test.Sdk" Version="16.2.0"></packagereference>
     <PackageReference Include="Moq" Version="4.13.1" />
     <PackageReference Include="NUnit" Version="3.12.0" />
     <PackageReference Include="Rebus.SqlServer" Version="6.0.0" />
     <packagereference Include="NUnit3TestAdapter" Version="3.14.0"></packagereference>
-    <PackageReference Include="CK.Monitoring" Version="12.2.0" />
+    <PackageReference Include="CK.Monitoring" Version="12.3.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\core\CK.Crs.Runtime\CK.Crs.Runtime.csproj" />
