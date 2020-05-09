@@ -1,6 +1,5 @@
 ﻿
 <RepositoryInfo>
-  <StartingVersionForCSemVer>v1.0.0-alpha.2</StartingVersionForCSemVer>
 
   <SimpleGitVersion StartingVersion="v1.0.0-alpha.2">
     <Branches>
