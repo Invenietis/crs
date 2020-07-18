@@ -1,6 +1,6 @@
 
 version: build{build}
-image: Visual Studio 2017
+image: Visual Studio 2019
 clone_folder: C:\CKli-World\CK-Crs-Projects\CK-Crs
 branches:
   only:
@@ -13,8 +13,8 @@ build_script:
   - dotnet run --project CodeCakeBuilder -nointeraction
 test: off
 install:
-  - ps: ./CodeCakeBuilder/InstallCredentialProvider.ps1
   - cmd: npm install -g npm@6.9.0
+  - ps: Install-Product node 12
 artifacts:
   - path: '**\*.log'
     name: Log file

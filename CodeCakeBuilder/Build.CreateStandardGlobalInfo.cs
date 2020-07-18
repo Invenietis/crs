@@ -10,40 +10,15 @@ namespace CodeCake
         /// Creates a new <see cref="StandardGlobalInfo"/> initialized by the
         /// current environment.
         /// </summary>
-        /// <param name="gitInfo">The git info.</param>
         /// <returns>A new info object.</returns>
-        StandardGlobalInfo CreateStandardGlobalInfo( SimpleRepositoryInfo gitInfo )
+        StandardGlobalInfo CreateStandardGlobalInfo()
         {
-            var result = new StandardGlobalInfo( Cake, gitInfo );
+            var result = new StandardGlobalInfo( Cake, Cake.GetRepositoryInfo().FinalBuildInfo );
             // By default:
-            if( !gitInfo.IsValid )
-            {
-                if( Cake.InteractiveMode() != InteractiveMode.NoInteraction
-                    && Cake.ReadInteractiveOption( "PublishDirtyRepo", "Repository is not ready to be published. Proceed anyway?", 'Y', 'N' ) == 'Y' )
-                {
-                    Cake.Warning( "GitInfo is not valid, but you choose to continue..." );
-                    result.IgnoreNoArtifactsToProduce = true;
-                }
-                else
-                {
-                    // On Appveyor, we let the build run: this gracefully handles Pull Requests.
-                    if( Cake.AppVeyor().IsRunningOnAppVeyor )
-                    {
-                        result.IgnoreNoArtifactsToProduce = true;
-                    }
-                    else
-                    {
-                        Cake.TerminateWithError( "Repository is not ready to be published." );
-                    }
-                }
-                // When the gitInfo is not valid, we do not try to push any packages, even if the build continues
-                // (either because the user choose to continue or if we are on the CI server).
-                // We don't need to worry about feeds here.
-            }
-            else
+            if( result.IsValid )
             {
                 // gitInfo is valid: it is either ci or a release build. 
-                var v = gitInfo.Info.FinalVersion;
+                var v = result.BuildInfo.Version;
                 // If a /LocalFeed/ directory exists above, we publish the packages in it.
                 var localFeedRoot = Cake.FindSiblingDirectoryAbove( Cake.Environment.WorkingDirectory.FullPath, "LocalFeed" );
                 if( localFeedRoot != null )
@@ -79,6 +54,30 @@ namespace CodeCake
                 {
                     result.PushToRemote = true;
                 }
+            }
+            else
+            {
+                if( Cake.InteractiveMode() != InteractiveMode.NoInteraction
+                    && Cake.ReadInteractiveOption( "PublishDirtyRepo", "Repository is not ready to be published. Proceed anyway?", 'Y', 'N' ) == 'Y' )
+                {
+                    Cake.Warning( "Unable to compute a valid version, but you choose to continue..." );
+                    result.IgnoreNoArtifactsToProduce = true;
+                }
+                else
+                {
+                    // On Appveyor, we let the build run: this gracefully handles Pull Requests.
+                    if( Cake.AppVeyor().IsRunningOnAppVeyor )
+                    {
+                        result.IgnoreNoArtifactsToProduce = true;
+                    }
+                    else
+                    {
+                        Cake.TerminateWithError( "Repository is not ready to be published." );
+                    }
+                }
+                // When the gitInfo is not valid, we do not try to push any packages, even if the build continues
+                // (either because the user choose to continue or if we are on the CI server).
+                // We don't need to worry about feeds here.
             }
             return result;
         }

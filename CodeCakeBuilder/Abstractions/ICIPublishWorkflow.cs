@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace CodeCake.Abstractions
 {
-    interface ISolutionProducingArtifact
+    interface ICIPublishWorkflow
     {
         /// <summary>
         /// Pack the solution: it produce the artifacts.

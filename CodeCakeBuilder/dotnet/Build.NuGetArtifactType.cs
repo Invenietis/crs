@@ -5,7 +5,6 @@ using Cake.Common.Tools.DotNetCore.Pack;
 using CodeCake.Abstractions;
 using CSemVer;
 using SimpleGitVersion;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using static CodeCake.Build;
@@ -13,7 +12,7 @@ using static CodeCake.Build;
 namespace CodeCake
 {
 
-    public partial class DotnetSolution : ISolutionProducingArtifact
+    public partial class DotnetSolution : ICIPublishWorkflow
     {
         private ArtifactType _artifactType;
 
@@ -29,11 +28,11 @@ namespace CodeCake
         public void Pack()
         {
             var nugetInfo = _globalInfo.ArtifactTypes.OfType<NuGetArtifactType>().Single();
-            var settings = new DotNetCorePackSettings().AddVersionArguments( _globalInfo.GitInfo, c =>
+            var settings = new DotNetCorePackSettings().AddVersionArguments( _globalInfo.BuildInfo, c =>
             {
                 c.NoBuild = true;
                 c.IncludeSymbols = true;
-                c.Configuration = _globalInfo.BuildConfiguration;
+                c.Configuration = _globalInfo.BuildInfo.BuildConfiguration;
                 c.OutputDirectory = _globalInfo.ReleasesFolder.Path;
             } );
             foreach( var p in nugetInfo.GetNuGetArtifacts() )
@@ -87,11 +86,9 @@ namespace CodeCake
             /// </summary>
             /// <returns>The set of remote NuGet feeds (in practice at most one).</returns>
             protected override IEnumerable<ArtifactFeed> GetRemoteFeeds()
-            {
-                if( GlobalInfo.Version.PackageQuality >= CSemVer.PackageQuality.ReleaseCandidate ) yield return new RemoteFeed( this, "nuget.org", "https://api.nuget.org/v3/index.json", "NUGET_ORG_PUSH_API_KEY" );
-yield return new SignatureVSTSFeed( this, "Signature-OpenSource", "Default" );
-
-            }
+            {if( GlobalInfo.BuildInfo.Version.PackageQuality >= CSemVer.PackageQuality.ReleaseCandidate ) yield return new RemoteFeed( this, "nuget.org", "https://api.nuget.org/v3/index.json", "NUGET_ORG_PUSH_API_KEY" );
+yield return new SignatureVSTSFeed( this, "Signature-OpenSource","NetCore3", "Feeds");
+}
 
             /// <summary>
             /// Gets the local target feeds.
@@ -106,7 +103,7 @@ yield return new SignatureVSTSFeed( this, "Signature-OpenSource", "Default" );
 
             protected override IEnumerable<ILocalArtifact> GetLocalArtifacts()
             {
-                return _solution.ProjectsToPublish.Select( p => new NuGetArtifact( p, GlobalInfo.Version ) );
+                return _solution.ProjectsToPublish.Select( p => new NuGetArtifact( p, GlobalInfo.BuildInfo.Version ) );
             }
         }
     }

@@ -1,3 +1,5 @@
+using Cake.Npm;
+using Cake.Npm.RunScript;
 using Cake.Common.IO;
 using Cake.Common.Solution;
 using Cake.Common.Tools.DotNetCore;
@@ -25,8 +27,7 @@ namespace CodeCake
         {
             Cake.Log.Verbosity = Verbosity.Diagnostic;
 
-            SimpleRepositoryInfo gitInfo = Cake.GetSimpleRepositoryInfo();
-            StandardGlobalInfo globalInfo = CreateStandardGlobalInfo(gitInfo)
+            StandardGlobalInfo globalInfo = CreateStandardGlobalInfo()
                                                 .AddDotnet()
                                                 .AddNPM()
                                                 .SetCIBuildTag();
@@ -37,15 +38,15 @@ namespace CodeCake
                    globalInfo.TerminateIfShouldStop();
                });
 
-            Task("Clean")
-                .IsDependentOn("Check-Repository")
-                .Does(() =>
-                {
-                    globalInfo.GetDotnetSolution().Clean();
-                    Cake.CleanDirectories(globalInfo.ReleasesFolder);
+            Task( "Clean" )
+                .IsDependentOn( "Check-Repository" )
+                .Does( () =>
+                 {
+                     globalInfo.GetDotnetSolution().Clean();
+                     Cake.CleanDirectories( globalInfo.ReleasesFolder );
 
-                    globalInfo.GetNPMSolution().RunInstallAndClean(scriptMustExist: false);
-                });
+                     globalInfo.GetNPMSolution().Clean();
+                 } );
 
 
             Task("Build")
@@ -54,7 +55,7 @@ namespace CodeCake
                 .Does(() =>
                 {
                     globalInfo.GetDotnetSolution().Build();
-                    globalInfo.GetNPMSolution().RunBuild();
+                    globalInfo.GetNPMSolution().Build();
                 });
 
             Task("Unit-Testing")
@@ -66,11 +67,11 @@ namespace CodeCake
                    var testProjects = globalInfo.GetDotnetSolution().Projects.Where(p => p.Name.EndsWith(".Tests")
                                                            && !p.Path.Segments.Contains("Integration"));
                    globalInfo.GetDotnetSolution().Test();
-                   globalInfo.GetNPMSolution().RunTest();
+                   globalInfo.GetNPMSolution().Test();
                });
 
             Task("Create-Packages")
-                //.WithCriteria( () => gitInfo.IsValid )
+                //.WithCriteria( () => globalInfo.IsValid )
                 .IsDependentOn("Unit-Testing")
                 .Does(() =>
                 {
@@ -79,7 +80,7 @@ namespace CodeCake
                 });
 
             Task("Push-Packages")
-                .WithCriteria(() => gitInfo.IsValid)
+                .WithCriteria(() => globalInfo.IsValid)
                 .IsDependentOn("Create-Packages")
                 .Does(() =>
                 {

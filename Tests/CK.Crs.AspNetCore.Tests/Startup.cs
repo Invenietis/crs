@@ -1,18 +1,12 @@
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using CK.Core;
-using System.IO;
-using CK.Monitoring.Handlers;
-using CK.Monitoring;
 using Microsoft.Extensions.Configuration;
 using CK.Crs.Tests;
 using System;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Hosting;
-using System.Threading;
-using CK.Crs.Hosting;
+using static CK.Testing.MonitorTestHelper;
 
 namespace CK.Crs.AspNetCore.Tests
 {
@@ -27,6 +21,7 @@ namespace CK.Crs.AspNetCore.Tests
 
         public void ConfigureServices( IServiceCollection services )
         {
+            services.AddScoped( sp => TestHelper.Monitor );
             services.AddAmbientValues( MapFromBaseCommandType );
             services
                 .AddCrsCore( Commands ) //.Endpoints( Endpoints ) )

@@ -6,6 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".SolutionItems", ".SolutionItems", "{22EC622B-B1FE-4EA5-B828-83D2FF952DA4}"
 	ProjectSection(SolutionItems) = preProject
 		BuildPackPackarium.bat = BuildPackPackarium.bat
+		NuGet.config = NuGet.config
 		RepositoryInfo.xml = RepositoryInfo.xml
 		common\Shared.props = common\Shared.props
 		Common\SharedKey.snk = Common\SharedKey.snk

@@ -38,6 +38,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 throw new ArgumentNullException( nameof( registry ) );
             }
 
+            // This is a trick to apply the registry function more than once.
             var builderDescriptor = services.SingleOrDefault( x => x.ServiceType == typeof( ICrsCoreBuilder ) );
             if( builderDescriptor != null )
             {
@@ -46,6 +47,9 @@ namespace Microsoft.Extensions.DependencyInjection
                 return impl;
             }
 
+            // :(
+            // Here we have a builder that depends on the services into which we
+            // must add a CrsCoreBuilder
             var builder = new CrsConfigurationBuilder( services );
             registry( builder.Registry );
 

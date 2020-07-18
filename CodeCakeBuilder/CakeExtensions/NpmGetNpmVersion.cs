@@ -1,10 +1,9 @@
-using System.Collections.Generic;
-using System.Linq;
 using Cake.Core;
 using Cake.Core.Annotations;
 using Cake.Core.Diagnostics;
 using Cake.Core.IO;
 using Cake.Core.Tooling;
+using System.Linq;
 
 namespace Cake.Npm
 {
@@ -42,10 +41,10 @@ namespace Cake.Npm
             try
             {
                 string output = null;
-                RunCore( new NpmGetNpmVersion() {}, new ProcessSettings(), process =>
-                {
-                    output = process.GetStandardOutput().Single();
-                } );
+                RunCore( new NpmGetNpmVersion() { }, new ProcessSettings(), process =>
+                 {
+                     output = process.GetStandardOutput().Single();
+                 } );
                 return output;
 
             }

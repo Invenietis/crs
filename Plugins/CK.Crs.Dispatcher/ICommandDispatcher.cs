@@ -41,5 +41,9 @@ namespace CK.Crs
         /// <param name="callerId"></param>
         /// <returns></returns>
         Task<TResult> SendAndWaitResult<TCommand, TResult>( Guid commandId, TCommand command, CallerId callerId ) where TCommand : ICommand<TResult>;
+
+        Task<Response> Send( Guid commandId, object command, string commandName, CallerId callerId );
+        Task<Response> Send<TCommand>( Guid commandId, TCommand command, string commandName, CallerId callerId );
+        Task<TResult> SendAndWaitResult<TCommand, TResult>( Guid commandId, TCommand command, string commandName, CallerId callerId ) where TCommand : ICommand<TResult>;
     }
 }

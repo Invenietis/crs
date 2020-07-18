@@ -15,7 +15,7 @@ namespace CK.Crs.InMemory
 
         public string Name => "InMemoryReceiver";
 
-        public bool AcceptCommand( ICommandContext context )
+        public bool AcceptCommand( object command, ICommandContext context )
         {
             bool res = context.Model.HasFireAndForgetTag();
             if( res == false )

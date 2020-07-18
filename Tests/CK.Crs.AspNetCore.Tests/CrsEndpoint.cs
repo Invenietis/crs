@@ -6,6 +6,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,7 +18,6 @@ namespace CK.Crs.AspNetCore.Tests
         public static async Task<CrsEndpoint> Create( PathString path )
         {
             CrsEndpoint endpoint = new CrsEndpoint( path );
-            //await endpoint.Connection.StartAsync().OrTimeout();
             await endpoint.LoadMeta( "/crs" );
             return endpoint;
         }
@@ -27,15 +27,15 @@ namespace CK.Crs.AspNetCore.Tests
         CrsEndpoint( PathString path )
         {
             Path = path;
-
-            var builder = new WebHostBuilder()
-                .UseUrls( "http://localhost:5001" )
-                .UseStartup<Startup>();
-            var server = new TestServer( builder );
-
-            _client = new TestServerClient( server, true );
-
-            Services = server.Host.Services;
+            IHost host = new HostBuilder().ConfigureWebHostDefaults( builder =>
+            {
+                builder.UseUrls( "http://localhost:5001" )
+                .UseStartup<Startup>()
+                .UseTestServer();
+            } ).Start();
+            _client = new TestServerClient( host, true );
+           
+            Services = host.Services;
             //var connectionBuilder = new HubConnectionBuilder()
             //    .WithUrl( _client.BaseAddress + path )
             //    .WithTransport( Microsoft.AspNetCore.Sockets.TransportType.All )

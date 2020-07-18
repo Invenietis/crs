@@ -18,11 +18,11 @@ namespace CK.Crs.AspNetCore
 
         public IEndpointModel EndpointModel { get; }
 
-        public async Task Invoke( HttpContext context )
+        public async Task Invoke( HttpContext context, IActivityMonitor monitor = null )
         {
             using( var endpoint = new HttpCrsEndpoint( context ) )
             {
-                var pipeline = endpoint.CreatePipeline( new ActivityMonitor(), EndpointModel );
+                var pipeline = endpoint.CreatePipeline( monitor ?? new ActivityMonitor(), EndpointModel );
                 if( pipeline.IsValid )
                 {
                     var response = await pipeline.ProcessCommand().ConfigureAwait( false );
@@ -31,23 +31,22 @@ namespace CK.Crs.AspNetCore
                         await WriteResponse( context, response ).ConfigureAwait( false );
                         return;
                     }
-                    pipeline.Monitor.Warn( "No response received from the command receiver..." );
+                    pipeline.Monitor.Warn( "No response received from the command receiver." );
                 }
-                else pipeline.Monitor.Warn( "Unable to receive the command" );
+                else pipeline.Monitor.Warn( "Unable to receive the command. Check previous logs for more information." );
             }
 
             await _next( context ).ConfigureAwait( false );
         }
 
-        private Task WriteResponse( HttpContext context, Response response )
+        private async Task WriteResponse( HttpContext context, Response response )
         {
             var result = EndpointModel.ResponseFormatter.Format( response );
             if( result != null )
             {
                 context.Response.Headers["Content-Type"] = EndpointModel.ResponseFormatter.ContentType;
-                return context.Response.WriteAsync( result );
+                await context.Response.WriteAsync( result );
             }
-            return Task.CompletedTask;
         }
     }
 }
