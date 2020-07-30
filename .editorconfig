@@ -51,5 +51,8 @@ csharp_style_prefer_range_operator = false:suggestion
 # IDE0060: Remove unused parameter
 dotnet_code_quality_unused_parameters = all:silent
 
+# IDE0040: Add accessibility modifiers
+dotnet_style_require_accessibility_modifiers = omit_if_default:silent
+
 # /Signature-Code .editorconfig
 

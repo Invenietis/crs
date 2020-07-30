@@ -37,7 +37,7 @@
 
   <!--<StandardProperties>-->
   <PropertyGroup>
-    <RepositoryUrl>https://github.com/Invenietis/crs.git</RepositoryUrl>
+    <RepositoryUrl>https://github.com/Invenietis/crs</RepositoryUrl>
     <ProductName>CK</ProductName>
     <Company>Signature Code</Company>
     <Authors>Signature Code</Authors>
