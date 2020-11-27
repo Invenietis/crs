@@ -6,6 +6,7 @@ import { CommandResponse } from "./CommandResponse";
 import { ResponseReceiver } from "./ResponseReceiver";
 import { ResponseType } from "./ResponseType";
 import { EndpointCommandMetadata, IResponseFormatter } from './EndpointMetadata';
+import { buildCrsCallErrorMsg, CrsCallError } from "./CrsCallError";
 
 function serializeQueryParams(obj: any) {
     const str = [];
@@ -70,10 +71,10 @@ export class CommandEmitter {
                         throw new Error(`CRS: Received a deferred command response, but no ResponseReceiver handled it. Add an async response receiver (eg. signalr). CommandName: ${commandName}; CommandId: ${x.commandId}`);
                     case ResponseType.ValidationError:
                         console.error(x.payload);
-                        throw new Error(`CRS: Received validation error. CommandName: ${commandName}; CommandId: ${x.commandId}`);
+                        throw new Error(`CRS: Received validation error. CommandName: ${commandName}; CommandId: ${x.commandId}; ${x.payload}`);
                     case ResponseType.InternalErrorResponseType:
                         console.error(x.payload);
-                        throw new Error(`CRS: Received internal error. CommandName: ${commandName}; CommandId: ${x.commandId}`);
+                        throw new CrsCallError( buildCrsCallErrorMsg(commandName, x.payload), x.payload, commandName, commandPayload );
                     default:
                         throw new Error(`CRS: Unknown ResponseType ${x.responseType}. CommandName: ${commandName}; CommandId: ${x.commandId}`);
                 }
