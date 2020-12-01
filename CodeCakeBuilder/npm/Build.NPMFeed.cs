@@ -134,7 +134,7 @@ namespace CodeCake
 
             protected override Task PublishOnePackageAsync( ArtifactPush p )
             {
-                var tags = p.Version.PackageQuality.GetLabels().Select( l => l.ToString().ToLowerInvariant() ).ToList();
+                var tags = p.Version.PackageQuality.GetAllQualities().Select( l => l.ToString().ToLowerInvariant() ).ToList();
                 var project = (NPMPublishedProject)p.LocalArtifact;
                 using( TokenInjector( project ) )
                 {
@@ -238,7 +238,7 @@ namespace CodeCake
                 {
                     bool isNpm = p.Feed.ArtifactType is NPMArtifactType;
                     string uriProtocol = isNpm ? "npm" : "nuget";
-                    foreach( var view in p.Version.PackageQuality.GetLabels() )
+                    foreach( var view in p.Version.PackageQuality.GetAllQualities() )
                     {
                         var url = ProjectName != null ?
                               $"https://pkgs.dev.azure.com/{Organization}/{ProjectName}/_apis/packaging/feeds/{FeedName}/{uriProtocol}/packagesBatch?api-version=5.0-preview.1"
