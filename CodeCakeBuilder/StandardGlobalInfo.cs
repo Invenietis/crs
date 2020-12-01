@@ -1,6 +1,7 @@
 using Cake.Common;
 using Cake.Common.Build;
 using Cake.Common.Build.AppVeyor;
+using Cake.Common.Build.AzurePipelines;
 using Cake.Common.Build.TFBuild;
 using Cake.Common.Diagnostics;
 using Cake.Core;
@@ -208,7 +209,7 @@ namespace CodeCake
                 // On clash, the default Azure/VSTS/VSO build number is used: to ensure that the actual
                 // version will be always be available we need to inject a uniquifier.
                 string buildVersion = AddSkipped( $"{buildInfo.Version}_{DateTime.UtcNow:yyyyMMdd-HHmmss}" );
-                Cake.Information( $"Using VSTS build number: {buildVersion}" );
+                Cake.Information( $"Using Azure build number: {buildVersion}" );
                 return $"##vso[build.updatebuildnumber]{buildVersion}";
             }
 
@@ -220,7 +221,7 @@ namespace CodeCake
             }
 
             IAppVeyorProvider appVeyor = Cake.AppVeyor();
-            ITFBuildProvider vsts = Cake.TFBuild();
+            IAzurePipelinesProvider azure = Cake.AzurePipelines();
             try
             {
                 if( appVeyor.IsRunningOnAppVeyor )  
@@ -228,7 +229,7 @@ namespace CodeCake
                     appVeyor.UpdateBuildVersion( AddSkipped( BuildInfo.Version.ToString() ) );
                 }
 
-                if( vsts.IsRunningOnAzurePipelinesHosted || vsts.IsRunningOnAzurePipelines )
+                if( azure.IsRunningOnAzurePipelinesHosted || azure.IsRunningOnAzurePipelines )
                 {
                     string azureVersion = ComputeAzurePipelineUpdateBuildVersion( BuildInfo );
                     AzurePipelineUpdateBuildVersion( azureVersion );
@@ -236,7 +237,7 @@ namespace CodeCake
             }
             catch( Exception e )
             {
-                Cake.Warning( "Could not set the Build Version !!!" );
+                Cake.Warning( "Could not set the Build Version!" );
                 Cake.Warning( e );
             }
 
