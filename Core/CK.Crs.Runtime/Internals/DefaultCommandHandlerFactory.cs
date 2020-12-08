@@ -29,7 +29,7 @@ namespace CK.Crs
         T CreateInstanceOrDefault<T>( Type instanceType, Func<T> defaultActivator = null ) where T : class
         {
             if( !typeof( T ).IsAssignableFrom( instanceType ) )
-                throw new InvalidOperationException( $"{typeof( T )} is not assignable from {instanceType}" );
+                throw new InvalidOperationException( $"{typeof( T )} is not assignable from {instanceType}." );
 
             T inst = _activator.Create( instanceType ) as T;
             return inst;

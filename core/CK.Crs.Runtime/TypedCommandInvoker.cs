@@ -67,7 +67,7 @@ namespace CK.Crs
                 var handler = handlerObject as ICommandHandler<TCommand>;
                 if( handler == null )
                     throw new ArgumentException(
-                        $"Handler of type {ClassName( context.Model.HandlerType )} must implements ICommandHandler<{ClassName( context.Model.CommandType )}>." );
+                        $"Handler of type {ClassName( context.Model.HandlerType )} must implement ICommandHandler<{ClassName( context.Model.CommandType )}>." );
 
 
                 return handler.HandleAsync( command, context );
@@ -98,9 +98,9 @@ namespace CK.Crs
                 var handler = handlerObject as ICommandHandler<TCommand, TResult>;
                 if( handler == null )
                     throw new ArgumentException(
-                        $"Handler of type {ClassName( context.Model.HandlerType )} must implements ICommandHandler<{ClassName( context.Model.CommandType )},{ClassName( context.Model.ResultType )}>." );
+                        $"Handler of type {ClassName( context.Model.HandlerType )} must implement ICommandHandler<{ClassName( context.Model.CommandType )},{ClassName( context.Model.ResultType )}>." );
 
-                context.Monitor.Trace( $"Handler {context.Model.HandlerType} has been succesfuly resolved." );
+                context.Monitor.Trace( $"Handler {context.Model.HandlerType} has been successfully resolved." );
                 return handler.HandleAsync( command, context );
             }
             catch( Exception ex )
@@ -121,7 +121,7 @@ namespace CK.Crs
         {
             var handlerObject = _factory.CreateHandler( context.Model.HandlerType );
             if( handlerObject == null )
-                throw new ArgumentException( $"Handler of type {context.Model.HandlerType} is impossible to create" );
+                throw new ArgumentException( $"Handler of type {context.Model.HandlerType} is impossible to create." );
             return handlerObject;
         }
 
