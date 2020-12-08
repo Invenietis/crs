@@ -511,7 +511,7 @@ namespace CodeCake
                 var basicAuth = Convert.ToBase64String( Encoding.ASCII.GetBytes( ":" + Cake.InteractiveEnvironmentVariable( SecretKeyName ) ) );
                 foreach( var p in pushes )
                 {
-                    foreach( var view in p.Version.PackageQuality.GetLabels() )
+                    foreach( var view in p.Version.PackageQuality.GetAllQualities() )
                     {
                         var url = ProjectName != null ?
                               $"https://pkgs.dev.azure.com/{Organization}/{ProjectName}/_apis/packaging/feeds/{FeedName}/nuget/packagesBatch?api-version=5.0-preview.1"
