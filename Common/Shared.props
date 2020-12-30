@@ -17,10 +17,12 @@
     <IsInTestsFolder Condition="$(MSBuildProjectDirectory.Contains('\Tests\')) Or $(MSBuildProjectDirectory.Contains('/Tests/'))">true</IsInTestsFolder>
     <!-- SolutionDir is defined by Visual Studio, we unify the behavior here. -->
     <SolutionDir Condition=" '$(SolutionDir)' == '' ">$([System.IO.Path]::GetDirectoryName($([System.IO.Path]::GetDirectoryName($(MSBuildThisFileDirectory)))))/</SolutionDir>
-    <!-- CakeBuild is obsolete: the new standard ContinuousIntegrationBuild should be used. -->
+    <!-- CakeBuild drives the standard ContinuousIntegrationBuild that should be used.
+
+  -->
     <ContinuousIntegrationBuild Condition=" '$(CakeBuild)' == 'true' ">true</ContinuousIntegrationBuild>
-    <!-- Always enable Deterministic build. -->
-    <Deterministic>true</Deterministic>
+    <!-- Enable Deterministic build. https://github.com/clairernovotny/DeterministicBuilds -->
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <!-- Always allow the repository url to appear in the nuget package. -->
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <!-- InformationalVersion is either the Zero version or provided by the CodeCakeBuilder when in CI build). -->
@@ -37,18 +39,23 @@
 
   <!--<StandardProperties>-->
   <PropertyGroup>
-    <RepositoryUrl>https://github.com/Invenietis/crs.git</RepositoryUrl>
+    <RepositoryUrl>https://github.com/Invenietis/crs</RepositoryUrl>
     <ProductName>CK</ProductName>
     <Company>Signature Code</Company>
     <Authors>Signature Code</Authors>
     <Copyright>Copyright Signature-Code 2007-$([System.DateTime]::UtcNow.ToString("yyyy"))</Copyright>
     <RepositoryType>git</RepositoryType>
+    <PackageIcon>PackageIcon.png</PackageIcon>
     <!--Removes annoying Pack warning: The package version ... uses SemVer 2.0.0 or components of SemVer 1.0.0 that are not supported on legacy clients...-->
     <NoWarn>NU5105</NoWarn>
     <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)SharedKey.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
     <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
+    <PackageIcon>PackageIcon.png</PackageIcon>
   </PropertyGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)PackageIcon.png" Pack="true" PackagePath="\" />
+  </ItemGroup>
   <!--</StandardProperties>-->
 
   <!--<ZeroVersion>: When not building from the CI, assemblies always use the ZeroVersion (see CSemVer.InformationalVersion).-->
@@ -61,9 +68,12 @@
   <!--</ZeroVersion>-->
 
   <!--<GenerateDocumentation>: When in IsInTestsFolder and in Release or during ContinuousIntegrationBuild builds. Each project can override GenerateDocumentationFile property. -->
-  <PropertyGroup Condition=" '$(GenerateDocumentationFile)' == '' And '$(IsInTestsFolder)' != 'true' And ('$(ContinuousIntegrationBuild)' == 'true' Or '$(Configuration)' == 'Release') ">
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-  </PropertyGroup>
+  <Target Name="_ResolveCopyLocalNuGetPackagePdbsAndXml" Condition="$(CopyLocalLockFileAssemblies) == true" AfterTargets="ResolveReferences">
+    <ItemGroup>
+      <ReferenceCopyLocalPaths Include="@(ReferenceCopyLocalPaths-&gt;'%(RootDir)%(Directory)%(Filename).pdb')" Condition="'%(ReferenceCopyLocalPaths.NuGetPackageId)' != '' and Exists('%(RootDir)%(Directory)%(Filename).pdb')" />
+      <ReferenceCopyLocalPaths Include="@(ReferenceCopyLocalPaths-&gt;'%(RootDir)%(Directory)%(Filename).xml')" Condition="'%(ReferenceCopyLocalPaths.NuGetPackageId)' != '' and Exists('%(RootDir)%(Directory)%(Filename).xml')" />
+    </ItemGroup>
+  </Target>
   <!--</GenerateDocumentation>-->
 
   <!--<SourceLink>: is enabled only for ContinuousIntegrationBuild build. -->
@@ -71,4 +81,10 @@
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
   </ItemGroup>
   <!--</SourceLink>-->
+
+  <!--<SourceLinkDebuggingWorkaround>: See  https://github.com/dotnet/sdk/issues/1458#issuecomment-695119194 -->
+  <PropertyGroup Condition=" '$(GenerateDocumentationFile)' == '' And '$(IsInTestsFolder)' != 'true' And ('$(ContinuousIntegrationBuild)' == 'true' Or '$(Configuration)' == 'Release') ">
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+  <!--</SourceLinkDebuggingWorkaround>-->
 </Project>
