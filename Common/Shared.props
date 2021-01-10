@@ -54,7 +54,7 @@
     <PackageIcon>PackageIcon.png</PackageIcon>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)PackageIcon.png" Pack="true" PackagePath="\" />
+    <None Include="$(MSBuildThisFileDirectory)PackageIcon.png" Pack="true" PackagePath="\" Visible="false" />
   </ItemGroup>
   <!--</StandardProperties>-->
 
