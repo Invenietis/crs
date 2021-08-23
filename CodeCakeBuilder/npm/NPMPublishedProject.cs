@@ -19,7 +19,7 @@ namespace CodeCake
             _ckliLocalFeedMode = json.CKliLocalFeedMode;
             ArtifactInstance = new ArtifactInstance( new Artifact( "NPM", json.Name ), globalInfo.BuildInfo.Version );
             string tgz = json.Name.Replace( "@", "" ).Replace( '/', '-' );
-            TGZName = tgz + "-" + globalInfo.BuildInfo.Version.WithBuildMetaData( "" ).ToNormalizedString() + ".tgz";
+            TGZName = tgz + "-" + globalInfo.BuildInfo.Version.ToNormalizedString() + ".tgz";
         }
 
         /// <summary>
