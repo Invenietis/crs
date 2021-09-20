@@ -58,9 +58,18 @@ dotnet_code_quality_unused_parameters = all:silent
 
 # IDE0040: Add accessibility modifiers
 dotnet_style_require_accessibility_modifiers = omit_if_default:silent
-
+# Motive: 'private' is one more word that can be omitted.
 
 # CA1034: Nested types should not be visible.
 dotnet_diagnostic.CA1034.severity = none
 # Motive: Nested types can be used to design a good API.
+
+# CA1040: Avoid empty interfaces
+dotnet_diagnostic.CA1040.severity = none
+# Motive: Empty interfaces are "interface markers" and are very useful.
+
+# CA1508: Avoid dead conditional code
+dotnet_diagnostic.CA1508.severity = none
+# Motive: Too much false positive: if you follow the suggestion you will remove useful code!
+
 # /Signature-Code .editorconfig
