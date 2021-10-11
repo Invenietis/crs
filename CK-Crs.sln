@@ -33,6 +33,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{F15FAD1E-E5E2-4AFF-927F-8FD756CEED6C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{0FF89577-82E3-496D-853F-B34BABCC03D8}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\TestHelper.config = Tests\TestHelper.config
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CK.Crs.Tests", "Tests\CK.Crs.Tests\CK.Crs.Tests.csproj", "{6D7BCE30-0C4A-49D8-82D8-361A8410228E}"
 EndProject
