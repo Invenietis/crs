@@ -1,4 +1,4 @@
-import { HubConnection, HubConnectionBuilder, LogLevel } from "@aspnet/signalr";
+import { HubConnection, HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 
 export class HubConnectionManager {
     private readonly hubConnection: HubConnection;
