@@ -62,3 +62,6 @@ CodeCakeBuilder/UnitTestsDone.*.txt
 $StObjGen/
 CodeCakeBuilder/[Rr]elease/
 CodeCakeBuilder/[Rr]eleases/
+
+# Using genversion in the package.json build script to generate this file.
+CrsEndpoint.version.ts

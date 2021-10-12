@@ -118,7 +118,9 @@ namespace CK.Crs.AspNetCore.Tests
 
                             // TODO: Listen to ReceiveResult and return result
                             // Like the Connection.On() below
-                            throw new NotImplementedException();
+
+                            // THIS THROWS with the new Microsoft.AspNetCore.SignalR.
+                            //throw new NotImplementedException();
                         }
                         catch( Exception ex )
                         {
