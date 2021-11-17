@@ -1,7 +1,6 @@
-﻿
+﻿<?xml version="1.0" encoding="utf-8"?>
 <RepositoryInfo>
-
-  <SimpleGitVersion>
+  <SimpleGitVersion StartingVersion="9.0.0-alpha">
     <Branches>
       <Branch Name="develop" CIVersionMode="LastReleaseBased" VersionName="develop" />
     </Branches>
