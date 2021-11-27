@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace CodeCake
 {
@@ -18,13 +19,13 @@ namespace CodeCake
         /// </summary>
         /// <param name="args">The command line arguments.</param>
         /// <returns>An error code (typically negative), 0 on success.</returns>
-        static int Main( string[] args )
+        static async Task<int> Main( string[] args )
         {
-            string solutionDirectory = args.Contains( SolutionDirectoryIsCurrentDirectoryParameter, StringComparer.OrdinalIgnoreCase )
+            string? solutionDirectory = args.Contains( SolutionDirectoryIsCurrentDirectoryParameter, StringComparer.OrdinalIgnoreCase )
                                         ? Environment.CurrentDirectory
                                         : null;
             var app = new CodeCakeApplication( solutionDirectory );
-            RunResult result = app.Run( args.Where( a => !StringComparer.OrdinalIgnoreCase.Equals( a, SolutionDirectoryIsCurrentDirectoryParameter ) ) );
+            RunResult result = await app.RunAsync( args.Where( a => !StringComparer.OrdinalIgnoreCase.Equals( a, SolutionDirectoryIsCurrentDirectoryParameter ) ) );
             if( result.InteractiveMode == InteractiveMode.Interactive )
             {
                 Console.WriteLine();

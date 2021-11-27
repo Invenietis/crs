@@ -2,7 +2,6 @@ using Cake.Common;
 using Cake.Common.Build;
 using Cake.Common.Build.AppVeyor;
 using Cake.Common.Build.AzurePipelines;
-using Cake.Common.Build.TFBuild;
 using Cake.Common.Diagnostics;
 using Cake.Core;
 using CK.Text;
@@ -25,7 +24,7 @@ namespace CodeCake
     {
         readonly ICakeContext _ctx;
         readonly HashSet<ICIWorkflow> _solutions = new HashSet<ICIWorkflow>();
-        List<ArtifactPush> _artifactPushes;
+        List<ArtifactPush>? _artifactPushes;
         bool _ignoreNoArtifactsToProduce;
 
         static StandardGlobalInfo()
@@ -97,7 +96,7 @@ namespace CodeCake
         /// Gets or sets the local feed path.
         /// Can be null if no local feed exists or if local feed should be ignored.
         /// </summary>
-        public string LocalFeedPath { get; set; }
+        public string? LocalFeedPath { get; set; }
 
         /// <summary>
         /// Gets or sets whether <see cref="NoArtifactsToProduce"/> should be ignored.
@@ -187,11 +186,10 @@ namespace CodeCake
         /// Simply calls <see cref="ArtifactType.PushAsync(IEnumerable{ArtifactPush})"/> on each <see cref="ArtifactTypes"/>
         /// with their correct typed artifacts.
         /// </summary>
-        public void PushArtifacts( IEnumerable<ArtifactPush> pushes = null )
+        public Task PushArtifactsAsync( IEnumerable<ArtifactPush>? pushes = null )
         {
             if( pushes == null ) pushes = GetArtifactPushList();
-            var tasks = ArtifactTypes.Select( t => t.PushAsync( pushes.Where( a => a.Feed.ArtifactType == t ) ) ).ToArray();
-            Task.WaitAll( tasks );
+            return Task.WhenAll( ArtifactTypes.Select( t => t.PushAsync( pushes.Where( a => a.Feed.ArtifactType == t ) ) ) );
         }
 
         /// <summary>
@@ -229,7 +227,7 @@ namespace CodeCake
                     appVeyor.UpdateBuildVersion( AddSkipped( BuildInfo.Version.ToString() ) );
                 }
 
-                if( azure.IsRunningOnAzurePipelinesHosted || azure.IsRunningOnAzurePipelines )
+                if( azure.IsRunningOnAzurePipelines )
                 {
                     string azureVersion = ComputeAzurePipelineUpdateBuildVersion( BuildInfo );
                     AzurePipelineUpdateBuildVersion( azureVersion );

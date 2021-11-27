@@ -1,6 +1,6 @@
 using Cake.Common.Diagnostics;
 using Cake.Common.Solution;
-using Cake.Common.Tools.DotNetCore;
+using Cake.Common.Tools.DotNet;
 using Cake.Common.Tools.DotNetCore.Pack;
 using CodeCake.Abstractions;
 using CSemVer;
@@ -14,7 +14,7 @@ namespace CodeCake
 
     public partial class DotnetSolution : ICIPublishWorkflow
     {
-        private ArtifactType _artifactType;
+        private ArtifactType? _artifactType;
 
         public ArtifactType ArtifactType
         {
@@ -38,7 +38,7 @@ namespace CodeCake
             foreach( var p in nugetInfo.GetNuGetArtifacts() )
             {
                 _globalInfo.Cake.Information( p.ArtifactInstance );
-                _globalInfo.Cake.DotNetCorePack( p.Project.Path.FullPath, settings );
+                _globalInfo.Cake.DotNetPack( p.Project.Path.FullPath, settings );
             }
         }
     }
