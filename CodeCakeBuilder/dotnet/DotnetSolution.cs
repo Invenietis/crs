@@ -7,7 +7,7 @@ using Cake.Common.Tools.DotNetCore.Test;
 using Cake.Common.Tools.NUnit;
 using Cake.Core;
 using Cake.Core.IO;
-using CK.Text;
+using CK.Core;
 using CodeCake.Abstractions;
 using SimpleGitVersion;
 using System;

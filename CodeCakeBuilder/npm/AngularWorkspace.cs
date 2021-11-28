@@ -1,5 +1,5 @@
 using Cake.Common.Diagnostics;
-using CK.Text;
+using CK.Core;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;

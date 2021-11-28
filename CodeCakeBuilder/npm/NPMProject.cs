@@ -1,7 +1,7 @@
 using Cake.Common.Diagnostics;
 using Cake.Npm;
 using Cake.Npm.RunScript;
-using CK.Text;
+using CK.Core;
 using CSemVer;
 using Newtonsoft.Json.Linq;
 using System;

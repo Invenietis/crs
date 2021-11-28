@@ -1,7 +1,7 @@
 using Cake.Common.IO;
 using Cake.Npm;
 using Cake.Npm.Pack;
-using CK.Text;
+using CK.Core;
 using CodeCake.Abstractions;
 using Newtonsoft.Json.Linq;
 using System;

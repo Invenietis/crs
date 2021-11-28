@@ -1,6 +1,6 @@
 using Cake.Common.Diagnostics;
 using Cake.Core;
-using CK.Text;
+using CK.Core;
 using CodeCake.Abstractions;
 using CSemVer;
 using NuGet.Common;
@@ -162,8 +162,8 @@ namespace CodeCake
                 public void LogError( string data ) { lock( _lock ) _ctx.Error( $"NuGet: {data}" ); }
                 public void LogSummary( string data ) { lock( _lock ) _ctx.Information( $"NuGet: {data}" ); }
                 public void LogInformationSummary( string data ) { lock( _lock ) _ctx.Information( $"NuGet: {data}" ); }
-                public void Log( LogLevel level, string data ) { lock( _lock ) _ctx.Information( $"NuGet ({level}): {data}" ); }
-                public Task LogAsync( LogLevel level, string data )
+                public void Log( NuGet.Common.LogLevel level, string data ) { lock( _lock ) _ctx.Information( $"NuGet ({level}): {data}" ); }
+                public Task LogAsync( NuGet.Common.LogLevel level, string data )
                 {
                     Log( level, data );
                     return System.Threading.Tasks.Task.CompletedTask;
