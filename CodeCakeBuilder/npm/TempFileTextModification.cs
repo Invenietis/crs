@@ -98,8 +98,8 @@ namespace CodeCake
             {
                 if( json.ContainsKey( dependencyPropName ) )
                 {
-                    JObject dependencies = (JObject)json[dependencyPropName];
-                    foreach( KeyValuePair<string, JToken> keyValuePair in dependencies )
+                    JObject dependencies = (JObject)json[dependencyPropName]!;
+                    foreach( KeyValuePair<string, JToken?> keyValuePair in dependencies )
                     {
                         if( npmSolution.AllPublishedProjects.FirstOrDefault( x => x.PackageJson.Name == keyValuePair.Key )
                             is NPMPublishedProject localProject )

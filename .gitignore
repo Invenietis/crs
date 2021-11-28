@@ -53,8 +53,6 @@ crs-store-slim.xml
 
 [Bb]in/
 [Oo]bj/
-[Rr]elease/
-[Rr]eleases/
 .vs/
 Tests/**/TestResult*.xml
 Tests/**/Logs/
@@ -62,3 +60,8 @@ Tests/**/CKSetup-WorkingDir/
 CodeCakeBuilder/MemoryKey.*.txt
 CodeCakeBuilder/UnitTestsDone.*.txt
 $StObjGen/
+CodeCakeBuilder/[Rr]elease/
+CodeCakeBuilder/[Rr]eleases/
+
+# Using genversion in the package.json build script to generate this file.
+CrsEndpoint.version.ts

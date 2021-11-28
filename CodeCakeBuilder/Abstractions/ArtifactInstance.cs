@@ -47,7 +47,7 @@ namespace CodeCake.Abstractions
         /// <returns>True when equals, false otherwise.</returns>
         public bool Equals( ArtifactInstance other ) => Artifact == other.Artifact && Version == other.Version;
 
-        public override bool Equals( object obj ) => obj is ArtifactInstance a ? Equals( a ) : false;
+        public override bool Equals( object? obj ) => obj is ArtifactInstance a ? Equals( a ) : false;
 
         public override int GetHashCode() => Version.GetHashCode() ^ Artifact.GetHashCode();
 

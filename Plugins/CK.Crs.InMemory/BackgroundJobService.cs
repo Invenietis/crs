@@ -21,61 +21,68 @@ namespace CK.Crs.InMemory
             _cancellationToken = new CancellationTokenSource();
             _proxy = new Task( async () =>
             {
-                monitor.Trace( "CommandJobQueue running..." );
-                while( _commandJobQueue.CanGetNextJob && !_cancellationToken.IsCancellationRequested )
+                try
                 {
-                    monitor.Trace( "Waiting for the next command to take..." );
-                    var job = _commandJobQueue.GetNextJob( _cancellationToken.Token );
-                    if( job != null )
+                    monitor.Trace( $"The CRS {nameof( BackgroundJobService )} queue is running." );
+                    while( _commandJobQueue.CanGetNextJob && !_cancellationToken.IsCancellationRequested )
                     {
-                        using( monitor.OpenTrace( $" Command {job.CommandContext.Model.Name} - {job.CommandContext.CommandId} taken" ) )
+                        monitor.Trace( "Waiting for the next command." );
+                        var job = _commandJobQueue.GetNextJob( _cancellationToken.Token );
+                        if( job != null )
                         {
-                            try
+                            using( monitor.OpenTrace( $"Processing command: {job.CommandContext.Model.Name}. CommandId: {job.CommandContext.CommandId}." ) )
                             {
-                                using( var scope = services.GetRequiredService<IServiceScopeFactory>().CreateScope() )
+                                try
                                 {
-                                    using( job.CommandContext.ChangeMonitor() )
+                                    using( var scope = services.GetRequiredService<IServiceScopeFactory>().CreateScope() )
                                     {
-                                        ITypedCommandHandlerInvoker invoker = scope.ServiceProvider.GetRequiredService<ITypedCommandHandlerInvoker>();
-                                        IResultReceiverProvider resultStrategy = scope.ServiceProvider.GetRequiredService<IResultReceiverProvider>();
-                                        await HandleCommandJobAsync( monitor, job, invoker, resultStrategy );
+                                        using( job.CommandContext.ChangeMonitor() )
+                                        {
+                                            ITypedCommandHandlerInvoker invoker = scope.ServiceProvider.GetRequiredService<ITypedCommandHandlerInvoker>();
+                                            IResultReceiverProvider resultStrategy = scope.ServiceProvider.GetRequiredService<IResultReceiverProvider>();
+                                            await HandleCommandJobAsync( monitor, job, invoker, resultStrategy );
+                                        }
                                     }
                                 }
-                            }
-                            catch( Exception ex )
-                            {
-                                monitor.Error( ex );
+                                catch( Exception ex )
+                                {
+                                    monitor.Error( ex );
+                                }
                             }
                         }
                     }
+                    monitor.Trace( $"The CRS {nameof( BackgroundJobService )} queue is stopping." );
                 }
-                monitor.Trace( "CommandJobQueue stoping..." );
+                catch( Exception ex )
+                {
+                    monitor.Error( $"Error in CK.Crs.BackgroundJobService", ex );
+                }
             } );
             _proxy.Start();
         }
 
         protected virtual async Task HandleCommandJobAsync( IActivityMonitor monitor, ICommandJob job, ITypedCommandHandlerInvoker invoker, IResultReceiverProvider resultStrategy )
         {
-            monitor.Trace( "Invoking the command..." );
+            monitor.Trace( "Invoking command." );
 
             var resultReceiver = resultStrategy.GetResultReceiver( job.CommandContext );
-            if( resultReceiver == null ) monitor.Warn( "No result receiver available for this command. Unable to communicate the result..." );
+            if( resultReceiver == null ) monitor.Warn( "No result receiver available for this command. No result will be sent back." );
 
             try
             {
                 object result = await invoker.Invoke( job.Command, job.CommandContext ).ConfigureAwait( false );
                 if( resultReceiver != null )
                 {
-                    monitor.Trace( "Sending the result." );
+                    monitor.Trace( "Sending result." );
                     await resultReceiver.InvokeGenericResult( result, job.CommandContext ).ConfigureAwait( false );
                 }
             }
             catch( Exception ex )
             {
-                monitor.Trace( "Error during command invokation." );
+                monitor.Trace( "Error during command invocation." );
                 if( resultReceiver != null )
                 {
-                    monitor.Trace( "Sending the result." );
+                    monitor.Trace( "Sending result." );
                     await resultReceiver.ReceiveError( ex, job.CommandContext ).ConfigureAwait( false );
                 }
             }
@@ -83,9 +90,28 @@ namespace CK.Crs.InMemory
 
         public virtual void Stop( IActivityMonitor monitor, IServiceProvider services, CancellationToken cancellationToken = default( CancellationToken ) )
         {
-            _cancellationToken?.Cancel();
-            _cancellationToken?.Dispose();
-            _proxy?.Dispose();
+            try
+            {
+                _cancellationToken?.Cancel();
+                _cancellationToken?.Dispose();
+                _cancellationToken = null;
+
+                try
+                {
+                    _proxy.GetAwaiter().GetResult();
+
+                }
+                catch( OperationCanceledException ocex )
+                {
+                    monitor.Debug( $"Ignoring caught {ocex.GetType().Name}." );
+                }
+                _proxy?.Dispose();
+                _proxy = null;
+            }
+            catch( Exception ex )
+            {
+                monitor.Error( $"Caught while stopping {nameof( BackgroundJobService )}.", ex );
+            }
         }
     }
 }

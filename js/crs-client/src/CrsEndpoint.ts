@@ -6,6 +6,7 @@ import { AmbientValuesProvider } from './AmbientValuesProvider';
 import { CrsEndpointConfiguration } from './CrsEndpointConfiguration';
 import { ResponseReceiver } from './ResponseReceiver';
 import { defaultMetadataOptions } from './MetadataOptions';
+import { version } from "./CrsEndpoint.version";
 
 export class CrsEndpoint {
     private readonly config: CrsEndpointConfiguration;
@@ -94,4 +95,8 @@ export class CrsEndpoint {
     private internalReloadMetadata(): Promise<EndpointMetadata> {
         return this.metadataService.reloadMetadata();
     }
+
+    /** Gets this client version. */
+    public static get clientVersion(): string { return version; }
+
 }

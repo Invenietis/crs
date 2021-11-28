@@ -1,5 +1,5 @@
 import { ResponseReceiver, CommandResponse, ResponseType, EndpointCommandMetadata } from "@signature/crs-client";
-import { LogLevel } from '@aspnet/signalr';
+import { LogLevel } from '@microsoft/signalr';
 import { HubConnectionManager } from "./HubConnectionManager";
 import { ResponseProxy } from "./ResponseProxy";
 

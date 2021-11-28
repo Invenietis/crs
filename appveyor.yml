@@ -1,6 +1,6 @@
-
+﻿
 version: build{build}
-image: Visual Studio 2019
+image: Visual Studio 2022
 clone_folder: C:\CKli-World\CK-Crs-Projects\CK-Crs
 branches:
   only:
@@ -12,15 +12,7 @@ environment:
 build_script:
   - dotnet run --project CodeCakeBuilder -nointeraction
 test: off
-install:
-  - cmd: npm install -g npm@6.9.0
-  - ps: Install-Product node 12
-artifacts:
-  - path: '**\*.log'
-    name: Log file
-  - path: '**\*.trx'
-    name: Visual studio test results file
-  - path: '**\Tests\**\TestResult*.xml'
-    name: NUnit tests result files
-  - path: '**Tests\**\Logs\**\*'
-    name: Log files
+on_finish:
+  - ps: 'Get-ChildItem -Recurse *.log | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name -DeploymentName ''Log files'' }'
+  - ps: 'Get-ChildItem -Recurse **\Tests\**\TestResult*.xml | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name -DeploymentName ''NUnit tests result files'' }'
+  - ps: 'Get-ChildItem -Recurse **Tests\**\Logs\**\* | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name -DeploymentName ''Log files'' }'

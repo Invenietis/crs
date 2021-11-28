@@ -1,6 +1,6 @@
 using Cake.Common.Diagnostics;
 using Cake.Common.Solution;
-using Cake.Common.Tools.DotNetCore;
+using Cake.Common.Tools.DotNet;
 using Cake.Common.Tools.DotNetCore.Pack;
 using CodeCake.Abstractions;
 using CSemVer;
@@ -14,7 +14,7 @@ namespace CodeCake
 
     public partial class DotnetSolution : ICIPublishWorkflow
     {
-        private ArtifactType _artifactType;
+        private ArtifactType? _artifactType;
 
         public ArtifactType ArtifactType
         {
@@ -38,7 +38,7 @@ namespace CodeCake
             foreach( var p in nugetInfo.GetNuGetArtifacts() )
             {
                 _globalInfo.Cake.Information( p.ArtifactInstance );
-                _globalInfo.Cake.DotNetCorePack( p.Project.Path.FullPath, settings );
+                _globalInfo.Cake.DotNetPack( p.Project.Path.FullPath, settings );
             }
         }
     }
@@ -87,13 +87,13 @@ namespace CodeCake
             /// <returns>The set of remote NuGet feeds (in practice at most one).</returns>
             protected override IEnumerable<ArtifactFeed> GetRemoteFeeds()
             {if( GlobalInfo.BuildInfo.Version.PackageQuality >= CSemVer.PackageQuality.ReleaseCandidate ) yield return new RemoteFeed( this, "nuget.org", "https://api.nuget.org/v3/index.json", "NUGET_ORG_PUSH_API_KEY" );
-yield return new SignatureVSTSFeed( this, "Signature-OpenSource","NetCore3", "Feeds");
+if( GlobalInfo.BuildInfo.Version.PackageQuality <= CSemVer.PackageQuality.Stable ) yield return new SignatureVSTSFeed( this, "Signature-OpenSource","NetCore3", "Feeds");
 }
 
             /// <summary>
             /// Gets the local target feeds.
             /// </summary>
-            /// <returns>The set of remote NuGet feeds (in practice at moste one).</returns>
+            /// <returns>The set of remote NuGet feeds (in practice at most one).</returns>
             protected override IEnumerable<ArtifactFeed> GetLocalFeeds()
             {
                 return new NuGetHelper.NuGetFeed[] {

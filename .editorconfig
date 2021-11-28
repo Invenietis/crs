@@ -1,58 +1,89 @@
 # Signature-Code .editorconfig
 # See also: https://github.com/dotnet/roslyn/blob/master/src/Workspaces/CSharp/Portable/Formatting/CSharpFormattingOptions.cs
 # 20170522
- 
+
 root = true
- 
+
 [*]
 charset = utf-8
 indent_style = space
 indent_size = 2
 insert_final_newline = true
 trim_trailing_whitespace = true
- 
+
+
 [*.{cs,js,ts,sql,tql}]
 indent_size = 4
 end_of_line = crlf
- 
+
 [*.cs]
 csharp_space_between_method_call_parameter_list_parentheses = true
 csharp_space_between_method_declaration_parameter_list_parentheses = true
 csharp_space_after_keywords_in_control_flow_statements = false
 csharp_space_between_parentheses = control_flow_statements
- 
+# Motive: May be weird at first, but it improve readability.
+
 # internal and private fields should be _camelCase
 dotnet_naming_rule.camel_case_for_private_internal_fields.severity = suggestion
 dotnet_naming_rule.camel_case_for_private_internal_fields.symbols  = private_internal_fields
 dotnet_naming_rule.camel_case_for_private_internal_fields.style    = camel_case_underscore_style
- 
+
 dotnet_naming_symbols.private_internal_fields.applicable_kinds = field
 dotnet_naming_symbols.private_internal_fields.applicable_accessibilities = private, internal
- 
+
 dotnet_naming_style.camel_case_underscore_style.required_prefix = _
 dotnet_naming_style.camel_case_underscore_style.capitalization = camel_case
+# Motive: It follow the C# style guideline.
 
-# This warning is irrelevant because we only use managed objects and we SHOULD always do.
+# CA1063: Implement IDisposable Correctly
+dotnet_diagnostic.CA1063.severity = none
+# Motive: This warning is irrelevant because we only use managed objects and we SHOULD always do.
 # The dispose pattern (see here https://docs.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-dispose) may be useful only in some edge case,
 # If you feel like you NEED to handle an unmanaged resource, please let's talk about this first: it may well be a bad idea...
 # and most of the time (99.99...%) a simple IDisposable implementation IS okay.
-# CA1063: Implement IDisposable Correctly
-dotnet_diagnostic.CA1063.severity = none
 
-# IDE0063: Use simple 'using' statement. Most of the time, the 'not simple' using scope is better.
+# IDE0063: Use simple 'using' statement.
 csharp_prefer_simple_using_statement = false:none
+# Motive: Most of the time, the 'not simple' using scope is better.
 
-# CA1031: Do not catch general exception types
+# CA1031: Do not catch general exception types.
 dotnet_diagnostic.CA1031.severity = none
 
-# IDE0057: Use range operator. Use it if you want but this is not a suggestion.
+# IDE0057: Use range operator.
 csharp_style_prefer_range_operator = false:suggestion
+# Motive: Use it if you want but this is should not show a message.
 
 # IDE0060: Remove unused parameter
 dotnet_code_quality_unused_parameters = all:silent
+# Motive: Emit messages where the parameter are necessary.
 
 # IDE0040: Add accessibility modifiers
 dotnet_style_require_accessibility_modifiers = omit_if_default:silent
+# Motive: 'private' is one more word that can be omitted.
+
+# CA1034: Nested types should not be visible.
+dotnet_diagnostic.CA1034.severity = none
+# Motive: Nested types can be used to design a good API.
+
+# CA1040: Avoid empty interfaces
+dotnet_diagnostic.CA1040.severity = none
+# Motive: Empty interfaces are "interface markers" and are very useful.
+
+# CA1508: Avoid dead conditional code
+dotnet_diagnostic.CA1508.severity = none
+# Motive: Too much false positive: if you follow the suggestion you will remove useful code!
+# Has 45 issues open for this analyzers as 21/08/2021
+
+
+# VSTHRD003: Avoid awaiting foreign Tasks
+dotnet_diagnostic.VSTHRD003.severity = none
+
+
+dotnet_diagnostic.CA2100.severity=warning
+dotnet_diagnostic.CA2012.severity=warning
+dotnet_diagnostic.CA2011.severity=error
+dotnet_diagnostic.CA1041.severity=error
+dotnet_diagnostic.CA1068.severity=warning
+dotnet_diagnostic.CA2016.severity=warning
 
 # /Signature-Code .editorconfig
-
