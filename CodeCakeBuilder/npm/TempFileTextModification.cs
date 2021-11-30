@@ -1,6 +1,6 @@
 using Cake.Common.Diagnostics;
 using Cake.Core;
-using CK.Text;
+using CK.Core;
 using CSemVer;
 using Newtonsoft.Json.Linq;
 using System;

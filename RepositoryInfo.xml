@@ -1,5 +1,4 @@
-﻿
-<RepositoryInfo>
+﻿<RepositoryInfo>
   <SimpleGitVersion StartingVersion="9.0.0-alpha">
     <Branches>
       <Branch Name="develop" CIVersionMode="LastReleaseBased" VersionName="develop" />

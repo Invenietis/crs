@@ -2,7 +2,6 @@
   <Import Project="../../common/shared.props" />
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
