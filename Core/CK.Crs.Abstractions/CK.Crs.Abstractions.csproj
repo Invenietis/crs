@@ -4,7 +4,7 @@
     <TargetFrameworks>net6.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CK.ActivityMonitor.SimpleSender" Version="0.0.0--03lvnn5-local+v15.0.0-a01" />
-    <PackageReference Include="CK.AmbientValues" Version="0.0.0--03lvnn5-local" />
+    <PackageReference Include="CK.ActivityMonitor.SimpleSender" Version="15.0.0-a01-00-0005-develop" />
+    <PackageReference Include="CK.AmbientValues" Version="0.0.0--03lx5p5-develop" />
   </ItemGroup>
 </Project>
