@@ -14,7 +14,7 @@ namespace CK.Crs.Samples.AspNetCoreApp
                     .UseContentRoot( Directory.GetCurrentDirectory() )
                     .UseStartup<Startup>()
               )
-                .UseMonitoring()
+                .UseCKMonitoring()
                 .Build()
                 .RunAsync();
         }
