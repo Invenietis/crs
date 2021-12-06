@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using System.Text;
 using SimpleGitVersion;
+using Cake.Yarn;
 
 namespace CodeCake
 {
@@ -17,31 +18,25 @@ namespace CodeCake
     public class NPMProject
     {
 
-        protected NPMProject(
-            StandardGlobalInfo globalInfo,
-            NPMSolution npmSolution,
-            SimplePackageJsonFile json,
-            NormalizedPath outputPath )
+        protected NPMProject( NPMSolution npmSolution,
+                              SimplePackageJsonFile json,
+                              NormalizedPath outputPath )
         {
             DirectoryPath = json.JsonFilePath.RemoveLastPart();
             PackageJson = json;
             OutputPath = outputPath;
             NPMRCPath = DirectoryPath.AppendPart( ".npmrc" );
-            GlobalInfo = globalInfo;
             NpmSolution = npmSolution;
         }
 
-        protected static NPMProject CreateNPMProject(
-            StandardGlobalInfo globalInfo,
-            NPMSolution npmSolution,
-            SimplePackageJsonFile json,
-            NormalizedPath outputPath )
+        protected static NPMProject CreateNPMProject( NPMSolution npmSolution,
+                                                      SimplePackageJsonFile json,
+                                                      NormalizedPath outputPath )
         {
-            return new NPMProject( globalInfo, npmSolution, json, outputPath );
+            return new NPMProject( npmSolution, json, outputPath );
         }
 
-
-        public StandardGlobalInfo GlobalInfo { get; }
+        public StandardGlobalInfo GlobalInfo => NpmSolution.GlobalInfo;
 
         public NPMSolution NpmSolution { get; }
 
@@ -56,18 +51,31 @@ namespace CodeCake
         public NormalizedPath NPMRCPath { get; }
 
         /// <summary>
-        /// Runs "npm ci" (instead of "npm install") on this project.
+        /// Runs "npm ci" (instead of "npm install") on this project or
+        /// "yarn install --frozen-lockfile" is <see cref="NPMSolution.UseYarn"/> is true.
         /// See https://docs.npmjs.com/cli/ci.html.
         /// </summary>
         /// <param name="globalInfo">The global information object.</param>
         public virtual void RunNpmCi()
         {
-            GlobalInfo.Cake.Information( $"Running 'npm ci' in {DirectoryPath.Path}" );
-            GlobalInfo.Cake.NpmCi( settings =>
+            if( NpmSolution.UseYarn )
             {
-                settings.LogLevel = NpmLogLevel.Warn;
-                settings.WorkingDirectory = DirectoryPath.Path;
-            } );
+                GlobalInfo.Cake.Information( $"Running 'yarn install --immutable' in {DirectoryPath.Path}" );
+                GlobalInfo.Cake.Yarn().Install( settings =>
+                {
+                    settings.WithArgument( "--immutable" );
+                    settings.WorkingDirectory = DirectoryPath.Path;
+                } );
+            }
+            else
+            {
+                GlobalInfo.Cake.Information( $"Running 'npm ci' in {DirectoryPath.Path}" );
+                GlobalInfo.Cake.NpmCi( settings =>
+                {
+                    settings.LogLevel = NpmLogLevel.Warn;
+                    settings.WorkingDirectory = DirectoryPath.Path;
+                } );
+            }
         }
 
         /// <summary>
@@ -111,7 +119,6 @@ namespace CodeCake
         /// is thrown. To emit a Cake warning (and return null) if the script can't be found,
         /// let <paramref name="scriptMustExist"/> be false.
         /// </summary>
-        /// <param name="globalInfo">The global info object.</param>
         /// <param name="name">Base script name to look for.</param>
         /// <param name="scriptMustExist">
         /// False to emit a warning and return null if the script doesn't exist.
@@ -120,7 +127,7 @@ namespace CodeCake
         /// <returns>The best script (or null if it doesn't exist and <paramref name="scriptMustExist"/> is false).</returns>
         public string FindBestScript( string name, bool scriptMustExist = true )
         {
-            string n = FindBestScript( name, scriptMustExist ? (bool?)true : null );
+            string n = FindBestScript( name, scriptMustExist ? true : null );
             if( n == null )
             {
                 GlobalInfo.Cake.Warning( $"Missing script '{name}' in '{PackageJson.JsonFilePath}'." );
@@ -133,9 +140,9 @@ namespace CodeCake
         /// </summary>
         /// <param name="cleanScriptName">Clean script name.</param>
         /// <returns></returns>
-        public virtual void RunClean()
+        public virtual void RunClean( string cleanScriptName = "clean" )
         {
-            RunScript( "clean", false, true );
+            RunScript( cleanScriptName, false, true );
         }
 
         /// <summary>
@@ -175,13 +182,13 @@ namespace CodeCake
         /// <summary>
         /// Runs "build" script: see <see cref="RunScript(string, bool)"/>.
         /// </summary>
-        /// <param name="globalInfo">The global information object.</param>
+        /// <param name="buildScriptName">The build script name.</param>
         /// <param name="scriptMustExist">
         /// False to only emit a warning and return false if the script doesn't exist instead of
         /// throwing an exception.
         /// </param>
         /// <returns>False if the script doesn't exist (<paramref name="scriptMustExist"/> is false), otherwise true.</returns>
-        public bool RunBuild( bool scriptMustExist = true ) => RunScript( "build", false, scriptMustExist );
+        public bool RunBuild( string buildScriptName = "build", bool scriptMustExist = true ) => RunScript( buildScriptName, false, scriptMustExist );
 
         /// <summary>
         /// Runs "test" script: see <see cref="RunScript(string, bool)"/>.
