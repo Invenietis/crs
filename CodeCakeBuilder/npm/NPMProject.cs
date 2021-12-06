@@ -188,7 +188,7 @@ namespace CodeCake
         /// throwing an exception.
         /// </param>
         /// <returns>False if the script doesn't exist (<paramref name="scriptMustExist"/> is false), otherwise true.</returns>
-        public bool RunBuild( string buildScriptName = "build", bool scriptMustExist = true ) => RunScript( "buildScriptName", false, scriptMustExist );
+        public bool RunBuild( string buildScriptName = "build", bool scriptMustExist = true ) => RunScript( buildScriptName, false, scriptMustExist );
 
         /// <summary>
         /// Runs "test" script: see <see cref="RunScript(string, bool)"/>.
