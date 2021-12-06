@@ -23,7 +23,7 @@ namespace CodeCake
                 Add( p );
             }
         }
-        public static AngularWorkspace Create( StandardGlobalInfo globalInfo, NPMSolution npmSolution, NormalizedPath path )
+        public static AngularWorkspace Create( NPMSolution npmSolution, NormalizedPath path )
         {
             NormalizedPath packageJsonPath = path.AppendPart( "package.json" );
             NormalizedPath angularJsonPath = path.AppendPart( "angular.json" );
@@ -57,20 +57,13 @@ namespace CodeCake
                 }
                 else
                 {
-                    globalInfo.Cake.Warning( $"No path found for angular project '{path}'." );
+                    npmSolution.GlobalInfo.Cake.Warning( $"No path found for angular project '{path}'." );
                     outputPath = path.Combine( projectPath );
                 }
 
-                projects.Add(
-                    NPMPublishedProject.Create(
-                        globalInfo,
-                        npmSolution,
-                        path.Combine( projectPath ),
-                        outputPath
-                    )
-                );
+                projects.Add( NPMPublishedProject.Create( npmSolution, path.Combine( projectPath ), outputPath ) );
             }
-            return new AngularWorkspace( NPMPublishedProject.Create( globalInfo, npmSolution, path, path ), projects );
+            return new AngularWorkspace( NPMPublishedProject.Create( npmSolution, path, path ), projects );
         }
     }
 }

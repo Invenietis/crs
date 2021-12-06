@@ -13,33 +13,35 @@ namespace CodeCake
     {
         readonly bool _ckliLocalFeedMode;
 
-        NPMPublishedProject( StandardGlobalInfo globalInfo, NPMSolution npmSolution, SimplePackageJsonFile json, NormalizedPath outputPath )
-            : base( globalInfo, npmSolution, json, outputPath )
+        NPMPublishedProject( NPMSolution npmSolution, SimplePackageJsonFile json, NormalizedPath outputPath )
+            : base( npmSolution, json, outputPath )
         {
             _ckliLocalFeedMode = json.CKliLocalFeedMode;
-            ArtifactInstance = new ArtifactInstance( new Artifact( "NPM", json.Name ), globalInfo.BuildInfo.Version );
+            ArtifactInstance = new ArtifactInstance( new Artifact( "NPM", json.Name ), GlobalInfo.BuildInfo.Version );
             string tgz = json.Name.Replace( "@", "" ).Replace( '/', '-' );
-            TGZName = tgz + "-" + globalInfo.BuildInfo.Version.ToNormalizedString() + ".tgz";
+            TGZName = tgz + "-" + GlobalInfo.BuildInfo.Version.ToNormalizedString() + ".tgz";
         }
 
         /// <summary>
         /// Create a <see cref="NPMProject"/> that can be a <see cref="NPMPublishedProject"/>.
         /// </summary>
-        /// <param name="globalInfo">The global info of the CodeCakeBuilder.</param>
+        /// <param name="solution">The NPM solution that contains the project.</param>
         /// <param name="dirPath">The directory path where is located the npm package.</param>
         /// <param name="outputPath">The directory path where the build output is. It can be the same than <paramref name="dirPath"/>.</param>
         /// <returns></returns>
-        public static NPMProject Create( StandardGlobalInfo globalInfo, NPMSolution solution, NormalizedPath dirPath, NormalizedPath outputPath )
+        public static NPMProject Create( NPMSolution solution,
+                                         NormalizedPath dirPath,
+                                         NormalizedPath outputPath )
         {
-            var json = SimplePackageJsonFile.Create( globalInfo.Cake, dirPath );
+            var json = SimplePackageJsonFile.Create( solution.GlobalInfo.Cake, dirPath );
             NPMProject output;
             if( json.IsPrivate )
             {
-                output = CreateNPMProject( globalInfo, solution, json, outputPath );
+                output = CreateNPMProject( solution, json, outputPath );
             }
             else
             {
-                output = new NPMPublishedProject( globalInfo, solution, json, outputPath );
+                output = new NPMPublishedProject( solution, json, outputPath );
             }
             return output;
         }
