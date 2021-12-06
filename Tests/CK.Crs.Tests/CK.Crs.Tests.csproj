@@ -5,7 +5,7 @@
     <IsPackable>False</IsPackable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CK.Testing.Monitoring" Version="3.0.0-a00-00-0001-develop" />
+    <PackageReference Include="CK.Testing.Monitoring" Version="0.0.0--03m7ux3-local+v3.0.0-a" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
     <PackageReference Include="Moq" Version="4.16.1" />
