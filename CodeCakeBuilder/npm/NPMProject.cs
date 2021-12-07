@@ -163,20 +163,33 @@ namespace CodeCake
         }
 
         /// <summary>
-        /// Run a npm script.
+        /// Run a NPM or Yarn script.
         /// </summary>
-        /// <param name="scriptName">The npm script to run.</param>
+        /// <param name="scriptName">The script name to run.</param>
         /// <param name="runInBuildDirectory">Whether the script should be run in <see cref="OutputPath"/> or <see cref="DirectoryPath"/> if false.</param>
         private protected virtual void DoRunScript( string scriptName, bool runInBuildDirectory )
         {
-            GlobalInfo.Cake.NpmRunScript(
-                    new NpmRunScriptSettings()
-                    {
-                        ScriptName = scriptName,
-                        LogLevel = NpmLogLevel.Info,
-                        WorkingDirectory = runInBuildDirectory ? OutputPath.Path : DirectoryPath.Path
-                    }
-                );
+            if( NpmSolution.UseYarn )
+            {
+                GlobalInfo.Cake.Yarn().RunScript( scriptName,
+                                                  settings =>
+                                                  {
+                                                      settings.WorkingDirectory = runInBuildDirectory
+                                                                                    ? OutputPath.Path
+                                                                                    : DirectoryPath.Path;
+                                                  } );
+            }
+            else
+            {
+                GlobalInfo.Cake.NpmRunScript(
+                        new NpmRunScriptSettings()
+                        {
+                            ScriptName = scriptName,
+                            LogLevel = NpmLogLevel.Info,
+                            WorkingDirectory = runInBuildDirectory ? OutputPath.Path : DirectoryPath.Path
+                        }
+                    );
+            }
         }
 
         /// <summary>

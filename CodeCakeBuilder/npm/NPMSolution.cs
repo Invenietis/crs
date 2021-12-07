@@ -71,7 +71,7 @@ namespace CodeCake
         public static NPMSolution GetYarnSolution( this StandardGlobalInfo @this )
         {
             var s = @this.Solutions.OfType<NPMSolution>().Single();
-            if( !s.UseYarn ) throw new Exception( "Solution is using NPM, not Yarn. Call GetNPMSolution() instead of GetNPMSolution()." );
+            if( !s.UseYarn ) throw new Exception( "Solution is using NPM, not Yarn. Call GetNPMSolution() instead of GetYarnSolution()." );
             return s;
         }
 
@@ -91,6 +91,7 @@ namespace CodeCake
             : base()
         {
             GlobalInfo = globalInfo;
+            UseYarn = useYarn;
         }
 
         /// <summary>
