@@ -13,7 +13,7 @@ namespace CodeCake
         {
             get
             {
-                if( _artifactType == null ) _artifactType = new NPMArtifactType( _globalInfo, this );
+                if( _artifactType == null ) _artifactType = new NPMArtifactType( GlobalInfo, this );
                 return _artifactType;
             }
         }

@@ -2,7 +2,7 @@ using Cake.Common.Diagnostics;
 using Cake.Common.IO;
 using Cake.Npm;
 using Cake.Npm.Publish;
-using CK.Text;
+using CK.Core;
 using CodeCake.Abstractions;
 using CSemVer;
 using Newtonsoft.Json.Linq;

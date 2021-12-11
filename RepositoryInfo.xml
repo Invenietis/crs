@@ -1,5 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<RepositoryInfo>
+﻿<RepositoryInfo>
   <SimpleGitVersion SingleMajor="8">
     <Branches>
       <Branch Name="develop-NetCore3" CIVersionMode="LastReleaseBased" VersionName="develop" />
