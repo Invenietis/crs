@@ -20,6 +20,7 @@ namespace CK.Crs.InMemory
             _commandJobQueue = services.GetRequiredService<CommandJobQueue>();
             _cts = new CancellationTokenSource();
             CancellationToken token = _cts.Token;
+#pragma warning disable VSTHRD101 // Avoid unsupported async delegates
             _proxy = new Task( async () =>
             {
                 try
@@ -59,6 +60,7 @@ namespace CK.Crs.InMemory
                     monitor.Error( $"Error in CK.Crs.BackgroundJobService", ex );
                 }
             } );
+#pragma warning restore VSTHRD101 // Avoid unsupported async delegates
             _proxy.Start();
         }
 
