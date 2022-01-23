@@ -11,24 +11,25 @@ namespace CK.Crs.InMemory
     {
         private Task _proxy;
         private CommandJobQueue _commandJobQueue;
-        private CancellationTokenSource _cancellationToken;
+        private CancellationTokenSource _cts;
 
         public bool Initialized { get; private set; }
 
         public virtual void Start( IActivityMonitor monitor, IServiceProvider services, CancellationToken cancellationToken = default( CancellationToken ) )
         {
             _commandJobQueue = services.GetRequiredService<CommandJobQueue>();
-            _cancellationToken = new CancellationTokenSource();
+            _cts = new CancellationTokenSource();
+            CancellationToken token = _cts.Token;
 #pragma warning disable VSTHRD101 // Avoid unsupported async delegates
             _proxy = new Task( async () =>
             {
                 try
                 {
                     monitor.Trace( $"The CRS {nameof( BackgroundJobService )} queue is running." );
-                    while( _commandJobQueue.CanGetNextJob && !_cancellationToken.IsCancellationRequested )
+                    while( _commandJobQueue.CanGetNextJob && !token.IsCancellationRequested )
                     {
                         monitor.Trace( "Waiting for the next command." );
-                        var job = _commandJobQueue.GetNextJob( _cancellationToken.Token );
+                        var job = _commandJobQueue.GetNextJob( token );
                         if( job != null )
                         {
                             using( monitor.OpenTrace( $"Processing command: {job.CommandContext.Model.Name}. CommandId: {job.CommandContext.CommandId}." ) )
@@ -94,14 +95,13 @@ namespace CK.Crs.InMemory
         {
             try
             {
-                _cancellationToken?.Cancel();
-                _cancellationToken?.Dispose();
-                _cancellationToken = null;
+                _cts?.Cancel();
+                _cts?.Dispose();
+                _cts = null;
 
                 try
                 {
-                    _proxy.GetAwaiter().GetResult();
-
+                    _proxy?.GetAwaiter().GetResult();
                 }
                 catch( OperationCanceledException ocex )
                 {
