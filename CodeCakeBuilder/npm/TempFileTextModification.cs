@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace CodeCake
@@ -54,7 +53,7 @@ namespace CodeCake
                 File.Delete( _path );
                 return;
             }
-            File.WriteAllText( _path, _originalText, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false) );
+            File.WriteAllText( _path, _originalText );
         }
 
 
@@ -73,7 +72,7 @@ namespace CodeCake
             (string content, TempFileTextModification temp) = CreateTempFileTextModification( jsonPath );
             JObject json = JObject.Parse( content );
             json["version"] = version.ToNormalizedString();
-            File.WriteAllText( jsonPath, json.ToString(), new UTF8Encoding(encoderShouldEmitUTF8Identifier: false) );
+            File.WriteAllText( jsonPath, json.ToString() );
             return temp;
         }
 
@@ -120,7 +119,7 @@ namespace CodeCake
                     }
                 }
             }
-            File.WriteAllText( jsonPath, json.ToString(), new UTF8Encoding(encoderShouldEmitUTF8Identifier: false) );
+            File.WriteAllText( jsonPath, json.ToString() );
             return temp;
         }
 
@@ -156,7 +155,7 @@ namespace CodeCake
             pushUri = pushUri.Replace( "https:", "" );
             npmrc.Add( pushUri + ":always-auth=true" );
             configure( npmrc, pushUri );
-            File.WriteAllLines( npmrcPath, npmrc, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false) );
+            File.WriteAllLines( npmrcPath, npmrc );
             return temp;
         }
     }

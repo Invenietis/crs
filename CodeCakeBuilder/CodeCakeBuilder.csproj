@@ -6,7 +6,7 @@
     <Nullable>annotations</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CK.Core" Version="15.0.0-r" />
+    <PackageReference Include="CK.Core" Version="15.0.0-r04-01" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Cake.Npm" Version="1.0.0" />
