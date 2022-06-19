@@ -1,4 +1,4 @@
-﻿<Project>
+<Project>
   <!-- Reproducible builds. See: http://blog.paranoidcoding.com/2016/04/05/deterministic-builds-in-roslyn.html
     On appveyor, the clone folder MUST be set to the solution path in the CK-World.
     This must be adapted for each solution/repository.
@@ -15,21 +15,13 @@
     <IsTestProject Condition=" '$(IsTestProject)' == '' And $(MSBuildProjectName.EndsWith('.Tests'))">true</IsTestProject>
     <IsInTestsFolder Condition="$(MSBuildProjectDirectory.Contains('\Tests\')) Or $(MSBuildProjectDirectory.Contains('/Tests/'))">true</IsInTestsFolder>
     <!-- SolutionDir is defined by Visual Studio, we unify the behavior here. -->
-    <SolutionDir Condition=" '$(SolutionDir)' == '' ">$([System.IO.Path]::GetDirectoryName($([System.IO.Path]::GetDirectoryName($(MSBuildThisFileDirectory)))))/</SolutionDir>
+    <SolutionDir Condition=" '$(SolutionDir)' == '' ">$([System.IO.Path]::GetDirectoryName($(MSBuildThisFileDirectory)))/</SolutionDir>
     <!-- CakeBuild drives the standard ContinuousIntegrationBuild that should be used.
 
   -->
     <ContinuousIntegrationBuild Condition=" '$(CakeBuild)' == 'true' ">true</ContinuousIntegrationBuild>
-    <!-- Enable Deterministic build. https://github.com/clairernovotny/DeterministicBuilds -->
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <!-- Always allow the repository url to appear in the nuget package. -->
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <!-- InformationalVersion is either the Zero version or provided by the CodeCakeBuilder when in CI build). -->
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
-    <!-- Always embedds the .pdb in the nuget package.
-       TODO: When using SourceLink, we should follow the guidelines here: https://github.com/dotnet/sourcelink#using-source-link-in-net-projects
-             (only for packages that are ultimately uploaded to nuget.org). -->
-    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
   </PropertyGroup>
   <ItemGroup>
     <SourceRoot Include="$(SolutionDir)" />
@@ -42,18 +34,17 @@
     <Company>Signature Code</Company>
     <Authors>Signature Code</Authors>
     <Copyright>Copyright Signature-Code 2007-$([System.DateTime]::UtcNow.ToString("yyyy"))</Copyright>
-    <RepositoryType>git</RepositoryType>
     <!--Removes annoying Pack warning: The package version ... uses SemVer 2.0.0 or components of SemVer 1.0.0 that are not supported on legacy clients...-->
     <NoWarn>NU5105</NoWarn>
     <!--Considering .net6 'global using' to be an opt-in (simply reproduce this with 'false' in the csproj if needed).-->
-    <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
+    <ImplicitUsings>disable</ImplicitUsings>
     <PackageIcon>PackageIcon.png</PackageIcon>
-    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)SharedKey.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>$(SolutionDir)Common/SharedKey.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
     <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)PackageIcon.png" Pack="true" PackagePath="\" Visible="false" />
+    <None Include="$(SolutionDir)Common/PackageIcon.png" Pack="true" PackagePath="\" Visible="false" />
   </ItemGroup>
   <!--</StandardProperties>-->
   <!--<ZeroVersion>: When not building from the CI, assemblies always use the ZeroVersion (see CSemVer.InformationalVersion).-->
@@ -69,11 +60,6 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <!--</GenerateDocumentation>-->
-  <!--<SourceLink>: is enabled only for ContinuousIntegrationBuild build. -->
-  <ItemGroup Condition=" '$(ContinuousIntegrationBuild)' == 'true' ">
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
-  </ItemGroup>
-  <!--</SourceLink>-->
   <!--<SourceLinkDebuggingWorkaround>: See  https://github.com/dotnet/sdk/issues/1458#issuecomment-695119194 -->
   <Target Name="_ResolveCopyLocalNuGetPackagePdbsAndXml" Condition="$(CopyLocalLockFileAssemblies) == true" AfterTargets="ResolveReferences">
     <ItemGroup>
@@ -83,8 +69,16 @@
   </Target>
   <!--</SourceLinkDebuggingWorkaround>-->
   <!--<Analyzers>: This analyzer provides very welcome guidelines about async and threading issues.-->
-  <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.0.64" PrivateAssets="All" IncludeAssets="runtime;build;native;contentfiles;analyzers" />
+  <ItemGroup Condition=" '$(MSBuildProjectName)' != 'CodeCakeBuilder' ">
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.2.32" PrivateAssets="All" IncludeAssets="runtime;build;native;contentfiles;analyzers" />
   </ItemGroup>
   <!--</Analyzers>-->
+  <!--<ReproducibleBuilds>-->
+  <!--Enable Deterministic build. https://github.com/dotnet/reproducible-builds. SourceLink is automatically managed by this package.-->
+  <ItemGroup>
+    <PackageReference Include="DotNet.ReproducibleBuilds" Version="1.1.1" PrivateAssets="All" />
+  </ItemGroup>
+  <!--Guaranty that the build is isolated. https://github.com/dotnet/reproducible-builds#dotnetreproduciblebuildsisolated-documentation-and-nuget-package-->
+  <Sdk Name="DotNet.ReproducibleBuilds.Isolated" Version="1.1.1" />
+  <!--</ReproducibleBuilds>-->
 </Project>
