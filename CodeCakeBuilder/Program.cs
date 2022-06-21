@@ -26,13 +26,6 @@ namespace CodeCake
                                         : null;
             var app = new CodeCakeApplication( solutionDirectory );
             RunResult result = await app.RunAsync( args.Where( a => !StringComparer.OrdinalIgnoreCase.Equals( a, SolutionDirectoryIsCurrentDirectoryParameter ) ) );
-            if( result.InteractiveMode == InteractiveMode.Interactive )
-            {
-                Console.WriteLine();
-                Console.WriteLine( $"Hit any key to exit." );
-                Console.WriteLine( $"Use -{InteractiveAliases.NoInteractionArgument} or -{InteractiveAliases.AutoInteractionArgument} parameter to exit immediately." );
-                Console.ReadKey();
-            }
             return result.ReturnCode;
         }
     }
