@@ -37,17 +37,42 @@ namespace CodeCake
         /// <returns>This info.</returns>
         public static StandardGlobalInfo AddNPM( this StandardGlobalInfo @this )
         {
-            return AddNPM( @this, NPMSolution.ReadFromNPMSolutionFile( @this ) );
+            return AddNPM( @this, NPMSolution.ReadFromNPMSolutionFile( @this, false ) );
         }
 
         /// <summary>
-        /// Gets the NPM solution handled by the single <see cref="Build.NPMArtifactType"/>.
+        /// Adds the <see cref="Build.NPMArtifactType"/> for NPM based on <see cref="NPMSolution.ReadFromNPMSolutionFile"/>
+        /// (projects are defined by "CodeCakeBuilder/NPMSolution.xml" file) using Yarn instead of NPM.
+        /// </summary>
+        /// <param name="this">This global info.</param>
+        /// <returns>This info.</returns>
+        public static StandardGlobalInfo AddYarn( this StandardGlobalInfo @this )
+        {
+            return AddNPM( @this, NPMSolution.ReadFromNPMSolutionFile( @this, true ) );
+        }
+
+        /// <summary>
+        /// Gets the single NPM solution.
         /// </summary>
         /// <param name="this">This global info.</param>
         /// <returns>The NPM solution.</returns>
         public static NPMSolution GetNPMSolution( this StandardGlobalInfo @this )
         {
-            return @this.Solutions.OfType<NPMSolution>().Single();
+            var s = @this.Solutions.OfType<NPMSolution>().Single();
+            if( s.UseYarn ) throw new Exception( "Solution is using Yarn. Call GetYarnSolution() instead of GetNPMSolution()." );
+            return s;
+        }
+
+        /// <summary>
+        /// Gets the single NPM solution (that must be using Yarn).
+        /// </summary>
+        /// <param name="this">This global info.</param>
+        /// <returns>The NPM solution.</returns>
+        public static NPMSolution GetYarnSolution( this StandardGlobalInfo @this )
+        {
+            var s = @this.Solutions.OfType<NPMSolution>().Single();
+            if( !s.UseYarn ) throw new Exception( "Solution is using NPM, not Yarn. Call GetNPMSolution() instead of GetYarnSolution()." );
+            return s;
         }
 
     }
@@ -57,21 +82,26 @@ namespace CodeCake
     /// </summary>
     public partial class NPMSolution : NPMProjectContainer, ICIWorkflow
     {
-        readonly StandardGlobalInfo _globalInfo;
 
         /// <summary>
         /// Initializes a new <see cref="NPMSolution" />.
         /// </summary>
         /// <param name="projects">Set of projects.</param>
-        NPMSolution(
-            StandardGlobalInfo globalInfo )
+        NPMSolution( StandardGlobalInfo globalInfo, bool useYarn )
             : base()
         {
-            _globalInfo = globalInfo;
+            GlobalInfo = globalInfo;
+            UseYarn = useYarn;
         }
+
+        /// <summary>
+        /// Gets whether Yarn is used instead of npm.
+        /// </summary>
+        public bool UseYarn { get; }
 
         public IEnumerable<AngularWorkspace> AngularWorkspaces => Containers.OfType<AngularWorkspace>();
 
+        public StandardGlobalInfo GlobalInfo { get; }
 
         public void RunNpmCI()
         {
@@ -164,26 +194,23 @@ namespace CodeCake
         /// <summary>
         /// Reads the "CodeCakeBuilder/NPMSolution.xml" file that must exist.
         /// </summary>
-        /// <param name="version">The version of all published packages.</param>
+        /// <param name="globalInfo">The global information.</param>
+        /// <param name="useYarn">True to use Yarn instead of NPM.</param>
         /// <returns>The solution object.</returns>
-        public static NPMSolution ReadFromNPMSolutionFile( StandardGlobalInfo globalInfo )
+        public static NPMSolution ReadFromNPMSolutionFile( StandardGlobalInfo globalInfo, bool useYarn )
         {
             var document = XDocument.Load( "CodeCakeBuilder/NPMSolution.xml" ).Root;
-            var solution = new NPMSolution(globalInfo);
-
+            var solution = new NPMSolution( globalInfo, useYarn );
             foreach( var item in document.Elements( "AngularWorkspace" ) )
             {
-                solution.Add( AngularWorkspace.Create( globalInfo,
-                         solution,
-                         (string)item.Attribute( "Path" ) ) );
+                solution.Add( AngularWorkspace.Create( solution,
+                                                       (string)item.Attribute( "Path" ) ) );
             }
             foreach( var item in document.Elements( "Project" ) )
             {
-                solution.Add( NPMPublishedProject.Create(
-                        globalInfo,
-                        solution,
-                        (string)item.Attribute( "Path" ),
-                        (string)item.Attribute( "OutputFolder" ) ) );
+                solution.Add( NPMPublishedProject.Create( solution,
+                                                          (string)item.Attribute( "Path" ),
+                                                          (string)item.Attribute( "OutputFolder" ) ) );
             }
             return solution;
         }

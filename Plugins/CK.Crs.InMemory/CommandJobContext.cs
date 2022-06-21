@@ -13,7 +13,7 @@ namespace CK.Crs.InMemory
         public CommandJobContext( ICommandContext commandContext )
         {
             _commandContext = commandContext;
-            MonitorToken = commandContext.Monitor.DependentActivity().CreateToken();
+            MonitorToken = commandContext.Monitor.CreateDependentToken( $"Command {commandContext.CommandId}." );
             Monitor = new ActivityMonitor();
         }
 

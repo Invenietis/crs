@@ -17,7 +17,7 @@ namespace CK.Crs.AspNetCore.Tests
             var settings = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
             var command = request;
             var jsonCommand = JsonConvert.SerializeObject( command, settings );
-            var response = await client.PostJSON( uri, jsonCommand );
+            var response = await client.PostJSONAsync( uri, jsonCommand );
             response.StatusCode.Should().Be( HttpStatusCode.OK );
 
             var jsonResult = await response.Content.ReadAsStringAsync();
@@ -36,7 +36,7 @@ namespace CK.Crs.AspNetCore.Tests
             var settings = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
             var command = request;
             var jsonCommand = JsonConvert.SerializeObject( command, settings );
-            var response = await client.PostJSON( uri, jsonCommand );
+            var response = await client.PostJSONAsync( uri, jsonCommand );
             response.StatusCode.Should().Be( HttpStatusCode.OK );
 
             var jsonResult = await response.Content.ReadAsStringAsync();

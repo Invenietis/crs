@@ -34,6 +34,7 @@ namespace CK.Crs.AspNetCore.Tests
 
         public void Configure( IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IHostingEnvironment env, ILoggerFactory loggerFactory )
         {
+            app.UseRouting();
             app.UseCrs( "/crs" );
         }
 

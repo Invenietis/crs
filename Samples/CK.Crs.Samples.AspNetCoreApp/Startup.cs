@@ -45,9 +45,6 @@ namespace CK.Crs.Samples.AspNetCoreApp
 
             services
                 .AddCrsCore( RegisterCommands )
-                .AddRebus(
-                    c => c.Transport( t => t.UseSqlServer( conString, "commands_result" ) ),
-                    c => c( "commands" )( m => m.HasRebusTag() ) )
                 .AddInMemoryReceiver()
                 .AddBackgroundCommandJobHostedService()
                 .AddSignalR();
@@ -63,15 +60,12 @@ namespace CK.Crs.Samples.AspNetCoreApp
 
         private void RegisterCommands( ICommandRegistry registry )
         {
-            // This command is sent to a rebus queue configured below
-            registry.Register<RemotelyQueuedCommand>().IsRebus();
-
             // This command is sent to an in-memory queue executed in webapp process
             registry.Register<QueuedCommand>().HandledBy<InProcessHandler>().FireAndForget();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure( IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory )
+        public void Configure( IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory )
         {
             app.UseDeveloperExceptionPage();
             app.UseCrs( "/crs", c => c.AcceptAll().SkipAmbientValuesValidation() );

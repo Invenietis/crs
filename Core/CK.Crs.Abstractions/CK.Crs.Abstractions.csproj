@@ -1,11 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="../../common/shared.props" />
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
-    <LangVersion>7.2</LangVersion>
+    <TargetFrameworks>net6.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CK.ActivityMonitor.SimpleSender" Version="14.2.1" />
-    <PackageReference Include="CK.AmbientValues" Version="5.2.1" />
+    <PackageReference Include="CK.ActivityMonitor.SimpleSender" Version="15.0.0" />
+    <PackageReference Include="CK.AmbientValues" Version="6.0.0" />
   </ItemGroup>
 </Project>

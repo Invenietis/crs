@@ -2,7 +2,7 @@ using Cake.Common.Diagnostics;
 using Cake.Common.IO;
 using Cake.Npm;
 using Cake.Npm.Publish;
-using CK.Text;
+using CK.Core;
 using CodeCake.Abstractions;
 using CSemVer;
 using Newtonsoft.Json.Linq;
@@ -34,7 +34,7 @@ namespace CodeCake
             {
                 var tasks = pushes.Select( p => PublishOnePackageAsync( p ) ).ToArray();
                 await System.Threading.Tasks.Task.WhenAll( tasks );
-                await OnAllArtifactsPushed( pushes );
+                await OnAllArtifactsPushedAsync( pushes );
             }
             protected abstract Task PublishOnePackageAsync( ArtifactPush push );
 
@@ -44,7 +44,7 @@ namespace CodeCake
             /// </summary>
             /// <param name="pushes">The instances to push (that necessary target this feed).</param>
             /// <returns>The awaitable.</returns>
-            protected virtual Task OnAllArtifactsPushed( IEnumerable<ArtifactPush> pushes )
+            protected virtual Task OnAllArtifactsPushedAsync( IEnumerable<ArtifactPush> pushes )
             {
                 return System.Threading.Tasks.Task.CompletedTask;
             }
@@ -231,7 +231,7 @@ namespace CodeCake
             /// <param name="ctx">The Cake context.</param>
             /// <param name="pushes">The set of artifacts to promote.</param>
             /// <returns>The awaitable.</returns>
-            protected override async Task OnAllArtifactsPushed( IEnumerable<ArtifactPush> pushes )
+            protected override async Task OnAllArtifactsPushedAsync( IEnumerable<ArtifactPush> pushes )
             {
                 var basicAuth = Convert.ToBase64String( Encoding.ASCII.GetBytes( ":" + Cake.InteractiveEnvironmentVariable( SecretKeyName ) ) );
                 foreach( var p in pushes )
@@ -266,7 +266,7 @@ namespace CodeCake
                 }
             }
 
-            string GetPromotionJSONBody( string packageName, string packageVersion, string viewId, bool npm )
+            static string GetPromotionJSONBody( string packageName, string packageVersion, string viewId, bool npm )
             {
                 var bodyFormat = @"{
  ""data"": {

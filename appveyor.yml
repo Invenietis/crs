@@ -1,6 +1,6 @@
 ﻿
 version: build{build}
-image: Visual Studio 2019
+image: Visual Studio 2022
 clone_folder: C:\CKli-World\CK-Crs-Projects\CK-Crs
 branches:
   only:
