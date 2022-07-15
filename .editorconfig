@@ -37,7 +37,9 @@ dotnet_naming_style.camel_case_underscore_style.capitalization = camel_case
 
 # CA1063: Implement IDisposable Correctly
 dotnet_diagnostic.CA1063.severity = none
-# Motive: This warning is irrelevant because we only use managed objects and we SHOULD always do.
+# CA1816: Dispose methods should call SuppressFinalize
+dotnet_diagnostic.CA1816.severity = none
+# Motive: These warning is irrelevant because we only use managed objects and we SHOULD always do.
 # The dispose pattern (see here https://docs.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-dispose) may be useful only in some edge case,
 # If you feel like you NEED to handle an unmanaged resource, please let's talk about this first: it may well be a bad idea...
 # and most of the time (99.99...%) a simple IDisposable implementation IS okay.
