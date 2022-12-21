@@ -1,18 +1,18 @@
-﻿
 version: build{build}
 image: Visual Studio 2022
 clone_folder: C:\CKli-World\CK-Crs-Projects\CK-Crs
 branches:
   only:
-    - master
-    - develop
+  - master
+  - develop
 environment:
   CODECAKEBUILDER_SECRET_KEY:
     secure: 8VAzdXgUQaJyFoU3WLf2iPFV/8zPDm9qV4TfOpx8/rg=
-build_script:
-  - dotnet run --project CodeCakeBuilder -nointeraction
 test: off
 on_finish:
-  - ps: 'Get-ChildItem -Recurse *.log | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name -DeploymentName ''Log files'' }'
-  - ps: 'Get-ChildItem -Recurse **\Tests\**\TestResult*.xml | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name -DeploymentName ''NUnit tests result files'' }'
-  - ps: 'Get-ChildItem -Recurse **Tests\**\Logs\**\* | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name -DeploymentName ''Log files'' }'
+- ps: "'Get-ChildItem -Recurse *.log | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name -DeploymentName ''Log files'' }'"
+- ps: "'Get-ChildItem -Recurse **\\Tests\\**\\TestResult*.xml | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name -DeploymentName ''NUnit tests result files'' }'"
+- ps: "'Get-ChildItem -Recurse **\\Tests\\**\\*.trx | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name -DeploymentName ''NUnit tests result files'' }'"
+- ps: "'Get-ChildItem -Recurse *.ckmon | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name -DeploymentName ''Log files'' }'"
+build_script:
+- dotnet run --project CodeCakeBuilder -nointeraction

@@ -59,17 +59,10 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <!--</GenerateDocumentation>-->
-  <!--<SourceLinkDebuggingWorkaround>: See  https://github.com/dotnet/sdk/issues/1458#issuecomment-695119194 -->
-  <Target Name="_ResolveCopyLocalNuGetPackagePdbsAndXml" AfterTargets="ResolveReferences">
-    <ItemGroup>
-      <ReferenceCopyLocalPaths Include="@(ReferenceCopyLocalPaths-&gt;'%(RootDir)%(Directory)%(Filename).pdb')" Condition="'%(ReferenceCopyLocalPaths.NuGetPackageId)' != '' and Exists('%(RootDir)%(Directory)%(Filename).pdb')" />
-      <ReferenceCopyLocalPaths Include="@(ReferenceCopyLocalPaths-&gt;'%(RootDir)%(Directory)%(Filename).xml')" Condition="'%(ReferenceCopyLocalPaths.NuGetPackageId)' != '' and Exists('%(RootDir)%(Directory)%(Filename).xml')" />
-    </ItemGroup>
-  </Target>
-  <!--</SourceLinkDebuggingWorkaround>-->
+
   <!--<Analyzers>: This analyzer provides very welcome guidelines about async and threading issues.-->
   <ItemGroup Condition=" '$(MSBuildProjectName)' != 'CodeCakeBuilder' ">
-    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.2.32" PrivateAssets="All" IncludeAssets="runtime;build;native;contentfiles;analyzers" />
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.3.48" PrivateAssets="All" IncludeAssets="runtime;build;native;contentfiles;analyzers" />
   </ItemGroup>
   <!--</Analyzers>-->
   <!--<ReproducibleBuilds>-->
@@ -80,4 +73,16 @@
   <!--Guaranty that the build is isolated. https://github.com/dotnet/reproducible-builds#dotnetreproduciblebuildsisolated-documentation-and-nuget-package-->
   <Sdk Name="DotNet.ReproducibleBuilds.Isolated" Version="1.1.1" />
   <!--</ReproducibleBuilds>-->
+
+  <!--<_CopyXmlDocFiles>:
+    It's a mess... See  https://github.com/dotnet/sdk/issues/1458#issuecomment-695119194
+    This solution works and filters out System and Microsoft packages.
+    Not sure the .Net 7 solution will enable this: see https://github.com/dotnet/sdk/issues/1458#issuecomment-1265262224-->
+  <Target Name="_CopyXmlDocFiles" AfterTargets="ResolveReferences" Condition=" '$(MSBuildProjectName)' != 'CodeCakeBuilder' ">
+    <ItemGroup>
+      <XmlDocFiles Include="@(ReferencePath-&gt;'%(RootDir)%(Directory)%(Filename).xml')" Condition="!( $([System.String]::new('%(FileName)').StartsWith('System.'))                                  Or                                  $([System.String]::new('%(FileName)').StartsWith('Microsoft.'))                                  Or                                  $([System.String]::new('%(FileName)').StartsWith('CommunityToolkit.'))                                  Or                                  '%(FileName)' == 'netstandard'                                )" />
+    </ItemGroup>
+    <Copy SourceFiles="@(XmlDocFiles)" Condition="Exists('%(FullPath)')" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+  </Target>
+  <!--</_CopyXmlDocFiles>-->
 </Project>
