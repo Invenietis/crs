@@ -20,8 +20,8 @@ namespace CodeCake
     {
         abstract class NPMFeed : ArtifactFeed
         {
-            public NPMFeed( NPMArtifactType t )
-                : base( t )
+
+            public NPMFeed( NPMArtifactType t ) : base( t )
             {
             }
 
@@ -115,17 +115,25 @@ namespace CodeCake
                 var result = artifacts.Cast<NPMPublishedProject>()
                          .Where( a =>
                             {
-                                using( TokenInjector( a ) )
+                                string viewString;
+                                if( a.NpmSolution.UseYarn )
                                 {
-                                    string viewString = Cake.NpmView( a.Name, a.DirectoryPath );
-                                    if( string.IsNullOrEmpty( viewString ) ) return true;
-                                    JObject json = JObject.Parse( viewString );
-                                    if( json.TryGetValue( "versions", out JToken versions ) )
+                                    using( TokenInjector( a ) )
                                     {
-                                        return !((JArray)versions).ToObject<string[]>().Contains( a.ArtifactInstance.Version.ToNormalizedString() );
+                                        viewString = Cake.NpmView( a.Name, a.DirectoryPath );
                                     }
-                                    return true;
                                 }
+                                else
+                                {
+                                    viewString = Cake.NpmView( a.Name, a.DirectoryPath );
+                                }
+                                if( string.IsNullOrEmpty( viewString ) ) return true;
+                                JObject json = JObject.Parse( viewString );
+                                if( json.TryGetValue( "versions", out JToken versions ) )
+                                {
+                                    return !((JArray)versions).ToObject<string[]>().Contains( a.ArtifactInstance.Version.ToNormalizedString() );
+                                }
+                                return true;
                             } )
                          .Select( a => new ArtifactPush( a, this ) )
                          .ToList();
