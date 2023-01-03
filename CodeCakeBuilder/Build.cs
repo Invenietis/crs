@@ -18,7 +18,7 @@ namespace CodeCake
 
             StandardGlobalInfo globalInfo = CreateStandardGlobalInfo()
                                                 .AddDotnet()
-                                                .AddNPM()
+                                                .AddYarn()
                                                 .SetCIBuildTag();
 
             Task("Check-Repository")
