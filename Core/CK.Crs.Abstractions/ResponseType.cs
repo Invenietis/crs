@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace CK.Crs
+﻿namespace CK.Crs
 {
     /// <summary>
     /// Defines all possible response types of a request

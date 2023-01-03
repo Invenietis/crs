@@ -1,11 +1,9 @@
 using CK.Core;
-using CK.Crs;
 using CK.Crs.Meta;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Primitives;
 using System;
-using System.Linq;
 
 namespace CK.Crs.AspNetCore
 {

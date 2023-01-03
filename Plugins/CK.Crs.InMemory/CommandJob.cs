@@ -1,5 +1,3 @@
-using CK.Core;
-
 namespace CK.Crs.InMemory
 {
     class CommandJob : ICommandJob

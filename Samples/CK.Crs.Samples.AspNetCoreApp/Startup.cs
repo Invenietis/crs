@@ -4,17 +4,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using CK.Crs.Samples.Messages;
 using CK.Core;
-using System.IO;
-using CK.Monitoring.Handlers;
-using CK.Monitoring;
-using Rebus.Config;
 using CK.Crs.Samples.Handlers;
 using Microsoft.Extensions.Configuration;
 using CK.Crs.Samples.AspNetCoreApp.Extensions;
-using System;
 using System.Threading.Tasks;
-using CK.Crs.Hosting;
-using CK.Crs.AspNetCore;
 
 namespace CK.Crs.Samples.AspNetCoreApp
 {

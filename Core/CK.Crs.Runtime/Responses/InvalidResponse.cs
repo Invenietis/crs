@@ -1,5 +1,3 @@
-using System;
-
 namespace CK.Crs.Responses
 {
     public class InvalidResponse : Response<object>

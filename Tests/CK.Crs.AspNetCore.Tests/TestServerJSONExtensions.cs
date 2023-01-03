@@ -1,7 +1,6 @@
 using CK.AspNet.Tester;
 using CK.Core;
 using FluentAssertions;
-using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
