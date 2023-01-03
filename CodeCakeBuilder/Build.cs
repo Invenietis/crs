@@ -34,7 +34,7 @@ namespace CodeCake
                      globalInfo.GetDotnetSolution().Clean();
                      Cake.CleanDirectories( globalInfo.ReleasesFolder.ToString() );
 
-                     globalInfo.GetNPMSolution().Clean();
+                     globalInfo.GetYarnSolution().Clean();
                  } );
 
 
@@ -44,7 +44,7 @@ namespace CodeCake
                 .Does(() =>
                 {
                     globalInfo.GetDotnetSolution().Build();
-                    globalInfo.GetNPMSolution().Build();
+                    globalInfo.GetYarnSolution().Build();
                 });
 
             Task("Unit-Testing")
@@ -56,7 +56,7 @@ namespace CodeCake
                    var testProjects = globalInfo.GetDotnetSolution().Projects.Where(p => p.Name.EndsWith(".Tests")
                                                            && !p.Path.Segments.Contains("Integration"));
                    globalInfo.GetDotnetSolution().Test();
-                   globalInfo.GetNPMSolution().Test();
+                   globalInfo.GetYarnSolution().Test();
                });
 
             Task("Create-Packages")
@@ -65,7 +65,7 @@ namespace CodeCake
                 .Does(() =>
                 {
                     globalInfo.GetDotnetSolution().Pack();
-                    globalInfo.GetNPMSolution().RunPack();
+                    globalInfo.GetYarnSolution().RunPack();
                 });
 
             Task("Push-Packages")
