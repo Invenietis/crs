@@ -1,3 +1,4 @@
+using CK.Core;
 using System.Threading.Tasks;
 
 namespace CK.Crs

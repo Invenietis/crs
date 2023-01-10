@@ -1,9 +1,0 @@
-{
-  "name": "js",
-  "packageManager": "yarn@3.3.1",
-  "workspaces": [
-    "crs-client",
-    "crs-client-signalr",
-    "samples/client-webpack"
-  ]
-}

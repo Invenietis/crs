@@ -22,7 +22,7 @@
     "webpack-cli": "^3.3.4"
   },
   "dependencies": {
-    "@signature/crs-client": "workspace:*",
-    "@signature/crs-client-signalr": "workspace:*"
+    "@signature/crs-client": "../../crs-client",
+    "@signature/crs-client-signalr": "../../crs-client-signalr"
   }
 }

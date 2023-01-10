@@ -1,4 +1,6 @@
-﻿namespace CK.Crs.Samples.Messages
+﻿using System;
+
+namespace CK.Crs.Samples.Messages
 {
     public abstract class MessageBase
     {

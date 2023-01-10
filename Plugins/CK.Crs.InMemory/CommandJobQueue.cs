@@ -1,6 +1,11 @@
+using CK.Core;
+using CK.Crs.Results;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace CK.Crs.InMemory
 {

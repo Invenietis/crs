@@ -1,3 +1,5 @@
+using System;
+
 namespace CK.Crs
 {
     public interface IBindable

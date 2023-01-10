@@ -1,4 +1,6 @@
+using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Reflection;
 
 namespace CK.Crs
 {

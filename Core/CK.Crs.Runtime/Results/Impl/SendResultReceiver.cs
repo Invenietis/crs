@@ -1,5 +1,7 @@
 using CK.Crs.Responses;
 using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace CK.Crs.Results

@@ -1,4 +1,4 @@
-{
+﻿{
   "name": "@signature/crs-client-signalr",
   "version": "0.0.0-0",
   "description": "CRS Client SignalR package",
@@ -17,13 +17,13 @@
   "license": "LGPL-3.0",
   "devDependencies": {
     "@types/node": "^12.0.8",
-    "genversion": "^3.0.1",
     "rimraf": ">=3.0.2",
-    "typescript": ">=3.5.3"
+    "typescript": ">=3.5.3",
+    "genversion": "^3.0.1"
   },
   "dependencies": {
     "@microsoft/signalr": ">=6.0.0",
-    "@signature/crs-client": "workspace:*",
+    "@signature/crs-client": "file:../crs-client",
     "axios": "^0.21.1"
   }
 }

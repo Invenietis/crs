@@ -1,3 +1,4 @@
+using System;
 namespace CK.Crs.Results
 {
     public interface IResultDispatcherSelector

@@ -1,3 +1,4 @@
+using CK.Core;
 using CK.Crs;
 using CK.Crs.Hosting;
 using CK.Crs.InMemory;

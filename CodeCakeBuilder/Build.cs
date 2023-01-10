@@ -1,15 +1,26 @@
+
+using Cake.Npm.RunScript;
 using Cake.Common.IO;
+using Cake.Common.Solution;
+using Cake.Common.Tools.DotNetCore;
+using Cake.Common.Tools.DotNetCore.Build;
+using Cake.Common.Tools.NUnit;
 using Cake.Core;
 using Cake.Core.Diagnostics;
+using Cake.Core.IO;
+using SimpleGitVersion;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json.Linq;
+using NuGet.Versioning;
 
 namespace CodeCake
 {
     /// <summary>
     /// Standard build "script".
     /// </summary>
-
+    
     public partial class Build : CodeCakeHost
     {
         public Build()
@@ -18,7 +29,7 @@ namespace CodeCake
 
             StandardGlobalInfo globalInfo = CreateStandardGlobalInfo()
                                                 .AddDotnet()
-                                                .AddYarn()
+                                                .AddNPM()
                                                 .SetCIBuildTag();
 
             Task("Check-Repository")
@@ -34,7 +45,7 @@ namespace CodeCake
                      globalInfo.GetDotnetSolution().Clean();
                      Cake.CleanDirectories( globalInfo.ReleasesFolder.ToString() );
 
-                     globalInfo.GetYarnSolution().Clean();
+                     globalInfo.GetNPMSolution().Clean();
                  } );
 
 
@@ -44,7 +55,7 @@ namespace CodeCake
                 .Does(() =>
                 {
                     globalInfo.GetDotnetSolution().Build();
-                    globalInfo.GetYarnSolution().Build();
+                    globalInfo.GetNPMSolution().Build();
                 });
 
             Task("Unit-Testing")
@@ -56,7 +67,7 @@ namespace CodeCake
                    var testProjects = globalInfo.GetDotnetSolution().Projects.Where(p => p.Name.EndsWith(".Tests")
                                                            && !p.Path.Segments.Contains("Integration"));
                    globalInfo.GetDotnetSolution().Test();
-                   globalInfo.GetYarnSolution().Test();
+                   globalInfo.GetNPMSolution().Test();
                });
 
             Task("Create-Packages")
@@ -65,7 +76,7 @@ namespace CodeCake
                 .Does(() =>
                 {
                     globalInfo.GetDotnetSolution().Pack();
-                    globalInfo.GetYarnSolution().RunPack();
+                    globalInfo.GetNPMSolution().RunPack();
                 });
 
             Task("Push-Packages")
