@@ -31,6 +31,8 @@ namespace CodeCake
             var settings = new DotNetCorePackSettings().AddVersionArguments( _globalInfo.BuildInfo, c =>
             {
                 c.NoBuild = true;
+                // Includes the .pdb in package.
+                c.IncludeSymbols = true;
                 c.Configuration = _globalInfo.BuildInfo.BuildConfiguration;
                 c.OutputDirectory = _globalInfo.ReleasesFolder.Path;
             } );

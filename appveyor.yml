@@ -14,7 +14,7 @@ on_finish:
 - ps: "'Get-ChildItem -Recurse **\\Tests\\**\\TestResult*.xml | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name -DeploymentName ''NUnit tests result files'' }'"
 - ps: "'Get-ChildItem -Recurse **\\Tests\\**\\*.trx | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name -DeploymentName ''NUnit tests result files'' }'"
 - ps: "'Get-ChildItem -Recurse *.ckmon | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name -DeploymentName ''Log files'' }'"
+install:
+- ps: Install-Product node 16 x64
 build_script:
 - dotnet run --project CodeCakeBuilder -nointeraction
-install:
-  - ps: Install-Product node 16 x64
