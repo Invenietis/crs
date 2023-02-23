@@ -2,8 +2,8 @@ using Cake.Common.Diagnostics;
 using Cake.Common.IO;
 using Cake.Common.Solution;
 using Cake.Common.Tools.DotNet;
-using Cake.Common.Tools.DotNetCore.Build;
-using Cake.Common.Tools.DotNetCore.Test;
+using Cake.Common.Tools.DotNet.Build;
+using Cake.Common.Tools.DotNet.Test;
 using Cake.Common.Tools.NUnit;
 using Cake.Core;
 using Cake.Core.IO;
@@ -110,7 +110,7 @@ namespace CodeCake
                 var exclude = new List<string>( excludedProjectsName ) { "CodeCakeBuilder" };
                 tempSln.ExcludeProjectsFromBuild( exclude.ToArray() );
                 _globalInfo.Cake.DotNetBuild( tempSln.FullPath.FullPath,
-                    new DotNetCoreBuildSettings().AddVersionArguments( _globalInfo.BuildInfo, s =>
+                    new DotNetBuildSettings().AddVersionArguments( _globalInfo.BuildInfo, s =>
                     {
                         s.Configuration = _globalInfo.BuildInfo.BuildConfiguration;
                     } ) );
@@ -172,7 +172,7 @@ namespace CodeCake
                         _globalInfo.Cake.Information( $"Testing via VSTest ({framework}): {testBinariesPath}" );
                         if( !_globalInfo.CheckCommitMemoryKey( testBinariesPath ) )
                         {
-                            var options = new DotNetCoreTestSettings()
+                            var options = new DotNetTestSettings()
                             {
                                 Configuration = _globalInfo.BuildInfo.BuildConfiguration,
                                 Framework = framework,

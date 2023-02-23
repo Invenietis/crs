@@ -1,7 +1,7 @@
 using Cake.Common.Diagnostics;
 using Cake.Common.Solution;
 using Cake.Common.Tools.DotNet;
-using Cake.Common.Tools.DotNetCore.Pack;
+using Cake.Common.Tools.DotNet.Pack;
 using CodeCake.Abstractions;
 using CSemVer;
 using SimpleGitVersion;
@@ -28,7 +28,7 @@ namespace CodeCake
         public void Pack()
         {
             var nugetInfo = _globalInfo.ArtifactTypes.OfType<NuGetArtifactType>().Single();
-            var settings = new DotNetCorePackSettings().AddVersionArguments( _globalInfo.BuildInfo, c =>
+            var settings = new DotNetPackSettings().AddVersionArguments( _globalInfo.BuildInfo, c =>
             {
                 c.NoBuild = true;
                 // Includes the .pdb in package.

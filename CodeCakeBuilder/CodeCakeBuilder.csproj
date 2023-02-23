@@ -9,15 +9,15 @@
     <Nullable>annotations</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CK.Core" Version="15.0.0-r06" />
+    <PackageReference Include="CK.Core" Version="16.1.1" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Cake.Npm" Version="2.0.0" />
-    <PackageReference Include="Cake.Yarn" Version="0.4.8" />
-    <PackageReference Include="NuGet.Credentials" Version="6.2.1" />
-    <PackageReference Include="NUnit.ConsoleRunner" Version="3.15.2" />
+    <PackageReference Include="Cake.Yarn" Version="2.0.0" />
+    <PackageReference Include="NuGet.Credentials" Version="6.5.0" />
+    <PackageReference Include="NUnit.ConsoleRunner" Version="3.16.3" />
     <PackageReference Include="NUnit.Runners.Net4" Version="2.6.4" />
-    <PackageReference Include="SimpleGitVersion.Cake" Version="8.0.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="SimpleGitVersion.Cake" Version="9.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
   </ItemGroup>
 </Project>
