@@ -8,12 +8,12 @@ namespace CK.Crs.InMemory
     {
         private readonly ICommandContext _commandContext;
 
-        public ActivityMonitor.DependentToken MonitorToken { get; }
+        public ActivityMonitor.Token MonitorToken { get; }
 
         public CommandJobContext( ICommandContext commandContext )
         {
             _commandContext = commandContext;
-            MonitorToken = commandContext.Monitor.CreateDependentToken( $"Command {commandContext.CommandId}." );
+            MonitorToken = commandContext.Monitor.CreateToken( $"Command {commandContext.CommandId}." );
             Monitor = new ActivityMonitor();
         }
 
