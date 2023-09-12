@@ -5,7 +5,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="NewtonSoft.Json" Version="13.0.2" />
-    <PackageReference Include="CK.AspNet" Version="11.0.1--0027-develop" />
+    <PackageReference Include="CK.AspNet" Version="11.0.1--0028-develop" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\core\CK.Crs.Runtime\CK.Crs.Runtime.csproj" />
