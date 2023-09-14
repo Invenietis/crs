@@ -3,7 +3,7 @@
     <TargetFrameworks>net6.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CK.ActivityMonitor.SimpleSender" Version="18.0.1--0053-develop" />
-    <PackageReference Include="CK.AmbientValues" Version="9.0.1--0027-develop" />
+    <PackageReference Include="CK.ActivityMonitor.SimpleSender" Version="18.0.1--0054-develop" />
+    <PackageReference Include="CK.AmbientValues" Version="9.0.1--0028-develop" />
   </ItemGroup>
 </Project>
