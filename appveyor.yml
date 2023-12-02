@@ -4,12 +4,9 @@ clone_folder: C:\CKli-World\CK-Crs-Projects\CK-Crs
 environment:
   CODECAKEBUILDER_SECRET_KEY:
     secure: 8VAzdXgUQaJyFoU3WLf2iPFV/8zPDm9qV4TfOpx8/rg=
-test: off
+test: false
 on_finish:
-- ps: "'Get-ChildItem -Recurse *.log | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name -DeploymentName ''Log files'' }'"
-- ps: "'Get-ChildItem -Recurse **\\Tests\\**\\TestResult*.xml | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name -DeploymentName ''NUnit tests result files'' }'"
-- ps: "'Get-ChildItem -Recurse **\\Tests\\**\\*.trx | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name -DeploymentName ''NUnit tests result files'' }'"
-- ps: "'Get-ChildItem -Recurse *.ckmon | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name -DeploymentName ''Log files'' }'"
+- ps: "'Get-ChildItem -Recurse *.log -exclude LastRun.log | % { Push-AppveyorArtifact $_.FullName }'"
 install:
 - ps: Install-Product node 16 x64
 build_script:
