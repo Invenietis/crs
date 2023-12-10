@@ -1,5 +1,5 @@
 # Signature-Code .editorconfig
-# See also: https://github.com/dotnet/roslyn/blob/master/src/Workspaces/CSharp/Portable/Formatting/CSharpFormattingOptions.cs
+# See also: https://github.com/dotnet/roslyn/blob/main/src/Workspaces/CSharp/Portable/Formatting/CSharpFormattingOptions.cs
 # 20170522
 
 root = true
@@ -22,6 +22,9 @@ csharp_space_between_method_declaration_parameter_list_parentheses = true
 csharp_space_after_keywords_in_control_flow_statements = false
 csharp_space_between_parentheses = control_flow_statements
 # Motive: May be weird at first, but it improve readability.
+
+csharp_style_prefer_primary_constructors = false:suggestion
+# Primary constructors should be used only for very simple classes. May be record is a good choice.
 
 # internal and private fields should be _camelCase
 dotnet_naming_rule.camel_case_for_private_internal_fields.severity = suggestion
@@ -75,7 +78,6 @@ dotnet_diagnostic.CA1040.severity = none
 dotnet_diagnostic.CA1508.severity = none
 # Motive: Too much false positive: if you follow the suggestion you will remove useful code!
 # Has 45 issues open for this analyzers as 21/08/2021
-
 
 # CA2100: Review SQL queries for security vulnerabilities.
 # This is an annoying yet useful warning... for beginners.
