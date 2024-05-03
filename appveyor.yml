@@ -6,7 +6,7 @@ environment:
     secure: 8VAzdXgUQaJyFoU3WLf2iPFV/8zPDm9qV4TfOpx8/rg=
 test: false
 on_finish:
-- ps: "'Get-ChildItem -Recurse *.log -exclude LastRun.log | % { Push-AppveyorArtifact $_.FullName }'"
+- ps: Get-ChildItem -Recurse *.log -exclude LastRun.log | % { Push-AppveyorArtifact $_.FullName }
 install:
 - ps: Install-Product node 16 x64
 build_script:
