@@ -6,7 +6,6 @@
     <SignAssembly>false</SignAssembly>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
-    <Nullable>annotations</Nullable>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CK.Core" Version="19.0.0" />

@@ -37,8 +37,10 @@
     <Copyright>Copyright Signature-Code 2007-$([System.DateTime]::UtcNow.ToString("yyyy"))</Copyright>
     <!--Removes annoying Pack warning: The package version ... uses SemVer 2.0.0 or components of SemVer 1.0.0 that are not supported on legacy clients...-->
     <NoWarn>NU5105</NoWarn>
-    <!--Considering .net6 'global using' to be an opt-in (simply reproduce this with 'false' in the csproj if needed).-->
+    <!--Considering .net6 'global using' to be an opt-in (simply reproduce this with 'enable' in the csproj if needed).-->
     <ImplicitUsings>disable</ImplicitUsings>
+    <!--Nullable Reference Type should always be used!-->
+    <Nullable>enable</Nullable>
     <PackageIcon>PackageIcon.png</PackageIcon>
     <AssemblyOriginatorKeyFile>$(SolutionDir)Common/SharedKey.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
@@ -63,7 +65,7 @@
   <!--</GenerateDocumentation>-->
   <!--<Analyzers>: This analyzer provides very welcome guidelines about async and threading issues.-->
   <ItemGroup Condition=" '$(MSBuildProjectName)' != 'CodeCakeBuilder' ">
-    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.9.28" PrivateAssets="All" IncludeAssets="runtime;build;native;contentfiles;analyzers" />
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.10.48" PrivateAssets="All" IncludeAssets="runtime;build;native;contentfiles;analyzers" />
   </ItemGroup>
   <!--</Analyzers>-->
   <!--<ReproducibleBuilds>-->

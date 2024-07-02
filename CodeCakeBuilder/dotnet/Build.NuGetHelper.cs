@@ -129,6 +129,11 @@ namespace CodeCake
                 {
                     throw new NotSupportedException( "Should not be called in this scenario." );
                 }
+
+                public IReadOnlyList<PackageSource> LoadAuditSources()
+                {
+                    throw new NotSupportedException( "Should not be called in this scenario." );
+                }
             }
 
             static NuGetHelper()
