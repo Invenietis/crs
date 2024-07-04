@@ -1,7 +1,8 @@
-﻿<RepositoryInfo>
-  <SimpleGitVersion StartingVersion="9.0.0-alpha">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RepositoryInfo>
+  <SimpleGitVersion StartingVersion="9.0.0-alpha" SingleMajor="15">
     <Branches>
-      <Branch Name="develop" CIVersionMode="LastReleaseBased" VersionName="develop" />
+      <Branch Name="develop-Net6" CIVersionMode="LastReleaseBased" VersionName="develop" />
     </Branches>
   </SimpleGitVersion>
 </RepositoryInfo>
