@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "jquery": "^2.2.0",
+    "jquery": "^3.5.0",
     "ck-command": "../../component-kitchen/src/ck-command" 
   },
   "author": "",
